@@ -39,6 +39,39 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   // Get current filter state
   const { datePreset, customDateStart, customDateEnd, getDateRange } = useAnalyticsNewFilters();
 
+  // Get realtime GA4 data for active users
+  const { data: ga4Data, isLoading: ga4Loading } = useQuery<any>({
+    queryKey: ['/api/ga4/realtime'],
+    refetchInterval: 15000, // Refresh every 15 seconds
+    refetchOnWindowFocus: false,
+  });
+
+  // Get GA4 report data based on current filters
+  const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
+    queryKey: ['/api/ga4/report', datePreset, customDateStart, customDateEnd],
+    queryFn: async () => {
+      const response = await fetch('/api/ga4/report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          preset: datePreset,
+          dateFrom: customDateStart || undefined,
+          dateTo: customDateEnd || undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`GA4 report failed: ${response.status}`);
+      }
+
+      return response.json();
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 30000, // 30 seconds
+  });
+
   const generateMockSparkline = () => {
     return Array.from({ length: 7 }, () => Math.floor(Math.random() * 100) + 20);
   };
@@ -264,40 +297,7 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   };
 
   const kpiData = generateKpiData();
-
-  // Get realtime GA4 data for active users
-  const { data: ga4Data, isLoading: ga4Loading } = useQuery<any>({
-    queryKey: ['/api/ga4/realtime'],
-    refetchInterval: 15000, // Refresh every 15 seconds
-    refetchOnWindowFocus: false,
-  });
-
-  // Get GA4 report data based on current filters
-  const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
-    queryKey: ['/api/ga4/report', datePreset, customDateStart, customDateEnd],
-    queryFn: async () => {
-      const response = await fetch('/api/ga4/report', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          preset: datePreset,
-          dateFrom: customDateStart || undefined,
-          dateTo: customDateEnd || undefined,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`GA4 report failed: ${response.status}`);
-      }
-
-      return response.json();
-    },
-    refetchOnWindowFocus: false,
-    staleTime: 30000, // 30 seconds
-  });
-
+  
   const realActiveUsers = ga4Data?.activeUsers || 0;
   const mockActiveUsers = mockState === 'empty' ? 0 : Math.floor(Math.random() * 20) + 5;
 
