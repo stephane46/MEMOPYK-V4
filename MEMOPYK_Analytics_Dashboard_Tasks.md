@@ -91,15 +91,26 @@ A task is **done** when:
 ---
 
 ## Phase 1 – MVP Skeleton (mock only)
-Status: [x] Backlog  [ ] In Progress  [ ] In Review  [ ] Done
+Status: [ ] Backlog  [ ] In Progress  [ ] In Review  [x] Done
 
-- [ ] Set up **routes/tabs**: Overview, Live View, Video, Geo, CTA, Trends, Clarity, Fallback
-- [ ] Create **Global filter bar** (date presets 7d/30d/90d/custom + language/country/video) with Zustand store
+- [x] Set up **routes/tabs**: Overview, Live View, Video, Geo, CTA, Trends, Clarity, Fallback
+- [x] Create **Global filter bar** (date presets 7d/30d/90d/custom + language/country/video) with Zustand store
 - [ ] Overview tab (mock): 5 KPI cards, sparklines, “Active now” badge (mocked)
-- [ ] Navigation and tabs responsive (desktop 2-col, tablet, mobile stacked)
-- [ ] Loading, Empty, Error states (mock toggles)
+- [x] Navigation and tabs responsive (desktop 2-col, tablet, mobile stacked)
+- [x] Loading, Empty, Error states (mock toggles)
 
 ✅ *Acceptance: All tabs navigable, flags work, layout clean with MEMOPYK colors.*
+
+**📝 Update (2025-09-03):** 
+- ✅ **What changed:** Built complete MVP skeleton with isolated namespace `client/src/admin/analyticsNew/`
+- ✅ **Components created:** AnalyticsNewDashboard, AnalyticsNewTabNavigation, AnalyticsNewGlobalFilters, AnalyticsNewKpiCard, AnalyticsNewOverview, AnalyticsNewLoadingStates
+- ✅ **Routes:** All 8 tabs working under `/admin/analytics-new/*` with proper routing
+- ✅ **Zustand store:** Global filters with date presets (7d/30d/90d/custom), language, country, video filters
+- ✅ **Mock data:** 5 KPI cards with sparklines, active users badge, mock toggles for error/empty/loading states  
+- ✅ **Responsive:** Desktop/tablet/mobile layouts working
+- ✅ **Integration:** Added "Analytics New" menu item to admin dashboard
+- ✅ **Verification:** All tabs navigable, mock flags work, MEMOPYK orange branding applied
+- ✅ **Evidence:** Dashboard accessible at `/fr-FR/admin` → "Analytics New" menu item → full 8-tab interface with filters
 
 ---
 
