@@ -378,7 +378,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <div className="w-32 bg-gray-200 rounded-full h-1.5 overflow-hidden">
                       <div
-                        className="h-1.5 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-500 ease-out"
+                        className="h-1.5 bg-[var(--memopyk-orange)] rounded-full transition-all duration-500 ease-out"
                         style={{ 
                           width: `${Math.max(0, Math.min(session.progress, 100))}%`
                         }}
