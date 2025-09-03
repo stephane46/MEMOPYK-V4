@@ -40582,5 +40582,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-03T15:05:33.775Z"
+  },
+  {
+    "id": "c9bfd353-c4fc-4404-9998-9087e9f1c5ba",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:07:18.627Z"
+  },
+  {
+    "id": "395a5373-08ef-4b91-8199-7e127553b64a",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:07:49.860Z"
   }
 ]

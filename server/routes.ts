@@ -1991,14 +1991,15 @@ export async function registerRoutes(app: Express): Promise<void> {
         }
       }
       
-      // Sort by most recent activity
+      // Sort by most recent activity and limit to 20 for display
       currentSessions.sort((a, b) => a.duration - b.duration);
+      const displaySessions = currentSessions.slice(0, 20);
       
-      console.log(`👀 Currently watching: ${currentSessions.length} active sessions`);
+      console.log(`👀 Currently watching: ${currentSessions.length} active sessions (showing ${displaySessions.length})`);
       
       res.json({
         totalActive: currentSessions.length,
-        sessions: currentSessions,
+        sessions: displaySessions,
         timestamp: new Date().toISOString()
       });
     } catch (error) {
