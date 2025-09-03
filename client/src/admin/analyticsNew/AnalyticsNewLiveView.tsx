@@ -403,21 +403,22 @@ export const AnalyticsNewLiveView: React.FC = () => {
                   {/* Enhanced location display with flag */}
                   <div className="mb-3 space-y-1">
                     {locationData.hasFlag ? (
-                      <div className="flex items-center space-x-2">
-                        <CountryFlag country={locationData.country} size={16} />
-                        <span className="text-sm font-medium text-[var(--analytics-new-text)]">
-                          {locationData.country}
-                        </span>
-                      </div>
+                      <>
+                        <div className="flex items-center space-x-2">
+                          <CountryFlag country={locationData.country} size={16} />
+                          <span className="text-sm font-light text-[var(--analytics-new-text-muted)]">
+                            {locationData.country}
+                          </span>
+                        </div>
+                        {locationData.cityRegion && (
+                          <div className="text-sm font-semibold text-[var(--analytics-new-text)] ml-6">
+                            {locationData.cityRegion}
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="text-sm text-[var(--analytics-new-text-muted)]">
                         {locationData.text}
-                      </div>
-                    )}
-                    
-                    {locationData.cityRegion && (
-                      <div className="text-sm text-[var(--analytics-new-text-muted)] ml-6">
-                        {locationData.cityRegion}
                       </div>
                     )}
                   </div>
