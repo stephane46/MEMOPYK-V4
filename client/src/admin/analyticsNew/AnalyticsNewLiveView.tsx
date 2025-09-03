@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Users, Globe, Monitor, Smartphone, Tablet, Eye, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
+import { CountryFlag } from '@/components/admin/CountryFlag';
 
 interface GA4RealtimeData {
   activeUsers: number;
@@ -335,14 +336,23 @@ export const AnalyticsNewLiveView: React.FC = () => {
               // Helper functions for UI formatting
               const getVideoTitle = () => session.videoTitle || 'Video';
               const getLocationDisplay = () => {
-                // Build location string with city, region, and country
-                const parts = [];
-                if (session.city) parts.push(session.city);
-                if (session.region && session.region !== session.city) parts.push(session.region);
-                if (session.country) parts.push(session.country);
+                if (!session.country) return { hasFlag: false, text: 'Location unknown' };
                 
-                if (parts.length === 0) return 'Location unknown';
-                return parts.join(', ');
+                // Build city and region part
+                let cityRegion = '';
+                if (session.city) {
+                  cityRegion = session.city;
+                  if (session.region && session.region !== session.city) {
+                    cityRegion += ` (${session.region})`;
+                  }
+                }
+                
+                return {
+                  hasFlag: true,
+                  country: session.country,
+                  cityRegion: cityRegion || null,
+                  countryCode: session.countryCode || null
+                };
               };
               const getDeviceDisplay = () => {
                 const device = session.device?.toLowerCase();
@@ -363,6 +373,8 @@ export const AnalyticsNewLiveView: React.FC = () => {
                   : session.sessionId;
                 return `#${id.slice(-4)}`;
               };
+
+              const locationData = getLocationDisplay();
 
               return (
                 <div 
@@ -388,10 +400,32 @@ export const AnalyticsNewLiveView: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Meta line: Country • Device • timeAgo • #shortId */}
+                  {/* Enhanced location display with flag */}
+                  <div className="mb-3 space-y-1">
+                    {locationData.hasFlag ? (
+                      <div className="flex items-center space-x-2">
+                        <CountryFlag country={locationData.country} size={16} />
+                        <span className="text-sm font-medium text-[var(--analytics-new-text)]">
+                          {locationData.country}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-[var(--analytics-new-text-muted)]">
+                        {locationData.text}
+                      </div>
+                    )}
+                    
+                    {locationData.cityRegion && (
+                      <div className="text-sm text-[var(--analytics-new-text-muted)] ml-6">
+                        {locationData.cityRegion}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Meta line: Device • timeAgo • #shortId */}
                   <div className="text-sm text-[var(--analytics-new-text-muted)] mb-3 flex items-center">
                     <span>
-                      {getLocationDisplay()} • {getDeviceDisplay()} • {getTimeAgo()}
+                      {getDeviceDisplay()} • {getTimeAgo()}
                     </span>
                     <TooltipProvider>
                       <Tooltip>
