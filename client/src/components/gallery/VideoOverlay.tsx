@@ -262,14 +262,29 @@ export default function VideoOverlay({
     }
   }, [title, videoUrl]);
 
-  // Heartbeat system for Live View tracking
+  // Heartbeat system for Live View tracking with concurrent sessions support
   const getOrCreateSessionId = useCallback(() => {
-    let sessionId = localStorage.getItem('memopyk-current-session-id');
-    if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('memopyk-current-session-id', sessionId);
+    // Get or create base session ID (persistent per device)
+    let baseSessionId = localStorage.getItem('memopyk-base-session-id');
+    if (!baseSessionId) {
+      baseSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('memopyk-base-session-id', baseSessionId);
     }
-    return sessionId;
+    
+    // Get or create tab ID (unique per tab/session)
+    let tabId = sessionStorage.getItem('memopyk-tab-id');
+    if (!tabId) {
+      tabId = Math.random().toString(36).substr(2, 9);
+      sessionStorage.setItem('memopyk-tab-id', tabId);
+    }
+    
+    // Combine to create clientSessionId for concurrent session tracking
+    const clientSessionId = `${baseSessionId}:${tabId}`;
+    
+    // Keep the legacy key updated for backward compatibility
+    localStorage.setItem('memopyk-current-session-id', clientSessionId);
+    
+    return clientSessionId;
   }, []);
 
   const sendHeartbeat = useCallback(async () => {

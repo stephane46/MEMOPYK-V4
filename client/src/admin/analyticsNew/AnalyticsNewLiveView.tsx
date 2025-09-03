@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Users, Globe, Monitor, Smartphone, Tablet, Eye } from 'lucide-react';
+import { Users, Globe, Monitor, Smartphone, Tablet, Eye, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 
 interface GA4RealtimeData {
@@ -291,6 +292,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
                 {watchingData.totalActive} active sessions
               </span>
             )}
+            <div className="text-sm text-[var(--analytics-new-text-muted)]">
+              Auto-updated every 15 seconds
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-sm text-[var(--analytics-new-text-muted)]">
@@ -369,9 +373,23 @@ export const AnalyticsNewLiveView: React.FC = () => {
                   </div>
 
                   {/* Meta line: Country • Device • timeAgo • #shortId */}
-                  <div className="text-sm text-[var(--analytics-new-text-muted)] mb-3">
-                    {getCountryDisplay()} • {getDeviceDisplay()} • {getTimeAgo()} • 
-                    <span className="text-gray-400 ml-1">{getShortId()}</span>
+                  <div className="text-sm text-[var(--analytics-new-text-muted)] mb-3 flex items-center">
+                    <span>
+                      {getCountryDisplay()} • {getDeviceDisplay()} • {getTimeAgo()}
+                    </span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-3 h-3 ml-1 text-gray-400 cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p className="text-sm">
+                            This shows when the viewer's last activity was detected. If it's only a few seconds ago, the video is actively playing. If it's longer, the viewer may have paused, left the page, or lost connection.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <span className="text-gray-400 ml-1"> • {getShortId()}</span>
                   </div>
 
                   {/* Progress row: Progress bar + percentage label */}
