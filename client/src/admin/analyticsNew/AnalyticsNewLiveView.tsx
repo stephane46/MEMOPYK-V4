@@ -84,19 +84,50 @@ const AnalyticsNewProgressBar: React.FC<{
 export const AnalyticsNewLiveView: React.FC = () => {
   const queryClient = useQueryClient();
   const [lastUpdate, setLastUpdate] = useState<string>('');
+  const [lastWatchingUpdate, setLastWatchingUpdate] = useState<string>('');
+  const [isVisible, setIsVisible] = useState<boolean>(!document.hidden);
+  const [isLiveTabActive, setIsLiveTabActive] = useState<boolean>(false);
   
-  // GA4 Realtime data - refetch every 10 seconds
+  // Check if the Live View tab is currently active
+  useEffect(() => {
+    const checkActiveTab = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const activeTab = urlParams.get('an_tab') || 'overview';
+      setIsLiveTabActive(activeTab === 'live');
+    };
+    
+    checkActiveTab();
+    window.addEventListener('popstate', checkActiveTab);
+    return () => window.removeEventListener('popstate', checkActiveTab);
+  }, []);
+
+  // Page Visibility API to pause polling when tab is hidden
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  // Calculate whether polling should be enabled
+  const shouldPoll = isVisible && isLiveTabActive;
+  
+  // GA4 Realtime data - refetch every 10 seconds when active
   const { data: ga4Data, isLoading: ga4Loading, error: ga4Error } = useQuery<GA4RealtimeData>({
     queryKey: ['/api/ga4/realtime'],
-    refetchInterval: 10000, // 10 seconds
+    refetchInterval: shouldPoll ? 10000 : false, // 10 seconds when active
     refetchOnWindowFocus: false,
+    enabled: shouldPoll, // Only query when tab is active and visible
   });
 
-  // Currently watching data - refetch every 15 seconds
+  // Currently watching data - refetch every 15 seconds when active
   const { data: watchingData, isLoading: watchingLoading, error: watchingError } = useQuery<CurrentlyWatchingData>({
     queryKey: ['/api/tracker/currently-watching'],
-    refetchInterval: 15000, // 15 seconds
+    refetchInterval: shouldPoll ? 15000 : false, // 15 seconds when active
     refetchOnWindowFocus: false,
+    enabled: shouldPoll, // Only query when tab is active and visible
   });
 
   // Update last refresh time
@@ -105,6 +136,13 @@ export const AnalyticsNewLiveView: React.FC = () => {
       setLastUpdate(new Date(ga4Data.timestamp).toLocaleTimeString());
     }
   }, [ga4Data?.timestamp]);
+
+  // Update last watching refresh time
+  useEffect(() => {
+    if (watchingData?.timestamp) {
+      setLastWatchingUpdate(new Date(watchingData.timestamp).toLocaleTimeString());
+    }
+  }, [watchingData?.timestamp]);
 
   // Error states
   if (ga4Error || watchingError) {
@@ -253,13 +291,18 @@ export const AnalyticsNewLiveView: React.FC = () => {
               </span>
             )}
           </div>
-          <button
-            onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/tracker/currently-watching'] })}
-            className="text-[var(--analytics-new-orange)] hover:text-orange-600 text-sm font-medium"
-            data-testid="refresh-currently-watching"
-          >
-            Refresh
-          </button>
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-[var(--analytics-new-text-muted)]">
+              Updated: {lastWatchingUpdate || 'Loading...'}
+            </div>
+            <button
+              onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/tracker/currently-watching'] })}
+              className="text-[var(--analytics-new-orange)] hover:text-orange-600 text-sm font-medium"
+              data-testid="refresh-currently-watching"
+            >
+              Refresh
+            </button>
+          </div>
         </div>
 
         {watchingLoading ? (
@@ -308,8 +351,11 @@ export const AnalyticsNewLiveView: React.FC = () => {
                       <div className="flex items-center space-x-2 mt-1">
                         <div className="w-32 bg-gray-200 rounded-full h-1.5 overflow-hidden">
                           <div
-                            className="h-1.5 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-300"
-                            style={{ width: `${Math.min(session.progress, 100)}%` }}
+                            className="h-1.5 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-500 ease-out"
+                            style={{ 
+                              width: `${Math.min(session.progress, 100)}%`,
+                              transition: 'width 0.5s ease-out'
+                            }}
                           />
                         </div>
                         <span className="text-xs text-[var(--analytics-new-text-muted)]">
