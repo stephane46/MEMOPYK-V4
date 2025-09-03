@@ -4691,10 +4691,12 @@ export async function registerRoutes(app: Express): Promise<void> {
           break;
       }
       
-      const start = new Date(now);
-      start.setDate(start.getDate() - days + 1);
+      const end = new Date(now);
+      end.setDate(end.getDate() - 1); // Yesterday as end date
+      const start = new Date(end);
+      start.setDate(start.getDate() - (days - 1)); // Go back days from end date
       startDate = start.toISOString().split('T')[0];
-      endDate = today;
+      endDate = end.toISOString().split('T')[0];
       
       // Previous period of same length
       const compareEnd = new Date(start);
