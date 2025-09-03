@@ -278,14 +278,18 @@ export default function VideoOverlay({
       sessionStorage.setItem('memopyk-tab-id', tabId);
     }
     
-    // Combine to create clientSessionId for concurrent session tracking
-    const clientSessionId = `${baseSessionId}:${tabId}`;
+    // CRITICAL FIX: Include video ID to make each video session unique
+    const videoId = getVideoId();
+    const videoSessionId = `${videoId}_${Math.random().toString(36).substr(2, 6)}`;
+    
+    // Combine to create unique clientSessionId per video
+    const clientSessionId = `${baseSessionId}:${tabId}:${videoSessionId}`;
     
     // Keep the legacy key updated for backward compatibility
     localStorage.setItem('memopyk-current-session-id', clientSessionId);
     
     return clientSessionId;
-  }, []);
+  }, [getVideoId]);
 
   const sendHeartbeat = useCallback(async (forceImmediate = false) => {
     try {

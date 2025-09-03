@@ -1922,8 +1922,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       const now = Date.now();
       const existingSession = activeHeartbeats.get(sessionId);
       
-      // Ensure progress never goes backwards
-      const finalProgress = existingSession?.sessionData?.progress 
+      // Each video session should track its own progress independently
+      // Only prevent backwards progress for the SAME video session
+      const finalProgress = (existingSession?.sessionData?.videoId === videoId && existingSession?.sessionData?.progress) 
         ? Math.max(existingSession.sessionData.progress, pct)
         : pct;
       
