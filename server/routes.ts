@@ -1908,20 +1908,36 @@ export async function registerRoutes(app: Express): Promise<void> {
   
   app.post("/api/tracker/heartbeat", async (req, res) => {
     try {
-      const { sessionId, videoId, progress, currentTime } = req.body;
+      const { sessionId, videoId, progressPct, progress, currentTime, videoTitle, device, country, ts } = req.body;
       
       if (!sessionId) {
         return res.status(400).json({ error: "sessionId is required" });
       }
       
+      // Normalize progress percentage - accept both progressPct and progress
+      const pct = Number.isFinite(progressPct) ? progressPct
+                : Number.isFinite(progress) ? progress
+                : 0;
+      
       const now = Date.now();
+      const existingSession = activeHeartbeats.get(sessionId);
+      
+      // Ensure progress never goes backwards
+      const finalProgress = existingSession?.sessionData?.progress 
+        ? Math.max(existingSession.sessionData.progress, pct)
+        : pct;
+      
       const sessionData = {
         videoId: videoId || null,
-        progress: progress || 0,
+        videoTitle: videoTitle || videoId,
+        progress: finalProgress,
         currentTime: currentTime || 0,
+        device: device || (/Mobi|Android/i.test(req.get('User-Agent') || '') ? 'Mobile' : 'Desktop'),
+        country: country || 'France',
         userAgent: req.get('User-Agent') || 'Unknown',
         ip: req.ip || '127.0.0.1',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        clientTimestamp: ts || now
       };
       
       // Update heartbeat
@@ -1931,7 +1947,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       });
       
       // Clean up expired sessions (TTL > 120s)
-      for (const [id, data] of activeHeartbeats.entries()) {
+      for (const [id, data] of Array.from(activeHeartbeats.entries())) {
         if (now - data.lastSeen > HEARTBEAT_TTL) {
           activeHeartbeats.delete(id);
         }
@@ -1957,18 +1973,19 @@ export async function registerRoutes(app: Express): Promise<void> {
       const currentSessions = [];
       
       // Clean up expired sessions and build response
-      for (const [sessionId, data] of activeHeartbeats.entries()) {
+      for (const [sessionId, data] of Array.from(activeHeartbeats.entries())) {
         if (now - data.lastSeen > HEARTBEAT_TTL) {
           activeHeartbeats.delete(sessionId);
         } else {
           currentSessions.push({
             sessionId: sessionId.substring(0, 8) + '...', // Truncate for privacy
             videoId: data.sessionData.videoId,
+            videoTitle: data.sessionData.videoTitle,
             progress: data.sessionData.progress,
             currentTime: data.sessionData.currentTime,
             duration: Math.floor((now - data.lastSeen) / 1000), // seconds ago
-            location: 'France', // Mock location for Phase 2
-            device: data.sessionData.userAgent?.includes('Mobile') ? 'Mobile' : 'Desktop',
+            location: data.sessionData.country || 'Unknown',
+            device: data.sessionData.device || (data.sessionData.userAgent?.includes('Mobile') ? 'Mobile' : 'Desktop'),
             clarityUrl: `https://clarity.microsoft.com/projects/t3uv5yndxl/sessions/${sessionId}` // Mock Clarity URL
           });
         }

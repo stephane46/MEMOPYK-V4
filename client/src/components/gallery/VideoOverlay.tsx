@@ -278,11 +278,24 @@ export default function VideoOverlay({
       const videoId = getVideoId();
       const video = videoRef.current;
       
+      // Only send heartbeat if video duration is known
+      if (!video || !isFinite(video.duration) || video.duration <= 0) {
+        console.log('💓 Heartbeat skipped - video duration not available yet');
+        return;
+      }
+      
+      // Calculate progress percentage
+      const progressPct = Math.max(0, Math.min(100, Math.round((video.currentTime / video.duration) * 100)));
+      
       const heartbeatData = {
         sessionId,
         videoId,
-        progress: Math.round(progress),
-        currentTime: Math.round(video?.currentTime || 0)
+        videoTitle: title,
+        progressPct, // Use progressPct instead of progress
+        currentTime: Math.round(video.currentTime),
+        device: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+        country: 'Unknown', // Will be enriched server-side
+        ts: Date.now()
       };
       
       const response = await fetch('/api/tracker/heartbeat', {
@@ -299,7 +312,7 @@ export default function VideoOverlay({
     } catch (error) {
       console.warn('❌ Heartbeat error:', error);
     }
-  }, [getOrCreateSessionId, getVideoId, progress]);
+  }, [getOrCreateSessionId, getVideoId, title]);
 
   const startHeartbeat = useCallback(() => {
     if (heartbeatIntervalRef.current) {
