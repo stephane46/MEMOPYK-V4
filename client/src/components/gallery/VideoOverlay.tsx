@@ -63,16 +63,12 @@ export default function VideoOverlay({
   // Feature flag for video analytics - Use environment variable as intended
   const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
   
-  // Extract video ID from URL
+  // Extract video ID from URL - stable reference for session tracking
   const getVideoId = useCallback(() => {
-    let id;
     if (videoUrl.includes('filename=')) {
-      id = videoUrl.split('filename=')[1].split('&')[0];
-    } else {
-      id = videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+      return videoUrl.split('filename=')[1].split('&')[0];
     }
-    console.log('🎬 Video ID extracted:', { videoUrl, extractedId: id });
-    return id;
+    return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
   }, [videoUrl]);
 
   // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time - MOUNT ONCE ONLY
@@ -282,17 +278,14 @@ export default function VideoOverlay({
       sessionStorage.setItem('memopyk-tab-id', tabId);
     }
     
-    // FIXED: Create stable session ID per video that doesn't change
+    // Create stable session ID per video per browser tab - prevents duplicates
     const videoId = getVideoId();
     const videoSessionKey = `memopyk-video-session-${videoId}`;
     
     let videoSessionId = sessionStorage.getItem(videoSessionKey);
     if (!videoSessionId) {
-      videoSessionId = `${videoId}_${Math.random().toString(36).substr(2, 6)}`;
+      videoSessionId = `${videoId}_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
       sessionStorage.setItem(videoSessionKey, videoSessionId);
-      console.log('🆔 NEW video session created:', { videoId, videoSessionKey, videoSessionId });
-    } else {
-      console.log('🆔 EXISTING video session found:', { videoId, videoSessionKey, videoSessionId });
     }
     
     // Combine to create stable unique clientSessionId per video
