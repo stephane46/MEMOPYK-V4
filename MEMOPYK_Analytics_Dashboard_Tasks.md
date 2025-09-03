@@ -91,7 +91,7 @@ A task is **done** when:
 ---
 
 ## Phase 1 – MVP Skeleton (mock only)
-Status: [ ] Backlog  [ ] In Progress  [ ] In Review  [x] Done
+Status: [ ] Backlog  [ ] In Progress  [x] In Review  [ ] Done
 
 - [x] Set up **routes/tabs**: Overview, Live View, Video, Geo, CTA, Trends, Clarity, Fallback
 - [x] Create **Global filter bar** (date presets 7d/30d/90d/custom + language/country/video) with Zustand store
