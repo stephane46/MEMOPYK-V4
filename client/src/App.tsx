@@ -108,9 +108,8 @@ function App() {
         console.log('🔍 Test mode active - all GA4 events will include debug_mode=true');
       }
     } else {
-      // Initialize GA4 on admin pages for video tracking testing (minimal tracking)
-      console.log('🚫 Admin page detected - GA4 enabled for video tracking only');
-      initGA();
+      // Do not initialize GA4 on admin pages - completely disabled
+      console.log('🚫 Admin page detected - GA4 completely disabled');
     }
     
     // Cleanup function

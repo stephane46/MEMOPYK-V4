@@ -6,39 +6,53 @@
     <title>MEMOPYK</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
-    <!-- GA4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLRWHE1HV4"></script>
+    <!-- GA4 - Only load on non-admin pages -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      // Check for developer mode and mark traffic accordingly
-      (function () {
-        var isDev = /[?#&]ga_dev=1\b/.test(location.href) || localStorage.getItem('ga_dev') === '1';
-        window.GA_DEV = isDev;
-        gtag('config', 'G-JLRWHE1HV4', {
-          send_page_view: true,
-          debug_mode: isDev
-        });
+      // Check if current path is admin page
+      var isAdmin = location.pathname.startsWith('/fr-FR/admin') || location.pathname.startsWith('/admin');
+      
+      if (!isAdmin) {
+        // Load GA4 script
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-JLRWHE1HV4';
+        document.head.appendChild(script);
         
-        // Show visual indicator when in test mode - matches bookmarklet styling
-        if (isDev) {
-          var banner = document.createElement('div');
-          banner.id = 'ga-test-banner';
-          banner.textContent = '🧪 GA TEST MODE ACTIVE';
-          banner.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';
-          document.body.appendChild(banner);
-        }
-      })();
+        // Initialize GA4
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+
+        // Check for developer mode and mark traffic accordingly
+        (function () {
+          var isDev = /[?#&]ga_dev=1\b/.test(location.href) || localStorage.getItem('ga_dev') === '1';
+          window.GA_DEV = isDev;
+          gtag('config', 'G-JLRWHE1HV4', {
+            send_page_view: true,
+            debug_mode: isDev
+          });
+          
+          // Show visual indicator when in test mode - matches bookmarklet styling
+          if (isDev) {
+            var banner = document.createElement('div');
+            banner.id = 'ga-test-banner';
+            banner.textContent = '🧪 GA TEST MODE ACTIVE';
+            banner.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';
+            document.body.appendChild(banner);
+          }
+        })();
+      } else {
+        console.log('🚫 GA4 disabled on admin pages');
+      }
     </script>
 
     <!-- Microsoft Clarity - Only load on non-admin pages -->
     <script type="text/javascript">
-        // Check if current path is admin page
-        var isAdminPage = window.location.pathname.startsWith('/admin');
+        // Check if current path is admin page  
+        var isAdmin = location.pathname.startsWith('/fr-FR/admin') || location.pathname.startsWith('/admin');
         
-        if (!isAdminPage) {
+        if (!isAdmin) {
             (function(c,l,a,r,i,t,y){
                 c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
                 t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
