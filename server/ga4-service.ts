@@ -28,12 +28,8 @@ const localeFilter = (
 /* =============  KPI QUERIES  ============= */
 
 export async function qPlays(start: string, end: string, locale?: string) {
-  // Quick timeout to prevent hangs
-  const timeoutPromise = new Promise<never>((_, reject) => 
-    setTimeout(() => reject(new Error('GA4 API timeout - qPlays took too long')), 2000)
-  );
-  
-  const queryPromise = client.runReport({
+  // DETAILED GA4 PARAMETER LOGGING
+  const requestParams = {
     property: PROPERTY,
     dateRanges: [range(start, end)],
     metrics: [{ name: "eventCount" }],
@@ -45,10 +41,26 @@ export async function qPlays(start: string, end: string, locale?: string) {
         ]
       }
     }
-  });
+  };
+  
+  console.log(`🔍 GA4 EXACT REQUEST PARAMETERS (qPlays):`);
+  console.log(`   Property ID: ${PROPERTY}`);
+  console.log(`   Date Range: ${start} to ${end} (YYYY-MM-DD format)`);
+  console.log(`   Server Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
+  console.log(`   Locale Filter: ${locale || 'all'}`);
+  console.log(`   Event Filter: eventName = "video_start"`);
+  console.log(`   Full Request:`, JSON.stringify(requestParams, null, 2));
+  
+  // Quick timeout to prevent hangs
+  const timeoutPromise = new Promise<never>((_, reject) => 
+    setTimeout(() => reject(new Error('GA4 API timeout - qPlays took too long')), 2000)
+  );
+  
+  const queryPromise = client.runReport(requestParams);
   
   const [res] = await Promise.race([queryPromise, timeoutPromise]);
   const plays = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  console.log(`✅ GA4 Response (qPlays): ${plays} plays`);
   return plays;
 }
 
