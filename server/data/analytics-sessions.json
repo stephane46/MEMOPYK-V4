@@ -41062,5 +41062,69 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-03T15:45:13.178Z"
+  },
+  {
+    "id": "90a2ec84-9c0d-43da-90c1-a8a39468517f",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:46:57.377Z"
+  },
+  {
+    "id": "457828f9-17f0-4ce2-8ae8-3426d48cf37b",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:47:28.451Z"
+  },
+  {
+    "id": "d7f4185c-b128-44c8-a6f4-2045af773dbb",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:47:59.632Z"
+  },
+  {
+    "id": "5549f84e-a81f-4b95-a63a-b7d3b53bd6df",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:48:30.645Z"
+  },
+  {
+    "id": "d33a4cf9-a3c8-421a-aa78-eff35a6c1d70",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:49:01.638Z"
+  },
+  {
+    "id": "431154c1-3261-4ad3-8253-47e8938afe7d",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:49:14.191Z"
+  },
+  {
+    "id": "c07e8378-fe18-4b46-b9e8-b53a0aea91a2",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:49:44.472Z"
+  },
+  {
+    "id": "8c0ff46a-9869-4af1-8b08-424f5de0a119",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T15:50:15.777Z"
   }
 ]
