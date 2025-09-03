@@ -43,6 +43,7 @@ export default function VideoOverlay({
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const videoStartTimeRef = useRef<number>(Date.now());
   const thumbnailStartTimeRef = useRef<number>(Date.now());
   const videoReadyRef = useRef<boolean>(false);
@@ -97,6 +98,12 @@ export default function VideoOverlay({
       if (video && video.currentTime > 0) {
         const finalWatchTime = Math.round(video.currentTime);
         trackVideoComplete(videoId, finalWatchTime, title);
+      }
+      
+      // LIVE VIEW TRACKING: Stop heartbeat on component unmount
+      if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current);
+        heartbeatIntervalRef.current = null;
       }
     };
   }, [title]); // Include title for cleanup tracking
@@ -255,6 +262,66 @@ export default function VideoOverlay({
     }
   }, [title, videoUrl]);
 
+  // Heartbeat system for Live View tracking
+  const getOrCreateSessionId = useCallback(() => {
+    let sessionId = localStorage.getItem('memopyk-current-session-id');
+    if (!sessionId) {
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('memopyk-current-session-id', sessionId);
+    }
+    return sessionId;
+  }, []);
+
+  const sendHeartbeat = useCallback(async () => {
+    try {
+      const sessionId = getOrCreateSessionId();
+      const videoId = getVideoId();
+      const video = videoRef.current;
+      
+      const heartbeatData = {
+        sessionId,
+        videoId,
+        progress: Math.round(progress),
+        currentTime: Math.round(video?.currentTime || 0)
+      };
+      
+      const response = await fetch('/api/tracker/heartbeat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(heartbeatData)
+      });
+      
+      if (!response.ok) {
+        console.warn('❌ Heartbeat failed:', response.status);
+      } else {
+        console.log('💓 Heartbeat sent for session:', sessionId.substring(0, 12) + '...');
+      }
+    } catch (error) {
+      console.warn('❌ Heartbeat error:', error);
+    }
+  }, [getOrCreateSessionId, getVideoId, progress]);
+
+  const startHeartbeat = useCallback(() => {
+    if (heartbeatIntervalRef.current) {
+      clearInterval(heartbeatIntervalRef.current);
+    }
+    
+    // Send immediate heartbeat on start
+    sendHeartbeat();
+    
+    // Then send heartbeat every 15 seconds
+    heartbeatIntervalRef.current = setInterval(sendHeartbeat, 15000);
+    console.log('💓 Heartbeat started - sending every 15s');
+  }, [sendHeartbeat]);
+
+  const stopHeartbeat = useCallback(() => {
+    if (heartbeatIntervalRef.current) {
+      clearInterval(heartbeatIntervalRef.current);
+      heartbeatIntervalRef.current = null;
+      console.log('💓 Heartbeat stopped');
+    }
+  }, []);
+
   // Video event handlers - Following stable dependency pattern
   const handlePlay = useCallback(() => {
     setIsPlaying(true);
@@ -282,7 +349,10 @@ export default function VideoOverlay({
       console.log(`📊 LOCAL ANALYTICS: Tracking video view start for ${videoId}`);
       trackVideoView(videoId, 0, false);
     }
-  }, [resetControlsTimer, VIDEO_ANALYTICS_ENABLED, trackVideoView, title, videoUrl, duration, currentTime, language]);
+    
+    // LIVE VIEW TRACKING: Start heartbeat system for real-time tracking
+    startHeartbeat();
+  }, [resetControlsTimer, VIDEO_ANALYTICS_ENABLED, trackVideoView, title, videoUrl, duration, currentTime, language, startHeartbeat]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
@@ -297,7 +367,10 @@ export default function VideoOverlay({
       // Track watch time when video is paused using proper analytics function
       trackVideoComplete(videoId, Math.round(currentTime), title);
     }
-  }, [duration, currentTime, title, videoUrl, language]);
+    
+    // LIVE VIEW TRACKING: Stop heartbeat when video is paused
+    stopHeartbeat();
+  }, [duration, currentTime, title, videoUrl, language, stopHeartbeat]);
 
   const handleEnded = useCallback(() => {
     setIsPlaying(false);
@@ -322,7 +395,10 @@ export default function VideoOverlay({
 
       trackVideoView(videoId, watchedDuration, isCompleted);
     }
-  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, title, videoUrl, language]);
+    
+    // LIVE VIEW TRACKING: Stop heartbeat when video ends
+    stopHeartbeat();
+  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, title, videoUrl, language, stopHeartbeat]);
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
