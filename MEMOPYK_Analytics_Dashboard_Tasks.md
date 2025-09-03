@@ -91,11 +91,11 @@ A task is **done** when:
 ---
 
 ## Phase 1 – MVP Skeleton (mock only)
-Status: [ ] Backlog  [ ] In Progress  [x] In Review  [ ] Done
+Status: [ ] Backlog  [ ] In Progress  [ ] In Review  [x] Done
 
 - [x] Set up **routes/tabs**: Overview, Live View, Video, Geo, CTA, Trends, Clarity, Fallback
 - [x] Create **Global filter bar** (date presets 7d/30d/90d/custom + language/country/video) with Zustand store
-- [ ] Overview tab (mock): 5 KPI cards, sparklines, “Active now” badge (mocked)
+- [x] Overview tab (mock): 5 KPI cards, sparklines, “Active now” badge (mocked)
 - [x] Navigation and tabs responsive (desktop 2-col, tablet, mobile stacked)
 - [x] Loading, Empty, Error states (mock toggles)
 
@@ -115,7 +115,7 @@ Status: [ ] Backlog  [ ] In Progress  [x] In Review  [ ] Done
 ---
 
 ## Phase 2 – Live View (Realtime)
-Status: [x] Backlog  [ ] In Progress  [ ] In Review  [ ] Done
+Status: [ ] Backlog  [x] In Progress  [ ] In Review  [ ] Done
 
 - [ ] Backend: `/api/ga4/realtime` → activeUsers + byCountry/byDevice (cache 10s)
 - [ ] Backend: `/api/tracker/heartbeat` (15s interval, TTL map, 120s eviction)
@@ -125,6 +125,12 @@ Status: [x] Backlog  [ ] In Progress  [ ] In Review  [ ] Done
 - [ ] “View in Clarity” link opens replay
 
 ✅ *Acceptance: Overview badge shows GA4 activeUsers; Live View updates ≤15s; Currently Watching shows session with progress; Clarity link works.*
+
+**📝 Update (2025-01-03):** 
+- 🏗️ **What changed:** Started Phase 2 implementation - creating backend endpoints for realtime analytics data
+- 🎯 **Current task:** Building `/api/ga4/realtime` endpoint with mock data (activeUsers, byCountry, byDevice) + 10s cache
+- 📋 **Next steps:** Complete heartbeat and currently-watching endpoints, then update Live View frontend
+- 🔄 **Status:** In Progress - backend endpoints development underway
 
 ---
 

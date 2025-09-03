@@ -1856,6 +1856,140 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Phase 2 - Analytics New: Realtime GA4 Data Endpoints
+  
+  // GA4 Realtime Analytics - Cache for 10s
+  let ga4RealtimeCache: { data: any; timestamp: number } | null = null;
+  const GA4_REALTIME_CACHE_TTL = 10000; // 10 seconds
+  
+  app.get("/api/ga4/realtime", async (req, res) => {
+    try {
+      const now = Date.now();
+      
+      // Check if cache is valid
+      if (ga4RealtimeCache && (now - ga4RealtimeCache.timestamp) < GA4_REALTIME_CACHE_TTL) {
+        console.log(`📊 GA4 Realtime served from cache (${Math.round((now - ga4RealtimeCache.timestamp) / 1000)}s old)`);
+        return res.json(ga4RealtimeCache.data);
+      }
+      
+      // Mock data for Phase 2 - Following task document requirement for mock-first approach
+      const mockData = {
+        activeUsers: Math.floor(Math.random() * 50) + 10, // Random between 10-60
+        byCountry: [
+          { country: "France", users: Math.floor(Math.random() * 20) + 5 },
+          { country: "Canada", users: Math.floor(Math.random() * 15) + 3 },
+          { country: "United States", users: Math.floor(Math.random() * 10) + 2 },
+          { country: "Switzerland", users: Math.floor(Math.random() * 8) + 1 },
+          { country: "Belgium", users: Math.floor(Math.random() * 6) + 1 }
+        ],
+        byDevice: [
+          { device: "Mobile", users: Math.floor(Math.random() * 25) + 8 },
+          { device: "Desktop", users: Math.floor(Math.random() * 20) + 5 },
+          { device: "Tablet", users: Math.floor(Math.random() * 10) + 2 }
+        ],
+        timestamp: new Date().toISOString(),
+        cached: false
+      };
+      
+      // Cache the data
+      ga4RealtimeCache = { data: { ...mockData, cached: true }, timestamp: now };
+      console.log(`🔄 GA4 Realtime data generated and cached`);
+      
+      res.json(mockData);
+    } catch (error) {
+      console.error('❌ GA4 Realtime error:', error);
+      res.status(500).json({ error: "Failed to get GA4 realtime data" });
+    }
+  });
+
+  // Tracker Heartbeat System - 15s interval, 120s TTL
+  const activeHeartbeats = new Map<string, { lastSeen: number; sessionData: any }>();
+  const HEARTBEAT_TTL = 120000; // 120 seconds
+  
+  app.post("/api/tracker/heartbeat", async (req, res) => {
+    try {
+      const { sessionId, videoId, progress, currentTime } = req.body;
+      
+      if (!sessionId) {
+        return res.status(400).json({ error: "sessionId is required" });
+      }
+      
+      const now = Date.now();
+      const sessionData = {
+        videoId: videoId || null,
+        progress: progress || 0,
+        currentTime: currentTime || 0,
+        userAgent: req.get('User-Agent') || 'Unknown',
+        ip: req.ip || '127.0.0.1',
+        timestamp: new Date().toISOString()
+      };
+      
+      // Update heartbeat
+      activeHeartbeats.set(sessionId, {
+        lastSeen: now,
+        sessionData
+      });
+      
+      // Clean up expired sessions (TTL > 120s)
+      for (const [id, data] of activeHeartbeats.entries()) {
+        if (now - data.lastSeen > HEARTBEAT_TTL) {
+          activeHeartbeats.delete(id);
+        }
+      }
+      
+      console.log(`💓 Heartbeat received from session ${sessionId}, active sessions: ${activeHeartbeats.size}`);
+      
+      res.json({ 
+        success: true, 
+        activeSessions: activeHeartbeats.size,
+        ttl: HEARTBEAT_TTL / 1000 // seconds
+      });
+    } catch (error) {
+      console.error('❌ Tracker heartbeat error:', error);
+      res.status(500).json({ error: "Failed to process heartbeat" });
+    }
+  });
+
+  // Currently Watching - List active sessions
+  app.get("/api/tracker/currently-watching", async (req, res) => {
+    try {
+      const now = Date.now();
+      const currentSessions = [];
+      
+      // Clean up expired sessions and build response
+      for (const [sessionId, data] of activeHeartbeats.entries()) {
+        if (now - data.lastSeen > HEARTBEAT_TTL) {
+          activeHeartbeats.delete(sessionId);
+        } else {
+          currentSessions.push({
+            sessionId: sessionId.substring(0, 8) + '...', // Truncate for privacy
+            videoId: data.sessionData.videoId,
+            progress: data.sessionData.progress,
+            currentTime: data.sessionData.currentTime,
+            duration: Math.floor((now - data.lastSeen) / 1000), // seconds ago
+            location: 'France', // Mock location for Phase 2
+            device: data.sessionData.userAgent?.includes('Mobile') ? 'Mobile' : 'Desktop',
+            clarityUrl: `https://clarity.microsoft.com/projects/t3uv5yndxl/sessions/${sessionId}` // Mock Clarity URL
+          });
+        }
+      }
+      
+      // Sort by most recent activity
+      currentSessions.sort((a, b) => a.duration - b.duration);
+      
+      console.log(`👀 Currently watching: ${currentSessions.length} active sessions`);
+      
+      res.json({
+        totalActive: currentSessions.length,
+        sessions: currentSessions,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('❌ Currently watching error:', error);
+      res.status(500).json({ error: "Failed to get currently watching data" });
+    }
+  });
+
   // Missing cache management endpoints for production
   app.get("/api/cache/breakdown", (req, res) => {
     try {

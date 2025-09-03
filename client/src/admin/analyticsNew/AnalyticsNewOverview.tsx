@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Video, Clock, MousePointer, Eye } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { AnalyticsNewKpiCard, KpiData } from './AnalyticsNewKpiCard';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -117,6 +118,14 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
     },
   ];
 
+  // Get realtime GA4 data for active users
+  const { data: ga4Data, isLoading: ga4Loading } = useQuery<any>({
+    queryKey: ['/api/ga4/realtime'],
+    refetchInterval: 15000, // Refresh every 15 seconds
+    refetchOnWindowFocus: false,
+  });
+
+  const realActiveUsers = ga4Data?.activeUsers || 0;
   const mockActiveUsers = mockState === 'empty' ? 0 : Math.floor(Math.random() * 20) + 5;
 
   return (
@@ -135,7 +144,11 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
             data-testid="active-users-badge"
           >
             <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-            {mockActiveUsers} active now
+            {ga4Loading ? (
+              <div className="inline-block w-6 h-4 bg-green-200 animate-pulse rounded mr-1" />
+            ) : (
+              realActiveUsers
+            )} active now
           </Badge>
         </div>
       </div>

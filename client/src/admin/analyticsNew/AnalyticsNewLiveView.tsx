@@ -1,0 +1,347 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Users, Globe, Monitor, Smartphone, Tablet, Eye } from 'lucide-react';
+import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
+
+interface GA4RealtimeData {
+  activeUsers: number;
+  byCountry: Array<{ country: string; users: number }>;
+  byDevice: Array<{ device: string; users: number }>;
+  timestamp: string;
+  cached: boolean;
+}
+
+interface CurrentlyWatchingSession {
+  sessionId: string;
+  videoId: string | null;
+  progress: number;
+  currentTime: number;
+  duration: number;
+  location: string;
+  device: string;
+  clarityUrl: string;
+}
+
+interface CurrentlyWatchingData {
+  totalActive: number;
+  sessions: CurrentlyWatchingSession[];
+  timestamp: string;
+}
+
+const AnalyticsNewActiveUsersBadge: React.FC<{ count: number; loading?: boolean }> = ({ 
+  count, 
+  loading = false 
+}) => (
+  <div className="flex items-center space-x-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-full border border-green-200">
+    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+    <span className="font-semibold">
+      {loading ? (
+        <div className="w-6 h-4 bg-green-200 animate-pulse rounded" />
+      ) : (
+        count
+      )}
+    </span>
+    <span className="text-sm">active now</span>
+  </div>
+);
+
+const AnalyticsNewProgressBar: React.FC<{ 
+  label: string; 
+  value: number; 
+  max: number;
+  color?: string;
+  animate?: boolean;
+}> = ({ 
+  label, 
+  value, 
+  max, 
+  color = 'bg-[var(--analytics-new-orange)]',
+  animate = true 
+}) => {
+  const percentage = Math.min((value / max) * 100, 100);
+  
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between text-sm">
+        <span className="text-[var(--analytics-new-text)]">{label}</span>
+        <span className="text-[var(--analytics-new-text-muted)]">{value}</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+        <div
+          className={`h-2 rounded-full transition-all duration-1000 ease-out ${color} ${
+            animate ? 'animate-pulse' : ''
+          }`}
+          style={{ 
+            width: `${percentage}%`,
+            transition: 'width 1s ease-out'
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+export const AnalyticsNewLiveView: React.FC = () => {
+  const queryClient = useQueryClient();
+  const [lastUpdate, setLastUpdate] = useState<string>('');
+  
+  // GA4 Realtime data - refetch every 10 seconds
+  const { data: ga4Data, isLoading: ga4Loading, error: ga4Error } = useQuery<GA4RealtimeData>({
+    queryKey: ['/api/ga4/realtime'],
+    refetchInterval: 10000, // 10 seconds
+    refetchOnWindowFocus: false,
+  });
+
+  // Currently watching data - refetch every 15 seconds
+  const { data: watchingData, isLoading: watchingLoading, error: watchingError } = useQuery<CurrentlyWatchingData>({
+    queryKey: ['/api/tracker/currently-watching'],
+    refetchInterval: 15000, // 15 seconds
+    refetchOnWindowFocus: false,
+  });
+
+  // Update last refresh time
+  useEffect(() => {
+    if (ga4Data?.timestamp) {
+      setLastUpdate(new Date(ga4Data.timestamp).toLocaleTimeString());
+    }
+  }, [ga4Data?.timestamp]);
+
+  // Error states
+  if (ga4Error || watchingError) {
+    return (
+      <div className="analytics-new-container space-y-6">
+        <AnalyticsNewLoadingStates 
+          mode="error" 
+          title="Failed to load live data"
+          description="Unable to connect to realtime analytics. Please check your connection."
+          showRetry={true}
+          onRetry={() => {
+            queryClient.invalidateQueries({ queryKey: ['/api/ga4/realtime'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/tracker/currently-watching'] });
+          }}
+        />
+      </div>
+    );
+  }
+
+  // Loading state
+  if (ga4Loading && watchingLoading) {
+    return (
+      <div className="analytics-new-container space-y-6">
+        <AnalyticsNewLoadingStates 
+          mode="loading" 
+          title="Loading live analytics..."
+          description="Fetching real-time visitor activity"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="analytics-new-container space-y-6" data-testid="analytics-new-live-view">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h2 className="text-xl font-bold text-[var(--analytics-new-text)]">Live View</h2>
+          {ga4Data && (
+            <AnalyticsNewActiveUsersBadge 
+              count={ga4Data.activeUsers} 
+              loading={ga4Loading}
+            />
+          )}
+        </div>
+        <div className="text-sm text-[var(--analytics-new-text-muted)]">
+          Last updated: {lastUpdate || 'Loading...'}
+        </div>
+      </div>
+
+      {/* GA4 Realtime Stats */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Active Users by Country */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center space-x-2 mb-4">
+            <Globe className="w-5 h-5 text-[var(--analytics-new-orange)]" />
+            <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+              Active Users by Country
+            </h3>
+          </div>
+          
+          {ga4Loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded mb-2" />
+                  <div className="h-2 bg-gray-200 rounded" />
+                </div>
+              ))}
+            </div>
+          ) : ga4Data?.byCountry ? (
+            <div className="space-y-4">
+              {ga4Data.byCountry.map((item, index) => (
+                <AnalyticsNewProgressBar
+                  key={item.country}
+                  label={item.country}
+                  value={item.users}
+                  max={ga4Data.activeUsers}
+                  color={index === 0 ? 'bg-[var(--analytics-new-orange)]' : 'bg-gray-400'}
+                  animate={true}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-[var(--analytics-new-text-muted)]">No country data available</div>
+          )}
+        </div>
+
+        {/* Active Users by Device */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center space-x-2 mb-4">
+            <Monitor className="w-5 h-5 text-[var(--analytics-new-orange)]" />
+            <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+              Active Users by Device
+            </h3>
+          </div>
+          
+          {ga4Loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded mb-2" />
+                  <div className="h-2 bg-gray-200 rounded" />
+                </div>
+              ))}
+            </div>
+          ) : ga4Data?.byDevice ? (
+            <div className="space-y-4">
+              {ga4Data.byDevice.map((item, index) => {
+                const DeviceIcon = item.device === 'Mobile' ? Smartphone : 
+                                 item.device === 'Tablet' ? Tablet : Monitor;
+                
+                return (
+                  <div key={item.device} className="flex items-center space-x-3">
+                    <DeviceIcon className="w-4 h-4 text-[var(--analytics-new-orange)]" />
+                    <div className="flex-1">
+                      <AnalyticsNewProgressBar
+                        label={item.device}
+                        value={item.users}
+                        max={ga4Data.activeUsers}
+                        color={index === 0 ? 'bg-[var(--analytics-new-orange)]' : 'bg-blue-400'}
+                        animate={true}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-[var(--analytics-new-text-muted)]">No device data available</div>
+          )}
+        </div>
+      </div>
+
+      {/* Currently Watching Sessions */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <Eye className="w-5 h-5 text-[var(--analytics-new-orange)]" />
+            <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+              Currently Watching
+            </h3>
+            {watchingData && (
+              <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm">
+                {watchingData.totalActive} active sessions
+              </span>
+            )}
+          </div>
+          <button
+            onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/tracker/currently-watching'] })}
+            className="text-[var(--analytics-new-orange)] hover:text-orange-600 text-sm font-medium"
+            data-testid="refresh-currently-watching"
+          >
+            Refresh
+          </button>
+        </div>
+
+        {watchingLoading ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="animate-pulse flex space-x-4 p-4 border border-gray-200 rounded">
+                <div className="w-12 h-12 bg-gray-200 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-1/2" />
+                  <div className="h-3 bg-gray-200 rounded w-1/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : watchingData?.sessions && watchingData.sessions.length > 0 ? (
+          <div className="space-y-4">
+            {watchingData.sessions.map((session) => (
+              <div 
+                key={session.sessionId} 
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0">
+                      {session.device === 'Mobile' ? (
+                        <Smartphone className="w-5 h-5 text-[var(--analytics-new-orange)]" />
+                      ) : (
+                        <Monitor className="w-5 h-5 text-[var(--analytics-new-orange)]" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-medium text-[var(--analytics-new-text)]">
+                        Session {session.sessionId}
+                      </div>
+                      <div className="text-sm text-[var(--analytics-new-text-muted)]">
+                        {session.location} • {session.device} • {session.duration}s ago
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {session.videoId && (
+                    <div className="mt-2 ml-8">
+                      <div className="text-sm text-[var(--analytics-new-text)]">
+                        Watching: {session.videoId}
+                      </div>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <div className="w-32 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                          <div
+                            className="h-1.5 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-300"
+                            style={{ width: `${Math.min(session.progress, 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-[var(--analytics-new-text-muted)]">
+                          {Math.round(session.progress)}%
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex-shrink-0">
+                  <a
+                    href={session.clarityUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-[var(--analytics-new-orange)] hover:bg-orange-600 rounded-md transition-colors"
+                    data-testid={`view-clarity-${session.sessionId}`}
+                  >
+                    View in Clarity
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-[var(--analytics-new-text-muted)]">
+            <Eye className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+            <div>No active sessions right now</div>
+            <div className="text-sm">Sessions will appear here when visitors are watching videos</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

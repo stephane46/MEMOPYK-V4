@@ -2,20 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { AnalyticsNewTabNavigation } from './AnalyticsNewTabNavigation';
 import { AnalyticsNewGlobalFilters } from './AnalyticsNewGlobalFilters';
 import { AnalyticsNewOverview } from './AnalyticsNewOverview';
+import { AnalyticsNewLiveView } from './AnalyticsNewLiveView';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import './analyticsNew.tokens.css';
 
 // Placeholder components for other tabs
-const AnalyticsNewLiveView: React.FC = () => (
-  <div className="analytics-new-container space-y-6">
-    <h2 className="text-xl font-bold text-gray-900">Live View</h2>
-    <AnalyticsNewLoadingStates 
-      mode="empty" 
-      title="Live view coming soon"
-      description="Real-time visitor activity will be displayed here"
-    />
-  </div>
-);
 
 const AnalyticsNewVideo: React.FC = () => (
   <div className="analytics-new-container space-y-6">
