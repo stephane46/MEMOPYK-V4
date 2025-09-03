@@ -35,6 +35,7 @@ import {
   PROPERTY as GA4_PROPERTY
 } from './ga4-service';
 import { getCache, setCache, k, getDbCache, setDbCache } from './cache';
+import { geoResolver } from './geoResolver';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -1931,15 +1932,30 @@ export async function registerRoutes(app: Express): Promise<void> {
         ? Math.max(existingSession.sessionData.progress, pct)
         : pct;
       
+      // Extract client IP using geo resolver
+      const clientIP = geoResolver.extractClientIP(req);
+      
+      // Get geo data only if session doesn't have it yet (first heartbeat)
+      let geoData = existingSession?.sessionData?.geoData || null;
+      if (!geoData && clientIP) {
+        geoData = await geoResolver.get(clientIP);
+        if (geoData) {
+          console.log(`🌍 Heartbeat geo enrichment: ${clientIP} → ${geoData.city}, ${geoData.country}`);
+        }
+      }
+      
       const sessionData = {
         videoId: videoId || null,
         videoTitle: videoTitle || videoId,
         progress: finalProgress,
         currentTime: currentTime || 0,
         device: device || (/Mobi|Android/i.test(req.get('User-Agent') || '') ? 'Mobile' : 'Desktop'),
-        country: country || 'France',
+        country: geoData?.country || country || null,
+        countryCode: geoData?.countryCode || null,
+        city: geoData?.city || null,
+        geoData: geoData, // Store full geo data for reuse
         userAgent: req.get('User-Agent') || 'Unknown',
-        ip: req.ip || '127.0.0.1',
+        ip: clientIP || req.ip || '127.0.0.1',
         timestamp: new Date().toISOString(),
         clientTimestamp: ts || now
       };
@@ -1989,6 +2005,9 @@ export async function registerRoutes(app: Express): Promise<void> {
             currentTime: data.sessionData.currentTime,
             duration: Math.floor((now - data.lastSeen) / 1000), // seconds ago
             location: data.sessionData.country || 'Unknown',
+            country: data.sessionData.country || null,
+            countryCode: data.sessionData.countryCode || null,
+            city: data.sessionData.city || null,
             device: data.sessionData.device || (data.sessionData.userAgent?.includes('Mobile') ? 'Mobile' : 'Desktop'),
             clarityUrl: `https://clarity.microsoft.com/projects/t3uv5yndxl/sessions/${sessionId}` // Mock Clarity URL
           });
