@@ -1906,6 +1906,9 @@ export async function registerRoutes(app: Express): Promise<void> {
   const activeHeartbeats = new Map<string, { lastSeen: number; sessionData: any }>();
   const HEARTBEAT_TTL = 120000; // 120 seconds
   
+  // Clear old duplicate sessions immediately on server restart
+  activeHeartbeats.clear();
+  
   app.post("/api/tracker/heartbeat", async (req, res) => {
     try {
       const { sessionId, videoId, progressPct, progress, currentTime, videoTitle, device, country, ts } = req.body;

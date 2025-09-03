@@ -278,11 +278,17 @@ export default function VideoOverlay({
       sessionStorage.setItem('memopyk-tab-id', tabId);
     }
     
-    // CRITICAL FIX: Include video ID to make each video session unique
+    // FIXED: Create stable session ID per video that doesn't change
     const videoId = getVideoId();
-    const videoSessionId = `${videoId}_${Math.random().toString(36).substr(2, 6)}`;
+    const videoSessionKey = `memopyk-video-session-${videoId}`;
     
-    // Combine to create unique clientSessionId per video
+    let videoSessionId = sessionStorage.getItem(videoSessionKey);
+    if (!videoSessionId) {
+      videoSessionId = `${videoId}_${Math.random().toString(36).substr(2, 6)}`;
+      sessionStorage.setItem(videoSessionKey, videoSessionId);
+    }
+    
+    // Combine to create stable unique clientSessionId per video
     const clientSessionId = `${baseSessionId}:${tabId}:${videoSessionId}`;
     
     // Keep the legacy key updated for backward compatibility
