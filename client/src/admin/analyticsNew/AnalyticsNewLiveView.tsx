@@ -411,7 +411,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
                           </span>
                         </div>
                         {locationData.cityRegion && (
-                          <div className="text-sm font-semibold text-[var(--analytics-new-text)] ml-6">
+                          <div className="text-sm font-bold text-[var(--analytics-new-text)]">
                             {locationData.cityRegion}
                           </div>
                         )}

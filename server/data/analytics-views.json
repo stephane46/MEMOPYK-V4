@@ -3162,5 +3162,37 @@
     "is_test_data": false,
     "created_at": "2025-09-03T16:11:29.718Z",
     "updated_at": "2025-09-03T16:11:29.718Z"
+  },
+  {
+    "id": "view_1756915966242_x7gcq3h3p",
+    "video_id": "VitaminSeaC.mp4",
+    "video_filename": "VitaminSeaC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1756915966242",
+    "language": "fr-FR",
+    "watch_time": 0,
+    "completion_rate": 0,
+    "ip_address": "172.31.94.34",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-09-03T16:12:46.242Z",
+    "updated_at": "2025-09-03T16:12:46.242Z"
+  },
+  {
+    "id": "view_1756915996860_2gnxygr84",
+    "video_id": "VitaminSeaC.mp4",
+    "video_filename": "VitaminSeaC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1756915996860",
+    "language": "fr-FR",
+    "watch_time": 31,
+    "completion_rate": 0,
+    "ip_address": "172.31.94.34",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-09-03T16:13:16.860Z",
+    "updated_at": "2025-09-03T16:13:16.860Z"
   }
 ]
