@@ -375,16 +375,16 @@ export const AnalyticsNewLiveView: React.FC = () => {
                   </div>
 
                   {/* Progress row: Progress bar + percentage label */}
-                  <div className="flex items-center space-x-3">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-32 bg-gray-200 rounded-full h-1.5 overflow-hidden">
                       <div
-                        className="h-2 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-500 ease-out"
+                        className="h-1.5 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-500 ease-out"
                         style={{ 
                           width: `${Math.max(0, Math.min(session.progress, 100))}%`
                         }}
                       />
                     </div>
-                    <span className="text-sm font-medium text-[var(--analytics-new-text)] min-w-[3rem] text-right">
+                    <span className="text-xs text-[var(--analytics-new-text-muted)]">
                       {Math.round(Math.max(0, Math.min(session.progress, 100)))}%
                     </span>
                   </div>

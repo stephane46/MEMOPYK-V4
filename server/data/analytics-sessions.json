@@ -39910,5 +39910,53 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-03T14:15:25.007Z"
+  },
+  {
+    "id": "2e9e6761-9820-4f81-aaad-78143f4d8d78",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T14:16:41.848Z"
+  },
+  {
+    "id": "ce423c1a-28f0-45a7-8383-94a264dedc13",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T14:17:13.225Z"
+  },
+  {
+    "id": "f9d058a8-d3da-4334-bf3b-67fe21b44cf3",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T14:17:44.631Z"
+  },
+  {
+    "id": "647fdea1-dd67-445f-a48f-6fc5c72a8b30",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T14:18:16.036Z"
+  },
+  {
+    "id": "e8522d66-1aca-4d41-b40a-6f2f49304beb",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T14:18:47.501Z"
+  },
+  {
+    "id": "0584207e-82ba-43be-b7a4-1a7c669585a4",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/fr-FR",
+    "language": "fr-FR",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-03T14:19:18.906Z"
   }
 ]
