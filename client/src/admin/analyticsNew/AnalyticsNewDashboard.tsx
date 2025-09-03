@@ -97,9 +97,18 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlTab = urlParams.get('an_tab');
-    if (urlTab) {
-      setActiveTab(urlTab);
-    }
+    setActiveTab(urlTab || 'overview');
+  }, []);
+
+  // Listen for browser Back/Forward navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      setActiveTab(params.get('an_tab') || 'overview');
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   // Handle tab changes and update URL
