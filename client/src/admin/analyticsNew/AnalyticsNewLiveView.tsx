@@ -14,6 +14,7 @@ interface GA4RealtimeData {
 interface CurrentlyWatchingSession {
   sessionId: string;
   videoId: string | null;
+  videoTitle?: string;
   progress: number;
   currentTime: number;
   duration: number;
@@ -319,66 +320,78 @@ export const AnalyticsNewLiveView: React.FC = () => {
           </div>
         ) : watchingData?.sessions && watchingData.sessions.length > 0 ? (
           <div className="space-y-4">
-            {watchingData.sessions.map((session) => (
-              <div 
-                key={session.sessionId} 
-                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex-shrink-0">
-                      {session.device === 'Mobile' ? (
-                        <Smartphone className="w-5 h-5 text-[var(--analytics-new-orange)]" />
-                      ) : (
-                        <Monitor className="w-5 h-5 text-[var(--analytics-new-orange)]" />
-                      )}
-                    </div>
-                    <div>
-                      <div className="font-medium text-[var(--analytics-new-text)]">
-                        Session {session.sessionId}
-                      </div>
-                      <div className="text-sm text-[var(--analytics-new-text-muted)]">
-                        {session.location} • {session.device} • {session.duration}s ago
-                      </div>
-                    </div>
+            {watchingData.sessions.map((session) => {
+              // Helper functions for UI formatting
+              const getVideoTitle = () => session.videoTitle || 'Video';
+              const getCountryDisplay = () => session.location === 'Unknown' || !session.location ? 'Country unknown' : session.location;
+              const getDeviceDisplay = () => {
+                const device = session.device?.toLowerCase();
+                if (device === 'desktop') return 'Desktop';
+                if (device === 'mobile') return 'Mobile';
+                if (device === 'tablet') return 'Tablet';
+                return 'Desktop'; // fallback
+              };
+              const getTimeAgo = () => {
+                const seconds = session.duration;
+                if (seconds < 60) return `${seconds} s ago`;
+                const minutes = Math.floor(seconds / 60);
+                return `${minutes} min ago`;
+              };
+              const getShortId = () => {
+                const id = session.sessionId.includes('...') 
+                  ? session.sessionId.replace('...', '') 
+                  : session.sessionId;
+                return `#${id.slice(-4)}`;
+              };
+
+              return (
+                <div 
+                  key={session.sessionId} 
+                  className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  data-testid={`watching-session-${session.sessionId}`}
+                >
+                  {/* Title row with video name and optional Clarity link */}
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-bold text-[var(--analytics-new-text)]">
+                      {getVideoTitle()}
+                    </h4>
+                    {session.clarityUrl && (
+                      <a
+                        href={session.clarityUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-[var(--analytics-new-orange)] hover:text-orange-600 font-medium"
+                        data-testid={`view-clarity-${session.sessionId}`}
+                      >
+                        View in Clarity ↗︎
+                      </a>
+                    )}
                   </div>
-                  
-                  {session.videoId && (
-                    <div className="mt-2 ml-8">
-                      <div className="text-sm text-[var(--analytics-new-text)]">
-                        Watching: {session.videoId}
-                      </div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <div className="w-32 bg-gray-200 rounded-full h-1.5 overflow-hidden">
-                          <div
-                            className="h-1.5 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-500 ease-out"
-                            style={{ 
-                              width: `${Math.min(session.progress, 100)}%`,
-                              transition: 'width 0.5s ease-out'
-                            }}
-                          />
-                        </div>
-                        <span className="text-xs text-[var(--analytics-new-text-muted)]">
-                          {Math.round(session.progress)}%
-                        </span>
-                      </div>
+
+                  {/* Meta line: Country • Device • timeAgo • #shortId */}
+                  <div className="text-sm text-[var(--analytics-new-text-muted)] mb-3">
+                    {getCountryDisplay()} • {getDeviceDisplay()} • {getTimeAgo()} • 
+                    <span className="text-gray-400 ml-1">{getShortId()}</span>
+                  </div>
+
+                  {/* Progress row: Progress bar + percentage label */}
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="h-2 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-1000 ease-out"
+                        style={{ 
+                          width: `${Math.min(session.progress, 100)}%`,
+                          transition: 'width 1s ease-out'
+                        }}
+                      />
                     </div>
-                  )}
+                    <span className="text-sm font-medium text-[var(--analytics-new-text)] min-w-[3rem] text-right">
+                      {Math.round(session.progress)}%
+                    </span>
+                  </div>
                 </div>
-                
-                <div className="flex-shrink-0">
-                  <a
-                    href={session.clarityUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-[var(--analytics-new-orange)] hover:bg-orange-600 rounded-md transition-colors"
-                    data-testid={`view-clarity-${session.sessionId}`}
-                  >
-                    View in Clarity
-                  </a>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-8 text-[var(--analytics-new-text-muted)]">
