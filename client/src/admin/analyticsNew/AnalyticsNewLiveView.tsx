@@ -128,7 +128,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
   const { data: watchingData, isLoading: watchingLoading, error: watchingError } = useQuery<CurrentlyWatchingData>({
     queryKey: ['/api/tracker/currently-watching'],
     refetchInterval: shouldPoll ? 15000 : false, // 15 seconds when active
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true, // Refresh when user returns to tab
+    staleTime: 0, // Always fetch fresh data
+    cacheTime: 5000, // Only cache for 5 seconds to prevent stale data
     enabled: shouldPoll, // Only query when tab is active and visible
   });
 
