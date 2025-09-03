@@ -1953,6 +1953,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         country: geoData?.country || country || null,
         countryCode: geoData?.countryCode || null,
         city: geoData?.city || null,
+        region: geoData?.region || null,
+        regionCode: geoData?.regionCode || null,
         geoData: geoData, // Store full geo data for reuse
         userAgent: req.get('User-Agent') || 'Unknown',
         ip: clientIP || req.ip || '127.0.0.1',
@@ -2008,6 +2010,8 @@ export async function registerRoutes(app: Express): Promise<void> {
             country: data.sessionData.country || null,
             countryCode: data.sessionData.countryCode || null,
             city: data.sessionData.city || null,
+            region: data.sessionData.region || null,
+            regionCode: data.sessionData.regionCode || null,
             device: data.sessionData.device || (data.sessionData.userAgent?.includes('Mobile') ? 'Mobile' : 'Desktop'),
             clarityUrl: `https://clarity.microsoft.com/projects/t3uv5yndxl/sessions/${sessionId}` // Mock Clarity URL
           });

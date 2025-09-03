@@ -5,6 +5,8 @@ interface GeoData {
   country: string | null;
   countryCode: string | null;
   city: string | null;
+  region: string | null;
+  regionCode: string | null;
   ts: number;
   source: string;
 }
@@ -145,6 +147,8 @@ class GeoResolver {
         country: data.country_name || null,
         countryCode: data.country_code || null,
         city: data.city || null,
+        region: data.region || null,
+        regionCode: data.region_code || null,
         ts: Date.now(),
         source: 'ipapi'
       };

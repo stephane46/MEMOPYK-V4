@@ -20,6 +20,11 @@ interface CurrentlyWatchingSession {
   currentTime: number;
   duration: number;
   location: string;
+  country?: string | null;
+  countryCode?: string | null;
+  city?: string | null;
+  region?: string | null;
+  regionCode?: string | null;
   device: string;
   clarityUrl: string;
 }
@@ -329,7 +334,16 @@ export const AnalyticsNewLiveView: React.FC = () => {
             {watchingData.sessions.map((session) => {
               // Helper functions for UI formatting
               const getVideoTitle = () => session.videoTitle || 'Video';
-              const getCountryDisplay = () => session.location === 'Unknown' || !session.location ? 'Country unknown' : session.location;
+              const getLocationDisplay = () => {
+                // Build location string with city, region, and country
+                const parts = [];
+                if (session.city) parts.push(session.city);
+                if (session.region && session.region !== session.city) parts.push(session.region);
+                if (session.country) parts.push(session.country);
+                
+                if (parts.length === 0) return 'Location unknown';
+                return parts.join(', ');
+              };
               const getDeviceDisplay = () => {
                 const device = session.device?.toLowerCase();
                 if (device === 'desktop') return 'Desktop';
@@ -377,7 +391,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
                   {/* Meta line: Country • Device • timeAgo • #shortId */}
                   <div className="text-sm text-[var(--analytics-new-text-muted)] mb-3 flex items-center">
                     <span>
-                      {getCountryDisplay()} • {getDeviceDisplay()} • {getTimeAgo()}
+                      {getLocationDisplay()} • {getDeviceDisplay()} • {getTimeAgo()}
                     </span>
                     <TooltipProvider>
                       <Tooltip>
