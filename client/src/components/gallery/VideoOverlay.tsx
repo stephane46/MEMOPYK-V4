@@ -287,20 +287,23 @@ export default function VideoOverlay({
     return clientSessionId;
   }, []);
 
-  const sendHeartbeat = useCallback(async () => {
+  const sendHeartbeat = useCallback(async (forceImmediate = false) => {
     try {
       const sessionId = getOrCreateSessionId();
       const videoId = getVideoId();
       const video = videoRef.current;
       
-      // Only send heartbeat if video duration is known
-      if (!video || !isFinite(video.duration) || video.duration <= 0) {
+      // Allow immediate heartbeat even if duration unknown for admin visibility
+      if (!video || (!forceImmediate && (!isFinite(video.duration) || video.duration <= 0))) {
         console.log('💓 Heartbeat skipped - video duration not available yet');
         return;
       }
       
-      // Calculate progress percentage
-      const progressPct = Math.max(0, Math.min(100, Math.round((video.currentTime / video.duration) * 100)));
+      // For immediate heartbeats without duration, use current time
+      const videoDuration = isFinite(video.duration) && video.duration > 0 ? video.duration : video.currentTime || 1;
+      
+      // Calculate progress percentage (use videoDuration which handles missing duration)
+      const progressPct = Math.max(0, Math.min(100, Math.round((video.currentTime / videoDuration) * 100)));
       
       const heartbeatData = {
         sessionId,
@@ -322,7 +325,7 @@ export default function VideoOverlay({
       if (!response.ok) {
         console.warn('❌ Heartbeat failed:', response.status);
       } else {
-        console.log('💓 Heartbeat sent for session:', sessionId.substring(0, 12) + '...');
+        console.log('💓 Heartbeat sent for session:', sessionId.substring(0, 12) + '...', forceImmediate ? '(IMMEDIATE)' : '');
       }
     } catch (error) {
       console.warn('❌ Heartbeat error:', error);
@@ -334,12 +337,12 @@ export default function VideoOverlay({
       clearInterval(heartbeatIntervalRef.current);
     }
     
-    // Send immediate heartbeat on start
-    sendHeartbeat();
+    // Send immediate heartbeat on start (force it even without duration)
+    sendHeartbeat(true);
     
     // Then send heartbeat every 15 seconds
-    heartbeatIntervalRef.current = setInterval(sendHeartbeat, 15000);
-    console.log('💓 Heartbeat started - sending every 15s');
+    heartbeatIntervalRef.current = setInterval(() => sendHeartbeat(false), 15000);
+    console.log('💓 Heartbeat started - immediate + every 15s');
   }, [sendHeartbeat]);
 
   const stopHeartbeat = useCallback(() => {
