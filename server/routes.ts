@@ -4650,6 +4650,219 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Helper function to calculate date ranges from presets
+  function calculateDateRange(preset: string, dateFrom?: string, dateTo?: string): { startDate: string; endDate: string; compareStartDate: string; compareEndDate: string } {
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    let startDate: string;
+    let endDate: string;
+    let compareStartDate: string;
+    let compareEndDate: string;
+
+    if (preset === 'custom' && dateFrom && dateTo) {
+      startDate = dateFrom;
+      endDate = dateTo;
+      
+      // Calculate previous period of same length for comparison
+      const start = new Date(dateFrom);
+      const end = new Date(dateTo);
+      const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      
+      const comparisonEnd = new Date(start);
+      comparisonEnd.setDate(comparisonEnd.getDate() - 1);
+      const comparisonStart = new Date(comparisonEnd);
+      comparisonStart.setDate(comparisonStart.getDate() - (days - 1));
+      
+      compareStartDate = comparisonStart.toISOString().split('T')[0];
+      compareEndDate = comparisonEnd.toISOString().split('T')[0];
+    } else {
+      // Handle preset ranges
+      let days: number;
+      switch (preset) {
+        case '30d':
+          days = 30;
+          break;
+        case '90d':
+          days = 90;
+          break;
+        case '7d':
+        default:
+          days = 7;
+          break;
+      }
+      
+      const start = new Date(now);
+      start.setDate(start.getDate() - days + 1);
+      startDate = start.toISOString().split('T')[0];
+      endDate = today;
+      
+      // Previous period of same length
+      const compareEnd = new Date(start);
+      compareEnd.setDate(compareEnd.getDate() - 1);
+      const compareStart = new Date(compareEnd);
+      compareStart.setDate(compareStart.getDate() - (days - 1));
+      
+      compareStartDate = compareStart.toISOString().split('T')[0];
+      compareEndDate = compareEnd.toISOString().split('T')[0];
+    }
+
+    return { startDate, endDate, compareStartDate, compareEndDate };
+  }
+
+  // Helper function to generate daily sparkline data
+  async function generateSparklineData(startDate: string, endDate: string, compareStartDate: string, compareEndDate: string, locale?: string) {
+    console.log(`🔍 Generating sparkline data from ${startDate} to ${endDate}, compare: ${compareStartDate} to ${compareEndDate}`);
+    
+    try {
+      // Get daily trend data for current period
+      const currentTrend = await qTrendDaily(startDate, endDate, locale);
+      console.log(`✅ Current trend data: ${currentTrend.length} days`);
+      
+      // Get daily trend data for comparison period
+      const compareTrend = await qTrendDaily(compareStartDate, compareEndDate, locale);
+      console.log(`✅ Compare trend data: ${compareTrend.length} days`);
+      
+      // Process current period data
+      const sessions = currentTrend.map(day => day.plays || 0);
+      const plays = currentTrend.map(day => day.plays || 0);
+      const avgWatchTimeSec = currentTrend.map(day => Math.round(day.avgWatch || 0));
+      
+      // Calculate completion rates (simplified - we'll use the overall completion rate for each day)
+      const totalPlays = await qPlays(startDate, endDate, locale);
+      const totalCompletes = await qCompletes(startDate, endDate, locale);
+      const overallCompletionRate = totalPlays > 0 ? (totalCompletes / totalPlays) * 100 : 0;
+      const completionRatePct = currentTrend.map(() => Math.round(overallCompletionRate));
+      
+      return {
+        current: {
+          sessions,
+          plays,
+          avgWatchTimeSec,
+          completionRatePct
+        },
+        previous: {
+          sessions: compareTrend.map(day => day.plays || 0),
+          plays: compareTrend.map(day => day.plays || 0),
+          avgWatchTimeSec: compareTrend.map(day => Math.round(day.avgWatch || 0)),
+          completionRatePct: compareTrend.map(() => Math.round(overallCompletionRate))
+        }
+      };
+    } catch (error) {
+      console.error('❌ Sparkline generation error:', error);
+      // Return empty arrays as fallback
+      return {
+        current: {
+          sessions: [],
+          plays: [],
+          avgWatchTimeSec: [],
+          completionRatePct: []
+        },
+        previous: {
+          sessions: [],
+          plays: [],
+          avgWatchTimeSec: [],
+          completionRatePct: []
+        }
+      };
+    }
+  }
+
+  // NEW GA4 Report endpoint for Analytics New dashboard
+  app.post("/api/ga4/report", async (req, res) => {
+    try {
+      const { preset = '7d', dateFrom, dateTo } = req.body;
+      console.log(`🎯 GA4 Report request: preset=${preset}, dateFrom=${dateFrom}, dateTo=${dateTo}`);
+      
+      // Calculate date ranges including comparison period
+      const { startDate, endDate, compareStartDate, compareEndDate } = calculateDateRange(preset, dateFrom, dateTo);
+      console.log(`📅 Calculated ranges: Current (${startDate} to ${endDate}), Compare (${compareStartDate} to ${compareEndDate})`);
+      
+      // Check cache first (60s TTL as specified)
+      const cacheKey = `ga4-report:${preset}:${startDate}:${endDate}`;
+      const cached = getCache<any>(cacheKey);
+      if (cached) {
+        console.log(`✅ GA4 Report cache hit for ${cacheKey}`);
+        return res.json(cached);
+      }
+      
+      console.log(`🔄 GA4 Report generating fresh data for ${cacheKey}`);
+      
+      // Fetch current period KPIs
+      console.log('📊 Fetching current period KPIs...');
+      const [currentSessions, currentPlays, currentCompletes, currentWatchTime] = await Promise.all([
+        qPlays(startDate, endDate), // Using plays as sessions for now
+        qPlays(startDate, endDate),
+        qCompletes(startDate, endDate),
+        qWatchTimeTotal(startDate, endDate)
+      ]);
+      
+      console.log(`✅ Current period: sessions=${currentSessions}, plays=${currentPlays}, completes=${currentCompletes}, watchTime=${currentWatchTime}s`);
+      
+      // Fetch comparison period KPIs
+      console.log('📊 Fetching comparison period KPIs...');
+      const [compareSessions, comparePlays, compareCompletes, compareWatchTime] = await Promise.all([
+        qPlays(compareStartDate, compareEndDate),
+        qPlays(compareStartDate, compareEndDate),
+        qCompletes(compareStartDate, compareEndDate),
+        qWatchTimeTotal(compareStartDate, compareEndDate)
+      ]);
+      
+      console.log(`✅ Compare period: sessions=${compareSessions}, plays=${comparePlays}, completes=${compareCompletes}, watchTime=${compareWatchTime}s`);
+      
+      // Calculate metrics
+      const avgWatchTimeSec = currentPlays > 0 ? Math.round(currentWatchTime / currentPlays) : 0;
+      const completionRatePct = currentPlays > 0 ? Math.round((currentCompletes / currentPlays) * 100) : 0;
+      
+      const compareAvgWatchTimeSec = comparePlays > 0 ? Math.round(compareWatchTime / comparePlays) : 0;
+      const compareCompletionRatePct = comparePlays > 0 ? Math.round((compareCompletes / comparePlays) * 100) : 0;
+      
+      // Generate sparkline data
+      console.log('📈 Generating sparkline data...');
+      const sparklineData = await generateSparklineData(startDate, endDate, compareStartDate, compareEndDate);
+      
+      // Build response according to specification
+      const response = {
+        kpis: {
+          sessions: currentSessions,
+          plays: currentPlays,
+          avgWatchTimeSec,
+          completionRatePct
+        },
+        sparklines: sparklineData.current,
+        previousPeriod: {
+          kpis: {
+            sessions: compareSessions,
+            plays: comparePlays,
+            avgWatchTimeSec: compareAvgWatchTimeSec,
+            completionRatePct: compareCompletionRatePct
+          },
+          sparklines: sparklineData.previous
+        },
+        dateRange: {
+          current: { from: startDate, to: endDate },
+          previous: { from: compareStartDate, to: compareEndDate }
+        },
+        cached: false,
+        timestamp: new Date().toISOString()
+      };
+      
+      console.log(`✅ GA4 Report generated successfully for ${cacheKey}`);
+      console.log(`📊 Final KPIs: sessions=${currentSessions}, plays=${currentPlays}, avgWatch=${avgWatchTimeSec}s, completion=${completionRatePct}%`);
+      
+      // Cache for 60 seconds
+      setCache(cacheKey, { ...response, cached: true }, 60);
+      
+      res.json(response);
+      
+    } catch (error) {
+      console.error('❌ GA4 Report error:', error);
+      res.status(500).json({ 
+        error: 'Failed to generate GA4 report',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   // GA4 Schema diagnostic endpoint to understand available custom events
   app.get("/api/ga4/debug-schema", async (req, res) => {
     try {

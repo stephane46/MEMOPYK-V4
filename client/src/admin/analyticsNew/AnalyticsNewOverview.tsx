@@ -5,10 +5,11 @@ import { AnalyticsNewKpiCard, KpiData } from './AnalyticsNewKpiCard';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import './analyticsNew.tokens.css';
 
-// Mock data for Phase 1
-const USE_MOCK = true;
+// Phase 2 - Switch to real GA4 data
+const USE_MOCK = false;
 
 type MockState = 'normal' | 'loading' | 'empty' | 'error';
 
@@ -16,11 +17,27 @@ interface AnalyticsNewOverviewProps {
   className?: string;
 }
 
+// Helper function to format seconds into MM:SS format
+const formatWatchTime = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
+
+// Helper function to calculate percentage change
+const calculateChange = (current: number, previous: number): number => {
+  if (previous === 0) return current > 0 ? 100 : 0;
+  return ((current - previous) / previous) * 100;
+};
+
 export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({ 
   className = '' 
 }) => {
   const [mockState, setMockState] = useState<MockState>('normal');
   const [loadingTimeout, setLoadingTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Get current filter state
+  const { datePreset, customDateStart, customDateEnd, getDateRange } = useAnalyticsNewFilters();
 
   const generateMockSparkline = () => {
     return Array.from({ length: 7 }, () => Math.floor(Math.random() * 100) + 20);
@@ -55,74 +72,230 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
     };
   }, [loadingTimeout]);
 
-  const mockKpiData: KpiData[] = [
-    {
-      id: 'sessions',
-      title: 'Total Sessions',
-      value: mockState === 'empty' ? 0 : 2847,
-      change: 12.3,
-      trend: 'up',
-      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
-      icon: Users,
-      color: 'blue',
-      isLoading: mockState === 'loading',
-      error: mockState === 'error' ? 'Failed to load sessions data' : undefined,
-    },
-    {
-      id: 'video-plays',
-      title: 'Video Plays',
-      value: mockState === 'empty' ? 0 : 1523,
-      change: -2.1,
-      trend: 'down',
-      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
-      icon: Video,
-      color: 'green',
-      isLoading: mockState === 'loading',
-      error: mockState === 'error' ? 'Failed to load video data' : undefined,
-    },
-    {
-      id: 'avg-watch-time',
-      title: 'Avg Watch Time',
-      value: mockState === 'empty' ? '0:00' : '2:34',
-      change: 8.7,
-      trend: 'up',
-      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
-      icon: Clock,
-      color: 'orange',
-      isLoading: mockState === 'loading',
-      error: mockState === 'error' ? 'Failed to load watch time data' : undefined,
-    },
-    {
-      id: 'cta-clicks',
-      title: 'CTA Clicks',
-      value: mockState === 'empty' ? 0 : 342,
-      change: 15.8,
-      trend: 'up',
-      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
-      icon: MousePointer,
-      color: 'purple',
-      isLoading: mockState === 'loading',
-      error: mockState === 'error' ? 'Failed to load CTA data' : undefined,
-    },
-    {
-      id: 'completion-rate',
-      title: 'Completion Rate',
-      value: mockState === 'empty' ? '0%' : '68.4%',
-      change: 0,
-      trend: 'flat',
-      sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
-      icon: Eye,
-      color: 'red',
-      isLoading: mockState === 'loading',
-      error: mockState === 'error' ? 'Failed to load completion data' : undefined,
-    },
-  ];
+  // Generate KPI data from real GA4 or mock data
+  const generateKpiData = (): KpiData[] => {
+    if (USE_MOCK) {
+      return [
+        {
+          id: 'sessions',
+          title: 'Total Sessions',
+          value: mockState === 'empty' ? 0 : 2847,
+          change: 12.3,
+          trend: 'up',
+          sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
+          icon: Users,
+          color: 'blue',
+          isLoading: mockState === 'loading',
+          error: mockState === 'error' ? 'Failed to load sessions data' : undefined,
+        },
+        {
+          id: 'video-plays',
+          title: 'Video Plays',
+          value: mockState === 'empty' ? 0 : 1523,
+          change: -2.1,
+          trend: 'down',
+          sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
+          icon: Video,
+          color: 'green',
+          isLoading: mockState === 'loading',
+          error: mockState === 'error' ? 'Failed to load video data' : undefined,
+        },
+        {
+          id: 'avg-watch-time',
+          title: 'Avg Watch Time',
+          value: mockState === 'empty' ? '0:00' : '2:34',
+          change: 8.7,
+          trend: 'up',
+          sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
+          icon: Clock,
+          color: 'orange',
+          isLoading: mockState === 'loading',
+          error: mockState === 'error' ? 'Failed to load watch time data' : undefined,
+        },
+        {
+          id: 'cta-clicks',
+          title: 'CTA Clicks',
+          value: mockState === 'empty' ? 0 : 342,
+          change: 15.8,
+          trend: 'up',
+          sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
+          icon: MousePointer,
+          color: 'purple',
+          isLoading: mockState === 'loading',
+          error: mockState === 'error' ? 'Failed to load CTA data' : undefined,
+        },
+        {
+          id: 'completion-rate',
+          title: 'Completion Rate',
+          value: mockState === 'empty' ? '0%' : '68.4%',
+          change: 0,
+          trend: 'flat',
+          sparklineData: mockState === 'empty' ? [] : generateMockSparkline(),
+          icon: Eye,
+          color: 'red',
+          isLoading: mockState === 'loading',
+          error: mockState === 'error' ? 'Failed to load completion data' : undefined,
+        },
+      ];
+    }
+
+    // Real GA4 data logic
+    const kpis = reportData?.kpis;
+    const sparklines = reportData?.sparklines;
+    const previousKpis = reportData?.previousPeriod?.kpis;
+    const isLoading = reportLoading;
+    const error = reportError?.message;
+
+    if (!kpis) {
+      // Return loading or empty state
+      return [
+        {
+          id: 'sessions',
+          title: 'Total Sessions',
+          value: 0,
+          change: 0,
+          trend: 'flat',
+          sparklineData: [],
+          icon: Users,
+          color: 'blue',
+          isLoading,
+          error,
+        },
+        {
+          id: 'video-plays',
+          title: 'Video Plays',
+          value: 0,
+          change: 0,
+          trend: 'flat',
+          sparklineData: [],
+          icon: Video,
+          color: 'green',
+          isLoading,
+          error,
+        },
+        {
+          id: 'avg-watch-time',
+          title: 'Avg Watch Time',
+          value: '0:00',
+          change: 0,
+          trend: 'flat',
+          sparklineData: [],
+          icon: Clock,
+          color: 'orange',
+          isLoading,
+          error,
+        },
+        {
+          id: 'completion-rate',
+          title: 'Completion Rate',
+          value: '0%',
+          change: 0,
+          trend: 'flat',
+          sparklineData: [],
+          icon: Eye,
+          color: 'red',
+          isLoading,
+          error,
+        },
+      ];
+    }
+
+    // Calculate changes and trends
+    const sessionsChange = calculateChange(kpis.sessions, previousKpis?.sessions || 0);
+    const playsChange = calculateChange(kpis.plays, previousKpis?.plays || 0);
+    const watchTimeChange = calculateChange(kpis.avgWatchTimeSec, previousKpis?.avgWatchTimeSec || 0);
+    const completionChange = calculateChange(kpis.completionRatePct, previousKpis?.completionRatePct || 0);
+
+    const getTrend = (change: number) => {
+      if (Math.abs(change) < 1) return 'flat';
+      return change > 0 ? 'up' : 'down';
+    };
+
+    return [
+      {
+        id: 'sessions',
+        title: 'Total Sessions',
+        value: kpis.sessions,
+        change: sessionsChange,
+        trend: getTrend(sessionsChange),
+        sparklineData: sparklines?.sessions || [],
+        icon: Users,
+        color: 'blue',
+        isLoading: false,
+        error: undefined,
+      },
+      {
+        id: 'video-plays',
+        title: 'Video Plays',
+        value: kpis.plays,
+        change: playsChange,
+        trend: getTrend(playsChange),
+        sparklineData: sparklines?.plays || [],
+        icon: Video,
+        color: 'green',
+        isLoading: false,
+        error: undefined,
+      },
+      {
+        id: 'avg-watch-time',
+        title: 'Avg Watch Time',
+        value: formatWatchTime(kpis.avgWatchTimeSec),
+        change: watchTimeChange,
+        trend: getTrend(watchTimeChange),
+        sparklineData: sparklines?.avgWatchTimeSec || [],
+        icon: Clock,
+        color: 'orange',
+        isLoading: false,
+        error: undefined,
+      },
+      {
+        id: 'completion-rate',
+        title: 'Completion Rate',
+        value: `${kpis.completionRatePct}%`,
+        change: completionChange,
+        trend: getTrend(completionChange),
+        sparklineData: sparklines?.completionRatePct || [],
+        icon: Eye,
+        color: 'red',
+        isLoading: false,
+        error: undefined,
+      },
+    ];
+  };
+
+  const kpiData = generateKpiData();
 
   // Get realtime GA4 data for active users
   const { data: ga4Data, isLoading: ga4Loading } = useQuery<any>({
     queryKey: ['/api/ga4/realtime'],
     refetchInterval: 15000, // Refresh every 15 seconds
     refetchOnWindowFocus: false,
+  });
+
+  // Get GA4 report data based on current filters
+  const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
+    queryKey: ['/api/ga4/report', datePreset, customDateStart, customDateEnd],
+    queryFn: async () => {
+      const response = await fetch('/api/ga4/report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          preset: datePreset,
+          dateFrom: customDateStart || undefined,
+          dateTo: customDateEnd || undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`GA4 report failed: ${response.status}`);
+      }
+
+      return response.json();
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 30000, // 30 seconds
   });
 
   const realActiveUsers = ga4Data?.activeUsers || 0;
@@ -154,8 +327,8 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-        {mockKpiData.map((kpi) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {kpiData.map((kpi) => (
           <AnalyticsNewKpiCard
             key={kpi.id}
             data={kpi}
