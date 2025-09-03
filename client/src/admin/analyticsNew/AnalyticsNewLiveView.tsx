@@ -378,15 +378,14 @@ export const AnalyticsNewLiveView: React.FC = () => {
                   <div className="flex items-center space-x-3">
                     <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
                       <div
-                        className="h-2 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-1000 ease-out"
+                        className="h-2 bg-[var(--analytics-new-orange)] rounded-full transition-all duration-500 ease-out"
                         style={{ 
-                          width: `${Math.min(session.progress, 100)}%`,
-                          transition: 'width 1s ease-out'
+                          width: `${Math.max(0, Math.min(session.progress, 100))}%`
                         }}
                       />
                     </div>
                     <span className="text-sm font-medium text-[var(--analytics-new-text)] min-w-[3rem] text-right">
-                      {Math.round(session.progress)}%
+                      {Math.round(Math.max(0, Math.min(session.progress, 100)))}%
                     </span>
                   </div>
                 </div>
