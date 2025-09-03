@@ -65,10 +65,14 @@ export default function VideoOverlay({
   
   // Extract video ID from URL
   const getVideoId = useCallback(() => {
+    let id;
     if (videoUrl.includes('filename=')) {
-      return videoUrl.split('filename=')[1].split('&')[0];
+      id = videoUrl.split('filename=')[1].split('&')[0];
+    } else {
+      id = videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
     }
-    return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+    console.log('🎬 Video ID extracted:', { videoUrl, extractedId: id });
+    return id;
   }, [videoUrl]);
 
   // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time - MOUNT ONCE ONLY
@@ -286,6 +290,9 @@ export default function VideoOverlay({
     if (!videoSessionId) {
       videoSessionId = `${videoId}_${Math.random().toString(36).substr(2, 6)}`;
       sessionStorage.setItem(videoSessionKey, videoSessionId);
+      console.log('🆔 NEW video session created:', { videoId, videoSessionKey, videoSessionId });
+    } else {
+      console.log('🆔 EXISTING video session found:', { videoId, videoSessionKey, videoSessionId });
     }
     
     // Combine to create stable unique clientSessionId per video
