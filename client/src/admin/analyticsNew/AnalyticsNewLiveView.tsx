@@ -406,15 +406,15 @@ export const AnalyticsNewLiveView: React.FC = () => {
                       <>
                         <div className="flex items-center space-x-2">
                           <CountryFlag country={locationData.country} size={16} />
-                          <span className="text-sm font-light text-[var(--analytics-new-text-muted)]">
-                            {locationData.country}
-                          </span>
+                          {locationData.cityRegion && (
+                            <span className="text-sm font-bold text-[var(--analytics-new-text)]">
+                              {locationData.cityRegion}
+                            </span>
+                          )}
                         </div>
-                        {locationData.cityRegion && (
-                          <div className="text-sm font-bold text-[var(--analytics-new-text)]">
-                            {locationData.cityRegion}
-                          </div>
-                        )}
+                        <div className="text-sm font-light text-[var(--analytics-new-text-muted)] ml-6">
+                          {locationData.country}
+                        </div>
                       </>
                     ) : (
                       <div className="text-sm text-[var(--analytics-new-text-muted)]">
