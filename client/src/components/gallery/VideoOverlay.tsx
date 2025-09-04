@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
-import { trackVideoComplete, trackVideoStart, trackVideoProgress } from '@/lib/analytics';
+// Removed wrapper imports - using direct GA4 calls only
 
 interface VideoOverlayProps {
   videoUrl: string;
@@ -57,6 +57,27 @@ export default function VideoOverlay({
   
   // Analytics tracking - LOCAL ANALYTICS: Track gallery video views
   const { trackVideoView } = useVideoAnalytics();
+
+  // GA4 direct tracking with initialization safety
+  const fireGA = useCallback((name: string, params: Record<string, any>) => {
+    const send = () => {
+      if (window.gtag) {
+        console.log(`[GA4] sending ${name}`, params);
+        window.gtag('event', name, params);
+        console.log(`[GA4] sent ${name}`);
+      }
+    };
+    
+    if (!window.dataLayer || !window.gtag) {
+      console.log(`[GA4] deferring ${name} - GA4 not ready`);
+      setTimeout(send, 150);
+    } else {
+      send();
+    }
+  }, []);
+
+  // Track if video_start has been sent for this session
+  const videoStartSentRef = useRef(false);
   
 
   
@@ -78,14 +99,6 @@ export default function VideoOverlay({
     videoReadyRef.current = false;
     milestonesTrackedRef.current.clear(); // Reset milestones for new video
     
-    // Extract video ID directly to avoid dependency issues
-    const videoId = videoUrl.includes('filename=') 
-      ? videoUrl.split('filename=')[1].split('&')[0]
-      : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
-      
-    // GA4 Analytics: Track video open (modal/overlay opened) using proper analytics function
-    trackVideoStart(videoId, title);
-    
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
     if (video && thumbnailUrl) {
@@ -93,13 +106,6 @@ export default function VideoOverlay({
     }
     
     return () => {
-      // Track final watch time on cleanup
-      const video = videoRef.current;
-      if (video && video.currentTime > 0) {
-        const finalWatchTime = Math.round(video.currentTime);
-        trackVideoComplete(videoId, finalWatchTime, title);
-      }
-      
       // LIVE VIEW TRACKING: Stop heartbeat on component unmount
       if (heartbeatIntervalRef.current) {
         clearInterval(heartbeatIntervalRef.current);
@@ -255,8 +261,16 @@ export default function VideoOverlay({
       for (const milestone of milestones) {
         if (progress >= milestone && !milestonesTrackedRef.current.has(milestone)) {
           milestonesTrackedRef.current.add(milestone);
-          trackVideoProgress(videoId, milestone, video.currentTime, title);
-          console.log(`📊 GA4 VIDEO PROGRESS: ${videoId} reached ${milestone}% (${Math.round(video.currentTime)}s)`);
+          
+          fireGA('video_progress', {
+            video_id: videoId,
+            video_title: title,
+            progress_percent: milestone,
+            current_time: Math.round(video.currentTime),
+            duration_sec: video.duration || 0,
+            locale: language,
+            debug_mode: window.location.search.includes('ga_dev=1') || localStorage.getItem('ga_dev') === '1'
+          });
         }
       }
     }
@@ -368,21 +382,23 @@ export default function VideoOverlay({
     setIsPlaying(true);
     resetControlsTimer();
     
-    // GA4 Analytics: Extract data inside callback to avoid dependencies
+    // Extract videoId for all tracking
     const videoId = videoUrl.includes('filename=') 
       ? videoUrl.split('filename=')[1].split('&')[0]
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
-      
-    // Track video start/resume with GA4 (don't wait for duration)
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'video_start', {
+    
+    // GA4 Analytics: Track video_start only once per session
+    if (!videoStartSentRef.current) {
+      fireGA('video_start', {
         video_id: videoId,
         video_title: title,
         duration_sec: duration || 0,
         position_sec: currentTime || 0,
-        locale: language
+        locale: language,
+        debug_mode: window.location.search.includes('ga_dev=1') || localStorage.getItem('ga_dev') === '1'
       });
-      console.log('📊 GA4 VIDEO START EVENT SENT:', { video_id: videoId, video_title: title, duration_sec: duration || 0, locale: language });
+      
+      videoStartSentRef.current = true;
     }
     
     // LOCAL ANALYTICS: Track video view start - CRITICAL FIX
@@ -399,33 +415,32 @@ export default function VideoOverlay({
     setIsPlaying(false);
     setShowControls(true);
     
-    // GA4 Analytics: Extract data inside callback to avoid dependencies
-    const videoId = videoUrl.includes('filename=') 
-      ? videoUrl.split('filename=')[1].split('&')[0]
-      : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
-      
-    if (duration > 0 && currentTime > 0) {
-      // Track watch time when video is paused using proper analytics function
-      trackVideoComplete(videoId, Math.round(currentTime), title);
-    }
-    
     // LIVE VIEW TRACKING: Stop heartbeat when video is paused
     stopHeartbeat();
-  }, [duration, currentTime, title, videoUrl, language, stopHeartbeat]);
+    
+    // Note: We don't send video_complete on pause - only on actual completion
+  }, [stopHeartbeat]);
 
   const handleEnded = useCallback(() => {
     setIsPlaying(false);
     setProgress(100);
     setShowControls(true);
     
-    // GA4 Analytics: Extract data inside callback to avoid dependencies
+    // GA4 Analytics: Track video_complete when video naturally ends
     const videoId = videoUrl.includes('filename=') 
       ? videoUrl.split('filename=')[1].split('&')[0]
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
     if (duration > 0) {
-      // Track final watch time when video ends using proper analytics function
-      trackVideoComplete(videoId, Math.round(duration), title);
+      fireGA('video_complete', {
+        video_id: videoId,
+        video_title: title,
+        duration_sec: Math.round(duration),
+        current_time: Math.round(duration), // Video fully completed
+        completion_rate: 100,
+        locale: language,
+        debug_mode: window.location.search.includes('ga_dev=1') || localStorage.getItem('ga_dev') === '1'
+      });
     }
     
     // Old VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
@@ -551,8 +566,22 @@ export default function VideoOverlay({
     
     if (!isNaN(actualDuration) && actualDuration > 0 && actualCurrentTime > 0) {
       const finalWatchTime = Math.round(actualCurrentTime);
-      console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${finalWatchTime}s (from video.currentTime)`);
-      trackVideoComplete(videoId, finalWatchTime, title);
+      const completionRate = Math.round((actualCurrentTime / actualDuration) * 100);
+      
+      console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${finalWatchTime}s (${completionRate}% completion)`);
+      
+      // Only send video_complete if user watched significant amount (25%+)
+      if (completionRate >= 25) {
+        fireGA('video_complete', {
+          video_id: videoId,
+          video_title: title,
+          duration_sec: Math.round(actualDuration),
+          current_time: finalWatchTime,
+          completion_rate: completionRate,
+          locale: language,
+          debug_mode: window.location.search.includes('ga_dev=1') || localStorage.getItem('ga_dev') === '1'
+        });
+      }
     } else {
       console.log(`📊 GA4 VIDEO CLOSE: No tracking - duration:${actualDuration}, currentTime:${actualCurrentTime}`);
     }
@@ -636,21 +665,12 @@ export default function VideoOverlay({
     };
   }, [handleKeyDown]);
 
-  // Component cleanup - Track watch time if user navigates away
+  // Component cleanup - No additional tracking needed (handled by onClose)
   useEffect(() => {
     return () => {
-      const video = videoRef.current;
-      if (video && video.currentTime > 0) {
-        const videoId = videoUrl.includes('filename=') 
-          ? videoUrl.split('filename=')[1].split('&')[0]
-          : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
-        
-        const finalWatchTime = Math.round(video.currentTime);
-        console.log(`📊 GA4 VIDEO UNMOUNT: ${videoId} watched ${finalWatchTime}s (component cleanup)`);
-        trackVideoComplete(videoId, finalWatchTime, title);
-      }
+      // Cleanup handled by onClose handler
     };
-  }, [videoUrl, title]);
+  }, []);
 
   return (
     <div
