@@ -249,8 +249,8 @@ function waitForGA4Ready(maxWaitMs = 3000): Promise<boolean> {
   });
 }
 
-// Direct GA4 fire function with comprehensive debugging and readiness check
-export async function fireGA(eventName: string, params: any = {}) {
+// Centralized GA4 fire function with transport reliability and debug HUD support
+export function fireGA(eventName: string, params: any = {}) {
   // Don't track on admin pages
   const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
   if (isAdmin) {
@@ -258,40 +258,28 @@ export async function fireGA(eventName: string, params: any = {}) {
     return;
   }
   
-  // Force debug logging - show exact payload
-  console.log('[GA4] about to fire', eventName, JSON.stringify(params));
-  
-  if (typeof window === 'undefined') {
-    console.error('[GA4] window undefined at event time:', eventName);
-    return;
-  }
-  
-  // Wait for GA4 to be ready
-  const isReady = await waitForGA4Ready();
-  if (!isReady) {
-    console.error('[GA4] GA4 not ready after timeout, cannot fire event:', eventName);
-    return;
-  }
-  
-  // Check gtag availability after waiting
-  console.log('[GA4] gtag available?', typeof window.gtag);
-  console.log('[GA4] dataLayer present?', Array.isArray(window.dataLayer));
-  
-  // Always add debug_mode until confirmed working
-  const finalParams = {
-    ...params,
-    debug_mode: true
+  // Base parameters for all events
+  const baseParams = {
+    debug_mode: true,              // while we're verifying
+    transport_type: 'beacon',      // ensure delivery on close/nav
+    ...params
   };
   
-  try {
-    // Fire the event
-    window.gtag('event', eventName, finalParams);
-    console.log('[GA4] collect event attempted:', eventName);
-    console.log('[GA4] final params sent:', JSON.stringify(finalParams));
-    
-    // Log network expectation
-    console.log('[GA4] EXPECT TO SEE: Network request to www.google-analytics.com/g/collect with en=' + eventName);
-  } catch (error) {
-    console.error('[GA4] Error firing event:', eventName, error);
+  const send = () => {
+    if (window.gtag) {
+      console.log(`[GA4] sending ${eventName}`, baseParams);
+      window.gtag('event', eventName, baseParams);
+      console.log(`[GA4] sent ${eventName}`);
+    } else {
+      console.warn(`[GA4] gtag not available for ${eventName}`);
+    }
+  };
+  
+  // Handle GA4 readiness
+  if (!window.dataLayer || !window.gtag) {
+    console.log(`[GA4] deferring ${eventName} - GA4 not ready`);
+    setTimeout(send, 150);
+  } else {
+    send();
   }
 }

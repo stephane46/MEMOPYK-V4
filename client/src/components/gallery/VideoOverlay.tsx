@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
-import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
 import { fireGA } from '@/lib/analytics';
 // Direct GA4 calls with fireGA function
 
@@ -59,23 +58,7 @@ export default function VideoOverlay({
   // Analytics tracking - LOCAL ANALYTICS: Track gallery video views
   const { trackVideoView } = useVideoAnalytics();
 
-  // GA4 direct tracking with initialization safety
-  const fireGA = useCallback((name: string, params: Record<string, any>) => {
-    const send = () => {
-      if (window.gtag) {
-        console.log(`[GA4] sending ${name}`, params);
-        window.gtag('event', name, params);
-        console.log(`[GA4] sent ${name}`);
-      }
-    };
-    
-    if (!window.dataLayer || !window.gtag) {
-      console.log(`[GA4] deferring ${name} - GA4 not ready`);
-      setTimeout(send, 150);
-    } else {
-      send();
-    }
-  }, []);
+  // Use centralized fireGA function from @/lib/analytics (no local shadow)
 
   // Track if video_start has been sent for this session
   const videoStartSentRef = useRef(false);
@@ -578,8 +561,8 @@ export default function VideoOverlay({
       
       console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${finalWatchTime}s (${completionRate}% completion)`);
       
-      // Only send video_complete if user watched significant amount (25%+)
-      if (completionRate >= 25) {
+      // Only send video_complete if user watched significant amount (90%+) 
+      if (completionRate >= 90) {
         fireGA('video_complete', {
           video_id: videoId,
           video_title: title,

@@ -52,7 +52,7 @@ export default function GaDebugHud() {
 
     setVisible(true);
 
-    // Wrap gtag to capture video events
+    // Enhanced network monitoring: gtag events + fetch + XHR + sendBeacon
     if (window.gtag && !originalGtag.current) {
       originalGtag.current = window.gtag;
       window.gtag = function(...args: any[]) {
@@ -73,6 +73,24 @@ export default function GaDebugHud() {
           console.warn('GA Debug HUD: Error capturing event', e);
         }
         return originalGtag.current?.apply(this, args);
+      };
+    }
+
+    // Monkey-patch navigator.sendBeacon to capture GA4 beacon requests
+    const origBeacon = navigator.sendBeacon?.bind(navigator);
+    if (origBeacon) {
+      navigator.sendBeacon = (url, data) => {
+        try {
+          if (typeof url === 'string' && url.includes('/g/collect')) {
+            setState(prev => ({
+              ...prev,
+              networkHits: prev.networkHits + 1,
+              lastCollectUrls: [url, ...prev.lastCollectUrls].slice(0, 3),
+              lastMsg: 'beacon hit captured'
+            }));
+          }
+        } catch {}
+        return origBeacon(url, data);
       };
     }
 
