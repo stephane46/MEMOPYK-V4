@@ -50,6 +50,12 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
     queryKey: ['/api/ga4/report', datePreset, customDateStart, customDateEnd],
     queryFn: async () => {
+      console.log('📊 OVERVIEW: Calling /api/ga4/report with:', {
+        preset: datePreset,
+        dateFrom: customDateStart || undefined,
+        dateTo: customDateEnd || undefined,
+      });
+
       const response = await fetch('/api/ga4/report', {
         method: 'POST',
         headers: {
@@ -66,7 +72,9 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
         throw new Error(`GA4 report failed: ${response.status}`);
       }
 
-      return response.json();
+      const data = await response.json();
+      console.log('📊 OVERVIEW: /api/ga4/report response:', data);
+      return data;
     },
     refetchOnWindowFocus: false,
     staleTime: 30000, // 30 seconds
