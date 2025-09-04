@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 import { useGA4VideoAnalytics } from '@/hooks/useGA4VideoAnalytics';
-// Removed wrapper imports - using direct GA4 calls only
+import { fireGA } from '@/lib/analytics';
+// Direct GA4 calls with fireGA function
 
 interface VideoOverlayProps {
   videoUrl: string;
@@ -379,6 +380,7 @@ export default function VideoOverlay({
 
   // Video event handlers - Following stable dependency pattern
   const handlePlay = useCallback(() => {
+    console.log('🔥 REACT VIDEO PLAY EVENT FIRED - handlePlay called');
     setIsPlaying(true);
     resetControlsTimer();
     
@@ -387,18 +389,24 @@ export default function VideoOverlay({
       ? videoUrl.split('filename=')[1].split('&')[0]
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
     
+    console.log('🎯 About to call fireGA - function type:', typeof fireGA);
+    
     // GA4 Analytics: Track video_start only once per session
     if (!videoStartSentRef.current) {
+      console.log('🚀 CALLING fireGA for video_start now...');
       fireGA('video_start', {
         video_id: videoId,
         video_title: title,
         duration_sec: duration || 0,
         position_sec: currentTime || 0,
         locale: language,
-        debug_mode: window.location.search.includes('ga_dev=1') || localStorage.getItem('ga_dev') === '1'
+        debug_mode: true
       });
+      console.log('✅ fireGA call completed');
       
       videoStartSentRef.current = true;
+    } else {
+      console.log('⏭️ video_start already sent, skipping');
     }
     
     // LOCAL ANALYTICS: Track video view start - CRITICAL FIX
