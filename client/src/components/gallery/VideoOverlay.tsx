@@ -380,7 +380,6 @@ export default function VideoOverlay({
 
   // Video event handlers - Following stable dependency pattern
   const handlePlay = useCallback(() => {
-    console.log('🔥 REACT VIDEO PLAY EVENT FIRED - handlePlay called');
     setIsPlaying(true);
     resetControlsTimer();
     
@@ -389,11 +388,8 @@ export default function VideoOverlay({
       ? videoUrl.split('filename=')[1].split('&')[0]
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
     
-    console.log('🎯 About to call fireGA - function type:', typeof fireGA);
-    
     // GA4 Analytics: Track video_start only once per session
     if (!videoStartSentRef.current) {
-      console.log('🚀 CALLING fireGA for video_start now...');
       fireGA('video_start', {
         video_id: videoId,
         video_title: title,
@@ -402,11 +398,8 @@ export default function VideoOverlay({
         locale: language,
         debug_mode: true
       });
-      console.log('✅ fireGA call completed');
       
       videoStartSentRef.current = true;
-    } else {
-      console.log('⏭️ video_start already sent, skipping');
     }
     
     // LOCAL ANALYTICS: Track video view start - CRITICAL FIX
