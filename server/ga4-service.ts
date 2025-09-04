@@ -92,6 +92,12 @@ export async function qPlays(start: string, end: string, locale?: string) {
   const [res] = await Promise.race([queryPromise, timeoutPromise]);
   const plays = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
   console.log(`✅ GA4 Response (qPlays): ${plays} plays`);
+  console.log('🔍 RAW GA4 API RESPONSE (qPlays):', JSON.stringify({
+    rows: res.rows,
+    metricHeaders: res.metricHeaders,
+    dimensionHeaders: res.dimensionHeaders,
+    rowCount: res.rowCount
+  }, null, 2));
   return plays;
 }
 
@@ -101,7 +107,7 @@ export async function qCompletes(start: string, end: string, locale?: string) {
       ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
       : [];
 
-  const [res] = await client.runReport({
+  const requestParams = {
     property: PROPERTY, // "properties/501023254"
     dateRanges: [{ startDate: start, endDate: end }],
     metrics: [{ name: "eventCount" }],
@@ -132,9 +138,26 @@ export async function qCompletes(start: string, end: string, locale?: string) {
         ]
       }
     }
-  });
+  };
 
-  return Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  console.log(`🔍 GA4 EXACT REQUEST PARAMETERS (qCompletes):`);
+  console.log(`   Property ID: ${PROPERTY}`);
+  console.log(`   Date Range: ${start} to ${end} (YYYY-MM-DD format)`);
+  console.log(`   Event Filters: video_complete OR (video_progress + progress_percent=100)`);
+  console.log(`   Full Request:`, JSON.stringify(requestParams, null, 2));
+
+  const [res] = await client.runReport(requestParams);
+  const completes = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  
+  console.log(`✅ GA4 Response (qCompletes): ${completes} completes`);
+  console.log('🔍 RAW GA4 API RESPONSE (qCompletes):', JSON.stringify({
+    rows: res.rows,
+    metricHeaders: res.metricHeaders,
+    dimensionHeaders: res.dimensionHeaders,
+    rowCount: res.rowCount
+  }, null, 2));
+
+  return completes;
 }
 
 export async function qWatchTimeTotal(start: string, end: string, locale?: string, playsCount?: number, completesCount?: number) {
@@ -858,6 +881,46 @@ export async function qTopCountries(start: string, end: string) {
   console.log(`🎯 qTopCountries RESULT: ${countries.length} countries (including any not set)`);
   console.log(`🎯 qTopCountries SAMPLE DATA:`, countries.slice(0, 3));
   return countries;
+}
+
+/* =============  EVENT INSPECTION  ============= */
+
+export async function qAllEvents(start: string, end: string) {
+  console.log(`🔍 qAllEvents CALLED: ${start} to ${end} - Listing all event names in GA4`);
+  
+  try {
+    const [res] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [{ startDate: start, endDate: end }],
+      metrics: [{ name: "eventCount" }],
+      dimensions: [{ name: "eventName" }],
+      orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
+      limit: 50 // Get top 50 events
+    });
+
+    console.log('🔍 RAW GA4 EVENT LIST RESPONSE:', JSON.stringify({
+      rows: res.rows,
+      metricHeaders: res.metricHeaders,
+      dimensionHeaders: res.dimensionHeaders,
+      rowCount: res.rowCount
+    }, null, 2));
+
+    const events = (res.rows ?? []).map(row => ({
+      eventName: row.dimensionValues?.[0]?.value ?? 'unknown',
+      count: Number(row.metricValues?.[0]?.value ?? 0)
+    }));
+
+    const videoEvents = events.filter(e => e.eventName.includes('video'));
+    
+    console.log(`🔍 qAllEvents FOUND: ${events.length} total events, ${videoEvents.length} video events`);
+    console.log(`🔍 TOP 10 EVENTS:`, events.slice(0, 10));
+    console.log(`🔍 ALL VIDEO EVENTS:`, videoEvents);
+
+    return { allEvents: events, videoEvents };
+  } catch (error) {
+    console.error('qAllEvents ERROR:', error);
+    return { allEvents: [], videoEvents: [], error: String(error) };
+  }
 }
 
 /* =============  REALTIME API  ============= */

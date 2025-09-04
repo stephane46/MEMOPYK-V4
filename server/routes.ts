@@ -4545,6 +4545,29 @@ export async function registerRoutes(app: Express): Promise<void> {
     return { startDate, endDate, locale, nocache };
   }
 
+  // Debug endpoint to list all available events in GA4
+  app.get("/api/ga4/debug-events", async (req, res) => {
+    try {
+      console.log('🔍 GA4 debug events requested');
+      const { startDate = '2025-08-27', endDate = '2025-09-02' } = req.query;
+      
+      const { qAllEvents } = await import('./ga4-service');
+      const result = await qAllEvents(startDate as string, endDate as string);
+      
+      res.json({
+        success: true,
+        dateRange: { startDate, endDate },
+        ...result
+      });
+    } catch (error) {
+      console.error('❌ GA4 debug events failed:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Debug events failed',
+        success: false 
+      });
+    }
+  });
+
   // GA4 KPIs endpoint - using your exact clean API structure
   app.get("/api/ga4/kpis", async (req, res, next) => {
     try {
