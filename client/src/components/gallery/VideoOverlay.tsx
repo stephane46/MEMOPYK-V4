@@ -262,6 +262,7 @@ export default function VideoOverlay({
       for (const milestone of milestones) {
         if (progress >= milestone && !milestonesTrackedRef.current.has(milestone)) {
           milestonesTrackedRef.current.add(milestone);
+          console.log(`🎯 FIRING GA4 video_progress event: ${milestone}% for ${videoId}`);
           
           fireGA('video_progress', {
             video_id: videoId,
@@ -272,6 +273,7 @@ export default function VideoOverlay({
             locale: language,
             debug_mode: window.location.search.includes('ga_dev=1') || localStorage.getItem('ga_dev') === '1'
           });
+          console.log(`✅ GA4 video_progress event sent: ${milestone}%`);
         }
       }
     }
@@ -380,6 +382,7 @@ export default function VideoOverlay({
 
   // Video event handlers - Following stable dependency pattern
   const handlePlay = useCallback(() => {
+    console.log('🎬 VIDEO PLAY EVENT: handlePlay fired');
     setIsPlaying(true);
     resetControlsTimer();
     
@@ -390,6 +393,7 @@ export default function VideoOverlay({
     
     // GA4 Analytics: Track video_start only once per session
     if (!videoStartSentRef.current) {
+      console.log('🚀 FIRING GA4 video_start event for:', videoId);
       fireGA('video_start', {
         video_id: videoId,
         video_title: title,
@@ -398,8 +402,11 @@ export default function VideoOverlay({
         locale: language,
         debug_mode: true
       });
+      console.log('✅ GA4 video_start event sent');
       
       videoStartSentRef.current = true;
+    } else {
+      console.log('⏭️ video_start already sent for this session');
     }
     
     // LOCAL ANALYTICS: Track video view start - CRITICAL FIX

@@ -44,14 +44,8 @@ export default function GaDebugHud() {
       }
     })();
 
-    console.log('🐛 GA Debug HUD: Checking activation...', { qsOn, lsOn, url: location.href });
+    if (!qsOn && !lsOn) return;
 
-    if (!qsOn && !lsOn) {
-      console.log('🐛 GA Debug HUD: Not activated');
-      return;
-    }
-
-    console.log('🐛 GA Debug HUD: ACTIVATING!');
     setVisible(true);
 
     // Wrap gtag to capture video events
@@ -197,12 +191,7 @@ ${last5}`;
     scheduleFade();
   }, [hover, pinned]);
 
-  if (!visible) {
-    console.log('🐛 GA Debug HUD: Not rendering (visible=false)');
-    return null;
-  }
-
-  console.log('🐛 GA Debug HUD: Rendering HUD!');
+  if (!visible) return null;
 
   const consentStr = Object.keys(state.consent).length ? JSON.stringify(state.consent) : '{}';
   const last5 = state.events
