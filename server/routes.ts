@@ -16,6 +16,7 @@ import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCa
 import { analyticsCleanupRoutes } from './routes-analytics-cache-cleanup';
 import { LocationService } from './location-service';
 import {
+  qSessions,
   qPlays,
   qCompletes,
   qWatchTimeTotal,
@@ -4804,7 +4805,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Fetch current period KPIs
       console.log('📊 Fetching current period KPIs...');
       const [currentSessions, currentPlays, currentCompletes, currentWatchTime, currentSessionDuration] = await Promise.all([
-        qPlays(startDate, endDate), // Using plays as sessions for now
+        qSessions(startDate, endDate), // FIXED: Using unfiltered sessions
         qPlays(startDate, endDate),
         qCompletes(startDate, endDate),
         qWatchTimeTotal(startDate, endDate),
@@ -4816,7 +4817,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Fetch comparison period KPIs
       console.log('📊 Fetching comparison period KPIs...');
       const [compareSessions, comparePlays, compareCompletes, compareWatchTime, compareSessionDuration] = await Promise.all([
-        qPlays(compareStartDate, compareEndDate),
+        qSessions(compareStartDate, compareEndDate), // FIXED: Using unfiltered sessions
         qPlays(compareStartDate, compareEndDate),
         qCompletes(compareStartDate, compareEndDate),
         qWatchTimeTotal(compareStartDate, compareEndDate),

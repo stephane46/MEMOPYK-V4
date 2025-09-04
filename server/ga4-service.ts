@@ -27,6 +27,37 @@ const localeFilter = (
 
 /* =============  KPI QUERIES  ============= */
 
+export async function qSessions(start: string, end: string, locale?: string) {
+  // UNFILTERED SESSIONS - No eventName filter (baseline sessions)
+  const requestParams = {
+    property: PROPERTY,
+    dateRanges: [range(start, end)],
+    metrics: [{ name: "sessions" }],
+    // ONLY locale filter, NO eventName filter
+    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+  };
+  
+  console.log(`🔍 GA4 EXACT REQUEST PARAMETERS (qSessions - UNFILTERED):`);
+  console.log(`   Property ID: ${PROPERTY}`);
+  console.log(`   Date Range: ${start} to ${end} (YYYY-MM-DD format)`);
+  console.log(`   Server Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
+  console.log(`   Locale Filter: ${locale || 'all'}`);
+  console.log(`   Event Filter: NONE (unfiltered sessions)`);
+  console.log(`   Full Request:`, JSON.stringify(requestParams, null, 2));
+  
+  // Quick timeout to prevent hangs
+  const timeoutPromise = new Promise<never>((_, reject) => 
+    setTimeout(() => reject(new Error('GA4 API timeout - qSessions took too long')), 2000)
+  );
+  
+  const queryPromise = client.runReport(requestParams);
+  
+  const [res] = await Promise.race([queryPromise, timeoutPromise]);
+  const sessions = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  console.log(`✅ GA4 Response (qSessions): ${sessions} sessions (unfiltered)`);
+  return sessions;
+}
+
 export async function qPlays(start: string, end: string, locale?: string) {
   // DETAILED GA4 PARAMETER LOGGING
   const requestParams = {
