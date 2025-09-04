@@ -111,18 +111,20 @@ export default function GaDebugHud() {
   const probeImg = (): Promise<boolean> => {
     return new Promise((resolve) => {
       const img = new Image();
-      const done = (ok: boolean) => {
+      const done = (ok: boolean, reason?: string) => {
+        const msg = ok ? 'img probe ok' : `img probe failed: ${reason || 'unknown'}`;
+        console.log('🔍 CSP IMG PROBE:', msg);
         setState(prev => ({
           ...prev,
           probes: { ...prev.probes, img: ok },
-          lastMsg: ok ? 'img probe ok' : 'img probe failed'
+          lastMsg: msg
         }));
         resolve(ok);
       };
       img.onload = () => done(true);
-      img.onerror = () => done(false);
-      img.src = 'https://www.google-analytics.com/r/collect?v=2&_dbg=1';
-      setTimeout(() => done(false), 2500);
+      img.onerror = (e) => done(false, 'CSP/network error');
+      img.src = 'https://www.google-analytics.com/g/collect?v=2&_dbg=1';
+      setTimeout(() => done(false, 'timeout'), 2500);
     });
   };
 
