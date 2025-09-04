@@ -211,3 +211,77 @@ function getStoredLanguage(): string {
 function getCurrentLocale(): string {
   return getStoredLanguage();
 }
+
+// GA4 readiness check with retry mechanism
+function waitForGA4Ready(maxWaitMs = 3000): Promise<boolean> {
+  return new Promise((resolve) => {
+    const startTime = Date.now();
+    
+    function checkGA4() {
+      if (window.gtag && typeof window.gtag === 'function' && Array.isArray(window.dataLayer)) {
+        console.log('[GA4] Ready! gtag and dataLayer confirmed');
+        resolve(true);
+        return;
+      }
+      
+      const elapsed = Date.now() - startTime;
+      if (elapsed >= maxWaitMs) {
+        console.error('[GA4] Timeout waiting for GA4 readiness after', elapsed, 'ms');
+        resolve(false);
+        return;
+      }
+      
+      // Check again in 50ms
+      setTimeout(checkGA4, 50);
+    }
+    
+    checkGA4();
+  });
+}
+
+// Direct GA4 fire function with comprehensive debugging and readiness check
+export async function fireGA(eventName: string, params: any = {}) {
+  // Don't track on admin pages
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  if (isAdmin) {
+    console.log('[GA4] SKIPPED - Admin page detected:', window.location.pathname);
+    return;
+  }
+  
+  // Force debug logging - show exact payload
+  console.log('[GA4] about to fire', eventName, JSON.stringify(params));
+  
+  if (typeof window === 'undefined') {
+    console.error('[GA4] window undefined at event time:', eventName);
+    return;
+  }
+  
+  // Wait for GA4 to be ready
+  const isReady = await waitForGA4Ready();
+  if (!isReady) {
+    console.error('[GA4] GA4 not ready after timeout, cannot fire event:', eventName);
+    return;
+  }
+  
+  // Check gtag availability after waiting
+  console.log('[GA4] gtag available?', typeof window.gtag);
+  console.log('[GA4] dataLayer present?', Array.isArray(window.dataLayer));
+  
+  // Always add debug_mode until confirmed working
+  const finalParams = {
+    ...params,
+    debug_mode: true
+  };
+  
+  try {
+    // Fire the event
+    window.gtag('event', eventName, finalParams);
+    console.log('[GA4] collect event attempted:', eventName);
+    console.log('[GA4] final params sent:', JSON.stringify(finalParams));
+    
+    // Log network expectation
+    console.log('[GA4] EXPECT TO SEE: Network request to www.google-analytics.com/g/collect with en=' + eventName);
+  } catch (error) {
+    console.error('[GA4] Error firing event:', eventName, error);
+  }
+}
