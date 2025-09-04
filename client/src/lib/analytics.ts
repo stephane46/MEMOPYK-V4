@@ -31,7 +31,8 @@ export function initGA(): void {
   
   window.gtag('js', new Date());
   window.gtag('config', MEASUREMENT_ID, {
-    send_page_view: false // We'll handle page views manually
+    send_page_view: false, // We'll handle page views manually
+    debug_mode: true // Always enable debug mode until GA4 reception confirmed
   });
   
   console.log('🚀 GA4 initialized with ID:', MEASUREMENT_ID);
