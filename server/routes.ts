@@ -4651,10 +4651,10 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Helper function to calculate date ranges from presets
+  // Helper function to calculate date ranges from presets using Europe/Paris timezone
   function calculateDateRange(preset: string, dateFrom?: string, dateTo?: string): { startDate: string; endDate: string; compareStartDate: string; compareEndDate: string } {
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
+    const { formatInTimeZone } = require('date-fns-tz');
+    const TZ = 'Europe/Paris';
     let startDate: string;
     let endDate: string;
     let compareStartDate: string;
@@ -4674,10 +4674,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       const comparisonStart = new Date(comparisonEnd);
       comparisonStart.setDate(comparisonStart.getDate() - (days - 1));
       
-      compareStartDate = comparisonStart.toISOString().split('T')[0];
-      compareEndDate = comparisonEnd.toISOString().split('T')[0];
+      compareStartDate = formatInTimeZone(comparisonStart, TZ, 'yyyy-MM-dd');
+      compareEndDate = formatInTimeZone(comparisonEnd, TZ, 'yyyy-MM-dd');
     } else {
-      // Handle preset ranges
+      // Handle preset ranges using Europe/Paris timezone
       let days: number;
       switch (preset) {
         case '30d':
@@ -4692,22 +4692,33 @@ export async function registerRoutes(app: Express): Promise<void> {
           break;
       }
       
-      const end = new Date(now);
-      end.setDate(end.getDate() - 1); // Yesterday as end date
-      const start = new Date(end);
-      start.setDate(start.getDate() - (days - 1)); // Go back days from end date
-      startDate = start.toISOString().split('T')[0];
-      endDate = end.toISOString().split('T')[0];
+      // Get current time in Europe/Paris timezone
+      const nowLocal = new Date();
+      
+      // End date = yesterday in Europe/Paris timezone
+      const endLocal = new Date(nowLocal);
+      endLocal.setDate(endLocal.getDate() - 1);
+      endDate = formatInTimeZone(endLocal, TZ, 'yyyy-MM-dd');
+      
+      // Start date = endLocal minus (days - 1) in Europe/Paris timezone
+      const startLocal = new Date(endLocal);
+      startLocal.setDate(startLocal.getDate() - (days - 1));
+      startDate = formatInTimeZone(startLocal, TZ, 'yyyy-MM-dd');
       
       // Previous period of same length
-      const compareEnd = new Date(start);
-      compareEnd.setDate(compareEnd.getDate() - 1);
-      const compareStart = new Date(compareEnd);
-      compareStart.setDate(compareStart.getDate() - (days - 1));
+      const compareEndLocal = new Date(startLocal);
+      compareEndLocal.setDate(compareEndLocal.getDate() - 1);
+      compareEndDate = formatInTimeZone(compareEndLocal, TZ, 'yyyy-MM-dd');
       
-      compareStartDate = compareStart.toISOString().split('T')[0];
-      compareEndDate = compareEnd.toISOString().split('T')[0];
+      const compareStartLocal = new Date(compareEndLocal);
+      compareStartLocal.setDate(compareStartLocal.getDate() - (days - 1));
+      compareStartDate = formatInTimeZone(compareStartLocal, TZ, 'yyyy-MM-dd');
     }
+
+    console.log(`🇫🇷 TIMEZONE-ALIGNED DATES (Europe/Paris):`);
+    console.log(`   Current: ${startDate} to ${endDate}`);
+    console.log(`   Compare: ${compareStartDate} to ${compareEndDate}`);
+    console.log(`   Timezone: ${TZ}`);
 
     return { startDate, endDate, compareStartDate, compareEndDate };
   }
