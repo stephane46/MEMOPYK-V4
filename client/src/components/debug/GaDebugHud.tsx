@@ -15,7 +15,7 @@ interface DebugState {
   probes: { img: boolean; connect: boolean };
   lastMsg: string;
   networkHits: number;
-  lastCollectUrls: Array<{ url: string; timestamp: number }>;
+  lastCollectUrls: string[];
 }
 
 export default function GaDebugHud() {
@@ -76,6 +76,40 @@ export default function GaDebugHud() {
       };
     }
 
+    // Network monitoring - intercept fetch and XHR
+    const originalFetch = window.fetch;
+    window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
+      const result = await originalFetch(input, init);
+      
+      // Check if this is a GA4 collect request
+      const url = typeof input === 'string' ? input : input.toString();
+      if (url.includes('google-analytics.com') || url.includes('/collect')) {
+        setState(prev => ({
+          ...prev,
+          networkHits: prev.networkHits + 1,
+          lastCollectUrls: [url, ...prev.lastCollectUrls].slice(0, 3),
+          lastMsg: `GA hit delivered (${prev.networkHits + 1})`
+        }));
+      }
+      
+      return result;
+    };
+
+    // Also intercept XMLHttpRequest in case gtag uses it
+    const originalXHROpen = window.XMLHttpRequest.prototype.open;
+    window.XMLHttpRequest.prototype.open = function (method: string, url: string | URL, async: boolean = true, username?: string | null, password?: string | null) {
+      const urlStr = typeof url === 'string' ? url : url.toString();
+      if (urlStr.includes('google-analytics.com') || urlStr.includes('/collect')) {
+        setState(prev => ({
+          ...prev,
+          networkHits: prev.networkHits + 1,
+          lastCollectUrls: [urlStr, ...prev.lastCollectUrls].slice(0, 3),
+          lastMsg: `GA hit delivered (${prev.networkHits + 1})`
+        }));
+      }
+      return originalXHROpen.call(this, method, url, async, username, password);
+    };
+
     // Initial snapshot
     const snapshot = () => {
       setState(prev => {
@@ -91,6 +125,21 @@ export default function GaDebugHud() {
           console.warn('GA Debug HUD: Error reading consent', e);
         }
         
+        // Also check performance API as backup
+        try {
+          const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+          const gaResources = resources.filter(r => r.name.includes('google-analytics.com') || r.name.includes('/collect'));
+          const newUrls = gaResources.map(r => r.name).filter(url => !prev.lastCollectUrls.includes(url));
+          
+          if (newUrls.length > 0) {
+            newState.networkHits = prev.networkHits + newUrls.length;
+            newState.lastCollectUrls = [...newUrls, ...prev.lastCollectUrls].slice(0, 3);
+            newState.lastMsg = `Performance API detected ${newUrls.length} hits`;
+          }
+        } catch (e) {
+          console.warn('GA Debug HUD: Error checking performance API', e);
+        }
+        
         return newState;
       });
     };
@@ -100,11 +149,13 @@ export default function GaDebugHud() {
     setTimeout(snapshot, 1500);
 
     return () => {
-      // Restore original gtag on cleanup
+      // Restore original functions on cleanup
       if (originalGtag.current) {
         window.gtag = originalGtag.current;
         originalGtag.current = null;
       }
+      window.fetch = originalFetch;
+      window.XMLHttpRequest.prototype.open = originalXHROpen;
     };
   }, []);
 
@@ -159,43 +210,9 @@ export default function GaDebugHud() {
   useEffect(() => {
     if (visible) {
       runProbes();
-      startNetworkMonitoring();
     }
   }, [visible]);
 
-  const startNetworkMonitoring = () => {
-    // Monitor performance entries for GA4 collect requests
-    const checkNetworkHits = () => {
-      const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
-      const gaHits = resources.filter(r => 
-        (r.name.includes('google-analytics.com/g/collect') || 
-         r.name.includes('region1.google-analytics.com/g/collect')) &&
-        (r.name.includes('en=video_start') || 
-         r.name.includes('en=video_progress') || 
-         r.name.includes('en=video_complete'))
-      );
-      
-      if (gaHits.length > state.networkHits) {
-        const newUrls = gaHits.slice(state.networkHits).map(hit => ({
-          url: hit.name.split('?')[1] || hit.name, // Show query params only
-          timestamp: Date.now()
-        }));
-        
-        setState(prev => ({
-          ...prev,
-          networkHits: gaHits.length,
-          lastCollectUrls: [...prev.lastCollectUrls, ...newUrls].slice(-3), // Keep last 3
-          lastMsg: `${gaHits.length} GA hits detected`
-        }));
-      }
-    };
-    
-    // Check every second for new network hits
-    const interval = setInterval(checkNetworkHits, 1000);
-    
-    // Cleanup on unmount
-    return () => clearInterval(interval);
-  };
 
   const copyToClipboard = () => {
     const consentStr = Object.keys(state.consent).length ? JSON.stringify(state.consent) : '{}';
@@ -205,7 +222,7 @@ export default function GaDebugHud() {
       .join('\n') || '(none yet)';
     
     const collectUrls = state.lastCollectUrls.length 
-      ? state.lastCollectUrls.map(u => `• ${u.url.slice(0, 80)}...`).join('\n')
+      ? state.lastCollectUrls.map(u => `• ${u.slice(0, 80)}...`).join('\n')
       : '(none yet)';
 
     const text = `gtag:           ${state.gtagType}
@@ -276,6 +293,7 @@ dataLayer:      ${state.hasDL ? 'present' : 'missing'}
 consent:        ${consentStr}
 events (totals): start=${state.counts.video_start} | progress=${state.counts.video_progress} | complete=${state.counts.video_complete}
 CSP probes:     img=${state.probes.img ? 'ok' : 'blocked?'} | connect=${state.probes.connect ? 'ok' : 'blocked?'}
+GA hits:        ${state.networkHits} delivered
 last message:   ${state.lastMsg}
 
 Last 5 events:
