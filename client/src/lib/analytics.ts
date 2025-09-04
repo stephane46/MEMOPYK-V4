@@ -35,6 +35,15 @@ export function initGA(): void {
     debug_mode: true // Always enable debug mode until GA4 reception confirmed
   });
   
+  // Set explicit consent in debug mode
+  const isDebugMode = window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1';
+  if (isDebugMode) {
+    window.gtag('consent', 'update', {
+      analytics_storage: 'granted',
+      ad_storage: 'denied'
+    });
+  }
+  
   console.log('🚀 GA4 initialized with ID:', MEASUREMENT_ID);
 }
 

@@ -14,6 +14,8 @@ interface DebugState {
   consent: Record<string, any>;
   probes: { img: boolean; connect: boolean };
   lastMsg: string;
+  networkHits: number;
+  lastCollectUrls: Array<{ url: string; timestamp: number }>;
 }
 
 export default function GaDebugHud() {
@@ -27,7 +29,9 @@ export default function GaDebugHud() {
     hasDL: false,
     consent: {},
     probes: { img: false, connect: false },
-    lastMsg: ''
+    lastMsg: '',
+    networkHits: 0,
+    lastCollectUrls: []
   });
 
   const fadeTimer = useRef<NodeJS.Timeout | null>(null);
@@ -153,8 +157,43 @@ export default function GaDebugHud() {
   useEffect(() => {
     if (visible) {
       runProbes();
+      startNetworkMonitoring();
     }
   }, [visible]);
+
+  const startNetworkMonitoring = () => {
+    // Monitor performance entries for GA4 collect requests
+    const checkNetworkHits = () => {
+      const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+      const gaHits = resources.filter(r => 
+        (r.name.includes('google-analytics.com/g/collect') || 
+         r.name.includes('region1.google-analytics.com/g/collect')) &&
+        (r.name.includes('en=video_start') || 
+         r.name.includes('en=video_progress') || 
+         r.name.includes('en=video_complete'))
+      );
+      
+      if (gaHits.length > state.networkHits) {
+        const newUrls = gaHits.slice(state.networkHits).map(hit => ({
+          url: hit.name.split('?')[1] || hit.name, // Show query params only
+          timestamp: Date.now()
+        }));
+        
+        setState(prev => ({
+          ...prev,
+          networkHits: gaHits.length,
+          lastCollectUrls: [...prev.lastCollectUrls, ...newUrls].slice(-3), // Keep last 3
+          lastMsg: `${gaHits.length} GA hits detected`
+        }));
+      }
+    };
+    
+    // Check every second for new network hits
+    const interval = setInterval(checkNetworkHits, 1000);
+    
+    // Cleanup on unmount
+    return () => clearInterval(interval);
+  };
 
   const copyToClipboard = () => {
     const consentStr = Object.keys(state.consent).length ? JSON.stringify(state.consent) : '{}';
@@ -163,12 +202,20 @@ export default function GaDebugHud() {
       .map(e => `• ${e.name} ${JSON.stringify(e.params)}`)
       .join('\n') || '(none yet)';
     
+    const collectUrls = state.lastCollectUrls.length 
+      ? state.lastCollectUrls.map(u => `• ${u.url.slice(0, 80)}...`).join('\n')
+      : '(none yet)';
+
     const text = `gtag:           ${state.gtagType}
 dataLayer:      ${state.hasDL ? 'present' : 'missing'}
 consent:        ${consentStr}
 events (totals): start=${state.counts.video_start} | progress=${state.counts.video_progress} | complete=${state.counts.video_complete}
 CSP probes:     img=${state.probes.img ? 'ok' : 'blocked?'} | connect=${state.probes.connect ? 'ok' : 'blocked?'}
+GA hits:        ${state.networkHits} delivered
 last message:   ${state.lastMsg}
+
+Last 3 collect URLs:
+${collectUrls}
 
 Last 5 events:
 ${last5}`;
