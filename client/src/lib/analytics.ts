@@ -263,6 +263,7 @@ export function fireGA(eventName: string, params: any = {}) {
   // Enhanced debugging for video events
   const isVideoEvent = ['video_start', 'video_progress', 'video_complete'].includes(eventName);
   if (isVideoEvent) {
+    console.log(`🎥 GA4 VIDEO EVENT: ${eventName}`, params);
   }
   
   // Base parameters for all events
@@ -274,13 +275,17 @@ export function fireGA(eventName: string, params: any = {}) {
   
   const send = () => {
     if (window.gtag) {
+      console.log(`[GA4] Sending ${eventName}`, baseParams);
       window.gtag('event', eventName, baseParams);
+      console.log(`[GA4] Sent ${eventName}`);
     } else {
+      console.warn(`[GA4] gtag not available for ${eventName}`);
     }
   };
   
   // Handle GA4 readiness
   if (!window.dataLayer || !window.gtag) {
+    console.log(`[GA4] Deferring ${eventName} - GA4 not ready, trying in 150ms`);
     setTimeout(send, 150);
   } else {
     send();
