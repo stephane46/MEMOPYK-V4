@@ -670,11 +670,16 @@ export default function GallerySection() {
   const [preloadedVideoElements, setPreloadedVideoElements] = useState<Map<string, HTMLVideoElement>>(new Map());
 
   // 🎯 SMART ON-DEMAND PRELOADING - Fast loading without conflicts
+  // 🚨 CRITICAL FIX: Remove galleryItems dependency to prevent VideoOverlay remounting!
+  const galleryItemsCount = React.useMemo(() => {
+    return Array.isArray(galleryItems) ? galleryItems.length : 0;
+  }, [galleryItems]);
+  
   useEffect(() => {
-    if (!galleryItems.length) return;
+    if (!galleryItemsCount) return;
 
     console.log(`🎯 SMART PRELOADING SYSTEM: On-demand video loading for instant playback without conflicts`);
-    console.log(`📊 Gallery items available: ${galleryItems.length} (videos preload on hover/click)`);
+    console.log(`📊 Gallery items available: ${galleryItemsCount} (videos preload on hover/click)`);
     
     // Cleanup any existing preloaded elements to start fresh
     const cleanupPreloadedElements = () => {
@@ -687,7 +692,7 @@ export default function GallerySection() {
     };
     
     cleanupPreloadedElements();
-  }, [galleryItems]);
+  }, [galleryItemsCount]); // FIXED: Use stable count instead of galleryItems object
 
   // Cleanup preloaded video elements on unmount
   useEffect(() => {
