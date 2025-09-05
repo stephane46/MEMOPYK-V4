@@ -4569,7 +4569,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       const title = r.dimensionValues[1].value;
       const completions = Number(r.metricValues[0].value);
       const base = startsMap.get(vid) || { title, plays: 0 };
-      const rate = base.plays ? Math.round((completions / base.plays) * 100) : 0;
+      const rate = base.plays ? (completions / base.plays) : 0;
       rows.push({ videoId: vid, title: base.title, plays: base.plays, completions, completionRate: rate });
       startsMap.delete(vid);
     }
@@ -4577,6 +4577,12 @@ export async function registerRoutes(app: Express): Promise<void> {
     // Videos that have starts but zero completions
     for (const [vid, { title, plays }] of startsMap.entries()) {
       rows.push({ videoId: vid, title, plays, completions: 0, completionRate: 0 });
+    }
+
+    // Guard: warn if all completion rates are 1.0 (suspicious)
+    const allPerfectRates = rows.length > 0 && rows.every(r => r.completionRate === 1 && r.plays > 0);
+    if (allPerfectRates) {
+      console.warn('🚨 GA4 Data Warning: All videos have 100% completion rate - this looks like mock data patterns');
     }
 
     return { 
@@ -4628,6 +4634,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         res.setHeader('Cache-Control', 'private, max-age=60');
         res.setHeader('X-Cache', 'HIT');
         res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
+        res.setHeader('X-GA4-Property', process.env.GA4_PROPERTY_ID || 'unknown');
         return res.json(cached);
       }
 
@@ -4664,6 +4671,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.setHeader('Cache-Control', 'private, max-age=60');
       res.setHeader('X-Cache', 'MISS');
       res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
+      res.setHeader('X-GA4-Property', process.env.GA4_PROPERTY_ID || 'unknown');
       res.json(result);
     } catch (error: any) {
       console.error('❌ GA4 report error:', error);
@@ -5145,6 +5153,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         res.setHeader('Cache-Control', 'private, max-age=60');
         res.setHeader('X-Cache', 'HIT');
         res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
+        res.setHeader('X-GA4-Property', process.env.GA4_PROPERTY_ID || 'unknown');
         return res.json(cached);
       }
       
@@ -5269,6 +5278,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.setHeader('Cache-Control', 'private, max-age=60');
       res.setHeader('X-Cache', 'MISS');
       res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
+      res.setHeader('X-GA4-Property', process.env.GA4_PROPERTY_ID || 'unknown');
       res.json(response);
       
     } catch (error) {

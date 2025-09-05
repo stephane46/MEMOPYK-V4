@@ -1,11 +1,11 @@
 // server/services/ga4Client.ts
 // A single entry point to GA4's RunReport with mock fallback.
 
-// Force mock mode for development/testing
-const GA4_MOCK = true; // Set to false when GA4 credentials are available
+const GA4_MOCK = process.env.GA4_MOCK === 'true';
+console.info('[GA4] mode:', process.env.GA4_MOCK, 'property:', process.env.GA4_PROPERTY_ID);
 
-// GA4_MOCK is forced to true for development
-// Change to false when real GA4 credentials are available
+// GA4_MOCK now reads from environment variable
+// GA4_MOCK=false for live GA4 data, GA4_MOCK=true for mock data
 
 // ---- Types (minimal) ----
 type RunReportRequest = {
@@ -27,7 +27,12 @@ type RunReportResponse = {
 
 // ---- PUBLIC API ----
 export async function runGa4Report(payload: RunReportRequest): Promise<RunReportResponse> {
-  if (GA4_MOCK) return runGa4ReportMock(payload);
+  console.log(`🔍 GA4 Client Mode: GA4_MOCK=${GA4_MOCK}, Property: ${process.env.GA4_PROPERTY_ID}`);
+  if (GA4_MOCK) {
+    console.log('📋 Using mock data (GA4_MOCK=true)');
+    return runGa4ReportMock(payload);
+  }
+  console.log('🌐 Using live GA4 data (GA4_MOCK=false)');
   return runGa4ReportReal(payload);
 }
 
@@ -115,17 +120,22 @@ async function runGa4ReportMock(payload: RunReportRequest): Promise<RunReportRes
 // =========================
 
 async function runGa4ReportReal(payload: RunReportRequest): Promise<RunReportResponse> {
-  /**
-   * Replace this with your actual GA4 Data API client code.
-   * Example using @google-analytics/data:
-   *
-   * import { BetaAnalyticsDataClient } from "@google-analytics/data";
-   * const client = new BetaAnalyticsDataClient({ credentials: { ...credentials } });
-   * const [resp] = await client.runReport({
-   *   property: `properties/${process.env.GA4_PROPERTY_ID}`,
-   *   ...payload
-   * });
-   * return resp as any;
-   */
-  throw new Error("runGa4ReportReal not implemented yet (set GA4_MOCK=true to use mock)");
+  const { BetaAnalyticsDataClient } = await import("@google-analytics/data");
+  
+  const client = new BetaAnalyticsDataClient({
+    credentials: JSON.parse(process.env.GA4_SERVICE_ACCOUNT_KEY!)
+  });
+  
+  const [response] = await client.runReport({
+    property: `properties/${process.env.GA4_PROPERTY_ID}`,
+    ...payload
+  });
+  
+  // Log first few dimension values to confirm real data
+  if (response.rows && response.rows.length > 0) {
+    console.log('🔍 GA4 Real Data Sample - First row dimensions:', 
+      response.rows[0].dimensionValues?.slice(0, 2).map(d => d.value));
+  }
+  
+  return response;
 }
