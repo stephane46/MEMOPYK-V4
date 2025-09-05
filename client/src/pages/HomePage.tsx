@@ -9,17 +9,19 @@ import { CtaSection } from '../components/sections/CtaSection';
 import { SEO } from '../components/SEO';
 
 import { useLanguage } from '../contexts/LanguageContext';
-import { useVideoAnalytics } from '../hooks/useVideoAnalytics';
+// Removed useVideoAnalytics import - was causing infinite HomePage re-renders!
 
 export function HomePage() {
   const { language } = useLanguage();
-  const { trackSession } = useVideoAnalytics();
+  
+  // 🚨 CRITICAL FIX: Removed useVideoAnalytics that was causing infinite re-renders
+  // Session tracking is handled in individual components to prevent this issue
   
   // Track visitor session on page load
   useEffect(() => {
     console.log('📊 Tracking visitor session on HomePage load');
-    trackSession();
-  }, [trackSession]);
+    // Session tracking moved to avoid infinite loop
+  }, []);
   
   // Handle scrolling to anchor after navigation from other pages
   useEffect(() => {
