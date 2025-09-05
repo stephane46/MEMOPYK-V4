@@ -1,5 +1,6 @@
 import { mockReport } from "./mockReport";
 import type { ReportParams } from "./types";
+import { setDataSource } from "./dataSource";
 
 const USE_MOCK = import.meta.env?.VITE_USE_MOCK === "true";
 
@@ -61,6 +62,11 @@ export async function fetchReport<T>(params: ReportParams): Promise<T> {
 
   const resp = await fetch(`/api/ga4/report?${qs.toString()}`);
   if (!resp.ok) throw new Error(`API error ${resp.status}`);
+  
+  // Read X-Data-Source header and update state
+  const ds = (resp.headers.get("x-data-source") || "unknown").toLowerCase();
+  if (ds === "live" || ds === "mock") setDataSource(ds as any);
+  
   const json = await resp.json();
   
   if (SIMULATE_EMPTY) {

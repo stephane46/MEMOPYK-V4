@@ -4627,6 +4627,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log('✅ GA4 Report returned from cache');
         res.setHeader('Cache-Control', 'private, max-age=60');
         res.setHeader('X-Cache', 'HIT');
+        res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
         return res.json(cached);
       }
 
@@ -4662,6 +4663,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.log(`✅ GA4 Report completed: ${ga4.report}`);
       res.setHeader('Cache-Control', 'private, max-age=60');
       res.setHeader('X-Cache', 'MISS');
+      res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
       res.json(result);
     } catch (error: any) {
       console.error('❌ GA4 report error:', error);
@@ -5142,6 +5144,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log(`✅ GA4 Report cache hit for ${cacheKey}`);
         res.setHeader('Cache-Control', 'private, max-age=60');
         res.setHeader('X-Cache', 'HIT');
+        res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
         return res.json(cached);
       }
       
@@ -5263,6 +5266,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Cache for 60 seconds
       setCache(cacheKey, { ...response, cached: true }, 60);
       
+      res.setHeader('Cache-Control', 'private, max-age=60');
+      res.setHeader('X-Cache', 'MISS');
+      res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
       res.json(response);
       
     } catch (error) {

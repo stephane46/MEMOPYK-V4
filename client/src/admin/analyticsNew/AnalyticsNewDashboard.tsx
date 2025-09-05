@@ -5,6 +5,7 @@ import { AnalyticsNewOverview } from './AnalyticsNewOverview';
 import { AnalyticsNewLiveView } from './AnalyticsNewLiveView';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { AnalyticsNewVideo } from './AnalyticsNewVideo';
+import DataSourceBadge from './components/DataSourceBadge';
 import './analyticsNew.tokens.css';
 
 // Placeholder components for other tabs
@@ -136,8 +137,9 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--analytics-new-text)]">
+              <h1 className="text-3xl font-bold text-[var(--analytics-new-text)] flex items-center gap-3">
                 Analytics New Dashboard
+                <DataSourceBadge />
               </h1>
               <p className="text-[var(--analytics-new-text-muted)] mt-1">
                 Comprehensive analytics platform for MEMOPYK
