@@ -38,11 +38,11 @@ export default function GaDebugHud() {
   const originalGtag = useRef<any>(null);
 
   useEffect(() => {
-    // Check if debug mode is enabled
-    const qsOn = new URLSearchParams(location.search).get('ga_debug') === '1';
+    // Check if debug mode is enabled - support both ga_debug and ga_dev
+    const qsOn = new URLSearchParams(location.search).get('ga_debug') === '1' || new URLSearchParams(location.search).get('ga_dev') === '1';
     const lsOn = (() => {
       try {
-        return localStorage.getItem('ga_debug') === '1';
+        return localStorage.getItem('ga_debug') === '1' || localStorage.getItem('ga_dev') === '1';
       } catch {
         return false;
       }
