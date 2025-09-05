@@ -1,77 +1,93 @@
 // server/utils/dateRangeFromQuery.ts
-import { resolveDates } from './resolveDates';
+import { resolveDates } from "./resolveDates";
 
+type ReportKind = "kpis" | "topVideos" | "videoFunnel";
 type Preset = "7d" | "30d" | "90d";
 
-interface QueryParams {
-  preset?: string;
-  startDate?: string;
-  endDate?: string;
-  [key: string]: any;
+export type Ga4Parsed = {
+  report: ReportKind;
+  videoId?: string;
+  dateRange: { startDate: string; endDate: string };
+  lang?: string;
+  country?: string;
+};
+
+const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function isValidISODate(d: string): boolean {
+  if (!ISO_RE.test(d)) return false;
+  const dt = new Date(d + "T00:00:00Z");
+  return dt instanceof Date && !isNaN(dt.getTime()) && d === d; // format already checked
 }
 
-interface DateRangeResult {
-  startDate: string;
-  endDate: string;
-  isPreset: boolean;
-  resolvedFrom: 'preset' | 'explicit' | 'default';
+function normalizeLang(lang?: string): string | undefined {
+  if (!lang) return undefined;
+  // Simple BCP-47 casing: xx-YY -> language lower, region upper
+  const parts = lang.split("-");
+  if (parts.length === 2) {
+    return parts[0].toLowerCase() + "-" + parts[1].toUpperCase();
+  }
+  return lang.toLowerCase();
 }
 
-/**
- * Centralizes parsing and validation of date range query parameters.
- * Provides helpful error messages and consistent behavior across endpoints.
- */
-export function dateRangeFromQuery(query: QueryParams): DateRangeResult {
-  const { preset, startDate, endDate } = query;
+function normalizeCountry(country?: string): string | undefined {
+  if (!country) return undefined;
+  return country.trim().toUpperCase();
+}
 
-  // Validate preset if provided
-  if (preset && !['7d', '30d', '90d'].includes(preset)) {
-    throw new Error(`Invalid preset "${preset}". Must be one of: 7d, 30d, 90d`);
+function badRequest(msg: string): never {
+  const err: any = new Error(msg);
+  err.status = 400;
+  throw err;
+}
+
+export function dateRangeFromQuery(q: any): Ga4Parsed {
+  const report = String(q.report || "");
+  if (!report || !["kpis", "topVideos", "videoFunnel"].includes(report)) {
+    badRequest('Invalid "report" param. Use kpis | topVideos | videoFunnel.');
   }
 
-  // Validate date format if provided
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  
-  if (startDate && !dateRegex.test(startDate)) {
-    throw new Error(`Invalid startDate "${startDate}". Must be YYYY-MM-DD format`);
-  }
-  
-  if (endDate && !dateRegex.test(endDate)) {
-    throw new Error(`Invalid endDate "${endDate}". Must be YYYY-MM-DD format`);
-  }
-
-  // Validate date range logic
-  if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    
-    if (start > end) {
-      throw new Error(`Invalid date range: startDate "${startDate}" is after endDate "${endDate}"`);
+  const presetRaw = q.preset ? String(q.preset) : undefined;
+  let preset: Preset | undefined;
+  if (presetRaw) {
+    if (!["7d", "30d", "90d"].includes(presetRaw)) {
+      badRequest('Invalid "preset". Use 7d | 30d | 90d.');
     }
-    
-    // Check for reasonable range (not more than 1 year)
-    const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    if (daysDiff > 365) {
-      throw new Error(`Date range too large: ${daysDiff} days. Maximum allowed is 365 days`);
-    }
+    preset = presetRaw as Preset;
   }
 
-  // Resolve dates using the helper
-  const resolved = resolveDates(preset as Preset, startDate, endDate);
+  const startDate = q.startDate ? String(q.startDate) : undefined;
+  const endDate   = q.endDate ? String(q.endDate) : undefined;
 
-  // Determine how the date range was resolved
-  let resolvedFrom: 'preset' | 'explicit' | 'default';
+  let dateRange: { startDate: string; endDate: string };
   if (preset) {
-    resolvedFrom = 'preset';
-  } else if (startDate && endDate) {
-    resolvedFrom = 'explicit';
+    dateRange = resolveDates(preset);
+  } else if (startDate || endDate) {
+    if (!startDate || !endDate) {
+      badRequest('When using explicit dates, provide both "startDate" and "endDate" (YYYY-MM-DD).');
+    }
+    if (!isValidISODate(startDate!) || !isValidISODate(endDate!)) {
+      badRequest('Dates must be valid ISO strings YYYY-MM-DD.');
+    }
+    if (startDate! > endDate!) {
+      badRequest('"startDate" cannot be after "endDate".');
+    }
+    dateRange = { startDate: startDate!, endDate: endDate! };
   } else {
-    resolvedFrom = 'default';
+    // default window
+    dateRange = resolveDates("7d");
   }
 
-  return {
-    ...resolved,
-    isPreset: !!preset,
-    resolvedFrom
-  };
+  const lang = normalizeLang(q.lang);
+  const country = normalizeCountry(q.country);
+
+  const out: Ga4Parsed = { report: report as ReportKind, dateRange, lang, country };
+
+  if (report === "videoFunnel") {
+    const videoId = String(q.videoId || "");
+    if (!videoId) badRequest('Missing "videoId" for report=videoFunnel.');
+    out.videoId = videoId;
+  }
+
+  return out;
 }

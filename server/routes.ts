@@ -4608,124 +4608,61 @@ export async function registerRoutes(app: Express): Promise<void> {
     };
   }
 
-  // KPIs Report Builder (updated with new queries)
-  async function buildKpis(params: any) {
-    const { startDate, endDate } = dateRangeFromQuery(params);
-    const dateRange = { startDate, endDate };
-    const { lang, country } = params;
-    
+
+
+
+  // Import middleware
+  const { parseGa4Query } = await import('./middleware/parseGa4Query');
+
+  // Phase 3 GA4 Report Endpoint with centralized query parsing
+  app.get('/api/ga4/report', parseGa4Query, async (req, res) => {
     try {
-      console.log('📊 Building KPIs with GA4 Data API queries...');
-      
-      const [sess, starts, comps] = await Promise.all([
-        qKpisSessionsAndEngagement({ dateRange, lang, country }),
-        qKpisStartsByDate({ dateRange, lang, country }),
-        qKpisCompletionsByDate({ dateRange, lang, country }),
-      ]);
+      const ga4 = res.locals.ga4!;
+      console.log('🎯 GA4 API REQUEST INTERCEPTED: GET /api/ga4/report');
+      console.log('📊 GA4 Report requested:', ga4);
 
-      // engagement is included with sessions call above; pass sess twice
-      return mapKpis(
-        sess.rows ?? [],
-        starts.rows ?? [],
-        comps.rows ?? [],
-        sess.rows ?? []
-      );
-    } catch (error) {
-      console.error('❌ buildKpis error:', error);
-      throw error;
-    }
-  }
-
-  // Top Videos Report Builder (updated with new queries)
-  async function buildTopVideos(params: any) {
-    const { startDate, endDate } = dateRangeFromQuery(params);
-    const dateRange = { startDate, endDate };
-    const { lang, country } = params;
-    
-    try {
-      console.log('📊 Building Top Videos with GA4 Data API queries...');
-      
-      const [starts, comps] = await Promise.all([
-        qTopVideosStarts({ dateRange, lang, country }),
-        qTopVideosCompletions({ dateRange, lang, country }),
-      ]);
-
-      return mapTopVideos(starts.rows ?? [], comps.rows ?? []);
-    } catch (error) {
-      console.error('❌ buildTopVideos error:', error);
-      throw error;
-    }
-  }
-
-  // Video Funnel Report Builder (updated with new queries)
-  async function buildVideoFunnel(params: any) {
-    const { startDate, endDate } = dateRangeFromQuery(params);
-    const dateRange = { startDate, endDate };
-    const { videoId, lang, country } = params;
-    
-    if (!videoId) {
-      throw new Error('videoId is required for videoFunnel report');
-    }
-    
-    try {
-      console.log('📊 Building Video Funnel with GA4 Data API queries...');
-      
-      const vf = await qVideoFunnelByBuckets({ dateRange, videoId, lang, country });
-      return mapVideoFunnel(vf.rows ?? []);
-    } catch (error) {
-      console.error('❌ buildVideoFunnel error:', error);
-      throw error;
-    }
-  }
-
-  // Phase 3 GA4 Report Endpoint
-  app.get('/api/ga4/report', async (req, res) => {
-    try {
-      const { report, videoId, preset, startDate, endDate, lang, country } = req.query as any;
-
-      if (!report) {
-        return res.status(400).json({ error: "Missing report parameter" });
-      }
-
-      // Create cache key
-      const cacheKey = JSON.stringify({ report, videoId, preset, startDate, endDate, lang, country });
-      
-      // Check cache first
+      const cacheKey = JSON.stringify(ga4);
       const cached = ga4ReportCache.get(cacheKey);
       if (cached) {
-        console.log('🚀 GA4 Report cache hit:', report);
-        return res.json({ ...cached, cached: true });
+        console.log('✅ GA4 Report returned from cache');
+        return res.json(cached);
       }
 
-      console.log('📊 GA4 Report requested:', { report, videoId, preset, startDate, endDate, lang, country });
+      let result;
+      const { dateRange, lang, country } = ga4;
 
-      let data;
-      switch (report) {
-        case "kpis":
-          data = await buildKpis({ preset, startDate, endDate, lang, country });
+      switch (ga4.report) {
+        case 'kpis': {
+          const [sess, starts, comps] = await Promise.all([
+            qKpisSessionsAndEngagement({ dateRange, lang, country }),
+            qKpisStartsByDate({ dateRange, lang, country }),
+            qKpisCompletionsByDate({ dateRange, lang, country }),
+          ]);
+          result = mapKpis(sess.rows ?? [], starts.rows ?? [], comps.rows ?? [], sess.rows ?? []);
           break;
-        case "topVideos":
-          data = await buildTopVideos({ preset, startDate, endDate, lang, country });
+        }
+        case 'topVideos': {
+          const [starts, comps] = await Promise.all([
+            qTopVideosStarts({ dateRange, lang, country }),
+            qTopVideosCompletions({ dateRange, lang, country }),
+          ]);
+          result = mapTopVideos(starts.rows ?? [], comps.rows ?? []);
           break;
-        case "videoFunnel":
-          if (!videoId) {
-            return res.status(400).json({ error: "Missing videoId for videoFunnel report" });
-          }
-          data = await buildVideoFunnel({ videoId, preset, startDate, endDate, lang, country });
+        }
+        case 'videoFunnel': {
+          const vf = await qVideoFunnelByBuckets({ dateRange, lang, country, videoId: ga4.videoId! });
+          result = mapVideoFunnel(vf.rows ?? []);
           break;
-        default:
-          return res.status(400).json({ error: `Unknown report type: ${report}` });
+        }
       }
 
-      // Cache the result
-      ga4ReportCache.set(cacheKey, data);
-      console.log('✅ GA4 Report completed:', report);
-      
-      res.json(data);
+      ga4ReportCache.set(cacheKey, result);
+      console.log(`✅ GA4 Report completed: ${ga4.report}`);
+      res.json(result);
     } catch (error: any) {
       console.error('❌ GA4 report error:', error);
       res.status(500).json({ 
-        error: "Internal server error",
+        error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
@@ -5331,139 +5268,7 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Phase 3: New GA4 Report API with report= parameter (kpis, topVideos, videoFunnel)
-  app.get("/api/ga4/report", async (req, res) => {
-    try {
-      const { 
-        startDate, 
-        endDate, 
-        preset = '7d',
-        lang = 'all', 
-        country = 'all', 
-        videoId,
-        report = 'kpis'
-      } = req.query;
-
-      console.log(`🎯 Phase 3 GA4 Report: report=${report}, preset=${preset}, startDate=${startDate}, endDate=${endDate}`);
-      
-      // Calculate dates if not provided
-      let resolvedStartDate = startDate as string;
-      let resolvedEndDate = endDate as string;
-      
-      if (!startDate || !endDate) {
-        const dateRange = calculateDateRange(preset as string);
-        resolvedStartDate = dateRange.startDate;
-        resolvedEndDate = dateRange.endDate;
-      }
-
-      // Cache key per report type
-      const cacheKey = `ga4-phase3:${report}:${preset}:${resolvedStartDate}:${resolvedEndDate}:${lang}:${country}:${videoId || 'all'}`;
-      const cached = getCache<any>(cacheKey);
-      if (cached) {
-        console.log(`✅ Phase 3 cache hit: ${cacheKey}`);
-        return res.json(cached);
-      }
-
-      console.log(`🔄 Phase 3 generating fresh data: ${report}`);
-
-      // Import GA4 functions
-      const { qSessions, qPlays, qVideoFunnel, getTopVideosTable, qTrendDaily } = await import('./ga4-service');
-
-      let result: any = {};
-
-      switch (report) {
-        case 'kpis': {
-          console.log('📊 Fetching KPIs with sparklines...');
-          const [sessions, plays] = await Promise.all([
-            qSessions(resolvedStartDate, resolvedEndDate, lang === 'all' ? undefined : lang),
-            qPlays(resolvedStartDate, resolvedEndDate, lang === 'all' ? undefined : lang)
-          ]);
-
-          // Get completion count (progress_bucket = 90)
-          const completions = await qVideoFunnel(resolvedStartDate, resolvedEndDate, undefined, lang === 'all' ? undefined : lang)
-            .then(funnel => funnel.find(f => f.bucket === 90)?.count || 0);
-
-          // Get sparklines for trends
-          const trends = await qTrendDaily(resolvedStartDate, resolvedEndDate, lang === 'all' ? undefined : lang);
-
-          result = {
-            kpis: {
-              sessions: {
-                value: sessions,
-                trend: trends.map(t => ({ date: t.date, value: sessions })) // Simplified for now
-              },
-              plays: {
-                value: plays,
-                trend: trends.map(t => ({ date: t.date, value: t.plays }))
-              },
-              completions: {
-                value: completions,
-                trend: trends.map(t => ({ date: t.date, value: completions })) // Simplified for now
-              },
-              avgWatch: {
-                value: trends.length > 0 ? Math.round(trends.reduce((acc, t) => acc + t.avgWatch, 0) / trends.length) : 0,
-                trend: trends.map(t => ({ date: t.date, value: t.avgWatch }))
-              }
-            }
-          };
-          break;
-        }
-
-        case 'topVideos': {
-          console.log('📊 Fetching top videos...');
-          const topVideosData = await getTopVideosTable(resolvedStartDate, resolvedEndDate);
-          
-          result = {
-            topVideos: topVideosData.map(video => ({
-              videoId: video.video_id,
-              title: video.title || video.video_id,
-              plays: video.plays,
-              completions: Math.round(video.plays * video.completePct / 100),
-              completionRate: video.completePct,
-              avgEngagement: video.avgWatchSeconds
-            }))
-          };
-          break;
-        }
-
-        case 'videoFunnel': {
-          console.log(`📊 Fetching video funnel for videoId: ${videoId || 'all'}`);
-          const funnelData = await qVideoFunnel(resolvedStartDate, resolvedEndDate, videoId as string, lang === 'all' ? undefined : lang);
-          
-          result = {
-            funnel: funnelData.map(item => ({
-              bucket: item.bucket as 10|25|50|75|90,
-              count: item.count
-            }))
-          };
-          break;
-        }
-
-        default:
-          return res.status(400).json({ 
-            error: 'Invalid report type',
-            validReports: ['kpis', 'topVideos', 'videoFunnel'] 
-          });
-      }
-
-      // Add metadata
-      result.timestamp = new Date().toISOString();
-      result.cached = false;
-
-      console.log(`✅ Phase 3 ${report} data generated successfully`);
-      
-      // Cache for 60s as specified
-      setCache(cacheKey, { ...result, cached: true }, 60);
-      res.json(result);
-
-    } catch (error) {
-      console.error(`❌ Phase 3 GA4 Report error:`, error);
-      res.status(500).json({ 
-        error: 'Failed to generate Phase 3 GA4 report',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  });
+  // Phase 3: Duplicate endpoint removed - using new centralized middleware approach
 
   // GA4 Schema diagnostic endpoint to understand available custom events
   app.get("/api/ga4/debug-schema", async (req, res) => {
