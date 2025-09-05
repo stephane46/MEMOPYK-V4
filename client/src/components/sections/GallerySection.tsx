@@ -66,17 +66,24 @@ export default function GallerySection() {
   const [flippedCards, setFlippedCards] = useState<Set<string | number>>(new Set());
   const galleryRef = useRef<HTMLDivElement>(null);
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  // 🚨 CRITICAL FIX: Make mobile detection static to prevent re-renders
+  const [isMobile] = useState(() => {
+    // Only check once on mount - no reactive updates
+    const isMobileViewport = typeof window !== 'undefined' && window.innerWidth < 768;
+    console.log(`📱 STATIC MOBILE CHECK: width=${typeof window !== 'undefined' ? window.innerWidth : 'N/A'}, isMobile=${isMobileViewport}`);
+    return isMobileViewport;
+  });
   const [preloadedVideos, setPreloadedVideos] = useState<Set<string>>(new Set());
   // 🚨 CRITICAL FIX: Remove unused hooks that might cause re-renders
   // const networkStatus = useNetworkStatus();
   // const { orientation } = useDeviceOrientation();
   
-  // Animation state for scroll-triggered animations
-  const [animationStates, setAnimationStates] = useState({
-    firstText: false,
-    secondText: false
-  });
+  // 🚨 DISABLED: Animation state causing constant re-renders!
+  // const [animationStates, setAnimationStates] = useState({
+  //   firstText: false,
+  //   secondText: false
+  // });
+  const animationStates = { firstText: true, secondText: true }; // Always show text
   const firstTextRef = useRef<HTMLDivElement>(null);
   const secondTextRef = useRef<HTMLDivElement>(null);
   
@@ -89,16 +96,8 @@ export default function GallerySection() {
   });
 
   // Detect mobile viewport - Responsive mobile detection
-  useEffect(() => {
-    const checkMobile = () => {
-      const isMobileViewport = window.innerWidth < 768; // Use standard mobile breakpoint
-      console.log(`📱 MOBILE VIEWPORT CHECK: width=${window.innerWidth}, isMobile=${isMobileViewport}`);
-      setIsMobile(isMobileViewport);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  // 🚨 REMOVED: Resize listener that was causing constant re-renders
+  // Mobile detection is now static - no reactive updates needed for gallery
   
 
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
@@ -222,64 +221,12 @@ export default function GallerySection() {
     return Array.isArray(galleryItems) ? galleryItems.length : 0;
   }, [galleryItems]);
   
+  // 🚨 CRITICAL FIX: Completely disable animation observers to stop re-renders
+  // These IntersectionObservers were causing constant state updates
   useEffect(() => {
-    // Only set up observers AFTER gallery items are loaded
-    if (galleryItemsLength === 0) {
-      console.log('🎬 ⏳ Waiting for gallery data to load before setting up observers...');
-      return;
-    }
-
-    console.log('🎬 ========== SETTING UP OBSERVERS AFTER DATA LOAD ==========');
-    console.log('🎬 Gallery items loaded:', galleryItemsLength);
-    console.log('🎬 First text ref exists:', !!firstTextRef.current);
-    console.log('🎬 Second text ref exists:', !!secondTextRef.current);
-    
-    const firstObserver = new IntersectionObserver(
-      ([entry]) => {
-        console.log('🎬 ⬅ FIRST OBSERVER FIRED!', entry.isIntersecting);
-        if (entry.isIntersecting && !animationStates.firstText) {
-          console.log('🎬 ⬅ ✅ FIRST TEXT TRIGGERED!');
-          setAnimationStates(prev => ({ ...prev, firstText: true }));
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    const secondObserver = new IntersectionObserver(
-      ([entry]) => {
-        console.log('🎬 ➡ SECOND OBSERVER FIRED!', entry.isIntersecting);
-        if (entry.isIntersecting && !animationStates.secondText) {
-          console.log('🎬 ➡ ✅ SECOND TEXT TRIGGERED!');
-          setAnimationStates(prev => ({ ...prev, secondText: true }));
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    // Set up observers with timeout to ensure DOM is ready
-    const timer = setTimeout(() => {
-      if (firstTextRef.current) {
-        console.log('🎬 ⬅ First observer attached successfully');
-        firstObserver.observe(firstTextRef.current);
-      } else {
-        console.error('🎬 ⬅ ❌ STILL NO FIRST TEXT ELEMENT!');
-      }
-
-      if (secondTextRef.current) {
-        console.log('🎬 ➡ Second observer attached successfully'); 
-        secondObserver.observe(secondTextRef.current);
-      } else {
-        console.error('🎬 ➡ ❌ STILL NO SECOND TEXT ELEMENT!');
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      firstObserver.disconnect();
-      secondObserver.disconnect();
-      console.log('🎬 🧹 Observers cleaned up');
-    };
-  }, [galleryItemsLength]); // FIXED: Use stable length instead of galleryItems object
+    console.log('🎬 Animation observers DISABLED to prevent VideoOverlay remounting');
+    // All animation logic disabled - text always visible
+  }, []);
 
   // Add gallery video logging similar to hero videos
   useEffect(() => {
