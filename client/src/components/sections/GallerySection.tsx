@@ -68,8 +68,9 @@ export default function GallerySection() {
   const [lightboxVideo, setLightboxVideo] = useState<GalleryItem | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [preloadedVideos, setPreloadedVideos] = useState<Set<string>>(new Set());
-  const networkStatus = useNetworkStatus();
-  const { orientation } = useDeviceOrientation();
+  // 🚨 CRITICAL FIX: Remove unused hooks that might cause re-renders
+  // const networkStatus = useNetworkStatus();
+  // const { orientation } = useDeviceOrientation();
   
   // Animation state for scroll-triggered animations
   const [animationStates, setAnimationStates] = useState({
@@ -236,7 +237,7 @@ export default function GallerySection() {
     const firstObserver = new IntersectionObserver(
       ([entry]) => {
         console.log('🎬 ⬅ FIRST OBSERVER FIRED!', entry.isIntersecting);
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !animationStates.firstText) {
           console.log('🎬 ⬅ ✅ FIRST TEXT TRIGGERED!');
           setAnimationStates(prev => ({ ...prev, firstText: true }));
         }
@@ -247,7 +248,7 @@ export default function GallerySection() {
     const secondObserver = new IntersectionObserver(
       ([entry]) => {
         console.log('🎬 ➡ SECOND OBSERVER FIRED!', entry.isIntersecting);
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !animationStates.secondText) {
           console.log('🎬 ➡ ✅ SECOND TEXT TRIGGERED!');
           setAnimationStates(prev => ({ ...prev, secondText: true }));
         }
