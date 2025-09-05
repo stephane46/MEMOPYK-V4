@@ -772,10 +772,22 @@ export default function VideoOverlay({
           controls={false}
           onClick={handleVideoClick}
           onMouseMove={resetControlsTimer}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onLoadedMetadata={handleLoadedMetadata}
-          onTimeUpdate={updateProgress}
+          onPlay={() => {
+            console.log('🎯 VIDEO PLAY EVENT FIRED');
+            handlePlay();
+          }}
+          onPause={() => {
+            console.log('🎯 VIDEO PAUSE EVENT FIRED');
+            handlePause();
+          }}
+          onLoadedMetadata={() => {
+            console.log('🎯 VIDEO METADATA LOADED');
+            handleLoadedMetadata();
+          }}
+          onTimeUpdate={(e) => {
+            console.log('🎯 TIMEUPDATE EVENT FIRED - Current time:', e.currentTarget.currentTime);
+            updateProgress();
+          }}
           onError={handleVideoError}
           onCanPlay={handleCanPlay}
           onCanPlayThrough={handleCanPlayThrough}
