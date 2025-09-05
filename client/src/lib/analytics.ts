@@ -21,7 +21,11 @@ export function initGA(): void {
   const gtagScript = document.createElement('script');
   gtagScript.async = true;
   gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
-  document.head.appendChild(gtagScript);
+  if (document.head) {
+    document.head.appendChild(gtagScript);
+  } else {
+    console.error('document.head not available for GA4 script');
+  }
   
   // Initialize gtag
   window.dataLayer = window.dataLayer || [];

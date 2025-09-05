@@ -39,7 +39,11 @@
             banner.id = 'ga-test-banner';
             banner.textContent = '🧪 GA TEST MODE ACTIVE';
             banner.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#ff9800;color:#fff;padding:8px 12px;font:600 13px/1.2 system-ui,Segoe UI,Roboto,Arial;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);z-index:2147483647;';
-            document.body.appendChild(banner);
+            if (document.body) {
+              document.body.appendChild(banner);
+            } else {
+              console.error('document.body not available for GA test banner');
+            }
           }
         })();
       } else {

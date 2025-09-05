@@ -11,7 +11,11 @@ export async function downloadCSV(endpoint: string, filename: string) {
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
-    document.body.appendChild(link);
+    if (document.body) {
+      document.body.appendChild(link);
+    } else {
+      throw new Error('document.body not available for file download');
+    }
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
@@ -33,7 +37,11 @@ export async function downloadPDF(filename: string = 'analytics_report.pdf') {
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
-    document.body.appendChild(link);
+    if (document.body) {
+      document.body.appendChild(link);
+    } else {
+      throw new Error('document.body not available for file download');
+    }
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
