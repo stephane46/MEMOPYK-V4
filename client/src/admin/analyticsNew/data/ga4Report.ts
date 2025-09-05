@@ -61,13 +61,26 @@ export async function fetchReport<T>(params: ReportParams): Promise<T> {
   if (params.country) qs.set("country", params.country);
 
   const resp = await fetch(`/api/ga4/report?${qs.toString()}`);
-  if (!resp.ok) throw new Error(`API error ${resp.status}`);
   
   // Read X-Data-Source header and update state
   const ds = (resp.headers.get("x-data-source") || "unknown").toLowerCase();
   if (ds === "live" || ds === "mock") setDataSource(ds as any);
   
   const json = await resp.json();
+  
+  if (!resp.ok) {
+    // Parse enhanced error response from server
+    const errorMessage = json.message || json.error || `API error ${resp.status}`;
+    const enhancedError = new Error(errorMessage);
+    
+    // Preserve additional error details from the enhanced GA4 error handling
+    if (json.error) (enhancedError as any).errorType = json.error;
+    if (json.instructions) (enhancedError as any).instructions = json.instructions;
+    if (json.missingDimensions) (enhancedError as any).missingDimensions = json.missingDimensions;
+    if (json.ga4Code) (enhancedError as any).ga4Code = json.ga4Code;
+    
+    throw enhancedError;
+  }
   
   if (SIMULATE_EMPTY) {
     if (params.report === "kpis") {
