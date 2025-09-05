@@ -254,7 +254,7 @@ export default function VideoOverlay({
             current_time: Math.round(video.currentTime),
             duration_sec: video.duration || 0,
             locale: language,
-            debug_mode: window.location.search.includes('ga_dev=1') || localStorage.getItem('ga_dev') === '1'
+            debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
           });
           console.log(`✅ GA4 video_progress event sent: ${milestone}%`);
         }
@@ -383,7 +383,7 @@ export default function VideoOverlay({
         duration_sec: duration || 0,
         position_sec: currentTime || 0,
         locale: language,
-        debug_mode: true
+        debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
       });
       console.log('✅ GA4 video_start event sent');
       
@@ -430,7 +430,7 @@ export default function VideoOverlay({
         current_time: Math.round(duration), // Video fully completed
         completion_rate: 100,
         locale: language,
-        debug_mode: window.location.search.includes('ga_dev=1') || localStorage.getItem('ga_dev') === '1'
+        debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
       });
     }
     
@@ -570,7 +570,7 @@ export default function VideoOverlay({
           current_time: finalWatchTime,
           completion_rate: completionRate,
           locale: language,
-          debug_mode: window.location.search.includes('ga_dev=1') || localStorage.getItem('ga_dev') === '1'
+          debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
         });
       }
     } else {
