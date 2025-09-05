@@ -1,0 +1,82 @@
+import { mockReport } from "./mockReport";
+import type { ReportParams } from "./types";
+
+const USE_MOCK = import.meta.env?.VITE_USE_MOCK === "true";
+
+export async function fetchReport<T>(params: ReportParams): Promise<T> {
+  // Simulations can be layered on top of mock or live:
+  const SIMULATE_ERROR = import.meta.env?.VITE_SIMULATE_ERROR === "true";
+  const SIMULATE_EMPTY = import.meta.env?.VITE_SIMULATE_EMPTY === "true";
+
+  if (SIMULATE_ERROR) {
+    await new Promise(r => setTimeout(r, 300));
+    throw new Error("Simulated error for testing");
+  }
+
+  if (USE_MOCK) {
+    await new Promise(r => setTimeout(r, 150)); // mimic latency
+    const res = mockReport(params) as T;
+    
+    if (SIMULATE_EMPTY) {
+      // Return empty counterparts depending on report
+      if (params.report === "kpis") {
+        return { 
+          kpis: {
+            sessions: { value: 0, trend: [] },
+            plays: { value: 0, trend: [] },
+            completions: { value: 0, trend: [] },
+            avgWatch: { value: 0, trend: [] },
+          },
+          timestamp: new Date().toISOString(),
+          cached: false
+        } as T;
+      }
+      if (params.report === "topVideos") {
+        return { 
+          topVideos: [],
+          timestamp: new Date().toISOString(),
+          cached: false
+        } as T;
+      }
+      if (params.report === "videoFunnel") {
+        return { 
+          funnel: [],
+          timestamp: new Date().toISOString(),
+          cached: false
+        } as T;
+      }
+    }
+    return res;
+  }
+
+  // Live mode: call backend
+  const qs = new URLSearchParams();
+  qs.set("report", params.report);
+  if (params.videoId) qs.set("videoId", params.videoId);
+  if (params.preset) qs.set("preset", params.preset);
+  if (params.startDate) qs.set("startDate", params.startDate);
+  if (params.endDate) qs.set("endDate", params.endDate);
+  if (params.lang) qs.set("lang", params.lang);
+  if (params.country) qs.set("country", params.country);
+
+  const resp = await fetch(`/api/ga4/report?${qs.toString()}`);
+  if (!resp.ok) throw new Error(`API error ${resp.status}`);
+  const json = await resp.json();
+  
+  if (SIMULATE_EMPTY) {
+    if (params.report === "kpis") {
+      json.kpis.sessions.trend = [];
+      json.kpis.plays.trend = [];
+      json.kpis.completions.trend = [];
+      json.kpis.avgWatch.trend = [];
+      json.kpis.sessions.value = 0;
+      json.kpis.plays.value = 0;
+      json.kpis.completions.value = 0;
+      json.kpis.avgWatch.value = 0;
+    }
+    if (params.report === "topVideos") json.topVideos = [];
+    if (params.report === "videoFunnel") json.funnel = [];
+  }
+  
+  return json as T;
+}

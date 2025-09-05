@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Video, Clock, MousePointer, Eye } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { OverviewKpis } from './components/OverviewKpis';
 import { AnalyticsNewKpiCard, KpiData } from './AnalyticsNewKpiCard';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import './analyticsNew.tokens.css';
-
-// Phase 2 - Switch to real GA4 data
-const USE_MOCK = false;
 
 type MockState = 'normal' | 'loading' | 'empty' | 'error';
 
@@ -38,6 +36,11 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
 
   // Get current filter state
   const { datePreset, customDateStart, customDateEnd, getDateRange } = useAnalyticsNewFilters();
+  
+  // Convert preset to the expected format
+  const preset = (datePreset === '7d' || datePreset === '30d' || datePreset === '90d') 
+    ? datePreset 
+    : '7d';
 
   // Get realtime GA4 data for active users
   const { data: ga4Data, isLoading: ga4Loading } = useQuery<any>({
@@ -334,8 +337,14 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* KPI Cards Grid - Phase 3 Fixtures */}
+      <OverviewKpis 
+        preset={preset}
+        className="mb-6"
+      />
+
+      {/* Legacy KPI Cards for fallback */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" style={{ display: 'none' }}>
         {kpiData.map((kpi) => (
           <AnalyticsNewKpiCard
             key={kpi.id}

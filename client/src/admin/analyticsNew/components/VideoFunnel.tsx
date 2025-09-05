@@ -1,0 +1,159 @@
+import React from "react";
+import { useGa4Report } from "../hooks/useGa4Report";
+import type { VideoFunnelResponse } from "../data/types";
+import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
+
+interface VideoFunnelProps {
+  videoId: string;
+  videoTitle?: string;
+  preset?: "7d" | "30d" | "90d";
+  onClose?: () => void;
+  className?: string;
+}
+
+export function VideoFunnel({ 
+  videoId, 
+  videoTitle, 
+  preset = "7d", 
+  onClose,
+  className = "" 
+}: VideoFunnelProps) {
+  const { data, loading, error } = useGa4Report<VideoFunnelResponse>({
+    report: "videoFunnel",
+    videoId,
+    preset
+  });
+
+  if (loading) {
+    return (
+      <div className={`analytics-new-card border-l-4 border-[var(--analytics-new-accent)] ${className}`}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+            Video Engagement Funnel - {videoTitle || videoId}
+          </h3>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="text-[var(--analytics-new-text-muted)] hover:text-[var(--analytics-new-text)] text-xl font-bold"
+              data-testid="close-funnel"
+            >
+              ×
+            </button>
+          )}
+        </div>
+        <AnalyticsNewLoadingStates mode="loading" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={`analytics-new-card border-l-4 border-red-500 ${className}`}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+            Video Engagement Funnel - {videoTitle || videoId}
+          </h3>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="text-[var(--analytics-new-text-muted)] hover:text-[var(--analytics-new-text)] text-xl font-bold"
+              data-testid="close-funnel"
+            >
+              ×
+            </button>
+          )}
+        </div>
+        <AnalyticsNewLoadingStates 
+          mode="error" 
+          title="Error loading funnel"
+          description="Unable to fetch video engagement data"
+        />
+      </div>
+    );
+  }
+
+  if (!data || data.funnel.length === 0) {
+    return (
+      <div className={`analytics-new-card border-l-4 border-gray-300 ${className}`}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+            Video Engagement Funnel - {videoTitle || videoId}
+          </h3>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="text-[var(--analytics-new-text-muted)] hover:text-[var(--analytics-new-text)] text-xl font-bold"
+              data-testid="close-funnel"
+            >
+              ×
+            </button>
+          )}
+        </div>
+        <AnalyticsNewLoadingStates 
+          mode="empty" 
+          title="No funnel data"
+          description="No engagement data available for this video"
+        />
+      </div>
+    );
+  }
+
+  const USE_MOCK = import.meta.env?.VITE_USE_MOCK === "true";
+  const maxCount = Math.max(...data.funnel.map(step => step.count));
+
+  return (
+    <div className={`analytics-new-card border-l-4 border-[var(--analytics-new-accent)] ${className}`} data-testid="video-funnel">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+            Video Engagement Funnel - {videoTitle || videoId}
+          </h3>
+          {USE_MOCK && (
+            <div className="text-xs text-orange-500 font-medium mt-1">🧪 Mock Data</div>
+          )}
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="text-[var(--analytics-new-text-muted)] hover:text-[var(--analytics-new-text)] text-xl font-bold"
+            data-testid="close-funnel"
+          >
+            ×
+          </button>
+        )}
+      </div>
+
+      <div className="grid grid-cols-5 gap-4 mb-6">
+        {data.funnel.map(step => (
+          <div 
+            key={step.bucket} 
+            className="p-4 rounded-xl border border-gray-200 text-center"
+            data-testid={`funnel-bucket-${step.bucket}`}
+          >
+            <div className="text-sm font-medium text-[var(--analytics-new-text-muted)] mb-1">
+              {step.bucket === 90 ? "90% (Complete)" : `${step.bucket}%`}
+            </div>
+            <div className="text-xl font-bold text-[var(--analytics-new-text)]">
+              {step.count.toLocaleString()}
+            </div>
+            {maxCount > 0 && (
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div 
+                  className="bg-[var(--analytics-new-accent)] h-2 rounded-full transition-all duration-500" 
+                  style={{ width: `${(step.count / maxCount) * 100}%` }}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="text-xs text-[var(--analytics-new-text-muted)] border-t pt-4">
+        <p>
+          <strong>Progress Buckets:</strong> Shows how many users reached each milestone. 
+          90% completion indicates users who watched at least 90% of the video.
+        </p>
+      </div>
+    </div>
+  );
+}
