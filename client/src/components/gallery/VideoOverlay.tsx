@@ -30,7 +30,6 @@ export default function VideoOverlay({
   preloadedElement = null,
   thumbnailUrl 
 }: VideoOverlayProps) {
-  console.log('🎬 VideoOverlay MOUNTED - v1.0.200 STABLE', videoUrl);
   
   // State
   const [isPlaying, setIsPlaying] = useState(false);
@@ -454,6 +453,7 @@ export default function VideoOverlay({
 
   // MOUNT ONCE ONLY - Initialization effect
   useEffect(() => {
+    console.log('🎬 VideoOverlay MOUNTED - v1.0.200 STABLE', videoUrl);
     console.log('🎬 VideoOverlay INITIALIZING - v1.0.200');
     
     videoStartTimeRef.current = Date.now();
