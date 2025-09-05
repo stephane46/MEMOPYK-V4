@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -562,11 +562,11 @@ export default function GallerySection() {
     }
   };
 
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setLightboxVideo(null);
     // Restore body scrolling
     document.body.style.overflow = 'unset';
-  };
+  }, []);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     // Only close if clicking the backdrop (not the video player)
