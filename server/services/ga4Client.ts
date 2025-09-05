@@ -36,6 +36,40 @@ export async function runGa4Report(payload: RunReportRequest): Promise<RunReport
   return runGa4ReportReal(payload);
 }
 
+// Metadata API function to check custom dimensions
+export async function checkGa4CustomDimensions(): Promise<{[key: string]: boolean}> {
+  if (GA4_MOCK) {
+    return { video_id: true, video_title: true, progress_bucket: true };
+  }
+  
+  try {
+    const { BetaAnalyticsDataClient } = await import("@google-analytics/data");
+    const client = new BetaAnalyticsDataClient({
+      credentials: JSON.parse(process.env.GA4_SERVICE_ACCOUNT_KEY!)
+    });
+    
+    const [response] = await client.getMetadata({
+      name: `properties/${process.env.GA4_PROPERTY_ID}/metadata`
+    });
+    
+    const customDimensions = response.dimensions?.filter(
+      d => d.apiName?.startsWith('customEvent:')
+    ) || [];
+    
+    const found = {
+      video_id: customDimensions.some(d => d.apiName === 'customEvent:video_id'),
+      video_title: customDimensions.some(d => d.apiName === 'customEvent:video_title'), 
+      progress_bucket: customDimensions.some(d => d.apiName === 'customEvent:progress_bucket')
+    };
+    
+    console.log('🔍 GA4 Custom Dimensions Found:', found);
+    return found;
+  } catch (error) {
+    console.error('❌ Failed to check GA4 custom dimensions:', error);
+    return { video_id: false, video_title: false, progress_bucket: false };
+  }
+}
+
 // =========================
 // MOCK IMPLEMENTATION
 // =========================
@@ -126,16 +160,66 @@ async function runGa4ReportReal(payload: RunReportRequest): Promise<RunReportRes
     credentials: JSON.parse(process.env.GA4_SERVICE_ACCOUNT_KEY!)
   });
   
-  const [response] = await client.runReport({
-    property: `properties/${process.env.GA4_PROPERTY_ID}`,
-    ...payload
-  });
+  try {
+    const [response] = await client.runReport({
+      property: `properties/${process.env.GA4_PROPERTY_ID}`,
+      ...payload
+    });
+    
+    // Log first few dimension values to confirm real data
+    if (response.rows && response.rows.length > 0) {
+      console.log('🔍 GA4 Real Data Sample - First row dimensions:', 
+        response.rows[0].dimensionValues?.slice(0, 2).map(d => d.value));
+    }
+    
+    return response;
+  } catch (error: any) {
+    // Enhanced error handling - pass through GA4 error details
+    console.error('🚨 GA4 API Error Details:', {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      metadata: error.metadata
+    });
+    
+    // Check for missing custom dimension errors
+    if (error.code === 3 && error.message && error.message.includes('INVALID_ARGUMENT')) {
+      const missingDimensions = checkForMissingCustomDimensions(error.message, payload);
+      if (missingDimensions.length > 0) {
+        const customError = new Error(
+          `Missing GA4 custom dimension${missingDimensions.length > 1 ? 's' : ''}: ${missingDimensions.join(', ')} (event-scoped). Create ${missingDimensions.length > 1 ? 'them' : 'it'} in GA4 Admin → Custom definitions.`
+        );
+        (customError as any).code = 'MISSING_CUSTOM_DIMENSION';
+        (customError as any).statusCode = 400;
+        (customError as any).missingDimensions = missingDimensions;
+        throw customError;
+      }
+    }
+    
+    // Pass through the original error with enhanced details
+    const enhancedError = new Error(`GA4 API Error (${error.code}): ${error.message || 'Unknown error'}`);
+    (enhancedError as any).code = error.code;
+    (enhancedError as any).originalError = error;
+    throw enhancedError;
+  }
+}
+
+// Helper function to detect missing custom dimensions
+function checkForMissingCustomDimensions(errorMessage: string, payload: RunReportRequest): string[] {
+  const missing: string[] = [];
+  const customDimensions = ['video_id', 'video_title', 'progress_bucket'];
   
-  // Log first few dimension values to confirm real data
-  if (response.rows && response.rows.length > 0) {
-    console.log('🔍 GA4 Real Data Sample - First row dimensions:', 
-      response.rows[0].dimensionValues?.slice(0, 2).map(d => d.value));
+  // Check if any custom dimensions are used in the query
+  const usedCustomDims = payload.dimensions?.filter(d => d.name.startsWith('customEvent:')) || [];
+  
+  for (const dim of usedCustomDims) {
+    const paramName = dim.name.replace('customEvent:', '');
+    if (customDimensions.includes(paramName)) {
+      // This is a heuristic - GA4 error messages don't always clearly specify which dimension is missing
+      // But if we're using a custom dimension and getting INVALID_ARGUMENT, it's likely missing
+      missing.push(paramName);
+    }
   }
   
-  return response;
+  return missing;
 }

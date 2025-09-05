@@ -4675,9 +4675,62 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(result);
     } catch (error: any) {
       console.error('❌ GA4 report error:', error);
-      res.status(500).json({ 
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
+      
+      // Handle missing custom dimensions with helpful error messages
+      if (error.code === 'MISSING_CUSTOM_DIMENSION') {
+        return res.status(400).json({
+          error: 'Missing GA4 Custom Dimension',
+          message: error.message,
+          missingDimensions: error.missingDimensions,
+          instructions: 'Create the missing custom dimensions in GA4 Admin → Custom definitions → Create custom dimension (Event scope)'
+        });
+      }
+      
+      // Handle GA4 INVALID_ARGUMENT errors with detailed information
+      if (error.code === 3 || (error.originalError && error.originalError.code === 3)) {
+        return res.status(400).json({
+          error: 'GA4 Invalid Argument',
+          message: error.message,
+          ga4Code: error.code,
+          details: 'This usually indicates missing custom dimensions or invalid query parameters',
+          instructions: 'Check that video_id, video_title, and progress_bucket custom dimensions exist in GA4 Admin'
+        });
+      }
+      
+      // Default error handling with enhanced details
+      const statusCode = error.statusCode || 500;
+      res.status(statusCode).json({ 
+        error: statusCode === 500 ? 'Internal server error' : 'GA4 API Error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        ga4Code: error.code || undefined
+      });
+    }
+  });
+
+  // GA4 Custom Dimensions Check endpoint
+  app.get('/api/ga4/check-dimensions', async (req, res) => {
+    try {
+      const { checkGa4CustomDimensions } = await import('./services/ga4Client');
+      const dimensions = await checkGa4CustomDimensions();
+      
+      const missing = Object.entries(dimensions)
+        .filter(([_, exists]) => !exists)
+        .map(([name, _]) => name);
+      
+      res.json({
+        success: true,
+        dimensions,
+        allPresent: missing.length === 0,
+        missing,
+        instructions: missing.length > 0 
+          ? `Create missing custom dimensions in GA4 Admin → Custom definitions: ${missing.join(', ')}`
+          : 'All required custom dimensions are present'
+      });
+    } catch (error) {
+      console.error('❌ GA4 dimensions check error:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   });
