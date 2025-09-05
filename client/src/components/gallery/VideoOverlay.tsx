@@ -80,11 +80,28 @@ export default function VideoOverlay({
 
   // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time - MOUNT ONCE ONLY
   useEffect(() => {
+    console.log('🎬 VideoOverlay MOUNTED - Setting up video element');
+    console.log('🎬 Video URL:', videoUrl);
+    console.log('🎬 Video ref exists:', !!videoRef.current);
+    
     videoStartTimeRef.current = Date.now();
     thumbnailStartTimeRef.current = Date.now();
     videoReadyRef.current = false;
     // Don't reset milestones on every re-mount - only reset for truly new videos
     console.log('🎬 VideoOverlay effect running - NOT clearing milestones (prevent reset on re-mount)');
+    
+    // Test if video element exists after a small delay
+    setTimeout(() => {
+      console.log('🎬 DELAYED CHECK - Video ref exists:', !!videoRef.current);
+      if (videoRef.current) {
+        console.log('🎬 Video element properties:', {
+          src: videoRef.current.src,
+          readyState: videoRef.current.readyState,
+          duration: videoRef.current.duration,
+          currentTime: videoRef.current.currentTime
+        });
+      }
+    }, 1000);
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
