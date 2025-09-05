@@ -1,8 +1,8 @@
 [
   {
     "id": "book_call",
-    "buttonTextFr": "Réserver une Consultation",
-    "buttonTextEn": "Book a Consultation", 
+    "buttonTextFr": "Consultation gratuite",
+    "buttonTextEn": "Free consultation", 
     "buttonUrlFr": "https://cal.memopyk.com/#/memopykfr",
     "buttonUrlEn": "https://cal.memopyk.com/#/memopyk1",
     "isActive": true,
@@ -11,8 +11,8 @@
   },
   {
     "id": "quick_quote",
-    "buttonTextFr": "Obtenir un Devis",
-    "buttonTextEn": "Get a Quote",
+    "buttonTextFr": "Devis gratuit",
+    "buttonTextEn": "Free quote",
     "buttonUrlFr": "https://zfrmz.eu/RdtLOFOuH2XDmFB1yXzG", 
     "buttonUrlEn": "https://zfrmz.eu/hQvcUay58hWLza3hc6qM",
     "isActive": true,
