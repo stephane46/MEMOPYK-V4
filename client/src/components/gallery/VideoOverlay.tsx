@@ -65,18 +65,25 @@ export default function VideoOverlay({
   // Track if video_start has been sent for this session
   const videoStartSentRef = useRef(false);
   
-
+  // Create stable refs for props to avoid dependency issues
+  const videoUrlRef = useRef(videoUrl);
+  const titleRef = useRef(title);
+  
+  // Update refs when props change, but don't trigger re-renders
+  videoUrlRef.current = videoUrl;
+  titleRef.current = title;
   
   // Feature flag for video analytics - Use environment variable as intended
   const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
   
   // Extract video ID from URL - stable reference for session tracking
   const getVideoId = useCallback(() => {
-    if (videoUrl.includes('filename=')) {
-      return videoUrl.split('filename=')[1].split('&')[0];
+    const currentVideoUrl = videoUrlRef.current;
+    if (currentVideoUrl.includes('filename=')) {
+      return currentVideoUrl.split('filename=')[1].split('&')[0];
     }
-    return videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
-  }, [videoUrl]);
+    return currentVideoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+  }, []); // No dependencies - uses ref
 
   // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time - MOUNT ONCE ONLY
   useEffect(() => {
@@ -121,7 +128,7 @@ export default function VideoOverlay({
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
     console.error('VideoOverlay Error:', e.target?.error);
-  }, [videoUrl]);
+  }, []); // No dependencies needed
 
   // Mobile detection - same logic as GallerySection
   const getIsMobile = useCallback(() => {
@@ -212,7 +219,7 @@ export default function VideoOverlay({
       
       return { width: containerWidth, height: containerHeight };
     }
-  }, [orientation, width, height, getViewportRatio, getIsMobile, title]);
+  }, [orientation, width, height, getViewportRatio, getIsMobile]); // Removed title dependency
 
   const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());
 
@@ -258,9 +265,7 @@ export default function VideoOverlay({
       setDuration(video.duration);
       
       // GA4 Analytics: Extract data inside callback to avoid dependencies
-      const videoId = videoUrl.includes('filename=') 
-        ? videoUrl.split('filename=')[1].split('&')[0]
-        : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+      const videoId = getVideoId();
         
       // Milestone tracking - Track progress at 10%, 25%, 50%, 75%, 90%
       const milestones = [10, 25, 50, 75, 90];
@@ -274,7 +279,7 @@ export default function VideoOverlay({
           
           fireGA('video_progress', {
             video_id: videoId,
-            video_title: title,
+            video_title: titleRef.current,
             progress_percent: milestone,
             current_time: Math.round(video.currentTime),
             duration_sec: video.duration || 0,
@@ -285,7 +290,7 @@ export default function VideoOverlay({
         }
       }
     }
-  }, [title, videoUrl]);
+  }, []); // No dependencies - uses refs
 
   // Heartbeat system for Live View tracking with concurrent sessions support
   const getOrCreateSessionId = useCallback(() => {
@@ -365,7 +370,7 @@ export default function VideoOverlay({
     } catch (error) {
       console.warn('❌ Heartbeat error:', error);
     }
-  }, [getOrCreateSessionId, getVideoId, title]);
+  }, [getOrCreateSessionId, getVideoId]); // Removed title dependency
 
   const startHeartbeat = useCallback(() => {
     if (heartbeatIntervalRef.current) {
@@ -395,9 +400,7 @@ export default function VideoOverlay({
     resetControlsTimer();
     
     // Extract videoId for all tracking
-    const videoId = videoUrl.includes('filename=') 
-      ? videoUrl.split('filename=')[1].split('&')[0]
-      : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+    const videoId = getVideoId();
     
     // GA4 Analytics: Track video_start only once per session
     if (!videoStartSentRef.current) {
@@ -405,7 +408,7 @@ export default function VideoOverlay({
       console.log('🚀🚀🚀 fireGA function exists?', typeof fireGA);
       fireGA('video_start', {
         video_id: videoId,
-        video_title: title,
+        video_title: titleRef.current,
         duration_sec: duration || 0,
         position_sec: currentTime || 0,
         locale: language,
@@ -426,7 +429,7 @@ export default function VideoOverlay({
     
     // LIVE VIEW TRACKING: Start heartbeat system for real-time tracking
     startHeartbeat();
-  }, [resetControlsTimer, VIDEO_ANALYTICS_ENABLED, trackVideoView, title, videoUrl, duration, currentTime, language, startHeartbeat]);
+  }, [resetControlsTimer, VIDEO_ANALYTICS_ENABLED, trackVideoView, duration, currentTime, language, startHeartbeat]); // Removed title, videoUrl dependencies
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
@@ -444,16 +447,14 @@ export default function VideoOverlay({
     setShowControls(true);
     
     // GA4 Analytics: Track video_complete when video naturally ends
-    const videoId = videoUrl.includes('filename=') 
-      ? videoUrl.split('filename=')[1].split('&')[0]
-      : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+    const videoId = getVideoId();
       
     if (duration > 0) {
       console.log('🎬 VIDEO ENDED: Natural completion detected');
       console.log('🚀🚀🚀 FIRING GA4 video_complete event for:', videoId);
       fireGA('video_complete', {
         video_id: videoId,
-        video_title: title,
+        video_title: titleRef.current,
         duration_sec: Math.round(duration),
         current_time: Math.round(duration), // Video fully completed
         completion_rate: 100,
@@ -474,7 +475,7 @@ export default function VideoOverlay({
     
     // LIVE VIEW TRACKING: Stop heartbeat when video ends
     stopHeartbeat();
-  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, title, videoUrl, language, stopHeartbeat]);
+  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, language, stopHeartbeat]); // Removed title, videoUrl dependencies
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
@@ -593,7 +594,7 @@ export default function VideoOverlay({
       if (completionRate >= 90) {
         fireGA('video_complete', {
           video_id: videoId,
-          video_title: title,
+          video_title: titleRef.current,
           duration_sec: Math.round(actualDuration),
           current_time: finalWatchTime,
           completion_rate: completionRate,
@@ -620,7 +621,7 @@ export default function VideoOverlay({
     
     // Call original close function
     onClose();
-  }, [getVideoId, trackVideoView, onClose, VIDEO_ANALYTICS_ENABLED, title]);
+  }, [getVideoId, trackVideoView, onClose, VIDEO_ANALYTICS_ENABLED]); // Removed title dependency
 
   const handleOverlayClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
