@@ -119,6 +119,15 @@ export const AnalyticsNewKpiCard: React.FC<AnalyticsNewKpiCardProps> = ({
   }
 
   if (error) {
+    // Check if this is a GA4 custom dimension error
+    const isGA4CustomDimensionError = typeof error === 'string' && 
+                                     (error.includes('GA4 Invalid Argument') || error.includes('custom dimension'));
+    
+    const errorTitle = isGA4CustomDimensionError ? "GA4 Setup Required" : "Error loading data";
+    const errorMessage = isGA4CustomDimensionError 
+      ? "Create video_id, video_title, progress_bucket in GA4 Admin → Custom definitions"
+      : error;
+
     return (
       <div className={cn('analytics-new-card border-red-200', className)}>
         <div className="flex items-start justify-between mb-4">
@@ -127,8 +136,8 @@ export const AnalyticsNewKpiCard: React.FC<AnalyticsNewKpiCardProps> = ({
             <Icon className="h-4 w-4" />
           </div>
         </div>
-        <p className="text-sm text-red-600">Error loading data</p>
-        <p className="text-xs text-gray-500 mt-1">{error}</p>
+        <p className="text-sm text-red-600">{errorTitle}</p>
+        <p className="text-xs text-gray-500 mt-1">{errorMessage}</p>
       </div>
     );
   }

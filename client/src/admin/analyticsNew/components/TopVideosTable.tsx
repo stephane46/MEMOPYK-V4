@@ -70,12 +70,21 @@ export function TopVideosTable({ onSelect, preset = "7d", className = "" }: TopV
   }
 
   if (error) {
+    // Check if this is a GA4 custom dimension error
+    const isGA4CustomDimensionError = error?.message?.includes?.('GA4 Invalid Argument') || 
+                                     error?.message?.includes?.('custom dimension');
+    
+    const errorTitle = isGA4CustomDimensionError ? "GA4 Setup Required" : "Error loading videos";
+    const errorDescription = isGA4CustomDimensionError 
+      ? "Missing custom dimensions in GA4. Create video_id, video_title, and progress_bucket in GA4 Admin → Custom definitions (Event scope)"
+      : `Unable to fetch video analytics data: ${error?.message || 'Unknown error'}`;
+
     return (
       <div className={className}>
         <AnalyticsNewLoadingStates 
           mode="error" 
-          title="Error loading videos"
-          description="Unable to fetch video analytics data"
+          title={errorTitle}
+          description={errorDescription}
           showRetry={true}
         />
       </div>
