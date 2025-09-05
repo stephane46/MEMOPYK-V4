@@ -4,20 +4,10 @@ import { AnalyticsNewGlobalFilters } from './AnalyticsNewGlobalFilters';
 import { AnalyticsNewOverview } from './AnalyticsNewOverview';
 import { AnalyticsNewLiveView } from './AnalyticsNewLiveView';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
+import { AnalyticsNewVideo } from './AnalyticsNewVideo';
 import './analyticsNew.tokens.css';
 
 // Placeholder components for other tabs
-
-const AnalyticsNewVideo: React.FC = () => (
-  <div className="analytics-new-container space-y-6">
-    <h2 className="text-xl font-bold text-gray-900">Video Analytics</h2>
-    <AnalyticsNewLoadingStates 
-      mode="empty" 
-      title="Video analytics coming soon"
-      description="Video performance and engagement metrics will be displayed here"
-    />
-  </div>
-);
 
 const AnalyticsNewGeo: React.FC = () => (
   <div className="analytics-new-container space-y-6">

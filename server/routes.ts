@@ -4906,6 +4906,24 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.log('📈 Generating sparkline data...');
       const sparklineData = await generateSparklineData(startDate, endDate, compareStartDate, compareEndDate);
       
+      // Import video analytics functions
+      const { getTopVideosTable, qFunnel } = await import('./ga4-service');
+      
+      // Fetch top videos data for Phase 3
+      console.log('📊 Fetching top videos data...');
+      const topVideos = await getTopVideosTable(startDate, endDate);
+      console.log(`✅ Top Videos: ${topVideos.length} videos retrieved`);
+      
+      // Fetch video funnel data for Phase 3
+      console.log('📊 Fetching video funnel data...');
+      const funnelData = await qFunnel(startDate, endDate);
+      const videoFunnel = {
+        start: funnelData.plays,
+        halfway: funnelData.half,
+        complete: funnelData.completes
+      };
+      console.log(`✅ Video Funnel: start=${videoFunnel.start}, halfway=${videoFunnel.halfway}, complete=${videoFunnel.complete}`);
+      
       // Build response according to specification
       const response = {
         kpis: {
@@ -4924,6 +4942,9 @@ export async function registerRoutes(app: Express): Promise<void> {
           },
           sparklines: sparklineData.previous
         },
+        // Phase 3 additions: Top Videos and Video Funnel data
+        topVideos: topVideos.slice(0, 10), // Top 10 videos
+        videoFunnel,
         dateRange: {
           current: { from: startDate, to: endDate },
           previous: { from: compareStartDate, to: compareEndDate }
