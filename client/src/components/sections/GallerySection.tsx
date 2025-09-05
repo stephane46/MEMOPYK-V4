@@ -131,8 +131,8 @@ export default function GallerySection() {
     clearBrowserCache();
   }, []);
   
-  // 🚨 CACHE SYNCHRONIZATION FIX v1.0.119 - Stable cache with forced refresh
-  const [refreshKey, setRefreshKey] = useState(0);
+  // 🚨 REMOVED: refreshKey state that was causing constant re-renders
+  // const [refreshKey, setRefreshKey] = useState(0);
   
   const { data: rawData = [], isLoading, refetch } = useQuery<any[]>({
     queryKey: ['/api/gallery'], // 🚨 CACHE SYNC FIX v1.0.125 - Use same key as admin
@@ -144,27 +144,11 @@ export default function GallerySection() {
     retry: 2, // Retry on failure
   });
   
-  // Force refresh mechanism for admin updates
+  // 🚨 CRITICAL FIX: Disable storage/admin listeners causing constant re-renders
+  // These event listeners were triggering setRefreshKey constantly
   useEffect(() => {
-    const handleStorageChange = () => {
-      console.log("🔄 Storage change detected - refreshing public gallery");
-      setRefreshKey(prev => prev + 1);
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Listen for custom admin update events
-    const handleAdminUpdate = () => {
-      console.log("🔄 Admin update event - refreshing public gallery");
-      setRefreshKey(prev => prev + 1);
-    };
-    
-    window.addEventListener('gallery-updated', handleAdminUpdate);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('gallery-updated', handleAdminUpdate);
-    };
+    console.log('🚨 Storage listeners DISABLED to prevent constant re-renders');
+    // All storage/admin refresh logic disabled to prevent VideoOverlay remounting
   }, []);
 
   // Process and transform data
