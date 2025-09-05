@@ -223,13 +223,42 @@ export default function VideoOverlay({
 
   const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());
 
-  // Debounced resize handler
+  // Debounced resize handler - FIXED: Use stable ref to prevent re-render loop
   useEffect(() => {
     let resizeTimeout: NodeJS.Timeout;
     const handleResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        setVideoDimensions(getVideoDimensions());
+        // Use getVideoDimensions directly in the callback to avoid dependency issues
+        const viewportRatio = 90; // 90% of viewport for all devices
+        const isMobileDevice = window.innerWidth <= 640;
+        const aspectRatio = width / height;
+        
+        let containerWidth, containerHeight;
+        
+        if (isMobileDevice) {
+          const maxWidth = (window.innerWidth * viewportRatio) / 100;
+          containerWidth = maxWidth;
+          containerHeight = containerWidth / aspectRatio;
+        } else {
+          const maxWidth = (window.innerWidth * viewportRatio) / 100;
+          const maxHeight = (window.innerHeight * viewportRatio) / 100;
+          
+          const widthConstrainedWidth = maxWidth;
+          const widthConstrainedHeight = maxWidth / aspectRatio;
+          const heightConstrainedHeight = maxHeight;
+          const heightConstrainedWidth = maxHeight * aspectRatio;
+          
+          if (widthConstrainedHeight <= maxHeight) {
+            containerWidth = widthConstrainedWidth;
+            containerHeight = widthConstrainedHeight;
+          } else {
+            containerWidth = heightConstrainedWidth;
+            containerHeight = heightConstrainedHeight;
+          }
+        }
+        
+        setVideoDimensions({ width: containerWidth, height: containerHeight });
       }, 150);
     };
 
@@ -238,7 +267,7 @@ export default function VideoOverlay({
       window.removeEventListener('resize', handleResize);
       clearTimeout(resizeTimeout);
     };
-  }, [getVideoDimensions]);
+  }, [width, height]); // Only depend on stable props, not functions
 
   // Auto-hide controls after 2 seconds
   const resetControlsTimer = useCallback(() => {
