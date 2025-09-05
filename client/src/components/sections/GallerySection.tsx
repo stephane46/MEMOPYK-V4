@@ -70,7 +70,6 @@ export default function GallerySection() {
   const [isMobile] = useState(() => {
     // Only check once on mount - no reactive updates
     const isMobileViewport = typeof window !== 'undefined' && window.innerWidth < 768;
-    console.log(`📱 STATIC MOBILE CHECK: width=${typeof window !== 'undefined' ? window.innerWidth : 'N/A'}, isMobile=${isMobileViewport}`);
     return isMobileViewport;
   });
   const [preloadedVideos, setPreloadedVideos] = useState<Set<string>>(new Set());
@@ -102,10 +101,6 @@ export default function GallerySection() {
 
   // 🚨 CACHE SYNCHRONIZATION FIX v1.0.111 - Browser storage cache busting
   useEffect(() => {
-    console.log("🚨 CACHE OPTIMIZATION v1.0.113 - Company Presentation Mode");
-    console.log("✅ Infinite cache - no automatic reloading");
-    console.log("📋 Perfect for company gallery that changes every few months");
-    console.log("🎯 Maximum performance - zero unnecessary network requests");
     
     // Clear any browser-cached gallery data on component mount
     const clearBrowserCache = () => {
@@ -122,7 +117,6 @@ export default function GallerySection() {
             sessionStorage.removeItem(key);
           }
         });
-        console.log("🧹 Browser cache cleared for gallery data");
       } catch (e) {
         console.warn("Cache clear failed:", e);
       }
@@ -147,7 +141,6 @@ export default function GallerySection() {
   // 🚨 CRITICAL FIX: Disable storage/admin listeners causing constant re-renders
   // These event listeners were triggering setRefreshKey constantly
   useEffect(() => {
-    console.log('🚨 Storage listeners DISABLED to prevent constant re-renders');
     // All storage/admin refresh logic disabled to prevent VideoOverlay remounting
   }, []);
 
@@ -208,7 +201,6 @@ export default function GallerySection() {
   // 🚨 CRITICAL FIX: Completely disable animation observers to stop re-renders
   // These IntersectionObservers were causing constant state updates
   useEffect(() => {
-    console.log('🎬 Animation observers DISABLED to prevent VideoOverlay remounting');
     // All animation logic disabled - text always visible
   }, []);
 
@@ -221,7 +213,6 @@ export default function GallerySection() {
         const videoUrl = language === 'fr-FR' ? item.videoUrlFr : item.videoUrlEn;
         return videoUrl && videoUrl.includes('/') ? videoUrl.split('/').pop() : (videoUrl || 'no-video');
       });
-      console.log(`🎬 Gallery videos available: ${safeGalleryItems.length}`, galleryVideoFilenames);
     }
   }, [galleryItems, language]);
 
@@ -237,7 +228,6 @@ export default function GallerySection() {
       
       // Close flipped cards if clicking outside gallery OR clicking on empty space within gallery
       if ((isOutsideGallery || (isInGallery && !isOnCard)) && flippedCards.size > 0) {
-        console.log('🔄 Clicking outside cards - closing flipped cards');
         setFlippedCards(new Set());
       }
     };
@@ -261,7 +251,6 @@ export default function GallerySection() {
             const cardId = cardElement.getAttribute('data-card-id');
             
             if (cardId && flippedCards.has(cardId)) {
-              console.log('🔄 Card scrolled out of view - closing flipped card:', cardId);
               setFlippedCards(prev => {
                 const newSet = new Set(prev);
                 newSet.delete(cardId);

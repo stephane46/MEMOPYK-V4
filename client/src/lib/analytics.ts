@@ -233,14 +233,12 @@ function waitForGA4Ready(maxWaitMs = 3000): Promise<boolean> {
     
     function checkGA4() {
       if (window.gtag && typeof window.gtag === 'function' && Array.isArray(window.dataLayer)) {
-        console.log('[GA4] Ready! gtag and dataLayer confirmed');
         resolve(true);
         return;
       }
       
       const elapsed = Date.now() - startTime;
       if (elapsed >= maxWaitMs) {
-        console.error('[GA4] Timeout waiting for GA4 readiness after', elapsed, 'ms');
         resolve(false);
         return;
       }
@@ -265,7 +263,6 @@ export function fireGA(eventName: string, params: any = {}) {
   // Enhanced debugging for video events
   const isVideoEvent = ['video_start', 'video_progress', 'video_complete'].includes(eventName);
   if (isVideoEvent) {
-    console.log(`🎥🎥🎥 VIDEO EVENT FIRED: ${eventName}`, params);
   }
   
   // Base parameters for all events
@@ -277,17 +274,13 @@ export function fireGA(eventName: string, params: any = {}) {
   
   const send = () => {
     if (window.gtag) {
-      console.log(`[GA4] sending ${eventName}`, baseParams);
       window.gtag('event', eventName, baseParams);
-      console.log(`[GA4] sent ${eventName}`);
     } else {
-      console.warn(`[GA4] gtag not available for ${eventName}`);
     }
   };
   
   // Handle GA4 readiness
   if (!window.dataLayer || !window.gtag) {
-    console.log(`[GA4] deferring ${eventName} - GA4 not ready`);
     setTimeout(send, 150);
   } else {
     send();

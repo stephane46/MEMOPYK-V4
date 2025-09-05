@@ -168,7 +168,6 @@ export default function VideoOverlay({
       });
       
       if (response.ok) {
-        console.log('💓 Heartbeat sent', sessionId.substring(0, 12) + '...', forceImmediate ? '(IMMEDIATE)' : '');
       }
     } catch (error) {
       console.warn('⚠ Heartbeat error:', error);
@@ -182,14 +181,12 @@ export default function VideoOverlay({
     
     sendHeartbeat(true);
     heartbeatIntervalRef.current = setInterval(() => sendHeartbeat(false), 15000);
-    console.log('💓 Heartbeat started');
   }, [sendHeartbeat]);
 
   const stopHeartbeat = useCallback(() => {
     if (heartbeatIntervalRef.current) {
       clearInterval(heartbeatIntervalRef.current);
       heartbeatIntervalRef.current = null;
-      console.log('💓 Heartbeat stopped');
     }
   }, []);
 
@@ -221,7 +218,6 @@ export default function VideoOverlay({
     for (const milestone of milestones) {
       if (progressValue >= milestone && !milestonesTrackedRef.current.has(milestone)) {
         milestonesTrackedRef.current.add(milestone);
-        console.log(`🎯 VIDEO PROGRESS: ${milestone}% reached`);
         
         fireGA('video_progress', {
           video_id: videoId,
@@ -238,12 +234,10 @@ export default function VideoOverlay({
 
   // Event handlers - stable functions
   const handlePlay = useCallback(() => {
-    console.log('🎬 VIDEO PLAY EVENT');
     setIsPlaying(true);
     resetControlsTimer();
     
     if (!videoStartSentRef.current) {
-      console.log('🚀 FIRING GA4 video_start event');
       fireGA('video_start', {
         video_id: videoId,
         video_title: stableProps.title,
@@ -274,7 +268,6 @@ export default function VideoOverlay({
     setShowControls(true);
     
     if (duration > 0) {
-      console.log('🎬 VIDEO ENDED');
       fireGA('video_complete', {
         video_id: videoId,
         video_title: stableProps.title,
@@ -368,7 +361,6 @@ export default function VideoOverlay({
   }, []);
 
   const handleCloseWithAnalytics = useCallback(() => {
-    console.log('🔥 CLOSING VIDEO OVERLAY');
     
     const video = videoRef.current;
     if (!video) {
@@ -453,8 +445,6 @@ export default function VideoOverlay({
 
   // MOUNT ONCE ONLY - Initialization effect
   useEffect(() => {
-    console.log('🎬 VideoOverlay MOUNTED - v1.0.200 STABLE', videoUrl);
-    console.log('🎬 VideoOverlay INITIALIZING - v1.0.200');
     
     videoStartTimeRef.current = Date.now();
     thumbnailStartTimeRef.current = Date.now();
