@@ -83,7 +83,8 @@ export default function VideoOverlay({
     videoStartTimeRef.current = Date.now();
     thumbnailStartTimeRef.current = Date.now();
     videoReadyRef.current = false;
-    milestonesTrackedRef.current.clear(); // Reset milestones for new video
+    // Don't reset milestones on every re-mount - only reset for truly new videos
+    console.log('🎬 VideoOverlay effect running - NOT clearing milestones (prevent reset on re-mount)');
     
     // Start video buffering immediately for faster transition
     const video = videoRef.current;
@@ -250,6 +251,7 @@ export default function VideoOverlay({
           console.log(`🎯🎯🎯 FIRING GA4 video_progress event: ${milestone}% for ${videoId}`);
           console.log(`🎬 VIDEO PROGRESS: ${milestone}% reached (${Math.round(video.currentTime)}s/${Math.round(video.duration)}s)`);
           console.log('🎯🎯🎯 fireGA function exists?', typeof fireGA);
+          console.log('🔍 MILESTONE TRACKING STATE:', Array.from(milestonesTrackedRef.current));
           
           fireGA('video_progress', {
             video_id: videoId,
