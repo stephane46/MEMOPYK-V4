@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 import { fireGA } from '@/lib/analytics';
-// Direct GA4 calls with fireGA function
 
 interface VideoOverlayProps {
   videoUrl: string;
@@ -31,9 +30,9 @@ export default function VideoOverlay({
   preloadedElement = null,
   thumbnailUrl 
 }: VideoOverlayProps) {
-  console.log('🎬🎬🎬 VideoOverlay MOUNTED with GA4 tracking!', videoUrl);
+  console.log('🎬 VideoOverlay MOUNTED - v1.0.200 STABLE', videoUrl);
   
-  // VideoOverlay mounted
+  // State
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showControls, setShowControls] = useState(true);
@@ -42,6 +41,7 @@ export default function VideoOverlay({
   const [currentTime, setCurrentTime] = useState(0);
   const [showThumbnail, setShowThumbnail] = useState(!!thumbnailUrl);
   
+  // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -50,226 +50,151 @@ export default function VideoOverlay({
   const thumbnailStartTimeRef = useRef<number>(Date.now());
   const videoReadyRef = useRef<boolean>(false);
   const milestonesTrackedRef = useRef<Set<number>>(new Set());
+  const videoStartSentRef = useRef(false);
+  const mountedRef = useRef(true);
   
-  // Minimum thumbnail display time (2 seconds)
+  // Constants
   const MINIMUM_THUMBNAIL_DISPLAY_TIME = 2000;
   
-  // Language detection for source text
+  // Stable values from props - memoized to prevent re-renders
+  const stableProps = useMemo(() => ({
+    videoUrl,
+    title,
+    width,
+    height,
+    orientation
+  }), [videoUrl, title, width, height, orientation]);
+  
+  // Language detection
   const language = localStorage.getItem('language') || 'en-US';
   
-  // Analytics tracking - LOCAL ANALYTICS: Track gallery video views
+  // Analytics tracking
   const { trackVideoView } = useVideoAnalytics();
-
-  // Use centralized fireGA function from @/lib/analytics (no local shadow)
-
-  // Track if video_start has been sent for this session
-  const videoStartSentRef = useRef(false);
   
-  // Create stable refs for props to avoid dependency issues
-  const videoUrlRef = useRef(videoUrl);
-  const titleRef = useRef(title);
-  
-  // Update refs when props change, but don't trigger re-renders
-  videoUrlRef.current = videoUrl;
-  titleRef.current = title;
-  
-  // Feature flag for video analytics - Use environment variable as intended
+  // Feature flag
   const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
   
-  // Extract video ID from URL - stable reference for session tracking
-  const getVideoId = useCallback(() => {
-    const currentVideoUrl = videoUrlRef.current;
-    if (currentVideoUrl.includes('filename=')) {
-      return currentVideoUrl.split('filename=')[1].split('&')[0];
+  // Stable video ID extraction - memoized
+  const videoId = useMemo(() => {
+    if (stableProps.videoUrl.includes('filename=')) {
+      return stableProps.videoUrl.split('filename=')[1].split('&')[0];
     }
-    return currentVideoUrl.split('/').pop()?.split('?')[0] || 'unknown';
-  }, []); // No dependencies - uses ref
+    return stableProps.videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
+  }, [stableProps.videoUrl]);
 
-  // ENHANCED THUMBNAIL-TO-VIDEO SYSTEM v1.0.174 with minimum display time - MOUNT ONCE ONLY
-  useEffect(() => {
-    console.log('🎬 VideoOverlay MOUNTED - Setting up video element');
-    console.log('🎬 Video URL:', videoUrl);
-    console.log('🎬 Video ref exists:', !!videoRef.current);
+  // Stable video dimensions calculation - memoized
+  const videoDimensions = useMemo(() => {
+    const viewportRatio = 90;
+    const isMobileDevice = window.innerWidth <= 640;
+    const aspectRatio = stableProps.width / stableProps.height;
     
-    videoStartTimeRef.current = Date.now();
-    thumbnailStartTimeRef.current = Date.now();
-    videoReadyRef.current = false;
-    // Don't reset milestones on every re-mount - only reset for truly new videos
-    console.log('🎬 VideoOverlay effect running - NOT clearing milestones (prevent reset on re-mount)');
-    
-    // Test if video element exists after a small delay
-    setTimeout(() => {
-      console.log('🎬 DELAYED CHECK - Video ref exists:', !!videoRef.current);
-      if (videoRef.current) {
-        console.log('🎬 Video element properties:', {
-          src: videoRef.current.src,
-          readyState: videoRef.current.readyState,
-          duration: videoRef.current.duration,
-          currentTime: videoRef.current.currentTime
-        });
-      }
-    }, 1000);
-    
-    // Start video buffering immediately for faster transition
-    const video = videoRef.current;
-    if (video && thumbnailUrl) {
-      video.load(); // Force immediate buffering
-    }
-    
-    return () => {
-      // LIVE VIEW TRACKING: Stop heartbeat on component unmount
-      if (heartbeatIntervalRef.current) {
-        clearInterval(heartbeatIntervalRef.current);
-        heartbeatIntervalRef.current = null;
-      }
-    };
-  }, []); // Run once on mount only
-
-  // Enhanced error handling
-  const handleVideoError = useCallback((e: any) => {
-    console.error('VideoOverlay Error:', e.target?.error);
-  }, []); // No dependencies needed
-
-  // Mobile detection - same logic as GallerySection
-  const getIsMobile = useCallback(() => {
-    return window.innerWidth <= 640; // Matches GallerySection mobile detection
-  }, []);
-
-  // Viewport sizing ratio
-  const getViewportRatio = useCallback(() => {
-    return 90; // 90% of viewport for all devices
-  }, []);
-
-  // Calculate video container dimensions - FIXED to use proper viewport constraints
-  const getVideoDimensions = useCallback(() => {
-    const viewportRatio = getViewportRatio();
-    const isMobileDevice = getIsMobile();
-    
-    // Calculate aspect ratio from video dimensions
-    const aspectRatio = width / height;
-    
-
-    
-    // CRITICAL FIX: Use viewport-based sizing for both mobile and desktop
     if (isMobileDevice) {
-      // MOBILE: Use WIDTH constraint (90% of screen width) to prevent landscape videos from being too wide
       const maxWidth = (window.innerWidth * viewportRatio) / 100;
       const containerWidth = maxWidth;
       const containerHeight = containerWidth / aspectRatio;
-      
-      console.log(`🎬 ${orientation.toUpperCase()} VIDEO - MOBILE WIDTH CONSTRAINED:`, {
-        title,
-        orientation,
-        screenWidth: window.innerWidth,
-        screenHeight: window.innerHeight,
-        viewportRatio,
-        maxWidth,
-        containerWidth,
-        containerHeight,
-        aspectRatio,
-        videoWidth: width,
-        videoHeight: height,
-        constraint: 'mobile width-based (90% viewport)'
-      });
-      
       return { width: containerWidth, height: containerHeight };
     } else {
-      // DESKTOP: Use both width AND height constraints, pick the smaller result
       const maxWidth = (window.innerWidth * viewportRatio) / 100;
       const maxHeight = (window.innerHeight * viewportRatio) / 100;
       
-      // Calculate dimensions for both constraints
       const widthConstrainedWidth = maxWidth;
       const widthConstrainedHeight = maxWidth / aspectRatio;
-      
       const heightConstrainedHeight = maxHeight;
       const heightConstrainedWidth = maxHeight * aspectRatio;
       
-      // Use whichever constraint results in smaller dimensions (fits in viewport)
-      let containerWidth, containerHeight, activeConstraint;
-      
       if (widthConstrainedHeight <= maxHeight) {
-        // Width constraint works - video fits height-wise
-        containerWidth = widthConstrainedWidth;
-        containerHeight = widthConstrainedHeight;
-        activeConstraint = 'width-constrained';
+        return { width: widthConstrainedWidth, height: widthConstrainedHeight };
       } else {
-        // Height constraint needed - video would be too tall
-        containerWidth = heightConstrainedWidth;
-        containerHeight = heightConstrainedHeight;
-        activeConstraint = 'height-constrained';
+        return { width: heightConstrainedWidth, height: heightConstrainedHeight };
+      }
+    }
+  }, [stableProps.width, stableProps.height]); // Only recalculate if video dimensions change
+
+  // Session ID management - stable function
+  const getOrCreateSessionId = useCallback(() => {
+    let baseSessionId = localStorage.getItem('memopyk-base-session-id');
+    if (!baseSessionId) {
+      baseSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('memopyk-base-session-id', baseSessionId);
+    }
+    
+    let tabId = sessionStorage.getItem('memopyk-tab-id');
+    if (!tabId) {
+      tabId = Math.random().toString(36).substr(2, 9);
+      sessionStorage.setItem('memopyk-tab-id', tabId);
+    }
+    
+    const videoSessionKey = `memopyk-video-session-${videoId}`;
+    let videoSessionId = sessionStorage.getItem(videoSessionKey);
+    if (!videoSessionId) {
+      videoSessionId = `${videoId}_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
+      sessionStorage.setItem(videoSessionKey, videoSessionId);
+    }
+    
+    const clientSessionId = `${baseSessionId}:${tabId}:${videoSessionId}`;
+    localStorage.setItem('memopyk-current-session-id', clientSessionId);
+    return clientSessionId;
+  }, [videoId]);
+
+  // Heartbeat system - stable functions
+  const sendHeartbeat = useCallback(async (forceImmediate = false) => {
+    if (!mountedRef.current) return;
+    
+    try {
+      const sessionId = getOrCreateSessionId();
+      const video = videoRef.current;
+      
+      if (!video || (!forceImmediate && (!isFinite(video.duration) || video.duration <= 0))) {
+        return;
       }
       
-      console.log(`🎬 ${orientation.toUpperCase()} VIDEO - DESKTOP DUAL CONSTRAINT (90% VIEWPORT):`, {
-        title,
-        orientation,
-        screenWidth: window.innerWidth,
-        screenHeight: window.innerHeight,
-        viewportRatio,
-        maxWidth,
-        maxHeight,
-        aspectRatio,
-        widthConstrainedDims: `${widthConstrainedWidth}x${widthConstrainedHeight}`,
-        heightConstrainedDims: `${heightConstrainedWidth}x${heightConstrainedHeight}`,
-        finalDims: `${containerWidth}x${containerHeight}`,
-        activeConstraint,
-        videoWidth: width,
-        videoHeight: height
+      const videoDuration = isFinite(video.duration) && video.duration > 0 ? video.duration : video.currentTime || 1;
+      const progressPct = Math.max(0, Math.min(100, Math.round((video.currentTime / videoDuration) * 100)));
+      
+      const heartbeatData = {
+        sessionId,
+        videoId,
+        videoTitle: stableProps.title,
+        progressPct,
+        currentTime: Math.round(video.currentTime),
+        device: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+        country: 'Unknown',
+        ts: Date.now()
+      };
+      
+      const response = await fetch('/api/tracker/heartbeat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(heartbeatData)
       });
       
-      return { width: containerWidth, height: containerHeight };
+      if (response.ok) {
+        console.log('💓 Heartbeat sent', sessionId.substring(0, 12) + '...', forceImmediate ? '(IMMEDIATE)' : '');
+      }
+    } catch (error) {
+      console.warn('⚠ Heartbeat error:', error);
     }
-  }, [orientation, width, height, getViewportRatio, getIsMobile]); // Removed title dependency
+  }, [videoId, getOrCreateSessionId, stableProps.title]);
 
-  const [videoDimensions, setVideoDimensions] = useState(() => getVideoDimensions());
+  const startHeartbeat = useCallback(() => {
+    if (heartbeatIntervalRef.current) {
+      clearInterval(heartbeatIntervalRef.current);
+    }
+    
+    sendHeartbeat(true);
+    heartbeatIntervalRef.current = setInterval(() => sendHeartbeat(false), 15000);
+    console.log('💓 Heartbeat started');
+  }, [sendHeartbeat]);
 
-  // Debounced resize handler - FIXED: Use stable ref to prevent re-render loop
-  useEffect(() => {
-    let resizeTimeout: NodeJS.Timeout;
-    const handleResize = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        // Use getVideoDimensions directly in the callback to avoid dependency issues
-        const viewportRatio = 90; // 90% of viewport for all devices
-        const isMobileDevice = window.innerWidth <= 640;
-        const aspectRatio = width / height;
-        
-        let containerWidth, containerHeight;
-        
-        if (isMobileDevice) {
-          const maxWidth = (window.innerWidth * viewportRatio) / 100;
-          containerWidth = maxWidth;
-          containerHeight = containerWidth / aspectRatio;
-        } else {
-          const maxWidth = (window.innerWidth * viewportRatio) / 100;
-          const maxHeight = (window.innerHeight * viewportRatio) / 100;
-          
-          const widthConstrainedWidth = maxWidth;
-          const widthConstrainedHeight = maxWidth / aspectRatio;
-          const heightConstrainedHeight = maxHeight;
-          const heightConstrainedWidth = maxHeight * aspectRatio;
-          
-          if (widthConstrainedHeight <= maxHeight) {
-            containerWidth = widthConstrainedWidth;
-            containerHeight = widthConstrainedHeight;
-          } else {
-            containerWidth = heightConstrainedWidth;
-            containerHeight = heightConstrainedHeight;
-          }
-        }
-        
-        setVideoDimensions({ width: containerWidth, height: containerHeight });
-      }, 150);
-    };
+  const stopHeartbeat = useCallback(() => {
+    if (heartbeatIntervalRef.current) {
+      clearInterval(heartbeatIntervalRef.current);
+      heartbeatIntervalRef.current = null;
+      console.log('💓 Heartbeat stopped');
+    }
+  }, []);
 
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(resizeTimeout);
-    };
-  }, [width, height]); // Only depend on stable props, not functions
-
-  // Auto-hide controls after 2 seconds
+  // Controls timer - stable function
   const resetControlsTimer = useCallback(() => {
     setShowControls(true);
     if (controlsTimeoutRef.current) {
@@ -282,192 +207,66 @@ export default function VideoOverlay({
     }
   }, [isPlaying]);
 
-  // Progress tracking - using timeupdate event for reliability with GA4 analytics
+  // Progress tracking - stable function with no external dependencies
   const updateProgress = useCallback(() => {
-    console.log('🎯 updateProgress called'); // Debug: Check if function is called
     const video = videoRef.current;
-    console.log('🎯 Video ref exists:', !!video, 'Duration:', video?.duration); // Debug video state
-    if (video && !isNaN(video.duration) && video.duration > 0) {
-      const progress = (video.currentTime / video.duration) * 100;
-      setProgress(progress);
-      setCurrentTime(video.currentTime);
-      setDuration(video.duration);
-      
-      // GA4 Analytics: Extract data inside callback to avoid dependencies
-      const videoId = getVideoId();
+    if (!video || !isFinite(video.duration) || video.duration <= 0) return;
+    
+    const progressValue = (video.currentTime / video.duration) * 100;
+    setProgress(progressValue);
+    setCurrentTime(video.currentTime);
+    setDuration(video.duration);
+    
+    // Milestone tracking
+    const milestones = [10, 25, 50, 75, 90];
+    for (const milestone of milestones) {
+      if (progressValue >= milestone && !milestonesTrackedRef.current.has(milestone)) {
+        milestonesTrackedRef.current.add(milestone);
+        console.log(`🎯 VIDEO PROGRESS: ${milestone}% reached`);
         
-      // Milestone tracking - Track progress at 10%, 25%, 50%, 75%, 90%
-      const milestones = [10, 25, 50, 75, 90];
-      for (const milestone of milestones) {
-        if (progress >= milestone && !milestonesTrackedRef.current.has(milestone)) {
-          milestonesTrackedRef.current.add(milestone);
-          console.log(`🎯🎯🎯 FIRING GA4 video_progress event: ${milestone}% for ${videoId}`);
-          console.log(`🎬 VIDEO PROGRESS: ${milestone}% reached (${Math.round(video.currentTime)}s/${Math.round(video.duration)}s)`);
-          console.log('🎯🎯🎯 fireGA function exists?', typeof fireGA);
-          console.log('🔍 MILESTONE TRACKING STATE:', Array.from(milestonesTrackedRef.current));
-          
-          fireGA('video_progress', {
-            video_id: videoId,
-            video_title: titleRef.current,
-            progress_percent: milestone,
-            current_time: Math.round(video.currentTime),
-            duration_sec: video.duration || 0,
-            locale: language,
-            debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
-          });
-          console.log(`✅ GA4 video_progress event sent: ${milestone}%`);
-        }
+        fireGA('video_progress', {
+          video_id: videoId,
+          video_title: stableProps.title,
+          progress_percent: milestone,
+          current_time: Math.round(video.currentTime),
+          duration_sec: video.duration || 0,
+          locale: language,
+          debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
+        });
       }
     }
-  }, []); // No dependencies - uses refs
+  }, [videoId, stableProps.title, language]);
 
-  // Heartbeat system for Live View tracking with concurrent sessions support
-  const getOrCreateSessionId = useCallback(() => {
-    // Get or create base session ID (persistent per device)
-    let baseSessionId = localStorage.getItem('memopyk-base-session-id');
-    if (!baseSessionId) {
-      baseSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('memopyk-base-session-id', baseSessionId);
-    }
-    
-    // Get or create tab ID (unique per tab/session)
-    let tabId = sessionStorage.getItem('memopyk-tab-id');
-    if (!tabId) {
-      tabId = Math.random().toString(36).substr(2, 9);
-      sessionStorage.setItem('memopyk-tab-id', tabId);
-    }
-    
-    // Create stable session ID per video per browser tab - prevents duplicates
-    const videoId = getVideoId();
-    const videoSessionKey = `memopyk-video-session-${videoId}`;
-    
-    let videoSessionId = sessionStorage.getItem(videoSessionKey);
-    if (!videoSessionId) {
-      videoSessionId = `${videoId}_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
-      sessionStorage.setItem(videoSessionKey, videoSessionId);
-    }
-    
-    // Combine to create stable unique clientSessionId per video
-    const clientSessionId = `${baseSessionId}:${tabId}:${videoSessionId}`;
-    
-    // Keep the legacy key updated for backward compatibility
-    localStorage.setItem('memopyk-current-session-id', clientSessionId);
-    
-    return clientSessionId;
-  }, [getVideoId]);
-
-  const sendHeartbeat = useCallback(async (forceImmediate = false) => {
-    try {
-      const sessionId = getOrCreateSessionId();
-      const videoId = getVideoId();
-      const video = videoRef.current;
-      
-      // Allow immediate heartbeat even if duration unknown for admin visibility
-      if (!video || (!forceImmediate && (!isFinite(video.duration) || video.duration <= 0))) {
-        console.log('💓 Heartbeat skipped - video duration not available yet');
-        return;
-      }
-      
-      // For immediate heartbeats without duration, use current time
-      const videoDuration = isFinite(video.duration) && video.duration > 0 ? video.duration : video.currentTime || 1;
-      
-      // Calculate progress percentage (use videoDuration which handles missing duration)
-      const progressPct = Math.max(0, Math.min(100, Math.round((video.currentTime / videoDuration) * 100)));
-      
-      const heartbeatData = {
-        sessionId,
-        videoId,
-        videoTitle: title,
-        progressPct, // Use progressPct instead of progress
-        currentTime: Math.round(video.currentTime),
-        device: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
-        country: 'Unknown', // Will be enriched server-side
-        ts: Date.now()
-      };
-      
-      const response = await fetch('/api/tracker/heartbeat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(heartbeatData)
-      });
-      
-      if (!response.ok) {
-        console.warn('❌ Heartbeat failed:', response.status);
-      } else {
-        console.log('💓 Heartbeat sent for session:', sessionId.substring(0, 12) + '...', forceImmediate ? '(IMMEDIATE)' : '');
-      }
-    } catch (error) {
-      console.warn('❌ Heartbeat error:', error);
-    }
-  }, [getOrCreateSessionId, getVideoId]); // Removed title dependency
-
-  const startHeartbeat = useCallback(() => {
-    if (heartbeatIntervalRef.current) {
-      clearInterval(heartbeatIntervalRef.current);
-    }
-    
-    // Send immediate heartbeat on start (force it even without duration)
-    sendHeartbeat(true);
-    
-    // Then send heartbeat every 15 seconds
-    heartbeatIntervalRef.current = setInterval(() => sendHeartbeat(false), 15000);
-    console.log('💓 Heartbeat started - immediate + every 15s');
-  }, [sendHeartbeat]);
-
-  const stopHeartbeat = useCallback(() => {
-    if (heartbeatIntervalRef.current) {
-      clearInterval(heartbeatIntervalRef.current);
-      heartbeatIntervalRef.current = null;
-      console.log('💓 Heartbeat stopped');
-    }
-  }, []);
-
-  // Video event handlers - Following stable dependency pattern
+  // Event handlers - stable functions
   const handlePlay = useCallback(() => {
-    console.log('🎬 VIDEO PLAY EVENT: handlePlay fired');
+    console.log('🎬 VIDEO PLAY EVENT');
     setIsPlaying(true);
     resetControlsTimer();
     
-    // Extract videoId for all tracking
-    const videoId = getVideoId();
-    
-    // GA4 Analytics: Track video_start only once per session
     if (!videoStartSentRef.current) {
-      console.log('🚀🚀🚀 FIRING GA4 video_start event for:', videoId);
-      console.log('🚀🚀🚀 fireGA function exists?', typeof fireGA);
+      console.log('🚀 FIRING GA4 video_start event');
       fireGA('video_start', {
         video_id: videoId,
-        video_title: titleRef.current,
+        video_title: stableProps.title,
         duration_sec: duration || 0,
         position_sec: currentTime || 0,
         locale: language,
         debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
       });
-      console.log('✅ GA4 video_start event sent');
-      
       videoStartSentRef.current = true;
-    } else {
-      console.log('⏭️ video_start already sent for this session');
     }
     
-    // LOCAL ANALYTICS: Track video view start - CRITICAL FIX
     if (VIDEO_ANALYTICS_ENABLED && trackVideoView) {
-      console.log(`📊 LOCAL ANALYTICS: Tracking video view start for ${videoId}`);
       trackVideoView(videoId, 0, false);
     }
     
-    // LIVE VIEW TRACKING: Start heartbeat system for real-time tracking
     startHeartbeat();
-  }, [resetControlsTimer, VIDEO_ANALYTICS_ENABLED, trackVideoView, duration, currentTime, language, startHeartbeat]); // Removed title, videoUrl dependencies
+  }, [resetControlsTimer, videoId, stableProps.title, duration, currentTime, language, VIDEO_ANALYTICS_ENABLED, trackVideoView, startHeartbeat]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
     setShowControls(true);
-    
-    // LIVE VIEW TRACKING: Stop heartbeat when video is paused
     stopHeartbeat();
-    
-    // Note: We don't send video_complete on pause - only on actual completion
   }, [stopHeartbeat]);
 
   const handleEnded = useCallback(() => {
@@ -475,36 +274,28 @@ export default function VideoOverlay({
     setProgress(100);
     setShowControls(true);
     
-    // GA4 Analytics: Track video_complete when video naturally ends
-    const videoId = getVideoId();
-      
     if (duration > 0) {
-      console.log('🎬 VIDEO ENDED: Natural completion detected');
-      console.log('🚀🚀🚀 FIRING GA4 video_complete event for:', videoId);
+      console.log('🎬 VIDEO ENDED');
       fireGA('video_complete', {
         video_id: videoId,
-        video_title: titleRef.current,
+        video_title: stableProps.title,
         duration_sec: Math.round(duration),
-        current_time: Math.round(duration), // Video fully completed
+        current_time: Math.round(duration),
         completion_rate: 100,
         locale: language,
         debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
       });
-      console.log('✅ GA4 video_complete event sent (natural ending)');
     }
     
-    // Old VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
     if (VIDEO_ANALYTICS_ENABLED) {
       const watchedDuration = Math.round(currentTime);
       const completionRate = duration > 0 ? Math.round((currentTime / duration) * 100) : 0;
       const isCompleted = completionRate >= 90;
-
       trackVideoView(videoId, watchedDuration, isCompleted);
     }
     
-    // LIVE VIEW TRACKING: Stop heartbeat when video ends
     stopHeartbeat();
-  }, [currentTime, duration, trackVideoView, VIDEO_ANALYTICS_ENABLED, language, stopHeartbeat]); // Removed title, videoUrl dependencies
+  }, [currentTime, duration, videoId, stableProps.title, language, trackVideoView, VIDEO_ANALYTICS_ENABLED, stopHeartbeat]);
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
@@ -513,7 +304,6 @@ export default function VideoOverlay({
     }
   }, []);
 
-  // Simple function to start video after brief thumbnail display
   const startVideoPlayback = useCallback(() => {
     const video = videoRef.current;
     if (video) {
@@ -521,42 +311,31 @@ export default function VideoOverlay({
       video.play().then(() => {
         setIsPlaying(true);
       }).catch((error) => {
-        console.error('❌ AUTO-PLAY FAILED:', error);
+        console.error('⚠ AUTO-PLAY FAILED:', error);
       });
     }
   }, []);
 
-  // Simple video ready handler with proper 2-second minimum display
   const handleCanPlay = useCallback(() => {
     const video = videoRef.current;
     if (video && showThumbnail) {
       videoReadyRef.current = true;
-      
-      // Calculate time already elapsed since thumbnail started showing
       const timeElapsed = Date.now() - thumbnailStartTimeRef.current;
       const remainingTime = Math.max(0, MINIMUM_THUMBNAIL_DISPLAY_TIME - timeElapsed);
-      
-      // Start playback after ensuring minimum 2-second thumbnail display
       setTimeout(startVideoPlayback, remainingTime);
     }
-  }, [startVideoPlayback, showThumbnail, MINIMUM_THUMBNAIL_DISPLAY_TIME]);
+  }, [startVideoPlayback, showThumbnail]);
 
-  // Handle when enough data is loaded for smooth playback with proper timing
   const handleCanPlayThrough = useCallback(() => {
     const video = videoRef.current;
     if (video && showThumbnail) {
       videoReadyRef.current = true;
-      
-      // Calculate time already elapsed since thumbnail started showing
       const timeElapsed = Date.now() - thumbnailStartTimeRef.current;
       const remainingTime = Math.max(0, MINIMUM_THUMBNAIL_DISPLAY_TIME - timeElapsed);
-      
-      // Start playback after ensuring minimum 2-second thumbnail display
       setTimeout(startVideoPlayback, remainingTime);
     }
-  }, [startVideoPlayback, showThumbnail, MINIMUM_THUMBNAIL_DISPLAY_TIME]);
+  }, [startVideoPlayback, showThumbnail]);
 
-  // Control handlers
   const handleVideoClick = useCallback(() => {
     const video = videoRef.current;
     if (video) {
@@ -576,12 +355,6 @@ export default function VideoOverlay({
     }
   }, []);
 
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
   const handleProgressClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const video = videoRef.current;
     if (video) {
@@ -595,35 +368,26 @@ export default function VideoOverlay({
     }
   }, []);
 
-  // Enhanced close handler with analytics tracking
   const handleCloseWithAnalytics = useCallback(() => {
-    console.log('🔥🔥🔥 HANDLECLOSEWITHANALYTICS CALLED! 🔥🔥🔥');
+    console.log('🔥 CLOSING VIDEO OVERLAY');
     
     const video = videoRef.current;
     if (!video) {
-      console.log('🔥 NO VIDEO REF - CALLING onClose()');
       onClose();
       return;
     }
     
-    // GA4 Analytics: Read current time directly from video element for accuracy
-    const videoId = getVideoId();
     const actualCurrentTime = video.currentTime;
     const actualDuration = video.duration;
-    
-    console.log(`📊 GA4 VIDEO CLOSE DEBUG: duration=${actualDuration}, currentTime=${actualCurrentTime}, videoId=${videoId}`);
     
     if (!isNaN(actualDuration) && actualDuration > 0 && actualCurrentTime > 0) {
       const finalWatchTime = Math.round(actualCurrentTime);
       const completionRate = Math.round((actualCurrentTime / actualDuration) * 100);
       
-      console.log(`📊 GA4 VIDEO CLOSE: ${videoId} watched ${finalWatchTime}s (${completionRate}% completion)`);
-      
-      // Only send video_complete if user watched significant amount (90%+) 
       if (completionRate >= 90) {
         fireGA('video_complete', {
           video_id: videoId,
-          video_title: titleRef.current,
+          video_title: stableProps.title,
           duration_sec: Math.round(actualDuration),
           current_time: finalWatchTime,
           completion_rate: completionRate,
@@ -631,26 +395,17 @@ export default function VideoOverlay({
           debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
         });
       }
-    } else {
-      console.log(`📊 GA4 VIDEO CLOSE: No tracking - duration:${actualDuration}, currentTime:${actualCurrentTime}`);
     }
     
-    // OLD VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
     if (VIDEO_ANALYTICS_ENABLED) {
-      // Track analytics when user manually closes the video - also read from video element
       const watchedDuration = Math.round(actualCurrentTime);
       const completionRate = actualDuration > 0 ? Math.round((actualCurrentTime / actualDuration) * 100) : 0;
-      const isCompleted = completionRate >= 90; // Consider 90%+ as completed
-      
-      console.log(`📊 VIDEO CLOSED ANALYTICS: ${videoId} watched ${watchedDuration}s (${completionRate}% completion)`);
+      const isCompleted = completionRate >= 90;
       trackVideoView(videoId, watchedDuration, isCompleted);
-    } else {
-      console.log('📊 VIDEO ANALYTICS DISABLED: Custom video tracking paused, switching to GA4-only');
     }
     
-    // Call original close function
     onClose();
-  }, [getVideoId, trackVideoView, onClose, VIDEO_ANALYTICS_ENABLED]); // Removed title dependency
+  }, [videoId, stableProps.title, language, trackVideoView, onClose, VIDEO_ANALYTICS_ENABLED]);
 
   const handleOverlayClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -658,9 +413,7 @@ export default function VideoOverlay({
     }
   }, [handleCloseWithAnalytics]);
 
-  // Keyboard controls
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    
     const video = videoRef.current;
     if (!video) return;
 
@@ -693,6 +446,36 @@ export default function VideoOverlay({
     }
   }, [isPlaying, toggleMute, handleCloseWithAnalytics]);
 
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  // MOUNT ONCE ONLY - Initialization effect
+  useEffect(() => {
+    console.log('🎬 VideoOverlay INITIALIZING - v1.0.200');
+    
+    videoStartTimeRef.current = Date.now();
+    thumbnailStartTimeRef.current = Date.now();
+    videoReadyRef.current = false;
+    mountedRef.current = true;
+    
+    const video = videoRef.current;
+    if (video && thumbnailUrl) {
+      video.load();
+    }
+    
+    return () => {
+      mountedRef.current = false;
+      if (heartbeatIntervalRef.current) {
+        clearInterval(heartbeatIntervalRef.current);
+        heartbeatIntervalRef.current = null;
+      }
+    };
+  }, []); // NO DEPENDENCIES - run once only
+
+  // Keyboard event handler setup - separate effect to avoid dependencies
   useEffect(() => {
     const overlayElement = overlayRef.current;
     
@@ -714,20 +497,13 @@ export default function VideoOverlay({
     };
   }, [handleKeyDown]);
 
-  // Component cleanup - No additional tracking needed (handled by onClose)
-  useEffect(() => {
-    return () => {
-      // Cleanup handled by onClose handler
-    };
-  }, []);
+  // Resize handler - REMOVED to prevent constant re-renders
+  // The videoDimensions are now calculated once on mount and only change if video dimensions change
 
   return (
     <div
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-300 ease-out"
-      style={{
-        '--viewport-ratio': `${getViewportRatio()}%`,
-      } as React.CSSProperties}
       onClick={handleOverlayClick}
       tabIndex={0}
       role="dialog"
@@ -742,7 +518,7 @@ export default function VideoOverlay({
         }}
         onMouseMove={resetControlsTimer}
       >
-        {/* Thumbnail Display - Shows initially while video buffers */}
+        {/* Thumbnail Display */}
         {showThumbnail && thumbnailUrl && (
           <div 
             className="absolute inset-0 z-20 bg-black flex items-center justify-center transition-opacity duration-300"
@@ -763,10 +539,9 @@ export default function VideoOverlay({
               }}
             />
             
-            {/* Centered animated overlays - all appear simultaneously */}
+            {/* Centered overlays */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-2 sm:p-4">
               <div className="text-center space-y-3 sm:space-y-8 animate-fade-in max-w-full">
-                {/* Source count (photos & videos) - Mobile responsive */}
                 {sourceText && (
                   <div className="flex justify-center">
                     <div className="bg-black/70 backdrop-blur-sm text-white text-xs sm:text-base px-3 sm:px-6 py-2 sm:py-4 rounded-full flex flex-col items-center justify-center max-w-full">
@@ -781,16 +556,14 @@ export default function VideoOverlay({
                   </div>
                 )}
                 
-                {/* Title - Mobile responsive */}
-                {title && (
+                {stableProps.title && (
                   <div className="px-3 sm:px-8">
                     <h3 className="text-white font-bold text-lg sm:text-3xl leading-tight drop-shadow-lg text-center break-words">
-                      {title}
+                      {stableProps.title}
                     </h3>
                   </div>
                 )}
                 
-                {/* Duration - Mobile responsive */}
                 {durationText && (
                   <div className="flex justify-center">
                     <div className="bg-black/70 backdrop-blur-sm text-white text-xs sm:text-base px-3 sm:px-6 py-2 rounded-full flex items-center gap-2 sm:gap-3">
@@ -818,23 +591,10 @@ export default function VideoOverlay({
           controls={false}
           onClick={handleVideoClick}
           onMouseMove={resetControlsTimer}
-          onPlay={() => {
-            console.log('🎯 VIDEO PLAY EVENT FIRED');
-            handlePlay();
-          }}
-          onPause={() => {
-            console.log('🎯 VIDEO PAUSE EVENT FIRED');
-            handlePause();
-          }}
-          onLoadedMetadata={() => {
-            console.log('🎯 VIDEO METADATA LOADED');
-            handleLoadedMetadata();
-          }}
-          onTimeUpdate={(e) => {
-            console.log('🎯 TIMEUPDATE EVENT FIRED - Current time:', e.currentTarget.currentTime);
-            updateProgress();
-          }}
-          onError={handleVideoError}
+          onPlay={handlePlay}
+          onPause={handlePause}
+          onLoadedMetadata={handleLoadedMetadata}
+          onTimeUpdate={updateProgress}
           onCanPlay={handleCanPlay}
           onCanPlayThrough={handleCanPlayThrough}
           onEnded={handleEnded}
@@ -845,7 +605,7 @@ export default function VideoOverlay({
           controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
           onContextMenu={(e) => e.preventDefault()}
         >
-          <source src={videoUrl} type="video/mp4" />
+          <source src={stableProps.videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
 
@@ -862,59 +622,63 @@ export default function VideoOverlay({
           </div>
         )}
 
-        {/* Control Bar - Only show after video starts playing (not during thumbnail) */}
+        {/* Control Bar */}
         {!showThumbnail && (
           <div
             className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 sm:p-4 transition-opacity duration-300 z-30 ${
               showControls ? 'opacity-100' : 'opacity-0'
             }`}
           >
-          {/* Time Display */}
-          <div className="flex justify-between items-center text-white text-xs sm:text-sm mb-2">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
-          </div>
+            <div className="flex items-center gap-2 sm:gap-4">
+              {/* Play/Pause Button */}
+              <button
+                onClick={handleVideoClick}
+                className="text-white hover:text-blue-400 transition-colors p-1"
+                aria-label={isPlaying ? 'Pause video' : 'Play video'}
+              >
+                {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+              </button>
 
-          {/* Progress Bar */}
-          <div
-            className="w-full bg-white/20 rounded-full h-1 sm:h-2 mb-2 sm:mb-4 cursor-pointer"
-            onClick={handleProgressClick}
-          >
-            <div
-              className="bg-white rounded-full h-full transition-all duration-150"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+              {/* Progress Bar */}
+              <div className="flex-1 relative group">
+                <div
+                  className="w-full h-1 bg-white/30 rounded-full cursor-pointer group-hover:h-2 transition-all"
+                  onClick={handleProgressClick}
+                >
+                  <div
+                    className="h-full bg-white rounded-full transition-all"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
 
-          {/* Controls */}
-          <div className="flex items-center justify-between">
-            <button
-              onClick={handleVideoClick}
-              className="text-white hover:text-white/80 transition-colors p-1 sm:p-2"
-              aria-label={isPlaying ? 'Pause video' : 'Play video'}
-            >
-              {isPlaying ? <Pause size={20} className="sm:w-6 sm:h-6" /> : <Play size={20} className="sm:w-6 sm:h-6" />}
-            </button>
+              {/* Time Display */}
+              <div className="text-white text-xs sm:text-sm font-mono">
+                <span>{formatTime(currentTime)}</span>
+                <span className="text-white/60"> / </span>
+                <span>{formatTime(duration)}</span>
+              </div>
 
-            <button
-              onClick={toggleMute}
-              className="text-white hover:text-white/80 transition-colors p-1 sm:p-2"
-              aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-            >
-              {isMuted ? <VolumeX size={16} className="sm:w-5 sm:h-5" /> : <Volume2 size={16} className="sm:w-5 sm:h-5" />}
-            </button>
-          </div>
+              {/* Volume Button */}
+              <button
+                onClick={toggleMute}
+                className="text-white hover:text-blue-400 transition-colors p-1"
+                aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+              >
+                {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+              </button>
+
+              {/* Close Button */}
+              <button
+                onClick={handleCloseWithAnalytics}
+                className="text-white hover:text-red-400 transition-colors p-1 ml-1"
+                aria-label="Close video"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
         )}
-
-        {/* Close Button - Mobile Only */}
-        <button
-          onClick={handleCloseWithAnalytics}
-          className="absolute top-2 right-2 sm:hidden text-white hover:text-white/80 transition-colors bg-black/50 rounded-full p-2 z-30"
-          aria-label="Close video"
-        >
-          <X size={20} />
-        </button>
       </div>
     </div>
   );
