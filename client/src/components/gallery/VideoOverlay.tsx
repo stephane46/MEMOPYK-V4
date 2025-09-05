@@ -480,7 +480,6 @@ export default function VideoOverlay({
     const video = videoRef.current;
     if (video) {
       setDuration(video.duration);
-
     }
   }, []);
 
