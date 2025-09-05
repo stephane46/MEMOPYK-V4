@@ -4625,6 +4625,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       const cached = ga4ReportCache.get(cacheKey);
       if (cached) {
         console.log('✅ GA4 Report returned from cache');
+        res.setHeader('Cache-Control', 'private, max-age=60');
+        res.setHeader('X-Cache', 'HIT');
         return res.json(cached);
       }
 
@@ -4658,6 +4660,8 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       ga4ReportCache.set(cacheKey, result);
       console.log(`✅ GA4 Report completed: ${ga4.report}`);
+      res.setHeader('Cache-Control', 'private, max-age=60');
+      res.setHeader('X-Cache', 'MISS');
       res.json(result);
     } catch (error: any) {
       console.error('❌ GA4 report error:', error);
@@ -5136,6 +5140,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       const cached = getCache<any>(cacheKey);
       if (cached) {
         console.log(`✅ GA4 Report cache hit for ${cacheKey}`);
+        res.setHeader('Cache-Control', 'private, max-age=60');
+        res.setHeader('X-Cache', 'HIT');
         return res.json(cached);
       }
       
@@ -5951,6 +5957,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Cache for 5 minutes
       await setCache(cacheKey, result, 300);
       
+      res.setHeader('Cache-Control', 'private, max-age=60');
+      res.setHeader('X-Cache', 'MISS');
       res.json(result);
     } catch (error) {
       console.error('❌ CLEAN GA4 ERROR:', error);

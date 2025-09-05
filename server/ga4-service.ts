@@ -125,6 +125,7 @@ export async function qCompletes(start: string, end: string, locale?: string) {
                     expressions: [
                       { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
                       // If progress_percent is STRING (most common):
+                      // NOTE: This "100" is for GA4 API completion detection only - UI buckets end at 90% (Complete)
                       { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "100" } } }
                       // If it's NUMERIC instead, replace the line above with:
                       // { filter: { fieldName: "customEvent:progress_percent", numericFilter: { operation: "EQUAL", value: { doubleValue: 100 } } } }
