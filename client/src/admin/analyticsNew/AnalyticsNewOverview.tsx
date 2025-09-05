@@ -118,6 +118,7 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
 
   // Generate KPI data from real GA4 or mock data
   const generateKpiData = (): KpiData[] => {
+    const USE_MOCK = import.meta.env?.VITE_USE_MOCK === "true";
     if (USE_MOCK) {
       return [
         {
@@ -355,7 +356,7 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       </div>
 
       {/* Mock State Toggles for Development */}
-      {USE_MOCK && (
+      {import.meta.env?.VITE_USE_MOCK === "true" && (
         <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <h3 className="text-sm font-medium text-yellow-800 mb-3">
             🔧 Phase 1 - Mock Data Mode
