@@ -10,7 +10,13 @@ import {
 } from 'lucide-react';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
+import { getMockReport } from './mockReport';
 import { cn } from '@/lib/utils';
+
+// Development flags
+const USE_MOCK = true; // Switch to false when GA4 backend is ready
+const SIMULATE_ERROR = false;
+const SIMULATE_EMPTY = false;
 
 interface TopVideo {
   videoId: string;
@@ -49,8 +55,25 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
 
   // Get Top Videos data
   const { data: topVideosData, isLoading: videosLoading, error: videosError } = useQuery<TopVideosResponse>({
-    queryKey: ['/api/ga4/report', 'topVideos', datePreset, customDateStart, customDateEnd],
+    queryKey: ['/api/ga4/report', 'topVideos', datePreset, customDateStart, customDateEnd, USE_MOCK],
     queryFn: async () => {
+      // Development toggles
+      if (SIMULATE_ERROR) {
+        throw new Error('Simulated error for testing');
+      }
+      
+      if (USE_MOCK) {
+        // Simulate API delay for realistic testing
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        if (SIMULATE_EMPTY) {
+          return { topVideos: [], timestamp: new Date().toISOString(), cached: false };
+        }
+        
+        return getMockReport('topVideos') as TopVideosResponse;
+      }
+
+      // Real API call
       const params = new URLSearchParams({
         report: 'topVideos',
         preset: datePreset,
@@ -70,10 +93,17 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
 
   // Get Video Funnel data when a video is selected
   const { data: funnelData, isLoading: funnelLoading } = useQuery<VideoFunnelResponse>({
-    queryKey: ['/api/ga4/report', 'videoFunnel', selectedVideo?.videoId, datePreset, customDateStart, customDateEnd],
+    queryKey: ['/api/ga4/report', 'videoFunnel', selectedVideo?.videoId, datePreset, customDateStart, customDateEnd, USE_MOCK],
     queryFn: async () => {
       if (!selectedVideo) return null;
       
+      if (USE_MOCK) {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+        return getMockReport('videoFunnel', selectedVideo.videoId) as VideoFunnelResponse;
+      }
+
+      // Real API call
       const params = new URLSearchParams({
         report: 'videoFunnel',
         videoId: selectedVideo.videoId,
@@ -233,7 +263,7 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
           </p>
         </div>
         <div className="text-xs text-[var(--analytics-new-text-muted)]">
-          {topVideosData.cached ? '⚡ Cached' : '🔄 Live'} • Updated {new Date(topVideosData.timestamp).toLocaleTimeString()}
+          {USE_MOCK ? '🧪 Mock Data' : (topVideosData.cached ? '⚡ Cached' : '🔄 Live')} • Updated {new Date(topVideosData.timestamp).toLocaleTimeString()}
         </div>
       </div>
 
