@@ -52,8 +52,11 @@ export default function VideoOverlay({
   const videoStartSentRef = useRef(false);
   const mountedRef = useRef(true);
   
-  // Constants
+  // Constants - moved to module level for clarity
   const MINIMUM_THUMBNAIL_DISPLAY_TIME = 2000;
+  const HEARTBEAT_INTERVAL = 15000;
+  const CONTROLS_HIDE_DELAY = 3000;
+  const VIDEO_MILESTONES = [10, 25, 50, 75, 90];
   
   // Stable values from props - memoized to prevent re-renders
   const stableProps = useMemo(() => ({
@@ -64,8 +67,8 @@ export default function VideoOverlay({
     orientation
   }), [videoUrl, title, width, height, orientation]);
   
-  // Language detection
-  const language = localStorage.getItem('language') || 'en-US';
+  // Language detection - memoized to prevent re-reads
+  const language = useMemo(() => localStorage.getItem('language') || 'en-US', []);
   
   // Analytics tracking
   const { trackVideoView } = useVideoAnalytics();
@@ -214,7 +217,7 @@ export default function VideoOverlay({
     setDuration(video.duration);
     
     // Milestone tracking
-    const milestones = [10, 25, 50, 75, 90];
+    const milestones = VIDEO_MILESTONES;
     for (const milestone of milestones) {
       if (progressValue >= milestone && !milestonesTrackedRef.current.has(milestone)) {
         milestonesTrackedRef.current.add(milestone);
