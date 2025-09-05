@@ -248,6 +248,7 @@ export default function VideoOverlay({
         if (progress >= milestone && !milestonesTrackedRef.current.has(milestone)) {
           milestonesTrackedRef.current.add(milestone);
           console.log(`🎯🎯🎯 FIRING GA4 video_progress event: ${milestone}% for ${videoId}`);
+          console.log(`🎬 VIDEO PROGRESS: ${milestone}% reached (${Math.round(video.currentTime)}s/${Math.round(video.duration)}s)`);
           console.log('🎯🎯🎯 fireGA function exists?', typeof fireGA);
           
           fireGA('video_progress', {
@@ -427,6 +428,8 @@ export default function VideoOverlay({
       : videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
       
     if (duration > 0) {
+      console.log('🎬 VIDEO ENDED: Natural completion detected');
+      console.log('🚀🚀🚀 FIRING GA4 video_complete event for:', videoId);
       fireGA('video_complete', {
         video_id: videoId,
         video_title: title,
@@ -436,6 +439,7 @@ export default function VideoOverlay({
         locale: language,
         debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
       });
+      console.log('✅ GA4 video_complete event sent (natural ending)');
     }
     
     // Old VIDEO ANALYTICS DISABLED - Switch to GA4-only for video analytics
