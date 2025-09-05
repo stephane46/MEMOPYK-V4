@@ -462,8 +462,10 @@ export default function VideoOverlay({
   const startVideoPlayback = useCallback(() => {
     const video = videoRef.current;
     if (video) {
+      console.log('🎬🎬🎬 STARTING VIDEO PLAYBACK - about to call video.play()');
       setShowThumbnail(false);
       video.play().then(() => {
+        console.log('🎬🎬🎬 VIDEO.PLAY() SUCCESS - setIsPlaying(true)');
         setIsPlaying(true);
       }).catch((error) => {
         console.error('❌ AUTO-PLAY FAILED:', error);
