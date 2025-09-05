@@ -4376,145 +4376,323 @@ export async function registerRoutes(app: Express): Promise<void> {
     };
   }
 
-  // KPIs Report Builder
+  // ========== GA4 QUERY HELPERS ==========
+  
+  // GA4 dimension filter helpers
+  function dimEquals(name: string, value: string) {
+    return {
+      filter: { fieldName: name, stringFilter: { matchType: "EXACT", value } }
+    };
+  }
+
+  function andExpr(...expressions: any[]) {
+    return { andGroup: { expressions } };
+  }
+
+  function orExpr(...expressions: any[]) {
+    return { orGroup: { expressions } };
+  }
+
+  // Optional geo/language filters (skip if not registered)
+  function maybeGeoLangFilter({ lang, country }: {lang?: string; country?: string}) {
+    const expr: any[] = [];
+    // Skip geo/lang filters for now - can add when dimensions are registered
+    // if (lang)    expr.push(dimEquals("language", lang));
+    // if (country) expr.push(dimEquals("country", country));
+    if (!expr.length) return undefined;
+    return andExpr(...expr);
+  }
+
+  // Import existing GA4 client
+  const { client: ga4Client, PROPERTY: GA4_PROPERTY } = require('./ga4-service');
+  
+  // runGa4Report wrapper 
+  async function runGa4Report(payload: any) {
+    const request = {
+      property: GA4_PROPERTY,
+      ...payload
+    };
+    const [response] = await ga4Client.runReport(request);
+    return response;
+  }
+
+  // ========== GA4 QUERY FUNCTIONS ==========
+
+  // KPIs: Sessions + Engagement by date
+  async function qKpisSessionsAndEngagement(opts: any) {
+    const { dateRange, lang, country } = opts;
+    const dimensionFilter = maybeGeoLangFilter({ lang, country });
+
+    const payload = {
+      dateRanges: [dateRange],
+      dimensions: [{ name: "date" }],
+      metrics: [
+        { name: "sessions" },
+        { name: "userEngagementDuration" }
+      ],
+      ...(dimensionFilter ? { dimensionFilter } : {}),
+    };
+
+    return runGa4Report(payload);
+  }
+
+  // KPIs: Plays (video_start) by date  
+  async function qKpisStartsByDate(opts: any) {
+    const { dateRange, lang, country } = opts;
+    const geoLang = maybeGeoLangFilter({ lang, country });
+
+    const payload = {
+      dateRanges: [dateRange],
+      dimensions: [{ name: "date" }],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: andExpr(
+        dimEquals("eventName", "video_start"),
+        ...(geoLang ? [geoLang] : [])
+      ),
+    };
+
+    return runGa4Report(payload);
+  }
+
+  // KPIs: Completions (progress_bucket=90) by date
+  async function qKpisCompletionsByDate(opts: any) {
+    const { dateRange, lang, country } = opts;
+    const geoLang = maybeGeoLangFilter({ lang, country });
+
+    const payload = {
+      dateRanges: [dateRange],
+      dimensions: [{ name: "date" }],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: andExpr(
+        dimEquals("eventName", "video_progress"),
+        dimEquals("customEvent:progress_bucket", "90"),
+        ...(geoLang ? [geoLang] : [])
+      ),
+    };
+
+    return runGa4Report(payload);
+  }
+
+  // Top Videos: Starts by video
+  async function qTopVideosStarts(opts: any) {
+    const { dateRange, lang, country } = opts;
+    const geoLang = maybeGeoLangFilter({ lang, country });
+
+    const payload = {
+      dateRanges: [dateRange],
+      dimensions: [
+        { name: "customEvent:video_id" },
+        { name: "customEvent:video_title" }
+      ],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: andExpr(
+        dimEquals("eventName", "video_start"),
+        ...(geoLang ? [geoLang] : [])
+      ),
+      orderBys: [{ desc: true, metric: { metricName: "eventCount" } }],
+      limit: 5000
+    };
+
+    return runGa4Report(payload);
+  }
+
+  // Top Videos: Completions by video
+  async function qTopVideosCompletions(opts: any) {
+    const { dateRange, lang, country } = opts;
+    const geoLang = maybeGeoLangFilter({ lang, country });
+
+    const payload = {
+      dateRanges: [dateRange],
+      dimensions: [
+        { name: "customEvent:video_id" },
+        { name: "customEvent:video_title" }
+      ],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: andExpr(
+        dimEquals("eventName", "video_progress"),
+        dimEquals("customEvent:progress_bucket", "90"),
+        ...(geoLang ? [geoLang] : [])
+      ),
+      limit: 5000
+    };
+
+    return runGa4Report(payload);
+  }
+
+  // Video Funnel: Progress buckets for single video
+  async function qVideoFunnelByBuckets(opts: any) {
+    const { dateRange, videoId, lang, country } = opts;
+    const geoLang = maybeGeoLangFilter({ lang, country });
+
+    const payload = {
+      dateRanges: [dateRange],
+      dimensions: [{ name: "customEvent:progress_bucket" }],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: andExpr(
+        dimEquals("eventName", "video_progress"),
+        dimEquals("customEvent:video_id", videoId),
+        ...(geoLang ? [geoLang] : [])
+      ),
+      orderBys: [{ dimension: { dimensionName: "customEvent:progress_bucket" } }],
+    };
+
+    return runGa4Report(payload);
+  }
+
+  // ========== RESPONSE MAPPERS ==========
+
+  function mapKpis(sessionsRows: any[], startsRows: any[], completesRows: any[], engagementRows: any[]) {
+    // Helper
+    const sum = (arr: number[]) => arr.reduce((a,b) => a+b, 0);
+
+    const sessionsTrend = sessionsRows.map((r: any) => ({
+      date: r.dimensionValues[0].value,
+      value: Number(r.metricValues[0].value)
+    }));
+    
+    const engagementTrend = engagementRows.map((r: any) => ({
+      date: r.dimensionValues[0].value,
+      value: Number(r.metricValues[1].value) // sessions, userEngagementDuration
+    }));
+
+    const startsTrend = startsRows.map((r: any) => ({
+      date: r.dimensionValues[0].value,
+      value: Number(r.metricValues[0].value)
+    }));
+    
+    const completesTrend = completesRows.map((r: any) => ({
+      date: r.dimensionValues[0].value,
+      value: Number(r.metricValues[0].value)
+    }));
+
+    return {
+      kpis: {
+        sessions: { value: sum(sessionsTrend.map(d=>d.value)), trend: sessionsTrend },
+        plays: { value: sum(startsTrend.map(d=>d.value)), trend: startsTrend },
+        completions: { value: sum(completesTrend.map(d=>d.value)), trend: completesTrend },
+        avgWatch: { value: Math.round(sum(engagementTrend.map(d=>d.value)) / (engagementTrend.length || 1)), trend: engagementTrend }
+      },
+      timestamp: new Date().toISOString(),
+      cached: false
+    };
+  }
+
+  function mapTopVideos(startsRows: any[], completesRows: any[]) {
+    const startsMap = new Map<string, { title: string; plays: number }>();
+    for (const r of startsRows) {
+      const vid = r.dimensionValues[0].value;
+      const title = r.dimensionValues[1].value;
+      const plays = Number(r.metricValues[0].value);
+      startsMap.set(vid, { title, plays });
+    }
+
+    const rows: { videoId: string; title: string; plays: number; completions: number; completionRate: number }[] = [];
+
+    for (const r of completesRows) {
+      const vid = r.dimensionValues[0].value;
+      const title = r.dimensionValues[1].value;
+      const completions = Number(r.metricValues[0].value);
+      const base = startsMap.get(vid) || { title, plays: 0 };
+      const rate = base.plays ? Math.round((completions / base.plays) * 100) : 0;
+      rows.push({ videoId: vid, title: base.title, plays: base.plays, completions, completionRate: rate });
+      startsMap.delete(vid);
+    }
+
+    // Videos that have starts but zero completions
+    for (const [vid, { title, plays }] of startsMap.entries()) {
+      rows.push({ videoId: vid, title, plays, completions: 0, completionRate: 0 });
+    }
+
+    return { 
+      topVideos: rows.sort((a,b) => b.plays - a.plays),
+      timestamp: new Date().toISOString(),
+      cached: false
+    };
+  }
+
+  function mapVideoFunnel(rows: any[]) {
+    const buckets = new Map<string, number>();
+    for (const r of rows) {
+      const bucket = r.dimensionValues[0].value; // "10","25","50","75","90"
+      const count = Number(r.metricValues[0].value);
+      buckets.set(bucket, count);
+    }
+    const ensure = (k: string) => buckets.get(k) ?? 0;
+
+    return {
+      funnel: [
+        { bucket: 10, count: ensure("10") },
+        { bucket: 25, count: ensure("25") },
+        { bucket: 50, count: ensure("50") },
+        { bucket: 75, count: ensure("75") },
+        { bucket: 90, count: ensure("90") }
+      ],
+      timestamp: new Date().toISOString(),
+      cached: false
+    };
+  }
+
+  // KPIs Report Builder (updated with new queries)
   async function buildKpis(params: any) {
-    const { startDate, endDate } = resolveDates(params.preset, params.startDate, params.endDate);
-    const locale = params.lang || 'all';
+    const dateRange = resolveDates(params.preset, params.startDate, params.endDate);
+    const { lang, country } = params;
     
     try {
-      // Get all metrics in parallel for efficiency
-      const [sessions, plays, completions, avgWatchSec] = await Promise.all([
-        qSessions(startDate, endDate, locale),
-        qPlays(startDate, endDate, locale), 
-        qCompletes(startDate, endDate, locale),
-        qAverageSessionDuration(startDate, endDate, locale)
+      console.log('📊 Building KPIs with GA4 Data API queries...');
+      
+      const [sess, starts, comps] = await Promise.all([
+        qKpisSessionsAndEngagement({ dateRange, lang, country }),
+        qKpisStartsByDate({ dateRange, lang, country }),
+        qKpisCompletionsByDate({ dateRange, lang, country }),
       ]);
 
-      // Get sparkline data (daily trends)
-      const sparklinePromises = [];
-      const sparklineDays = 7; // Always show 7 days for sparklines
-      for (let i = sparklineDays - 1; i >= 0; i--) {
-        const day = new Date();
-        day.setDate(day.getDate() - i);
-        const dayStr = day.toISOString().split('T')[0];
-        
-        sparklinePromises.push(
-          Promise.all([
-            qSessions(dayStr, dayStr, locale),
-            qPlays(dayStr, dayStr, locale),
-            qCompletes(dayStr, dayStr, locale),
-            qAverageSessionDuration(dayStr, dayStr, locale)
-          ]).then(([s, p, c, a]) => ({
-            date: dayStr,
-            sessions: s,
-            plays: p,
-            completions: c,
-            avgWatch: a
-          }))
-        );
-      }
-      
-      const sparklineData = await Promise.all(sparklinePromises);
-      
-      return {
-        kpis: {
-          sessions: {
-            value: sessions,
-            trend: sparklineData.map(d => ({ date: d.date, value: d.sessions }))
-          },
-          plays: {
-            value: plays,
-            trend: sparklineData.map(d => ({ date: d.date, value: d.plays }))
-          },
-          completions: {
-            value: completions,
-            trend: sparklineData.map(d => ({ date: d.date, value: d.completions }))
-          },
-          avgWatch: {
-            value: Math.round(avgWatchSec),
-            trend: sparklineData.map(d => ({ date: d.date, value: Math.round(d.avgWatch) }))
-          }
-        },
-        timestamp: new Date().toISOString(),
-        cached: false
-      };
+      // engagement is included with sessions call above; pass sess twice
+      return mapKpis(
+        sess.rows ?? [],
+        starts.rows ?? [],
+        comps.rows ?? [],
+        sess.rows ?? []
+      );
     } catch (error) {
       console.error('❌ buildKpis error:', error);
       throw error;
     }
   }
 
-  // Top Videos Report Builder
+  // Top Videos Report Builder (updated with new queries)
   async function buildTopVideos(params: any) {
-    const { startDate, endDate } = resolveDates(params.preset, params.startDate, params.endDate);
-    const locale = params.lang || 'all';
+    const dateRange = resolveDates(params.preset, params.startDate, params.endDate);
+    const { lang, country } = params;
     
     try {
-      // Get plays by video and completion data
-      const [playsByVideo, progressData] = await Promise.all([
-        qPlaysByVideo(startDate, endDate, locale, 20),
-        qProgressByVideo(startDate, endDate, locale)
+      console.log('📊 Building Top Videos with GA4 Data API queries...');
+      
+      const [starts, comps] = await Promise.all([
+        qTopVideosStarts({ dateRange, lang, country }),
+        qTopVideosCompletions({ dateRange, lang, country }),
       ]);
 
-      // Map to required format
-      const topVideos = playsByVideo.map((video: any) => {
-        const completions = progressData.filter(
-          (p: any) => p.video_id === video.video_id && p.bucket === 90
-        )[0]?.count || 0;
-        
-        const completionRate = video.plays > 0 ? Math.round((completions / video.plays) * 100) : 0;
-        
-        return {
-          videoId: video.video_id,
-          title: video.video_title || video.video_id,
-          plays: video.plays,
-          completions,
-          completionRate,
-          avgEngagement: video.avg_watch_time_sec || undefined
-        };
-      });
-
-      return {
-        topVideos: topVideos.sort((a: any, b: any) => b.plays - a.plays),
-        timestamp: new Date().toISOString(),
-        cached: false
-      };
+      return mapTopVideos(starts.rows ?? [], comps.rows ?? []);
     } catch (error) {
       console.error('❌ buildTopVideos error:', error);
       throw error;
     }
   }
 
-  // Video Funnel Report Builder  
+  // Video Funnel Report Builder (updated with new queries)
   async function buildVideoFunnel(params: any) {
-    const { startDate, endDate } = resolveDates(params.preset, params.startDate, params.endDate);
-    const locale = params.lang || 'all';
-    const videoId = params.videoId;
+    const dateRange = resolveDates(params.preset, params.startDate, params.endDate);
+    const { videoId, lang, country } = params;
     
     if (!videoId) {
       throw new Error('videoId is required for videoFunnel report');
     }
     
     try {
-      const progressData = await qProgressByVideo(startDate, endDate, locale);
+      console.log('📊 Building Video Funnel with GA4 Data API queries...');
       
-      // Filter by video and map to funnel buckets
-      const videoProgress = progressData.filter((p: any) => p.video_id === videoId);
-      
-      const buckets = [10, 25, 50, 75, 90];
-      const funnel = buckets.map(bucket => {
-        const bucketData = videoProgress.find((p: any) => p.bucket === bucket);
-        return {
-          bucket: bucket as 10 | 25 | 50 | 75 | 90,
-          count: bucketData?.count || 0
-        };
-      });
-
-      return {
-        funnel,
-        timestamp: new Date().toISOString(),
-        cached: false
-      };
+      const vf = await qVideoFunnelByBuckets({ dateRange, videoId, lang, country });
+      return mapVideoFunnel(vf.rows ?? []);
     } catch (error) {
       console.error('❌ buildVideoFunnel error:', error);
       throw error;
