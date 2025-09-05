@@ -277,15 +277,9 @@ export function fireGA(eventName: string, params: any = {}) {
   
   const send = () => {
     if (window.gtag) {
-      if (isVideoEvent) {
-        console.log(`🚀🚀🚀 SENDING VIDEO EVENT TO GA4: ${eventName}`, baseParams);
-      }
       console.log(`[GA4] sending ${eventName}`, baseParams);
       window.gtag('event', eventName, baseParams);
       console.log(`[GA4] sent ${eventName}`);
-      if (isVideoEvent) {
-        console.log(`✅✅✅ VIDEO EVENT SENT TO GA4: ${eventName}`);
-      }
     } else {
       console.warn(`[GA4] gtag not available for ${eventName}`);
     }

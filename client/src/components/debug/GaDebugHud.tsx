@@ -60,14 +60,16 @@ export default function GaDebugHud() {
           if (args[0] === 'event') {
             const name = args[1];
             const params = args[2] || {};
-            if (['video_start', 'video_progress', 'video_complete'].includes(name)) {
-              setState(prev => ({
-                ...prev,
-                events: [...prev.events, { name, params, ts: Date.now() }],
-                counts: { ...prev.counts, [name]: (prev.counts[name as keyof typeof prev.counts] || 0) + 1 },
-                lastMsg: `captured ${name}`
-              }));
-            }
+            // Capture ALL events, not just video events
+            setState(prev => ({
+              ...prev,
+              events: [...prev.events, { name, params, ts: Date.now() }],
+              counts: { 
+                ...prev.counts, 
+                [name]: (prev.counts[name as keyof typeof prev.counts] || 0) + 1 
+              },
+              lastMsg: `captured ${name}`
+            }));
           }
         } catch (e) {
           console.warn('GA Debug HUD: Error capturing event', e);
