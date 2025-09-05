@@ -4919,8 +4919,14 @@ export async function registerRoutes(app: Express): Promise<void> {
       const funnelData = await qFunnel(startDate, endDate);
       const videoFunnel = {
         start: funnelData.plays,
-        halfway: funnelData.half,
-        complete: funnelData.completes
+        p10: funnelData.p10,
+        p25: funnelData.p25,
+        p50: funnelData.p50,
+        p75: funnelData.p75,
+        p90: funnelData.p90,
+        complete: funnelData.completes,
+        // Legacy compatibility
+        halfway: funnelData.half
       };
       console.log(`✅ Video Funnel: start=${videoFunnel.start}, halfway=${videoFunnel.halfway}, complete=${videoFunnel.complete}`);
       

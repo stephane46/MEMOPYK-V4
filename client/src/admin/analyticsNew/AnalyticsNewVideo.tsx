@@ -26,8 +26,14 @@ interface TopVideo {
 
 interface VideoFunnel {
   start: number;
-  halfway: number;
+  p10: number;
+  p25: number;
+  p50: number;
+  p75: number;
+  p90: number;
   complete: number;
+  // Legacy compatibility
+  halfway: number;
 }
 
 interface GA4ReportData {
@@ -123,13 +129,17 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Calculate funnel percentages
+  // Calculate granular funnel percentages (10%, 25%, 50%, 75%, 90%)
   const calculateFunnelPercentages = (funnel: VideoFunnel) => {
     const startPct = 100;
-    const halfwayPct = funnel.start > 0 ? Math.round((funnel.halfway / funnel.start) * 100) : 0;
+    const p10Pct = funnel.start > 0 ? Math.round((funnel.p10 / funnel.start) * 100) : 0;
+    const p25Pct = funnel.start > 0 ? Math.round((funnel.p25 / funnel.start) * 100) : 0;
+    const p50Pct = funnel.start > 0 ? Math.round((funnel.p50 / funnel.start) * 100) : 0;
+    const p75Pct = funnel.start > 0 ? Math.round((funnel.p75 / funnel.start) * 100) : 0;
+    const p90Pct = funnel.start > 0 ? Math.round((funnel.p90 / funnel.start) * 100) : 0;
     const completePct = funnel.start > 0 ? Math.round((funnel.complete / funnel.start) * 100) : 0;
     
-    return { startPct, halfwayPct, completePct };
+    return { startPct, p10Pct, p25Pct, p50Pct, p75Pct, p90Pct, completePct };
   };
 
   if (isLoading) {
@@ -242,11 +252,11 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
           <BarChart3 className="h-5 w-5 text-[var(--analytics-new-accent)]" />
         </div>
         
-        <div className="space-y-4">
-          {/* Start */}
+        <div className="space-y-3">
+          {/* Start - 100% baseline */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
               <span className="text-sm font-medium text-[var(--analytics-new-text)]">Video Start</span>
             </div>
             <div className="flex items-center space-x-4">
@@ -255,28 +265,88 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
             </div>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${funnelPercentages.startPct}%` }}></div>
+            <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${funnelPercentages.startPct}%` }}></div>
           </div>
 
-          {/* Halfway */}
+          {/* 10% Progress */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+              <span className="text-sm font-medium text-[var(--analytics-new-text)]">10% Progress</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p10Pct}%</span>
+              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p10.toLocaleString()}</span>
+            </div>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${funnelPercentages.p10Pct}%` }}></div>
+          </div>
+
+          {/* 25% Progress */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+              <span className="text-sm font-medium text-[var(--analytics-new-text)]">25% Progress</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p25Pct}%</span>
+              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p25.toLocaleString()}</span>
+            </div>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="bg-green-600 h-2 rounded-full" style={{ width: `${funnelPercentages.p25Pct}%` }}></div>
+          </div>
+
+          {/* 50% Progress */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-3 h-3 bg-green-500 rounded-full"></div>
               <span className="text-sm font-medium text-[var(--analytics-new-text)]">50% Progress</span>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.halfwayPct}%</span>
-              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.halfway.toLocaleString()}</span>
+              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p50Pct}%</span>
+              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p50.toLocaleString()}</span>
             </div>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-green-500 h-2 rounded-full" style={{ width: `${funnelPercentages.halfwayPct}%` }}></div>
+            <div className="bg-green-500 h-2 rounded-full" style={{ width: `${funnelPercentages.p50Pct}%` }}></div>
           </div>
 
-          {/* Complete */}
+          {/* 75% Progress */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-orange-600 rounded-full"></div>
+              <span className="text-sm font-medium text-[var(--analytics-new-text)]">75% Progress</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p75Pct}%</span>
+              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p75.toLocaleString()}</span>
+            </div>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="bg-orange-600 h-2 rounded-full" style={{ width: `${funnelPercentages.p75Pct}%` }}></div>
+          </div>
+
+          {/* 90% Progress */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+              <span className="text-sm font-medium text-[var(--analytics-new-text)]">90% Progress</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p90Pct}%</span>
+              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p90.toLocaleString()}</span>
+            </div>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${funnelPercentages.p90Pct}%` }}></div>
+          </div>
+
+          {/* Completion (90%+ = Complete) */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
               <span className="text-sm font-medium text-[var(--analytics-new-text)]">Completion (90%+)</span>
             </div>
             <div className="flex items-center space-x-4">
@@ -285,7 +355,7 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
             </div>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${funnelPercentages.completePct}%` }}></div>
+            <div className="bg-red-500 h-2 rounded-full" style={{ width: `${funnelPercentages.completePct}%` }}></div>
           </div>
         </div>
       </div>

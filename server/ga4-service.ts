@@ -693,34 +693,113 @@ export async function qFunnel(start: string, end: string, locale?: string) {
   const plays = await qPlays(start, end, locale);
   const completes = await qCompletes(start, end, locale);
 
-  // 50% progress milestone - use same structure as working functions
+  // Granular progress tracking (10%, 25%, 50%, 75%, 90%) - as established in project requirements
   const localeExpr =
     locale && locale !== "all"
       ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
       : [];
 
   try {
-    const [halfRes] = await client.runReport({
-      property: PROPERTY,
-      dateRanges: [{ startDate: start, endDate: end }],
-      metrics: [{ name: "eventCount" }],
-      dimensionFilter: {
-        andGroup: {
-          expressions: [
-            { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-            { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "50" } } },
-            ...localeExpr
-          ]
+    // Get all progress milestones in parallel
+    const [p10Res, p25Res, p50Res, p75Res, p90Res] = await Promise.all([
+      // 10% progress
+      client.runReport({
+        property: PROPERTY,
+        dateRanges: [{ startDate: start, endDate: end }],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "10" } } },
+              ...localeExpr
+            ]
+          }
         }
-      }
-    });
-    const half = Number(halfRes.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+      }),
+      // 25% progress
+      client.runReport({
+        property: PROPERTY,
+        dateRanges: [{ startDate: start, endDate: end }],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "25" } } },
+              ...localeExpr
+            ]
+          }
+        }
+      }),
+      // 50% progress
+      client.runReport({
+        property: PROPERTY,
+        dateRanges: [{ startDate: start, endDate: end }],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "50" } } },
+              ...localeExpr
+            ]
+          }
+        }
+      }),
+      // 75% progress
+      client.runReport({
+        property: PROPERTY,
+        dateRanges: [{ startDate: start, endDate: end }],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "75" } } },
+              ...localeExpr
+            ]
+          }
+        }
+      }),
+      // 90% progress
+      client.runReport({
+        property: PROPERTY,
+        dateRanges: [{ startDate: start, endDate: end }],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "90" } } },
+              ...localeExpr
+            ]
+          }
+        }
+      })
+    ]);
 
-    return { plays, half, completes };
+    const p10 = Number(p10Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
+    const p25 = Number(p25Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
+    const p50 = Number(p50Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
+    const p75 = Number(p75Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
+    const p90 = Number(p90Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
+
+    return { 
+      plays, 
+      p10, 
+      p25, 
+      p50, 
+      p75, 
+      p90,
+      completes,
+      // Legacy compatibility for existing code
+      half: p50
+    };
   } catch (error) {
-    console.error("qFunnel 50% progress error:", error);
-    // Return funnel data with 0 for half progress when query fails
-    return { plays, half: 0, completes };
+    console.error("qFunnel granular progress error:", error);
+    // Return funnel data with 0 for all milestones when query fails
+    return { plays, p10: 0, p25: 0, p50: 0, p75: 0, p90: 0, completes, half: 0 };
   }
 }
 
