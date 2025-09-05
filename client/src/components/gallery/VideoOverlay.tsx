@@ -32,6 +32,15 @@ export default function VideoOverlay({
   thumbnailUrl 
 }: VideoOverlayProps) {
   console.log('🎬🎬🎬 VideoOverlay MOUNTED with GA4 tracking!', videoUrl);
+  
+  // Test debug HUD - fire a test event to verify interception
+  useEffect(() => {
+    setTimeout(() => {
+      console.log('🧪 TESTING DEBUG HUD - firing test event');
+      fireGA('test_event', { test_param: 'debug_hud_test' });
+    }, 2000);
+  }, []);
+  
   // VideoOverlay mounted
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
