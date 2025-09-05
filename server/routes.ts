@@ -4906,30 +4906,6 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.log('📈 Generating sparkline data...');
       const sparklineData = await generateSparklineData(startDate, endDate, compareStartDate, compareEndDate);
       
-      // Import video analytics functions
-      const { getTopVideosTable, qFunnel } = await import('./ga4-service');
-      
-      // Fetch top videos data for Phase 3
-      console.log('📊 Fetching top videos data...');
-      const topVideos = await getTopVideosTable(startDate, endDate);
-      console.log(`✅ Top Videos: ${topVideos.length} videos retrieved`);
-      
-      // Fetch video funnel data for Phase 3
-      console.log('📊 Fetching video funnel data...');
-      const funnelData = await qFunnel(startDate, endDate);
-      const videoFunnel = {
-        start: funnelData.plays,
-        p10: funnelData.p10,
-        p25: funnelData.p25,
-        p50: funnelData.p50,
-        p75: funnelData.p75,
-        p90: funnelData.p90,
-        complete: funnelData.completes,
-        // Legacy compatibility
-        halfway: funnelData.half
-      };
-      console.log(`✅ Video Funnel: start=${videoFunnel.start}, halfway=${videoFunnel.halfway}, complete=${videoFunnel.complete}`);
-      
       // Build response according to specification
       const response = {
         kpis: {
@@ -4948,9 +4924,6 @@ export async function registerRoutes(app: Express): Promise<void> {
           },
           sparklines: sparklineData.previous
         },
-        // Phase 3 additions: Top Videos and Video Funnel data
-        topVideos: topVideos.slice(0, 10), // Top 10 videos
-        videoFunnel,
         dateRange: {
           current: { from: startDate, to: endDate },
           previous: { from: compareStartDate, to: compareEndDate }
@@ -4974,6 +4947,140 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.error('❌ GA4 Report error:', error);
       res.status(500).json({ 
         error: 'Failed to generate GA4 report',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  // Phase 3: New GA4 Report API with report= parameter (kpis, topVideos, videoFunnel)
+  app.get("/api/ga4/report", async (req, res) => {
+    try {
+      const { 
+        startDate, 
+        endDate, 
+        preset = '7d',
+        lang = 'all', 
+        country = 'all', 
+        videoId,
+        report = 'kpis'
+      } = req.query;
+
+      console.log(`🎯 Phase 3 GA4 Report: report=${report}, preset=${preset}, startDate=${startDate}, endDate=${endDate}`);
+      
+      // Calculate dates if not provided
+      let resolvedStartDate = startDate as string;
+      let resolvedEndDate = endDate as string;
+      
+      if (!startDate || !endDate) {
+        const dateRange = calculateDateRange(preset as string);
+        resolvedStartDate = dateRange.startDate;
+        resolvedEndDate = dateRange.endDate;
+      }
+
+      // Cache key per report type
+      const cacheKey = `ga4-phase3:${report}:${preset}:${resolvedStartDate}:${resolvedEndDate}:${lang}:${country}:${videoId || 'all'}`;
+      const cached = getCache<any>(cacheKey);
+      if (cached) {
+        console.log(`✅ Phase 3 cache hit: ${cacheKey}`);
+        return res.json(cached);
+      }
+
+      console.log(`🔄 Phase 3 generating fresh data: ${report}`);
+
+      // Import GA4 functions
+      const { qSessions, qPlays, qVideoFunnel, getTopVideosTable, qTrendDaily } = await import('./ga4-service');
+
+      let result: any = {};
+
+      switch (report) {
+        case 'kpis': {
+          console.log('📊 Fetching KPIs with sparklines...');
+          const [sessions, plays] = await Promise.all([
+            qSessions(resolvedStartDate, resolvedEndDate, lang === 'all' ? undefined : lang),
+            qPlays(resolvedStartDate, resolvedEndDate, lang === 'all' ? undefined : lang)
+          ]);
+
+          // Get completion count (progress_bucket = 90)
+          const completions = await qVideoFunnel(resolvedStartDate, resolvedEndDate, undefined, lang === 'all' ? undefined : lang)
+            .then(funnel => funnel.find(f => f.bucket === 90)?.count || 0);
+
+          // Get sparklines for trends
+          const trends = await qTrendDaily(resolvedStartDate, resolvedEndDate, lang === 'all' ? undefined : lang);
+
+          result = {
+            kpis: {
+              sessions: {
+                value: sessions,
+                trend: trends.map(t => ({ date: t.date, value: sessions })) // Simplified for now
+              },
+              plays: {
+                value: plays,
+                trend: trends.map(t => ({ date: t.date, value: t.plays }))
+              },
+              completions: {
+                value: completions,
+                trend: trends.map(t => ({ date: t.date, value: completions })) // Simplified for now
+              },
+              avgWatch: {
+                value: trends.length > 0 ? Math.round(trends.reduce((acc, t) => acc + t.avgWatch, 0) / trends.length) : 0,
+                trend: trends.map(t => ({ date: t.date, value: t.avgWatch }))
+              }
+            }
+          };
+          break;
+        }
+
+        case 'topVideos': {
+          console.log('📊 Fetching top videos...');
+          const topVideosData = await getTopVideosTable(resolvedStartDate, resolvedEndDate);
+          
+          result = {
+            topVideos: topVideosData.map(video => ({
+              videoId: video.video_id,
+              title: video.title || video.video_id,
+              plays: video.plays,
+              completions: Math.round(video.plays * video.completePct / 100),
+              completionRate: video.completePct,
+              avgEngagement: video.avgWatchSeconds
+            }))
+          };
+          break;
+        }
+
+        case 'videoFunnel': {
+          console.log(`📊 Fetching video funnel for videoId: ${videoId || 'all'}`);
+          const funnelData = await qVideoFunnel(resolvedStartDate, resolvedEndDate, videoId as string, lang === 'all' ? undefined : lang);
+          
+          result = {
+            funnel: funnelData.map(item => ({
+              bucket: item.bucket as 10|25|50|75|90,
+              count: item.count
+            }))
+          };
+          break;
+        }
+
+        default:
+          return res.status(400).json({ 
+            error: 'Invalid report type',
+            validReports: ['kpis', 'topVideos', 'videoFunnel'] 
+          });
+      }
+
+      // Add metadata
+      result.timestamp = new Date().toISOString();
+      result.cached = false;
+
+      console.log(`✅ Phase 3 ${report} data generated successfully`);
+      
+      // Cache for 60s as specified
+      setCache(cacheKey, { ...result, cached: true }, 60);
+      res.json(result);
+
+    } catch (error) {
+      console.error(`❌ Phase 3 GA4 Report error:`, error);
+      res.status(500).json({ 
+        error: 'Failed to generate Phase 3 GA4 report',
         details: error instanceof Error ? error.message : 'Unknown error'
       });
     }

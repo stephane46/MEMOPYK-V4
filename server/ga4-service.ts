@@ -689,117 +689,44 @@ export async function getTopVideosTable(start: string, end: string, locale?: str
 
 /* =============  FUNNEL & TREND  ============= */
 
-export async function qFunnel(start: string, end: string, locale?: string) {
-  const plays = await qPlays(start, end, locale);
-  const completes = await qCompletes(start, end, locale);
-
-  // Granular progress tracking (10%, 25%, 50%, 75%, 90%) - as established in project requirements
-  const localeExpr =
-    locale && locale !== "all"
-      ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
-      : [];
+// Phase 3: Funnel data for progress buckets (10, 25, 50, 75, 90)
+export async function qVideoFunnel(start: string, end: string, videoId?: string, locale?: string) {
+  const buckets = [10, 25, 50, 75, 90];
+  const localeExpr = locale && locale !== "all" 
+    ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }] 
+    : [];
+  const videoExpr = videoId 
+    ? [{ filter: { fieldName: "customEvent:video_id", stringFilter: { value: videoId } } }] 
+    : [];
 
   try {
-    // Get all progress milestones in parallel
-    const [p10Res, p25Res, p50Res, p75Res, p90Res] = await Promise.all([
-      // 10% progress
-      client.runReport({
-        property: PROPERTY,
-        dateRanges: [{ startDate: start, endDate: end }],
-        metrics: [{ name: "eventCount" }],
-        dimensionFilter: {
-          andGroup: {
-            expressions: [
-              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "10" } } },
-              ...localeExpr
-            ]
+    const results = await Promise.all(
+      buckets.map(async (bucket) => {
+        const [res] = await client.runReport({
+          property: PROPERTY,
+          dateRanges: [{ startDate: start, endDate: end }],
+          metrics: [{ name: "eventCount" }],
+          dimensionFilter: {
+            andGroup: {
+              expressions: [
+                { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
+                { filter: { fieldName: "customEvent:progress_bucket", stringFilter: { value: String(bucket) } } },
+                ...localeExpr,
+                ...videoExpr
+              ]
+            }
           }
-        }
-      }),
-      // 25% progress
-      client.runReport({
-        property: PROPERTY,
-        dateRanges: [{ startDate: start, endDate: end }],
-        metrics: [{ name: "eventCount" }],
-        dimensionFilter: {
-          andGroup: {
-            expressions: [
-              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "25" } } },
-              ...localeExpr
-            ]
-          }
-        }
-      }),
-      // 50% progress
-      client.runReport({
-        property: PROPERTY,
-        dateRanges: [{ startDate: start, endDate: end }],
-        metrics: [{ name: "eventCount" }],
-        dimensionFilter: {
-          andGroup: {
-            expressions: [
-              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "50" } } },
-              ...localeExpr
-            ]
-          }
-        }
-      }),
-      // 75% progress
-      client.runReport({
-        property: PROPERTY,
-        dateRanges: [{ startDate: start, endDate: end }],
-        metrics: [{ name: "eventCount" }],
-        dimensionFilter: {
-          andGroup: {
-            expressions: [
-              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "75" } } },
-              ...localeExpr
-            ]
-          }
-        }
-      }),
-      // 90% progress
-      client.runReport({
-        property: PROPERTY,
-        dateRanges: [{ startDate: start, endDate: end }],
-        metrics: [{ name: "eventCount" }],
-        dimensionFilter: {
-          andGroup: {
-            expressions: [
-              { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-              { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "90" } } },
-              ...localeExpr
-            ]
-          }
-        }
+        });
+        
+        const count = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+        return { bucket, count };
       })
-    ]);
-
-    const p10 = Number(p10Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
-    const p25 = Number(p25Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
-    const p50 = Number(p50Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
-    const p75 = Number(p75Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
-    const p90 = Number(p90Res[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
-
-    return { 
-      plays, 
-      p10, 
-      p25, 
-      p50, 
-      p75, 
-      p90,
-      completes,
-      // Legacy compatibility for existing code
-      half: p50
-    };
+    );
+    
+    return results;
   } catch (error) {
-    console.error("qFunnel granular progress error:", error);
-    // Return funnel data with 0 for all milestones when query fails
-    return { plays, p10: 0, p25: 0, p50: 0, p75: 0, p90: 0, completes, half: 0 };
+    console.error("qVideoFunnel error:", error);
+    return buckets.map(bucket => ({ bucket, count: 0 }));
   }
 }
 

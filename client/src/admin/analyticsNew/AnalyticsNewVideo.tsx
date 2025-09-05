@@ -6,45 +6,29 @@ import {
   Clock, 
   BarChart3,
   ChevronDown,
-  ChevronUp,
-  Video,
-  Target
+  ChevronUp
 } from 'lucide-react';
-import { AnalyticsNewKpiCard } from './AnalyticsNewKpiCard';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { cn } from '@/lib/utils';
 
 interface TopVideo {
-  video_id: string;
+  videoId: string;
   title: string;
   plays: number;
-  avgWatchSeconds: number;
-  reach50Pct: number;
-  completePct: number;
+  completions: number;
+  completionRate: number;
+  avgEngagement?: number;
 }
 
-interface VideoFunnel {
-  start: number;
-  p10: number;
-  p25: number;
-  p50: number;
-  p75: number;
-  p90: number;
-  complete: number;
-  // Legacy compatibility
-  halfway: number;
-}
-
-interface GA4ReportData {
-  kpis: {
-    sessions: number;
-    plays: number;
-    avgWatchTimeSec: number;
-    completionRatePct: number;
-  };
+interface TopVideosResponse {
   topVideos: TopVideo[];
-  videoFunnel: VideoFunnel;
+  timestamp: string;
+  cached: boolean;
+}
+
+interface VideoFunnelResponse {
+  funnel: Array<{ bucket: 10|25|50|75|90, count: number }>;
   timestamp: string;
   cached: boolean;
 }
@@ -63,30 +47,50 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
   // Get current filter state
   const { datePreset, customDateStart, customDateEnd } = useAnalyticsNewFilters();
 
-  // Get GA4 report data with top videos and funnel
-  const { data: reportData, isLoading, error } = useQuery<GA4ReportData>({
-    queryKey: ['/api/ga4/report', datePreset, customDateStart, customDateEnd],
+  // Get Top Videos data
+  const { data: topVideosData, isLoading: videosLoading, error: videosError } = useQuery<TopVideosResponse>({
+    queryKey: ['/api/ga4/report', 'topVideos', datePreset, customDateStart, customDateEnd],
     queryFn: async () => {
-      const response = await fetch('/api/ga4/report', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          preset: datePreset,
-          dateFrom: customDateStart || undefined,
-          dateTo: customDateEnd || undefined,
-        }),
+      const params = new URLSearchParams({
+        report: 'topVideos',
+        preset: datePreset,
+        ...(customDateStart && { startDate: customDateStart }),
+        ...(customDateEnd && { endDate: customDateEnd }),
       });
 
+      const response = await fetch(`/api/ga4/report?${params}`);
       if (!response.ok) {
-        throw new Error(`GA4 report failed: ${response.status}`);
+        throw new Error(`Failed to fetch top videos: ${response.status}`);
       }
-
       return response.json();
     },
     refetchOnWindowFocus: false,
     staleTime: 30000, // 30 seconds
+  });
+
+  // Get Video Funnel data when a video is selected
+  const { data: funnelData, isLoading: funnelLoading } = useQuery<VideoFunnelResponse>({
+    queryKey: ['/api/ga4/report', 'videoFunnel', selectedVideo?.videoId, datePreset, customDateStart, customDateEnd],
+    queryFn: async () => {
+      if (!selectedVideo) return null;
+      
+      const params = new URLSearchParams({
+        report: 'videoFunnel',
+        videoId: selectedVideo.videoId,
+        preset: datePreset,
+        ...(customDateStart && { startDate: customDateStart }),
+        ...(customDateEnd && { endDate: customDateEnd }),
+      });
+
+      const response = await fetch(`/api/ga4/report?${params}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch video funnel: ${response.status}`);
+      }
+      return response.json();
+    },
+    enabled: !!selectedVideo,
+    refetchOnWindowFocus: false,
+    staleTime: 30000,
   });
 
   // Handle sorting
@@ -108,7 +112,7 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
     );
   };
 
-  const sortedVideos = reportData?.topVideos ? [...reportData.topVideos].sort((a, b) => {
+  const sortedVideos = topVideosData?.topVideos ? [...topVideosData.topVideos].sort((a, b) => {
     const aVal = a[sortField];
     const bVal = b[sortField];
     
@@ -129,20 +133,60 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Calculate granular funnel percentages (10%, 25%, 50%, 75%, 90%)
-  const calculateFunnelPercentages = (funnel: VideoFunnel) => {
-    const startPct = 100;
-    const p10Pct = funnel.start > 0 ? Math.round((funnel.p10 / funnel.start) * 100) : 0;
-    const p25Pct = funnel.start > 0 ? Math.round((funnel.p25 / funnel.start) * 100) : 0;
-    const p50Pct = funnel.start > 0 ? Math.round((funnel.p50 / funnel.start) * 100) : 0;
-    const p75Pct = funnel.start > 0 ? Math.round((funnel.p75 / funnel.start) * 100) : 0;
-    const p90Pct = funnel.start > 0 ? Math.round((funnel.p90 / funnel.start) * 100) : 0;
-    const completePct = funnel.start > 0 ? Math.round((funnel.complete / funnel.start) * 100) : 0;
+  // Render funnel chart
+  const renderFunnelChart = () => {
+    if (!funnelData || !selectedVideo) return null;
     
-    return { startPct, p10Pct, p25Pct, p50Pct, p75Pct, p90Pct, completePct };
+    const maxCount = Math.max(...funnelData.funnel.map(f => f.count));
+    
+    return (
+      <div className="analytics-new-card border-l-4 border-[var(--analytics-new-accent)] mt-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+            Video Engagement Funnel - {selectedVideo.title}
+          </h3>
+          <button
+            onClick={() => setSelectedVideo(null)}
+            className="text-[var(--analytics-new-text-muted)] hover:text-[var(--analytics-new-text)] text-xl font-bold"
+          >
+            ×
+          </button>
+        </div>
+        
+        {funnelLoading ? (
+          <div className="text-center py-8">Loading funnel data...</div>
+        ) : (
+          <div className="space-y-3">
+            {funnelData.funnel.map((item) => {
+              const percentage = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
+              const bucketLabel = item.bucket === 90 ? `${item.bucket}% (Complete)` : `${item.bucket}%`;
+              
+              return (
+                <div key={item.bucket}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-[var(--analytics-new-text)]">
+                      {bucketLabel}
+                    </span>
+                    <span className="text-sm font-semibold text-[var(--analytics-new-text)]">
+                      {item.count.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-[var(--analytics-new-accent)] h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${percentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
   };
 
-  if (isLoading) {
+  if (videosLoading) {
     return (
       <div className={cn('analytics-new-container space-y-6', className)}>
         <h2 className="text-2xl font-bold text-[var(--analytics-new-text)]">Video Analytics</h2>
@@ -151,7 +195,7 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
     );
   }
 
-  if (error) {
+  if (videosError) {
     return (
       <div className={cn('analytics-new-container space-y-6', className)}>
         <h2 className="text-2xl font-bold text-[var(--analytics-new-text)]">Video Analytics</h2>
@@ -165,7 +209,7 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
     );
   }
 
-  if (!reportData?.topVideos || reportData.topVideos.length === 0) {
+  if (!topVideosData?.topVideos || topVideosData.topVideos.length === 0) {
     return (
       <div className={cn('analytics-new-container space-y-6', className)}>
         <h2 className="text-2xl font-bold text-[var(--analytics-new-text)]">Video Analytics</h2>
@@ -178,48 +222,6 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
     );
   }
 
-  const { kpis, topVideos, videoFunnel } = reportData;
-  const funnelPercentages = calculateFunnelPercentages(videoFunnel);
-
-  const videoKpis = [
-    {
-      id: 'video_plays',
-      title: 'Total Video Plays',
-      value: kpis.plays.toLocaleString(),
-      icon: Play,
-      color: 'blue' as const,
-      trend: 'up' as const,
-      change: 0, // Could add comparison data later
-    },
-    {
-      id: 'avg_watch_time',
-      title: 'Avg Watch Time',
-      value: formatDuration(kpis.avgWatchTimeSec),
-      icon: Clock,
-      color: 'green' as const,
-      trend: 'up' as const,
-      change: 0,
-    },
-    {
-      id: 'completion_rate',
-      title: 'Completion Rate',
-      value: `${kpis.completionRatePct}%`,
-      icon: Target,
-      color: 'orange' as const,
-      trend: 'up' as const,
-      change: 0,
-    },
-    {
-      id: 'total_videos',
-      title: 'Total Videos',
-      value: topVideos.length.toString(),
-      icon: Video,
-      color: 'purple' as const,
-      trend: 'flat' as const,
-      change: 0,
-    },
-  ];
-
   return (
     <div className={cn('analytics-new-container space-y-6', className)}>
       {/* Header */}
@@ -231,132 +233,7 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
           </p>
         </div>
         <div className="text-xs text-[var(--analytics-new-text-muted)]">
-          {reportData.cached ? '⚡ Cached' : '🔄 Live'} • Updated {new Date(reportData.timestamp).toLocaleTimeString()}
-        </div>
-      </div>
-
-      {/* Video KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {videoKpis.map((kpi, index) => (
-          <AnalyticsNewKpiCard 
-            key={index}
-            data={kpi}
-          />
-        ))}
-      </div>
-
-      {/* Video Funnel Chart */}
-      <div className="analytics-new-card">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">Video Engagement Funnel</h3>
-          <BarChart3 className="h-5 w-5 text-[var(--analytics-new-accent)]" />
-        </div>
-        
-        <div className="space-y-3">
-          {/* Start - 100% baseline */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-              <span className="text-sm font-medium text-[var(--analytics-new-text)]">Video Start</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.startPct}%</span>
-              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.start.toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${funnelPercentages.startPct}%` }}></div>
-          </div>
-
-          {/* 10% Progress */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span className="text-sm font-medium text-[var(--analytics-new-text)]">10% Progress</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p10Pct}%</span>
-              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p10.toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${funnelPercentages.p10Pct}%` }}></div>
-          </div>
-
-          {/* 25% Progress */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-              <span className="text-sm font-medium text-[var(--analytics-new-text)]">25% Progress</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p25Pct}%</span>
-              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p25.toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-green-600 h-2 rounded-full" style={{ width: `${funnelPercentages.p25Pct}%` }}></div>
-          </div>
-
-          {/* 50% Progress */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-[var(--analytics-new-text)]">50% Progress</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p50Pct}%</span>
-              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p50.toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-green-500 h-2 rounded-full" style={{ width: `${funnelPercentages.p50Pct}%` }}></div>
-          </div>
-
-          {/* 75% Progress */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-orange-600 rounded-full"></div>
-              <span className="text-sm font-medium text-[var(--analytics-new-text)]">75% Progress</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p75Pct}%</span>
-              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p75.toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-orange-600 h-2 rounded-full" style={{ width: `${funnelPercentages.p75Pct}%` }}></div>
-          </div>
-
-          {/* 90% Progress */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-              <span className="text-sm font-medium text-[var(--analytics-new-text)]">90% Progress</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.p90Pct}%</span>
-              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.p90.toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${funnelPercentages.p90Pct}%` }}></div>
-          </div>
-
-          {/* Completion (90%+ = Complete) */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-              <span className="text-sm font-medium text-[var(--analytics-new-text)]">Completion (90%+)</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-[var(--analytics-new-text-muted)]">{funnelPercentages.completePct}%</span>
-              <span className="text-sm font-semibold text-[var(--analytics-new-text)]">{videoFunnel.complete.toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-red-500 h-2 rounded-full" style={{ width: `${funnelPercentages.completePct}%` }}></div>
-          </div>
+          {topVideosData.cached ? '⚡ Cached' : '🔄 Live'} • Updated {new Date(topVideosData.timestamp).toLocaleTimeString()}
         </div>
       </div>
 
@@ -364,7 +241,9 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
       <div className="analytics-new-card">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">Top Videos</h3>
-          <span className="text-sm text-[var(--analytics-new-text-muted)]">{topVideos.length} videos</span>
+          <span className="text-sm text-[var(--analytics-new-text-muted)]">
+            {topVideosData.topVideos.length} videos • Click a row to view funnel
+          </span>
         </div>
 
         <div className="overflow-x-auto">
@@ -391,31 +270,42 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
                 </th>
                 <th 
                   className="text-right py-3 px-4 text-sm font-medium text-[var(--analytics-new-text)] cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleSort('avgWatchSeconds')}
+                  onClick={() => handleSort('completions')}
                 >
                   <div className="flex items-center justify-end space-x-1">
-                    <span>Avg Watch</span>
-                    {getSortIcon('avgWatchSeconds')}
+                    <span>Completions</span>
+                    {getSortIcon('completions')}
                   </div>
                 </th>
                 <th 
                   className="text-right py-3 px-4 text-sm font-medium text-[var(--analytics-new-text)] cursor-pointer hover:bg-gray-50"
-                  onClick={() => handleSort('completePct')}
+                  onClick={() => handleSort('completionRate')}
                 >
                   <div className="flex items-center justify-end space-x-1">
-                    <span>Completion</span>
-                    {getSortIcon('completePct')}
+                    <span>Completion Rate</span>
+                    {getSortIcon('completionRate')}
                   </div>
                 </th>
+                {topVideosData.topVideos.some(v => v.avgEngagement) && (
+                  <th 
+                    className="text-right py-3 px-4 text-sm font-medium text-[var(--analytics-new-text)] cursor-pointer hover:bg-gray-50"
+                    onClick={() => handleSort('avgEngagement')}
+                  >
+                    <div className="flex items-center justify-end space-x-1">
+                      <span>Avg Engagement</span>
+                      {getSortIcon('avgEngagement')}
+                    </div>
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
-              {sortedVideos.map((video, index) => (
+              {sortedVideos.map((video) => (
                 <tr 
-                  key={video.video_id}
+                  key={video.videoId}
                   className={cn(
                     'border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors',
-                    selectedVideo?.video_id === video.video_id && 'bg-blue-50'
+                    selectedVideo?.videoId === video.videoId && 'bg-blue-50'
                   )}
                   onClick={() => setSelectedVideo(video)}
                 >
@@ -426,10 +316,10 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-[var(--analytics-new-text)] truncate">
-                          {video.title || video.video_id}
+                          {video.title}
                         </p>
                         <p className="text-xs text-[var(--analytics-new-text-muted)] truncate">
-                          {video.video_id}
+                          {video.videoId}
                         </p>
                       </div>
                     </div>
@@ -438,19 +328,24 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
                     {video.plays.toLocaleString()}
                   </td>
                   <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]">
-                    {formatDuration(video.avgWatchSeconds)}
+                    {video.completions.toLocaleString()}
                   </td>
                   <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]">
                     <div className="flex items-center justify-end space-x-2">
-                      <span>{video.completePct}%</span>
+                      <span>{video.completionRate}%</span>
                       <div className="w-12 bg-gray-200 rounded-full h-1.5">
                         <div 
                           className="bg-[var(--analytics-new-accent)] h-1.5 rounded-full transition-all duration-300" 
-                          style={{ width: `${Math.min(video.completePct, 100)}%` }}
+                          style={{ width: `${Math.min(video.completionRate, 100)}%` }}
                         ></div>
                       </div>
                     </div>
                   </td>
+                  {video.avgEngagement !== undefined && (
+                    <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]">
+                      {formatDuration(video.avgEngagement)}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -458,39 +353,8 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
         </div>
       </div>
 
-      {/* Selected Video Details */}
-      {selectedVideo && (
-        <div className="analytics-new-card border-l-4 border-[var(--analytics-new-accent)]">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">Video Details</h3>
-            <button
-              onClick={() => setSelectedVideo(null)}
-              className="text-[var(--analytics-new-text-muted)] hover:text-[var(--analytics-new-text)]"
-            >
-              ×
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-[var(--analytics-new-text)]">{selectedVideo.plays.toLocaleString()}</p>
-              <p className="text-sm text-[var(--analytics-new-text-muted)]">Total Plays</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-[var(--analytics-new-text)]">{formatDuration(selectedVideo.avgWatchSeconds)}</p>
-              <p className="text-sm text-[var(--analytics-new-text-muted)]">Avg Watch Time</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-[var(--analytics-new-text)]">{selectedVideo.reach50Pct}%</p>
-              <p className="text-sm text-[var(--analytics-new-text-muted)]">Reached 50%</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-[var(--analytics-new-text)]">{selectedVideo.completePct}%</p>
-              <p className="text-sm text-[var(--analytics-new-text-muted)]">Completion Rate</p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Funnel Chart - renders when video is selected */}
+      {renderFunnelChart()}
     </div>
   );
 };
