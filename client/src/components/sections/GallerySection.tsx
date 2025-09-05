@@ -49,8 +49,15 @@ interface GalleryItem {
   isActive: boolean;
   lightboxVideoUrl?: string; // Infrastructure workaround URL for lightbox display
   thumbnailUrl?: string; // Thumbnail URL for instant display during video loading
-  isInstantReady?: boolean; // Indicates if video uses preloaded element for instant playback
+  isInstantReady?: boolean; // Indicates if video uses preloaded element for instant playbook
   preloadedElement?: HTMLVideoElement; // The actual preloaded video element
+  // Memoized values to prevent remounting in VideoOverlay
+  memoizedTitle?: string;
+  memoizedSource?: string;
+  memoizedDuration?: string;
+  memoizedWidth?: number;
+  memoizedHeight?: number;
+  memoizedOrientation?: 'portrait' | 'landscape';
 }
 
 export default function GallerySection() {
@@ -593,11 +600,21 @@ export default function GallerySection() {
       const videoUrl = getVideoUrl(item, index);
       const thumbnailUrl = getImageUrl(item);
       
+      // Pre-calculate ALL values to avoid function calls in render
+      const dimensions = getAuthenticVideoDimensions(item);
+      
       setLightboxVideo({
         ...item, 
         lightboxVideoUrl: videoUrl,
         thumbnailUrl: thumbnailUrl,
-        isInstantReady: false
+        isInstantReady: false,
+        // Pre-calculated memoized values to prevent remounting
+        memoizedTitle: getItemTitle(item),
+        memoizedSource: getItemSource(item),
+        memoizedDuration: getItemDuration(item),
+        memoizedWidth: dimensions.width,
+        memoizedHeight: dimensions.height,
+        memoizedOrientation: dimensions.orientation
       });
       
       // Prevent body scrolling when lightbox is open
@@ -1258,13 +1275,13 @@ export default function GallerySection() {
       {lightboxVideo && (
         <VideoOverlay
           key={lightboxVideo.id} // Stable React key to prevent multiple mounts
-          videoUrl={lightboxVideo.lightboxVideoUrl || getVideoUrl(lightboxVideo, 0)}
-          title={getItemTitle(lightboxVideo)}
-          sourceText={getItemSource(lightboxVideo)}
-          durationText={getItemDuration(lightboxVideo)}
-          width={getAuthenticVideoDimensions(lightboxVideo).width}
-          height={getAuthenticVideoDimensions(lightboxVideo).height}
-          orientation={getAuthenticVideoDimensions(lightboxVideo).orientation}
+          videoUrl={lightboxVideo.lightboxVideoUrl || ''}
+          title={lightboxVideo.memoizedTitle || ''}
+          sourceText={lightboxVideo.memoizedSource || ''}
+          durationText={lightboxVideo.memoizedDuration || ''}
+          width={lightboxVideo.memoizedWidth || 1920}
+          height={lightboxVideo.memoizedHeight || 1080}
+          orientation={lightboxVideo.memoizedOrientation || 'landscape'}
           onClose={closeLightbox}
           isInstantReady={lightboxVideo.isInstantReady}
           preloadedElement={lightboxVideo.preloadedElement}
