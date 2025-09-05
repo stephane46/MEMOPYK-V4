@@ -245,7 +245,8 @@ export default function VideoOverlay({
       for (const milestone of milestones) {
         if (progress >= milestone && !milestonesTrackedRef.current.has(milestone)) {
           milestonesTrackedRef.current.add(milestone);
-          console.log(`🎯 FIRING GA4 video_progress event: ${milestone}% for ${videoId}`);
+          console.log(`🎯🎯🎯 FIRING GA4 video_progress event: ${milestone}% for ${videoId}`);
+          console.log('🎯🎯🎯 fireGA function exists?', typeof fireGA);
           
           fireGA('video_progress', {
             video_id: videoId,
@@ -376,7 +377,8 @@ export default function VideoOverlay({
     
     // GA4 Analytics: Track video_start only once per session
     if (!videoStartSentRef.current) {
-      console.log('🚀 FIRING GA4 video_start event for:', videoId);
+      console.log('🚀🚀🚀 FIRING GA4 video_start event for:', videoId);
+      console.log('🚀🚀🚀 fireGA function exists?', typeof fireGA);
       fireGA('video_start', {
         video_id: videoId,
         video_title: title,
