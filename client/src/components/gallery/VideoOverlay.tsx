@@ -116,7 +116,7 @@ export default function VideoOverlay({
         heartbeatIntervalRef.current = null;
       }
     };
-  }, [title]); // Include title for cleanup tracking
+  }, []); // Run once on mount only
 
   // Enhanced error handling
   const handleVideoError = useCallback((e: any) => {
