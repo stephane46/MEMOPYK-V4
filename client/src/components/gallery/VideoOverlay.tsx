@@ -31,6 +31,7 @@ export default function VideoOverlay({
   preloadedElement = null,
   thumbnailUrl 
 }: VideoOverlayProps) {
+  console.log('🎬🎬🎬 VideoOverlay MOUNTED with GA4 tracking!', videoUrl);
   // VideoOverlay mounted
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
