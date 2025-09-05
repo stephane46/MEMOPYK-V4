@@ -4358,23 +4358,9 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // ========== PHASE 3 GA4 REPORT ENDPOINT ==========
   
-  // Date range resolver utility
-  function resolveDates(preset?: string, startDate?: string, endDate?: string) {
-    if (preset) {
-      const now = new Date();
-      const days = preset === '7d' ? 7 : preset === '30d' ? 30 : 90;
-      const start = new Date(now);
-      start.setDate(start.getDate() - days);
-      return {
-        startDate: start.toISOString().split('T')[0],
-        endDate: now.toISOString().split('T')[0]
-      };
-    }
-    return { 
-      startDate: startDate || '2024-01-01', 
-      endDate: endDate || new Date().toISOString().split('T')[0] 
-    };
-  }
+  // Import utilities
+  const { resolveDates } = await import('./utils/resolveDates');
+  const { dateRangeFromQuery } = await import('./utils/dateRangeFromQuery');
 
   // ========== GA4 QUERY HELPERS ==========
   
@@ -4403,18 +4389,8 @@ export async function registerRoutes(app: Express): Promise<void> {
     return andExpr(...expr);
   }
 
-  // Import existing GA4 client
-  const { client: ga4Client, PROPERTY: GA4_PROPERTY } = require('./ga4-service');
-  
-  // runGa4Report wrapper 
-  async function runGa4Report(payload: any) {
-    const request = {
-      property: GA4_PROPERTY,
-      ...payload
-    };
-    const [response] = await ga4Client.runReport(request);
-    return response;
-  }
+  // Import new GA4 client
+  const { runGa4Report } = await import('./services/ga4Client');
 
   // ========== GA4 QUERY FUNCTIONS ==========
 
@@ -4634,7 +4610,8 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // KPIs Report Builder (updated with new queries)
   async function buildKpis(params: any) {
-    const dateRange = resolveDates(params.preset, params.startDate, params.endDate);
+    const { startDate, endDate } = dateRangeFromQuery(params);
+    const dateRange = { startDate, endDate };
     const { lang, country } = params;
     
     try {
@@ -4661,7 +4638,8 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // Top Videos Report Builder (updated with new queries)
   async function buildTopVideos(params: any) {
-    const dateRange = resolveDates(params.preset, params.startDate, params.endDate);
+    const { startDate, endDate } = dateRangeFromQuery(params);
+    const dateRange = { startDate, endDate };
     const { lang, country } = params;
     
     try {
@@ -4681,7 +4659,8 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // Video Funnel Report Builder (updated with new queries)
   async function buildVideoFunnel(params: any) {
-    const dateRange = resolveDates(params.preset, params.startDate, params.endDate);
+    const { startDate, endDate } = dateRangeFromQuery(params);
+    const dateRange = { startDate, endDate };
     const { videoId, lang, country } = params;
     
     if (!videoId) {
