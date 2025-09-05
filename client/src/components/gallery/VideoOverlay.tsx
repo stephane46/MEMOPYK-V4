@@ -231,7 +231,9 @@ export default function VideoOverlay({
 
   // Progress tracking - using timeupdate event for reliability with GA4 analytics
   const updateProgress = useCallback(() => {
+    console.log('🎯 updateProgress called'); // Debug: Check if function is called
     const video = videoRef.current;
+    console.log('🎯 Video ref exists:', !!video, 'Duration:', video?.duration); // Debug video state
     if (video && !isNaN(video.duration) && video.duration > 0) {
       const progress = (video.currentTime / video.duration) * 100;
       setProgress(progress);
