@@ -10,7 +10,7 @@ import { MobileEnhancedGallery } from "@/components/mobile/MobileEnhancedGallery
 import { LazyImage } from "@/components/ui/LazyImage";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useDeviceOrientation } from "@/hooks/useDeviceOrientation";
-import { useVideoAnalytics } from "@/hooks/useVideoAnalytics";
+// Removed useVideoAnalytics import - not used in GallerySection, causing unnecessary re-renders
 
 // Gallery item interface using camelCase (transformed from API snake_case)
 interface GalleryItem {
@@ -79,8 +79,7 @@ export default function GallerySection() {
   const firstTextRef = useRef<HTMLDivElement>(null);
   const secondTextRef = useRef<HTMLDivElement>(null);
   
-  // 📊 Initialize video analytics for gallery video tracking
-  const { trackVideoView } = useVideoAnalytics();
+  // 📊 Video analytics removed from GallerySection - handled directly in VideoOverlay
 
   // Fetch CTA settings for the call-to-action section
   const { data: ctaSettings = [] } = useQuery({
@@ -170,22 +169,14 @@ export default function GallerySection() {
 
   // Process and transform data
   const galleryItems = React.useMemo(() => {
-    console.log('🔍 RAW GALLERY DATA:', rawData);
-    console.log('🔍 FIRST ITEM DETAILS:', rawData[0]);
-    console.log('🔍 IS_ACTIVE STATUS:', rawData[0]?.is_active);
+    // 🚨 PERFORMANCE FIX: Removed excessive console logging that was causing re-renders!
     
     // 🚨 CRITICAL FIX: Ensure rawData is always an array before calling .filter()
     const safeRawData = Array.isArray(rawData) ? rawData : [];
-    console.log('🔍 SAFE RAW DATA LENGTH:', safeRawData.length);
     
     const filteredData = safeRawData
-      .filter((item: any) => {
-        console.log(`🔍 FILTER CHECK: Item ${item.id} - is_active: ${item.is_active}`);
-        return item.is_active;
-      })
+      .filter((item: any) => item.is_active)
       .sort((a: any, b: any) => a.order_index - b.order_index);
-    
-    console.log('🔍 FILTERED GALLERY ITEMS:', filteredData.length);
     
     return filteredData.map((item: any) => ({
       // Convert snake_case API response to camelCase for TypeScript compatibility

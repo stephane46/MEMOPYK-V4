@@ -58,8 +58,9 @@ export const useVideoAnalytics = () => {
     },
     onSuccess: (data) => {
       console.log('🚨 CRITICAL TRACKING MUTATION v1.0.190: MUTATION SUCCESS:', data);
-      // Invalidate analytics queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics'] });
+      // 🚨 FIXED: Only invalidate specific analytics endpoints, NOT gallery!
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/video-view'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/sessions'] });
     },
     onError: (error) => {
       console.error('🚨 CRITICAL TRACKING MUTATION v1.0.190: MUTATION ERROR:', error);
@@ -101,7 +102,8 @@ export const useVideoAnalytics = () => {
         console.log('📊 SESSION TRACKING: Stored session ID for duration tracking:', data.session.session_id);
       }
       
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics'] });
+      // 🚨 FIXED: Only invalidate sessions, NOT gallery!
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/sessions'] });
     },
     onError: (error) => {
       console.error('📊 PRODUCTION ANALYTICS: Session tracking error:', error);
