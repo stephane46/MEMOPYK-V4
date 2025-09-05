@@ -225,16 +225,20 @@ export default function GallerySection() {
     }));
   }, [rawData]);
 
-  // 🎬 Animation observers - AFTER galleryItems is defined!
+  // 🎬 Animation observers - FIXED: Removed galleryItems dependency to prevent VideoOverlay remounting!
+  const galleryItemsLength = React.useMemo(() => {
+    return Array.isArray(galleryItems) ? galleryItems.length : 0;
+  }, [galleryItems]);
+  
   useEffect(() => {
     // Only set up observers AFTER gallery items are loaded
-    if (galleryItems.length === 0) {
+    if (galleryItemsLength === 0) {
       console.log('🎬 ⏳ Waiting for gallery data to load before setting up observers...');
       return;
     }
 
     console.log('🎬 ========== SETTING UP OBSERVERS AFTER DATA LOAD ==========');
-    console.log('🎬 Gallery items loaded:', galleryItems.length);
+    console.log('🎬 Gallery items loaded:', galleryItemsLength);
     console.log('🎬 First text ref exists:', !!firstTextRef.current);
     console.log('🎬 Second text ref exists:', !!secondTextRef.current);
     
@@ -283,7 +287,7 @@ export default function GallerySection() {
       secondObserver.disconnect();
       console.log('🎬 🧹 Observers cleaned up');
     };
-  }, [galleryItems]); // Trigger when gallery data loads
+  }, [galleryItemsLength]); // FIXED: Use stable length instead of galleryItems object
 
   // Add gallery video logging similar to hero videos
   useEffect(() => {
