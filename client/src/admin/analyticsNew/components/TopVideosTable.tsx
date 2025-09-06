@@ -247,13 +247,23 @@ export function TopVideosTable({ onSelect, preset = "7d", liveView = false, clas
                     </td>
                     <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]">
                       <div className="flex items-center justify-end space-x-2">
-                        <span data-testid={`completion-rate-${row.videoId}`}>{row.completionRate || 0}%</span>
-                        <div className="w-12 bg-gray-200 rounded-full h-1.5">
-                          <div 
-                            className="bg-[var(--analytics-new-accent)] h-1.5 rounded-full transition-all duration-300" 
-                            style={{ width: `${Math.min(row.completionRate || 0, 100)}%` }}
-                          />
-                        </div>
+                        {(() => {
+                          // Handle completion rate formatting: convert 0..1 ratio to percentage
+                          const rawRate = row.completionRate || 0;
+                          const pct = Number.isFinite(rawRate) ? Math.round(rawRate * 100) : 0;
+                          const displayPct = Math.min(pct, 100); // Cap at 100%
+                          return (
+                            <>
+                              <span data-testid={`completion-rate-${row.videoId}`}>{displayPct}%</span>
+                              <div className="w-12 bg-gray-200 rounded-full h-1.5">
+                                <div 
+                                  className="bg-[var(--analytics-new-accent)] h-1.5 rounded-full transition-all duration-300" 
+                                  style={{ width: `${displayPct}%` }}
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
                       </div>
                     </td>
                   </>
