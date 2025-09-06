@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 import { fireGA } from '@/lib/analytics';
+import { sendVideoProgress, sendVideoStart, sendVideoComplete } from '@/analytics/ga';
 
 interface VideoOverlayProps {
   videoUrl: string;

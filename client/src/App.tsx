@@ -20,6 +20,7 @@ import ClarityRouteListener from './components/ClarityRouteListener';
 import { useEffect } from 'react';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { initTestMode, initGA } from '@/lib/analytics';
+import { initGA as initDirectGA } from '@/analytics/ga';
 import { initOpenReplay } from '@/lib/openReplay';
 import { readGa4Ids } from '@/lib/readGa4';
 
@@ -97,6 +98,9 @@ function App() {
     if (!isAdminPage) {
       // Initialize GA4 only for public pages
       initGA();
+      
+      // Initialize direct GA4 for video events (bypasses GTM)
+      initDirectGA(import.meta.env.VITE_GA_MEASUREMENT_ID || "G-JLRWHE1HV4", { debug: true });
       
       // OpenReplay temporarily disabled for mobile deployment compatibility
       // Will be automatically enabled in production where it works without connection issues
