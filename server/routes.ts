@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { DateTime } from "luxon";
 import { hybridStorage } from "./hybrid-storage";
 import { pool } from "./db";
 import { z } from "zod";
@@ -40,6 +41,64 @@ import { getCache, setCache, k, getDbCache, setDbCache } from './cache';
 import { geoResolver } from './geoResolver';
 import ga4MpRouter from './routes/ga4Mp';
 import { getRealtimeTopVideos, getRealtimeVideoProgress } from './routes/ga4Realtime';
+
+// Paris timezone window computation function
+const PARIS_ZONE = "Europe/Paris";
+
+function parisDay(d = DateTime.now().setZone(PARIS_ZONE)) { 
+  return d.setZone(PARIS_ZONE).startOf("day"); 
+}
+
+function computeParisWindow(query: any) {
+  const today = parisDay();
+  let start = today;
+  let end = today;
+
+  if (query.preset === "yesterday") { 
+    start = end = today.minus({ days: 1 }); 
+  } else if (query.preset === "today") {
+    start = end = today;
+  } else if (query.preset === "7d") { 
+    start = today.minus({ days: 6 }); 
+    end = today;
+  } else if (query.preset === "30d") { 
+    start = today.minus({ days: 29 }); 
+    end = today;
+  } else if (query.preset === "90d") { 
+    start = today.minus({ days: 89 }); 
+    end = today;
+  } else if (query.start && query.end) {
+    start = DateTime.fromISO(query.start, { zone: PARIS_ZONE }).startOf("day");
+    end = DateTime.fromISO(query.end, { zone: PARIS_ZONE }).startOf("day");
+  } else if (query.startDate && query.endDate) {
+    start = DateTime.fromISO(query.startDate, { zone: PARIS_ZONE }).startOf("day");
+    end = DateTime.fromISO(query.endDate, { zone: PARIS_ZONE }).startOf("day");
+  }
+
+  // Apply Since filter if provided
+  const since = query.since ? DateTime.fromISO(query.since, { zone: PARIS_ZONE }).startOf("day") : null;
+  const effStart = since ? DateTime.max(start, since) : start;
+
+  return {
+    startStr: start.toFormat("yyyy-LL-dd"),
+    endStr: end.toFormat("yyyy-LL-dd"),
+    effStartStr: effStart.toFormat("yyyy-LL-dd"),
+    effEndStr: end.toFormat("yyyy-LL-dd"),
+    timezone: PARIS_ZONE
+  };
+}
+
+function setParisTimezoneHeaders(res: any, query: any) {
+  const window = computeParisWindow(query);
+  res.set({
+    "X-Timezone": window.timezone,
+    "X-Window-Start": window.startStr,
+    "X-Window-End": window.endStr,
+    "X-Effective-Start": window.effStartStr,
+    "X-Effective-End": window.effEndStr,
+  });
+  return window;
+}
 
 // Contact form validation schema
 const contactFormSchema = z.object({
