@@ -39,7 +39,7 @@ export async function runGa4Report(payload: RunReportRequest): Promise<RunReport
 // Metadata API function to check custom dimensions
 export async function checkGa4CustomDimensions(): Promise<{[key: string]: boolean}> {
   if (GA4_MOCK) {
-    return { video_id: true, video_title: true, progress_bucket: true };
+    return { video_id: true, video_title: true, progress_percent: true };
   }
   
   try {
@@ -59,14 +59,14 @@ export async function checkGa4CustomDimensions(): Promise<{[key: string]: boolea
     const found = {
       video_id: customDimensions.some(d => d.apiName === 'customEvent:video_id'),
       video_title: customDimensions.some(d => d.apiName === 'customEvent:video_title'), 
-      progress_bucket: customDimensions.some(d => d.apiName === 'customEvent:progress_bucket')
+      progress_percent: customDimensions.some(d => d.apiName === 'customEvent:progress_percent')
     };
     
     console.log('🔍 GA4 Custom Dimensions Found:', found);
     return found;
   } catch (error) {
     console.error('❌ Failed to check GA4 custom dimensions:', error);
-    return { video_id: false, video_title: false, progress_bucket: false };
+    return { video_id: false, video_title: false, progress_percent: false };
   }
 }
 
