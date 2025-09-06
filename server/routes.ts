@@ -4562,7 +4562,7 @@ export async function registerRoutes(app: Express): Promise<void> {
     };
   }
 
-  function mapTopVideos(startsRows: any[], completesRows: any[]) {
+  async function mapTopVideos(startsRows: any[], completesRows: any[]) {
     const startsMap = new Map<string, { title: string; plays: number }>();
     for (const r of startsRows) {
       const vid = r.dimensionValues[0].value;
@@ -4571,21 +4571,53 @@ export async function registerRoutes(app: Express): Promise<void> {
       startsMap.set(vid, { title, plays });
     }
 
+    // Create enhanced title fallback function
+    const getVideoTitle = async (videoId: string, gaTitle: string): Promise<string> => {
+      // If GA4 has a real title (not "(not set)"), use it
+      if (gaTitle && gaTitle !== '(not set)') {
+        return gaTitle;
+      }
+      
+      // Fallback: try to get title from gallery data
+      try {
+        const galleryItems = await hybridStorage.getGalleryItems();
+        const galleryItem = galleryItems.find(item => 
+          item.video_filename === videoId || 
+          item.video_url_en?.includes(videoId) ||
+          item.video_url_fr?.includes(videoId)
+        );
+        
+        if (galleryItem) {
+          // Use English title if available, fallback to French, then video ID
+          return galleryItem.title_en || galleryItem.title_fr || videoId;
+        }
+      } catch (error) {
+        console.warn('Failed to fetch gallery titles for fallback:', error);
+      }
+      
+      // Final fallback: clean up the video filename for display
+      return videoId.replace(/\.(mp4|mov|avi)$/i, '').replace(/[_-]/g, ' ');
+    };
+
     const rows: { videoId: string; title: string; plays: number; completions: number; completionRate: number }[] = [];
 
+    // Process completions with enhanced titles
     for (const r of completesRows) {
       const vid = r.dimensionValues[0].value;
       const title = r.dimensionValues[1].value;
       const completions = Number(r.metricValues[0].value);
       const base = startsMap.get(vid) || { title, plays: 0 };
       const rate = base.plays ? (completions / base.plays) : 0;
-      rows.push({ videoId: vid, title: base.title, plays: base.plays, completions, completionRate: rate });
+      
+      const enhancedTitle = await getVideoTitle(vid, base.title);
+      rows.push({ videoId: vid, title: enhancedTitle, plays: base.plays, completions, completionRate: rate });
       startsMap.delete(vid);
     }
 
     // Videos that have starts but zero completions
     for (const [vid, { title, plays }] of startsMap.entries()) {
-      rows.push({ videoId: vid, title, plays, completions: 0, completionRate: 0 });
+      const enhancedTitle = await getVideoTitle(vid, title);
+      rows.push({ videoId: vid, title: enhancedTitle, plays, completions: 0, completionRate: 0 });
     }
 
     // Guard: warn if all completion rates are 1.0 (suspicious)
@@ -4665,7 +4697,7 @@ export async function registerRoutes(app: Express): Promise<void> {
             qTopVideosStarts({ dateRange, lang, country }),
             qTopVideosCompletions({ dateRange, lang, country }),
           ]);
-          result = mapTopVideos(starts.rows ?? [], comps.rows ?? []);
+          result = await mapTopVideos(starts.rows ?? [], comps.rows ?? []);
           break;
         }
         case 'videoFunnel': {
