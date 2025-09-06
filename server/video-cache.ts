@@ -797,6 +797,10 @@ export class VideoCache {
   /**
    * Preload all videos from storage without any filename restrictions
    */
+  async preloadHeroVideos(): Promise<void> {
+    return this.preloadHeroVideosOnly();
+  }
+
   private async preloadHeroVideosOnly(): Promise<void> {
     console.log('📥 HERO-ONLY PRELOAD v1.0.66 - Loading ONLY hero videos (gallery uses direct CDN)...');
     
