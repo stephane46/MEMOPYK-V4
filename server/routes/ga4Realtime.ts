@@ -30,36 +30,42 @@ export async function getRealtimeTopVideos(req: Request, res: Response) {
       client = initGA4Client();
     }
     
-    console.log("🔍 [GA4 Realtime] Fetching top videos from last 30 minutes...");
+    console.log("🔍 [GA4 Realtime] Fetching top videos with dimensional breakdown...");
     
-    // Query for video_start events with eventName dimension
+    // Query for video_start events with customEvent dimensions for videoId and title
     const [response] = await client.runRealtimeReport({
       property,
-      dimensions: [{ name: "eventName" }],
+      dimensions: [
+        { name: "customEvent:video_id" },
+        { name: "customEvent:video_title" }
+      ],
       metrics: [{ name: "eventCount" }],
       dimensionFilter: {
         filter: {
           fieldName: "eventName",
           stringFilter: {
-            value: "video_start",
-            matchType: "EXACT"
+            matchType: "EXACT",
+            value: "video_start"
           }
         }
       },
-      limit: 20
+      orderBys: [{
+        metric: { metricName: "eventCount" },
+        desc: true
+      }],
+      limit: 50
     });
 
-    const videoStarts = (response.rows || []).map(row => ({
-      eventName: row.dimensionValues?.[0]?.value || "(n/a)",
-      eventCount: Number(row.metricValues?.[0]?.value || 0)
-    }));
+    const topVideosRt = (response.rows || []).map(row => ({
+      videoId: row.dimensionValues?.[0]?.value || "unknown",
+      title: row.dimensionValues?.[1]?.value || "Unknown Title",
+      playsRt: Number(row.metricValues?.[0]?.value || 0)
+    })).filter(video => video.videoId !== "unknown" && video.playsRt > 0);
     
-    console.log(`✅ [GA4 Realtime] Found ${videoStarts.length} video start events`);
+    console.log(`✅ [GA4 Realtime] Found ${topVideosRt.length} top videos with plays`);
 
     res.json({ 
-      success: true,
-      videoStarts,
-      note: "Video start events from realtime API"
+      topVideosRt
     });
   } catch (error: any) {
     console.error("❌ [GA4 Realtime] Error fetching top videos:", error);
@@ -83,34 +89,75 @@ export async function getRealtimeVideoProgress(req: Request, res: Response) {
 
     console.log(`🔍 [GA4 Realtime] Fetching progress funnel for video: ${videoId}`);
     
-    // For now, just get video_progress events (custom parameters not available in realtime)
+    // Query for video_progress events with progress_percent dimension for specific videoId
     const [response] = await client.runRealtimeReport({
       property,
-      dimensions: [{ name: "eventName" }],
+      dimensions: [{ name: "customEvent:progress_percent" }],
       metrics: [{ name: "eventCount" }],
       dimensionFilter: {
-        filter: {
-          fieldName: "eventName",
-          stringFilter: {
-            value: "video_progress",
-            matchType: "EXACT"
-          }
+        andGroup: {
+          expressions: [
+            {
+              filter: {
+                fieldName: "eventName",
+                stringFilter: {
+                  matchType: "EXACT",
+                  value: "video_progress"
+                }
+              }
+            },
+            {
+              filter: {
+                fieldName: "customEvent:video_id",
+                stringFilter: {
+                  matchType: "EXACT",
+                  value: videoId
+                }
+              }
+            }
+          ]
         }
       },
+      orderBys: [{
+        dimension: { dimensionName: "customEvent:progress_percent" }
+      }],
       limit: 50
     });
 
-    const progressEvents = (response.rows || []).map(row => ({
-      eventName: row.dimensionValues?.[0]?.value || "(n/a)",
-      eventCount: Number(row.metricValues?.[0]?.value || 0)
+    // Map GA4 data to progress buckets {10,25,50,75,90}
+    const bucketCounts = new Map<number, number>();
+    const targetBuckets = [10, 25, 50, 75, 90];
+    
+    // Initialize all buckets to 0
+    targetBuckets.forEach(bucket => bucketCounts.set(bucket, 0));
+    
+    // Process GA4 response data
+    (response.rows || []).forEach(row => {
+      const progressPercent = Number(row.dimensionValues?.[0]?.value || 0);
+      const count = Number(row.metricValues?.[0]?.value || 0);
+      
+      // Map to appropriate bucket
+      if (progressPercent >= 10 && progressPercent < 25) {
+        bucketCounts.set(10, bucketCounts.get(10)! + count);
+      } else if (progressPercent >= 25 && progressPercent < 50) {
+        bucketCounts.set(25, bucketCounts.get(25)! + count);
+      } else if (progressPercent >= 50 && progressPercent < 75) {
+        bucketCounts.set(50, bucketCounts.get(50)! + count);
+      } else if (progressPercent >= 75 && progressPercent < 90) {
+        bucketCounts.set(75, bucketCounts.get(75)! + count);
+      } else if (progressPercent >= 90) {
+        bucketCounts.set(90, bucketCounts.get(90)! + count);
+      }
+    });
+    
+    const funnelRt = targetBuckets.map(bucket => ({
+      bucket,
+      count: bucketCounts.get(bucket) || 0
     }));
 
-    console.log(`✅ [GA4 Realtime] Found ${progressEvents.length} video progress events`);
+    console.log(`✅ [GA4 Realtime] Progress funnel for ${videoId}:`, funnelRt);
     res.json({ 
-      success: true,
-      progressEvents,
-      videoId,
-      note: "Video progress events from realtime API - custom parameters not available in realtime"
+      funnelRt
     });
   } catch (error: any) {
     console.error("❌ [GA4 Realtime] Error fetching video progress:", error);
