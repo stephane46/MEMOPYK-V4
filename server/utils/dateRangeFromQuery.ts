@@ -10,6 +10,7 @@ export type Ga4Parsed = {
   dateRange: { startDate: string; endDate: string };
   lang?: string;
   country?: string;
+  sinceDate?: string; // For "Since Date" filtering
 };
 
 const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -58,10 +59,20 @@ export function dateRangeFromQuery(q: any): Ga4Parsed {
 
   const startDate = q.startDate ? String(q.startDate) : undefined;
   const endDate   = q.endDate ? String(q.endDate) : undefined;
+  const sinceDate = q.sinceDate ? String(q.sinceDate) : undefined;
+
+  // Validate sinceDate if provided
+  if (sinceDate && !isValidISODate(sinceDate)) {
+    badRequest('Since date must be a valid ISO string YYYY-MM-DD.');
+  }
 
   let dateRange: { startDate: string; endDate: string };
   if (preset) {
     dateRange = resolveDates(preset);
+    // If sinceDate is provided and is later than preset start, use sinceDate instead
+    if (sinceDate && sinceDate > dateRange.startDate) {
+      dateRange.startDate = sinceDate;
+    }
   } else if (startDate || endDate) {
     if (!startDate || !endDate) {
       badRequest('When using explicit dates, provide both "startDate" and "endDate" (YYYY-MM-DD).');
@@ -73,15 +84,23 @@ export function dateRangeFromQuery(q: any): Ga4Parsed {
       badRequest('"startDate" cannot be after "endDate".');
     }
     dateRange = { startDate: startDate!, endDate: endDate! };
+    // If sinceDate is provided and is later than explicit start, use sinceDate instead
+    if (sinceDate && sinceDate > dateRange.startDate) {
+      dateRange.startDate = sinceDate;
+    }
   } else {
     // default window
     dateRange = resolveDates("7d");
+    // If sinceDate is provided and is later than default start, use sinceDate instead
+    if (sinceDate && sinceDate > dateRange.startDate) {
+      dateRange.startDate = sinceDate;
+    }
   }
 
   const lang = normalizeLang(q.lang);
   const country = normalizeCountry(q.country);
 
-  const out: Ga4Parsed = { report: report as ReportKind, dateRange, lang, country };
+  const out: Ga4Parsed = { report: report as ReportKind, dateRange, lang, country, sinceDate };
 
   if (report === "videoFunnel") {
     const videoId = String(q.videoId || "");

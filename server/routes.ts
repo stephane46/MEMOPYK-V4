@@ -5100,7 +5100,7 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Helper function to calculate date ranges from presets using Europe/Paris timezone
-  function calculateDateRange(preset: string, dateFrom?: string, dateTo?: string): { startDate: string; endDate: string; compareStartDate: string; compareEndDate: string } {
+  function calculateDateRange(preset: string, dateFrom?: string, dateTo?: string, sinceDate?: string): { startDate: string; endDate: string; compareStartDate: string; compareEndDate: string } {
     const { formatInTimeZone } = require('date-fns-tz');
     const TZ = 'Europe/Paris';
     let startDate: string;
@@ -5163,9 +5163,21 @@ export async function registerRoutes(app: Express): Promise<void> {
       compareStartDate = formatInTimeZone(compareStartLocal, TZ, 'yyyy-MM-dd');
     }
 
+    // Apply sinceDate filtering if provided
+    if (sinceDate && sinceDate > startDate) {
+      console.log(`📅 SINCE DATE FILTER: Adjusting start date from ${startDate} to ${sinceDate}`);
+      startDate = sinceDate;
+      
+      // For comparison, also adjust if the sinceDate affects the comparison period
+      if (sinceDate > compareStartDate) {
+        compareStartDate = sinceDate;
+      }
+    }
+
     console.log(`🇫🇷 TIMEZONE-ALIGNED DATES (Europe/Paris):`);
     console.log(`   Current: ${startDate} to ${endDate}`);
     console.log(`   Compare: ${compareStartDate} to ${compareEndDate}`);
+    console.log(`   Since Filter: ${sinceDate || 'none'}`);
     console.log(`   Timezone: ${TZ}`);
 
     return { startDate, endDate, compareStartDate, compareEndDate };
@@ -5232,15 +5244,15 @@ export async function registerRoutes(app: Express): Promise<void> {
   // NEW GA4 Report endpoint for Analytics New dashboard
   app.post("/api/ga4/report", async (req, res) => {
     try {
-      const { preset = '7d', dateFrom, dateTo } = req.body;
-      console.log(`🎯 GA4 Report request: preset=${preset}, dateFrom=${dateFrom}, dateTo=${dateTo}`);
+      const { preset = '7d', dateFrom, dateTo, sinceDate } = req.body;
+      console.log(`🎯 GA4 Report request: preset=${preset}, dateFrom=${dateFrom}, dateTo=${dateTo}, sinceDate=${sinceDate}`);
       
       // Calculate date ranges including comparison period
-      const { startDate, endDate, compareStartDate, compareEndDate } = calculateDateRange(preset, dateFrom, dateTo);
+      const { startDate, endDate, compareStartDate, compareEndDate } = calculateDateRange(preset, dateFrom, dateTo, sinceDate);
       console.log(`📅 Calculated ranges: Current (${startDate} to ${endDate}), Compare (${compareStartDate} to ${compareEndDate})`);
       
       // Check cache first (60s TTL as specified)
-      const cacheKey = `ga4-report:${preset}:${startDate}:${endDate}`;
+      const cacheKey = `ga4-report:${preset}:${startDate}:${endDate}${sinceDate ? `:since-${sinceDate}` : ''}`;
       const cached = getCache<any>(cacheKey);
       if (cached) {
         console.log(`✅ GA4 Report cache hit for ${cacheKey}`);
