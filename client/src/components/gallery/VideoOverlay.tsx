@@ -223,14 +223,14 @@ export default function VideoOverlay({
       if (progressValue >= milestone && !milestonesTrackedRef.current.has(milestone)) {
         milestonesTrackedRef.current.add(milestone);
         
-        fireGA('video_progress', {
+        sendVideoProgress({
+          progress_percent: milestone as 10 | 25 | 50 | 75 | 90,
           video_id: videoId,
           video_title: stableProps.title,
-          progress_percent: milestone,
           current_time: Math.round(video.currentTime),
-          duration_sec: video.duration || 0,
+          duration_sec: Math.round(video.duration || 0),
           locale: language,
-          debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
+          debug_mode: true
         });
       }
     }
@@ -242,13 +242,13 @@ export default function VideoOverlay({
     resetControlsTimer();
     
     if (!videoStartSentRef.current) {
-      fireGA('video_start', {
+      sendVideoStart({
         video_id: videoId,
         video_title: stableProps.title,
-        duration_sec: duration || 0,
-        position_sec: currentTime || 0,
+        duration_sec: Math.round(duration || 0),
+        position_sec: Math.round(currentTime || 0),
         locale: language,
-        debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
+        debug_mode: true
       });
       videoStartSentRef.current = true;
     }
@@ -272,14 +272,14 @@ export default function VideoOverlay({
     setShowControls(true);
     
     if (duration > 0) {
-      fireGA('video_complete', {
+      sendVideoComplete({
         video_id: videoId,
         video_title: stableProps.title,
         duration_sec: Math.round(duration),
         current_time: Math.round(duration),
         completion_rate: 100,
         locale: language,
-        debug_mode: window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1'
+        debug_mode: true
       });
     }
     
