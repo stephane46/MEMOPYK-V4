@@ -7232,6 +7232,163 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // ========== IP EXCLUSIONS ADMIN ENDPOINTS ==========
+  
+  // Get all IP exclusions
+  app.get("/api/admin/ip-exclusions", requireAdmin, async (req, res) => {
+    try {
+      console.log('🔍 Fetching IP exclusions from database...');
+      
+      // Try to fetch from Supabase first
+      try {
+        const { data, error } = await supabase
+          .from('analytics_exclusions')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        
+        console.log(`✅ IP exclusions retrieved from Supabase: ${data.length} items`);
+        res.json(data);
+        return;
+      } catch (supabaseError) {
+        console.warn('⚠️ Supabase IP exclusions query failed, using JSON fallback:', supabaseError);
+        
+        // JSON fallback for IP exclusions
+        const fallbackData = [];
+        res.json(fallbackData);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching IP exclusions:', error);
+      res.status(500).json({ error: 'Failed to fetch IP exclusions' });
+    }
+  });
+  
+  // Create new IP exclusion  
+  app.post("/api/admin/ip-exclusions", requireAdmin, async (req, res) => {
+    try {
+      const { ipCidr, label, active = true } = req.body;
+      
+      if (!ipCidr || !label) {
+        return res.status(400).json({ error: 'IP CIDR and label are required' });
+      }
+      
+      console.log('📝 Creating IP exclusion:', { ipCidr, label, active });
+      
+      // Try to save to Supabase first
+      try {
+        const { data, error } = await supabase
+          .from('analytics_exclusions')
+          .insert([{
+            ip_cidr: ipCidr,
+            label,
+            active,
+            applies_from: new Date().toISOString()
+          }])
+          .select()
+          .single();
+          
+        if (error) throw error;
+        
+        console.log('✅ IP exclusion created in Supabase:', data.id);
+        res.json(data);
+        return;
+      } catch (supabaseError) {
+        console.warn('⚠️ Supabase IP exclusion creation failed:', supabaseError);
+        res.status(500).json({ error: 'Failed to create IP exclusion' });
+      }
+    } catch (error) {
+      console.error('❌ Error creating IP exclusion:', error);
+      res.status(500).json({ error: 'Failed to create IP exclusion' });
+    }
+  });
+  
+  // Update IP exclusion
+  app.patch("/api/admin/ip-exclusions/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      console.log('📝 Updating IP exclusion:', id, updates);
+      
+      // Try to update in Supabase first
+      try {
+        const { data, error } = await supabase
+          .from('analytics_exclusions')
+          .update(updates)
+          .eq('id', id)
+          .select()
+          .single();
+          
+        if (error) throw error;
+        
+        console.log('✅ IP exclusion updated in Supabase:', id);
+        res.json(data);
+        return;
+      } catch (supabaseError) {
+        console.warn('⚠️ Supabase IP exclusion update failed:', supabaseError);
+        res.status(500).json({ error: 'Failed to update IP exclusion' });
+      }
+    } catch (error) {
+      console.error('❌ Error updating IP exclusion:', error);
+      res.status(500).json({ error: 'Failed to update IP exclusion' });
+    }
+  });
+  
+  // Delete IP exclusion
+  app.delete("/api/admin/ip-exclusions/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      console.log('🗑️ Deleting IP exclusion:', id);
+      
+      // Try to delete from Supabase first
+      try {
+        const { error } = await supabase
+          .from('analytics_exclusions')
+          .delete()
+          .eq('id', id);
+          
+        if (error) throw error;
+        
+        console.log('✅ IP exclusion deleted from Supabase:', id);
+        res.json({ success: true });
+        return;
+      } catch (supabaseError) {
+        console.warn('⚠️ Supabase IP exclusion deletion failed:', supabaseError);
+        res.status(500).json({ error: 'Failed to delete IP exclusion' });
+      }
+    } catch (error) {
+      console.error('❌ Error deleting IP exclusion:', error);
+      res.status(500).json({ error: 'Failed to delete IP exclusion' });
+    }
+  });
+  
+  // Get current user's IP (for testing/whitelisting)
+  app.get("/api/whoami", async (req, res) => {
+    try {
+      const clientIp = req.headers['x-forwarded-for'] || 
+                      req.headers['x-real-ip'] || 
+                      req.connection.remoteAddress ||
+                      req.socket.remoteAddress ||
+                      req.ip ||
+                      'unknown';
+                      
+      const userAgent = req.headers['user-agent'] || 'unknown';
+      
+      console.log('🔍 Whoami request:', { clientIp, userAgent });
+      
+      res.json({
+        ip: clientIp,
+        userAgent,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('❌ Error in whoami endpoint:', error);
+      res.status(500).json({ error: 'Failed to get client info' });
+    }
+  });
+
   // Admin Routes
   app.use(adminCountryNames);
   
