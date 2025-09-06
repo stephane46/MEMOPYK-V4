@@ -95,44 +95,6 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
             </div>
           )}
 
-          {/* Temporal Filtering Section */}
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-            <div className="mb-3">
-              <h3 className="text-sm font-semibold text-orange-800 flex items-center">
-                <Clock className="h-4 w-4 mr-2" />
-                Temporal Filtering
-              </h3>
-              <p className="text-xs text-orange-600 mt-1">
-                Filter analytics data from a specific start date onwards
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="since-date-toggle"
-                  checked={sinceDateEnabled}
-                  onCheckedChange={setSinceDateEnabled}
-                  data-testid="since-date-toggle"
-                />
-                <Label htmlFor="since-date-toggle" className="text-sm font-medium text-orange-700">
-                  Enable Start Date Filter
-                </Label>
-              </div>
-              {sinceDateEnabled && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-orange-700">From:</span>
-                  <Input
-                    type="date"
-                    value={sinceDate}
-                    onChange={(e) => setSinceDate(e.target.value)}
-                    className="w-32 border-orange-300 focus:border-orange-500 focus:ring-orange-500"
-                    placeholder="Select start date"
-                    data-testid="since-date-input"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
 
           {/* Additional Filters */}
           <div className="flex gap-2 items-center">

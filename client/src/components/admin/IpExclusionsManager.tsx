@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Trash2, Edit, Shield, Eye, EyeOff, Globe } from 'lucide-react';
+import { Plus, Trash2, Edit, Shield, Eye, EyeOff, Globe, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useAnalyticsNewFilters } from '@/admin/analyticsNew/analyticsNewFilters.store';
 
 interface IpExclusion {
   id: string;
@@ -49,6 +50,14 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Get analytics filters (moved from global filters)
+  const {
+    sinceDate,
+    sinceDateEnabled,
+    setSinceDate,
+    setSinceDateEnabled,
+  } = useAnalyticsNewFilters();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -221,6 +230,45 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
 
   return (
     <div className={cn('space-y-6', className)}>
+      {/* Start Date Filter Section */}
+      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold text-orange-800 flex items-center">
+            <Clock className="h-4 w-4 mr-2" />
+            Start Date Filter
+          </h3>
+          <p className="text-xs text-orange-600 mt-1">
+            Standard reports only; Live View shows last ~30 min.
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="since-date-toggle"
+              checked={sinceDateEnabled}
+              onCheckedChange={setSinceDateEnabled}
+              data-testid="since-date-toggle"
+            />
+            <Label htmlFor="since-date-toggle" className="text-sm font-medium text-orange-700">
+              Enable Start Date Filter
+            </Label>
+          </div>
+          {sinceDateEnabled && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-orange-700">From:</span>
+              <Input
+                type="date"
+                value={sinceDate}
+                onChange={(e) => setSinceDate(e.target.value)}
+                className="w-32 border-orange-300 focus:border-orange-500 focus:ring-orange-500"
+                placeholder="Select start date"
+                data-testid="since-date-input"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
