@@ -2455,6 +2455,68 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // IP Exclusions Management - Admin endpoints
+  
+  // GET all IP exclusions
+  app.get("/api/admin/analytics/exclusions", async (req, res) => {
+    try {
+      const exclusions = await hybridStorage.getIpExclusions();
+      res.json(exclusions);
+    } catch (error) {
+      console.error('❌ Get IP exclusions error:', error);
+      res.status(500).json({ error: "Failed to get IP exclusions" });
+    }
+  });
+
+  // POST create new IP exclusion
+  app.post("/api/admin/analytics/exclusions", async (req, res) => {
+    try {
+      const { ip_cidr, label, user_agent, active = true } = req.body;
+      
+      if (!ip_cidr || !label) {
+        return res.status(400).json({ error: "IP/CIDR and label are required" });
+      }
+      
+      const exclusion = await hybridStorage.createIpExclusion({
+        ip_cidr: ip_cidr.trim(),
+        label: label.trim(),
+        user_agent: user_agent?.trim() || null,
+        active
+      });
+      
+      res.json(exclusion);
+    } catch (error) {
+      console.error('❌ Create IP exclusion error:', error);
+      res.status(500).json({ error: "Failed to create IP exclusion" });
+    }
+  });
+
+  // PUT update IP exclusion
+  app.put("/api/admin/analytics/exclusions/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      const exclusion = await hybridStorage.updateIpExclusion(id, updates);
+      res.json(exclusion);
+    } catch (error) {
+      console.error('❌ Update IP exclusion error:', error);
+      res.status(500).json({ error: "Failed to update IP exclusion" });
+    }
+  });
+
+  // DELETE IP exclusion
+  app.delete("/api/admin/analytics/exclusions/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await hybridStorage.deleteIpExclusion(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('❌ Delete IP exclusion error:', error);
+      res.status(500).json({ error: "Failed to delete IP exclusion" });
+    }
+  });
+
   // Missing Analytics Endpoints - Fixing 404s
   app.get("/api/analytics/video-engagement", async (req, res) => {
     try {

@@ -6413,6 +6413,183 @@ Allow: /contact`;
   private ipToNumber(ip: string): number {
     return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0) >>> 0;
   }
+
+  // IP Exclusions Management Methods
+  async getIpExclusions(): Promise<any[]> {
+    try {
+      console.log('🔍 IP Exclusions: Querying Supabase database...');
+      
+      const { data, error } = await this.supabase
+        .from('analytics_exclusions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.warn('⚠️ IP Exclusions: Database query failed, checking JSON fallback:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log(`✅ IP Exclusions: Found ${data.length} exclusions in Supabase`);
+        return data;
+      }
+      
+      return [];
+    } catch (error) {
+      console.warn('⚠️ IP Exclusions: Supabase connection failed, using JSON fallback:', error);
+      
+      // Fallback to JSON
+      try {
+        const exclusions = this.loadJsonFile('ip-exclusions.json');
+        return Array.isArray(exclusions) ? exclusions : [];
+      } catch (jsonError) {
+        console.error('Error getting IP exclusions from JSON:', jsonError);
+        return [];
+      }
+    }
+  }
+
+  async createIpExclusion(exclusionData: any): Promise<any> {
+    try {
+      console.log('🔍 Creating IP Exclusion in Supabase database...');
+      
+      const newExclusion = {
+        ...exclusionData,
+        id: `exclusion_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await this.supabase
+        .from('analytics_exclusions')
+        .insert([newExclusion])
+        .select()
+        .single();
+
+      if (error) {
+        console.warn('⚠️ Create IP Exclusion: Database insert failed, using JSON fallback:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log('✅ IP Exclusion created in Supabase');
+        return data;
+      }
+      
+      return newExclusion;
+    } catch (error) {
+      console.warn('⚠️ Create IP Exclusion: Supabase connection failed, using JSON fallback:', error);
+      
+      // Fallback to JSON
+      try {
+        const exclusions = this.loadJsonFile('ip-exclusions.json') || [];
+        const newExclusion = {
+          ...exclusionData,
+          id: `exclusion_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
+        exclusions.push(newExclusion);
+        this.saveJsonFile('ip-exclusions.json', exclusions);
+        
+        return newExclusion;
+      } catch (jsonError) {
+        console.error('Error creating IP exclusion in JSON:', jsonError);
+        throw jsonError;
+      }
+    }
+  }
+
+  async updateIpExclusion(id: string, updates: any): Promise<any> {
+    try {
+      console.log(`🔍 Updating IP Exclusion ${id} in Supabase database...`);
+      
+      const updateData = {
+        ...updates,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await this.supabase
+        .from('analytics_exclusions')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.warn('⚠️ Update IP Exclusion: Database update failed, using JSON fallback:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log('✅ IP Exclusion updated in Supabase');
+        return data;
+      }
+      
+      return { id, ...updateData };
+    } catch (error) {
+      console.warn('⚠️ Update IP Exclusion: Supabase connection failed, using JSON fallback:', error);
+      
+      // Fallback to JSON
+      try {
+        const exclusions = this.loadJsonFile('ip-exclusions.json') || [];
+        const index = exclusions.findIndex((item: any) => item.id === id);
+        
+        if (index === -1) {
+          throw new Error('IP exclusion not found');
+        }
+        
+        exclusions[index] = {
+          ...exclusions[index],
+          ...updates,
+          updated_at: new Date().toISOString()
+        };
+        
+        this.saveJsonFile('ip-exclusions.json', exclusions);
+        
+        return exclusions[index];
+      } catch (jsonError) {
+        console.error('Error updating IP exclusion in JSON:', jsonError);
+        throw jsonError;
+      }
+    }
+  }
+
+  async deleteIpExclusion(id: string): Promise<void> {
+    try {
+      console.log(`🔍 Deleting IP Exclusion ${id} from Supabase database...`);
+      
+      const { error } = await this.supabase
+        .from('analytics_exclusions')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.warn('⚠️ Delete IP Exclusion: Database delete failed, using JSON fallback:', error);
+        throw error;
+      }
+
+      console.log('✅ IP Exclusion deleted from Supabase');
+    } catch (error) {
+      console.warn('⚠️ Delete IP Exclusion: Supabase connection failed, using JSON fallback:', error);
+      
+      // Fallback to JSON
+      try {
+        const exclusions = this.loadJsonFile('ip-exclusions.json') || [];
+        const filteredExclusions = exclusions.filter((item: any) => item.id !== id);
+        
+        if (filteredExclusions.length === exclusions.length) {
+          throw new Error('IP exclusion not found');
+        }
+        
+        this.saveJsonFile('ip-exclusions.json', filteredExclusions);
+      } catch (jsonError) {
+        console.error('Error deleting IP exclusion from JSON:', jsonError);
+        throw jsonError;
+      }
+    }
+  }
 }
 
 // Create singleton instance
