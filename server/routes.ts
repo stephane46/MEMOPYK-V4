@@ -5190,6 +5190,13 @@ export async function registerRoutes(app: Express): Promise<void> {
       setCache(key, data, 300);
       console.log(`✅ Data stored in cache for key: ${key}`);
       
+      // Add timezone headers for debugging and verification
+      res.set({
+        'X-Timezone': 'Europe/Paris',
+        'X-Window-Start': startDate,
+        'X-Window-End': endDate
+      });
+      
       res.json(data);
     } catch (e) { 
       console.error('❌ GA4 KPIs error:', e);
@@ -5224,19 +5231,49 @@ export async function registerRoutes(app: Express): Promise<void> {
       compareEndDate = formatInTimeZone(comparisonEnd, TZ, 'yyyy-MM-dd');
     } else {
       // Handle preset ranges using Europe/Paris timezone
-      let days: number;
-      switch (preset) {
-        case '30d':
-          days = 30;
-          break;
-        case '90d':
-          days = 90;
-          break;
-        case '7d':
-        default:
-          days = 7;
-          break;
-      }
+      if (preset === 'today') {
+        // Today: 00:00 to 24:00 Paris time
+        const nowLocal = new Date();
+        const todayLocal = formatInTimeZone(nowLocal, TZ, 'yyyy-MM-dd');
+        startDate = todayLocal;
+        endDate = todayLocal;
+        
+        // Comparison: yesterday
+        const yesterdayLocal = new Date(nowLocal);
+        yesterdayLocal.setDate(yesterdayLocal.getDate() - 1);
+        const yesterdayStr = formatInTimeZone(yesterdayLocal, TZ, 'yyyy-MM-dd');
+        compareStartDate = yesterdayStr;
+        compareEndDate = yesterdayStr;
+      } else if (preset === 'yesterday') {
+        // Yesterday: the previous Paris day
+        const nowLocal = new Date();
+        const yesterdayLocal = new Date(nowLocal);
+        yesterdayLocal.setDate(yesterdayLocal.getDate() - 1);
+        const yesterdayStr = formatInTimeZone(yesterdayLocal, TZ, 'yyyy-MM-dd');
+        startDate = yesterdayStr;
+        endDate = yesterdayStr;
+        
+        // Comparison: day before yesterday
+        const dayBeforeLocal = new Date(nowLocal);
+        dayBeforeLocal.setDate(dayBeforeLocal.getDate() - 2);
+        const dayBeforeStr = formatInTimeZone(dayBeforeLocal, TZ, 'yyyy-MM-dd');
+        compareStartDate = dayBeforeStr;
+        compareEndDate = dayBeforeStr;
+      } else {
+        // Handle day-based presets (7d, 30d, 90d)
+        let days: number;
+        switch (preset) {
+          case '30d':
+            days = 30;
+            break;
+          case '90d':
+            days = 90;
+            break;
+          case '7d':
+          default:
+            days = 7;
+            break;
+        }
       
       // Get current time in Europe/Paris timezone
       const nowLocal = new Date();
@@ -5256,9 +5293,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       compareEndLocal.setDate(compareEndLocal.getDate() - 1);
       compareEndDate = formatInTimeZone(compareEndLocal, TZ, 'yyyy-MM-dd');
       
-      const compareStartLocal = new Date(compareEndLocal);
-      compareStartLocal.setDate(compareStartLocal.getDate() - (days - 1));
-      compareStartDate = formatInTimeZone(compareStartLocal, TZ, 'yyyy-MM-dd');
+        const compareStartLocal = new Date(compareEndLocal);
+        compareStartLocal.setDate(compareStartLocal.getDate() - (days - 1));
+        compareStartDate = formatInTimeZone(compareStartLocal, TZ, 'yyyy-MM-dd');
+      }
     }
 
     // Apply sinceDate filtering if provided
