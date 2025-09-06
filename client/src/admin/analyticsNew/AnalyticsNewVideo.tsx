@@ -77,8 +77,8 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
         className="mb-6"
       />
 
-      {/* Video Funnel - renders when video is selected */}
-      {selectedVideo && (
+      {/* Video Funnel - renders when video is selected or shows empty state */}
+      {selectedVideo ? (
         <VideoFunnel 
           videoId={selectedVideo.videoId}
           videoTitle={selectedVideo.title}
@@ -87,6 +87,19 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
           onClose={handleCloseFunnel}
           className="mt-6"
         />
+      ) : (
+        <div className="analytics-new-card border-l-4 border-gray-300 mt-6">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="text-lg font-medium text-[var(--analytics-new-text-muted)] mb-2">
+                📊 Select a video to see the funnel
+              </div>
+              <div className="text-sm text-[var(--analytics-new-text-muted)]">
+                Click any row in the table above to view engagement metrics
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

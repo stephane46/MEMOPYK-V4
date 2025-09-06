@@ -113,7 +113,7 @@ export function VideoFunnel({
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
-              Video Engagement Funnel - {videoTitle || videoId}
+              {liveView ? 'Live View — last ~30 min' : 'Video Engagement Funnel'} - {videoTitle || videoId}
               {liveView && <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">Live</span>}
             </h3>
             <TooltipProvider>
