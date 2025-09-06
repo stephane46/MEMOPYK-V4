@@ -36,13 +36,12 @@ router.post("/ga4/mp", express.json(), async (req, res) => {
       events,
     };
 
-    // Use debug endpoint in development, production endpoint otherwise
-    const base =
-      process.env.NODE_ENV === "production"
-        ? "https://www.google-analytics.com/mp/collect"
-        : "https://www.google-analytics.com/debug/mp/collect";
+    // Use production endpoint when no API_SECRET (avoids warnings)
+    const base = API_SECRET
+      ? "https://www.google-analytics.com/debug/mp/collect"
+      : "https://www.google-analytics.com/mp/collect";
 
-    // Build URL - API_SECRET is optional for basic functionality
+    // Build URL with API_SECRET if available
     let url = `${base}?measurement_id=${encodeURIComponent(MID)}`;
     if (API_SECRET) {
       url += `&api_secret=${encodeURIComponent(API_SECRET)}`;
