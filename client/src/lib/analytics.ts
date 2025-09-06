@@ -146,7 +146,7 @@ export const trackVideoProgress = (videoId: string, progressPercent: number, cur
     player: 'custom',
     locale: locale || 'fr-FR',
     current_time: currentTimeSeconds,
-    progress_bucket: progressPercent,
+    progress_percent: progressPercent,
     debug_mode: isGaDev()
   });
 };
@@ -184,7 +184,7 @@ export const trackVideoPause = (videoId: string, progressPercent: number, curren
     player: 'custom',
     locale: locale || 'fr-FR',
     current_time: currentTimeSeconds,
-    progress_bucket: progressPercent,
+    progress_percent: progressPercent,
     debug_mode: isGaDev()
   });
 };
