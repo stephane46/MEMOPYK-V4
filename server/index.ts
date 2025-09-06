@@ -8,7 +8,12 @@ import { registerRoutes } from "./routes";
 import { log } from "./vite";           
 import { testDatabaseConnection } from "./database";
 import { VideoCache } from "./video-cache";
-import "./ga4-scheduler.js";
+// Import GA4 scheduler after server startup to avoid blocking deployment
+setImmediate(() => {
+  import("./ga4-scheduler.js").catch(err => {
+    console.error("❌ GA4 scheduler import error:", err);
+  });
+});
 
 const VERSION = "1.0.52-deploy-fix";
 console.log(`=== MEMOPYK Server Starting ${VERSION} ===`);
@@ -24,33 +29,64 @@ console.log(
   process.env.SUPABASE_URL ? "✅ Available" : "❌ Missing"
 );
 
-// Initialize video cache system for production gallery video support
+// Initialize video cache system for production gallery video support (non-blocking)
 console.log("🎬 Initializing video cache system...");
 const videoCache = new VideoCache();
 console.log("✅ Video cache system initialized");
 
-// Test database connection (non-blocking)
-testDatabaseConnection()
-  .then((success) => {
-    if (success) {
-      console.log("✅ Database connectivity confirmed");
-    } else {
-      console.log("❌ Database connection test failed");
-    }
-  })
-  .catch((err) => {
-    console.error("❌ Database test error:", err);
-  });
+// Start video preloading after server startup (non-blocking)
+setImmediate(() => {
+  if (process.env.NODE_ENV === "production") {
+    console.log("🚀 Starting hero video preloading for production...");
+    videoCache.preloadHeroVideos().catch(err => {
+      console.error("❌ Hero video preload error:", err);
+    });
+  }
+});
+
+// Test database connection (non-blocking, don't await during startup)
+setImmediate(() => {
+  testDatabaseConnection()
+    .then((success) => {
+      if (success) {
+        console.log("✅ Database connectivity confirmed");
+      } else {
+        console.log("❌ Database connection test failed");
+      }
+    })
+    .catch((err) => {
+      console.error("❌ Database test error:", err);
+    });
+});
 
 const app = express();
 const server = createServer(app);
 
-// Add health check endpoint (not root path - that should serve the app)
+// Add multiple health check endpoints for deployment compatibility
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    version: VERSION,
+    uptime: process.uptime()
+  });
+});
+
+app.get('/api/health', (req: Request, res: Response) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    version: VERSION,
+    uptime: process.uptime()
+  });
+});
+
 app.get('/api/health-check', (req: Request, res: Response) => {
   res.status(200).json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    version: '1.0.50'
+    version: VERSION,
+    uptime: process.uptime()
   });
 });
 
@@ -266,6 +302,11 @@ app.use((req, res, next) => {
       console.log(`📦 Frontend: http://localhost:${port}`);
     }
     console.log(`✅ ${VERSION} deployment ready!`);
+    
+    // Signal deployment readiness immediately
+    if (process.send) {
+      process.send('ready');
+    }
   });
   
   // Handle deployment errors gracefully
