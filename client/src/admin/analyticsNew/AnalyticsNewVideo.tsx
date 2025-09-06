@@ -19,7 +19,7 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
   const [liveView, setLiveView] = useState(false);
 
   // Get current filter state
-  const { datePreset, customDateStart, customDateEnd } = useAnalyticsNewFilters();
+  const { datePreset, customDateStart, customDateEnd, sinceDate, sinceDateEnabled } = useAnalyticsNewFilters();
   
   // Convert preset to the expected format
   const preset = (datePreset === '7d' || datePreset === '30d' || datePreset === '90d') 

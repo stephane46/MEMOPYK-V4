@@ -11,6 +11,8 @@ export interface AnalyticsNewFilters {
   datePreset: DatePreset['key'];
   customDateStart: string;
   customDateEnd: string;
+  sinceDate: string;
+  sinceDateEnabled: boolean;
   
   // Segmentation filters
   language: string;
@@ -26,6 +28,8 @@ interface AnalyticsNewFiltersStore extends AnalyticsNewFilters {
   // Actions
   setDatePreset: (preset: DatePreset['key']) => void;
   setCustomDateRange: (start: string, end: string) => void;
+  setSinceDate: (date: string) => void;
+  setSinceDateEnabled: (enabled: boolean) => void;
   setLanguage: (language: string) => void;
   setCountry: (country: string) => void;
   setVideoId: (videoId: string) => void;
@@ -42,6 +46,8 @@ const defaultState: AnalyticsNewFilters = {
   datePreset: '7d',
   customDateStart: '',
   customDateEnd: '',
+  sinceDate: '',
+  sinceDateEnabled: false,
   language: 'all',
   country: 'all', 
   videoId: 'all',
@@ -66,6 +72,9 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()((set, g
       datePreset: 'custom'
     });
   },
+
+  setSinceDate: (date) => set({ sinceDate: date }),
+  setSinceDateEnabled: (enabled) => set({ sinceDateEnabled: enabled }),
 
   setLanguage: (language) => set({ language }),
   setCountry: (country) => set({ country }),
@@ -103,6 +112,7 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()((set, g
     if (state.language !== 'all') filters.language = state.language;
     if (state.country !== 'all') filters.country = state.country;
     if (state.videoId !== 'all') filters.videoId = state.videoId;
+    if (state.sinceDateEnabled && state.sinceDate) filters.sinceDate = state.sinceDate;
     
     return filters;
   },

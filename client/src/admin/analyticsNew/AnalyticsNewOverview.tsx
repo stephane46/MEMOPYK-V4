@@ -35,7 +35,7 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   const [loadingTimeout, setLoadingTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Get current filter state
-  const { datePreset, customDateStart, customDateEnd, getDateRange } = useAnalyticsNewFilters();
+  const { datePreset, customDateStart, customDateEnd, sinceDate, sinceDateEnabled, getDateRange } = useAnalyticsNewFilters();
   
   // Convert preset to the expected format
   const preset = (datePreset === '7d' || datePreset === '30d' || datePreset === '90d') 
@@ -51,24 +51,23 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
 
   // Get GA4 report data based on current filters
   const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
-    queryKey: ['/api/ga4/report', datePreset, customDateStart, customDateEnd],
+    queryKey: ['/api/ga4/report', datePreset, customDateStart, customDateEnd, sinceDateEnabled ? sinceDate : null],
     queryFn: async () => {
-      console.log('📊 OVERVIEW: Calling /api/ga4/report with:', {
+      const requestBody = {
         preset: datePreset,
         dateFrom: customDateStart || undefined,
         dateTo: customDateEnd || undefined,
-      });
+        ...(sinceDateEnabled && sinceDate ? { sinceDate } : {}),
+      };
+
+      console.log('📊 OVERVIEW: Calling /api/ga4/report with:', requestBody);
 
       const response = await fetch('/api/ga4/report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          preset: datePreset,
-          dateFrom: customDateStart || undefined,
-          dateTo: customDateEnd || undefined,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {

@@ -1,5 +1,7 @@
 import React from 'react';
-import { Calendar, ChevronDown, Filter, X } from 'lucide-react';
+import { Calendar, ChevronDown, Filter, X, Clock } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { 
   Select,
@@ -29,11 +31,15 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
     datePreset,
     customDateStart,
     customDateEnd,
+    sinceDate,
+    sinceDateEnabled,
     language,
     country,
     videoId,
     setDatePreset,
     setCustomDateRange,
+    setSinceDate,
+    setSinceDateEnabled,
     setLanguage,
     setCountry,
     setVideoId,
@@ -88,6 +94,32 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               />
             </div>
           )}
+
+          {/* Since Date Toggle */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="since-date-toggle"
+                checked={sinceDateEnabled}
+                onCheckedChange={setSinceDateEnabled}
+                data-testid="since-date-toggle"
+              />
+              <Label htmlFor="since-date-toggle" className="text-sm font-medium text-gray-700 flex items-center">
+                <Clock className="h-4 w-4 mr-1" />
+                Since Date
+              </Label>
+            </div>
+            {sinceDateEnabled && (
+              <Input
+                type="date"
+                value={sinceDate}
+                onChange={(e) => setSinceDate(e.target.value)}
+                className="w-32"
+                placeholder="Select date"
+                data-testid="since-date-input"
+              />
+            )}
+          </div>
 
           {/* Additional Filters */}
           <div className="flex gap-2 items-center">
@@ -219,6 +251,16 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   <X 
                     className="h-3 w-3 ml-1 cursor-pointer" 
                     onClick={() => setVideoId('all')}
+                  />
+                </Badge>
+              )}
+              {sinceDateEnabled && sinceDate && (
+                <Badge variant="outline" className="text-xs bg-orange-50 border-orange-200 text-orange-800">
+                  <Clock className="h-3 w-3 mr-1" />
+                  Since: {sinceDate}
+                  <X 
+                    className="h-3 w-3 ml-1 cursor-pointer" 
+                    onClick={() => setSinceDateEnabled(false)}
                   />
                 </Badge>
               )}
