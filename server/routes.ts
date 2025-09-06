@@ -6305,7 +6305,19 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Top videos table endpoint - using your exact clean API structure
   app.get("/api/ga4/top-videos", async (req, res, next) => {
     try {
-      const { startDate, endDate, locale, nocache } = getParams(req);
+      let startDate, endDate, locale, nocache;
+      
+      // Check if this is a preset request
+      if (req.query.preset) {
+        const preset = String(req.query.preset);
+        const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(preset);
+        startDate = calcStart;
+        endDate = calcEnd;
+        locale = req.query.locale ? String(req.query.locale) : "all";
+        nocache = req.query.nocache === "1" || req.query.nocache === "true";
+      } else {
+        ({ startDate, endDate, locale, nocache } = getParams(req));
+      }
       const key = k(`top:${startDate}:${endDate}:${locale}`);
 
       // Check cache with timeout to prevent hanging
@@ -6355,7 +6367,19 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Funnel endpoint - using your exact clean API structure
   app.get("/api/ga4/funnel", async (req, res) => {
     try {
-      const { startDate, endDate, locale, nocache } = getParams(req);
+      let startDate, endDate, locale, nocache;
+      
+      // Check if this is a preset request
+      if (req.query.preset) {
+        const preset = String(req.query.preset);
+        const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(preset);
+        startDate = calcStart;
+        endDate = calcEnd;
+        locale = req.query.locale ? String(req.query.locale) : "all";
+        nocache = req.query.nocache === "1" || req.query.nocache === "true";
+      } else {
+        ({ startDate, endDate, locale, nocache } = getParams(req));
+      }
       const key = k(`funnel:${startDate}:${endDate}:${locale}`);
 
       // Check cache unless bypassed
@@ -6389,7 +6413,19 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Trend endpoint - daily plays and avg watch time
   app.get("/api/ga4/trend", async (req, res) => {
     try {
-      const { startDate, endDate, locale, nocache } = getParams(req);
+      let startDate, endDate, locale, nocache;
+      
+      // Check if this is a preset request
+      if (req.query.preset) {
+        const preset = String(req.query.preset);
+        const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(preset);
+        startDate = calcStart;
+        endDate = calcEnd;
+        locale = req.query.locale ? String(req.query.locale) : "all";
+        nocache = req.query.nocache === "1" || req.query.nocache === "true";
+      } else {
+        ({ startDate, endDate, locale, nocache } = getParams(req));
+      }
       const key = k(`trend:${startDate}:${endDate}:${locale}`);
 
       // Check cache unless bypassed
