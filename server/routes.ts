@@ -28,7 +28,7 @@ import {
   qPlaysByVideo,
   qWatchTimeByVideo,
   qProgressByVideo,
-  qFunnel,
+  // qFunnel, // Temporarily commented out
   qTrend,
   qTrendDaily,
   qRealtime,
@@ -39,6 +39,7 @@ import {
 import { getCache, setCache, k, getDbCache, setDbCache } from './cache';
 import { geoResolver } from './geoResolver';
 import ga4MpRouter from './routes/ga4Mp';
+import { getRealtimeTopVideos, getRealtimeVideoProgress } from './routes/ga4Realtime';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -183,6 +184,10 @@ const locationService = new LocationService(hybridStorage);
 export async function registerRoutes(app: Express): Promise<void> {
   // GA4 Measurement Protocol Relay (ad-blocker bypass)
   app.use("/api", ga4MpRouter);
+  
+  // GA4 Realtime API endpoints for instant verification
+  app.get("/api/ga4/realtime/topVideos", getRealtimeTopVideos);
+  app.get("/api/ga4/realtime/videoProgress", getRealtimeVideoProgress);
   
   // MEMOPYK Platform Content API Routes
   
