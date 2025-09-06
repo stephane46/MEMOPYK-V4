@@ -148,9 +148,6 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
                 Comprehensive analytics platform for MEMOPYK
               </p>
             </div>
-            <div className="text-xs text-[var(--analytics-new-text-muted)] bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200">
-              Phase 1 - MVP Skeleton
-            </div>
           </div>
           
           {/* Global Filters */}
