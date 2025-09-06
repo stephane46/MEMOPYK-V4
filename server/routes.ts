@@ -38,6 +38,7 @@ import {
 } from './ga4-service';
 import { getCache, setCache, k, getDbCache, setDbCache } from './cache';
 import { geoResolver } from './geoResolver';
+import ga4MpRouter from './routes/ga4Mp';
 
 // Contact form validation schema
 const contactFormSchema = z.object({
@@ -180,6 +181,9 @@ const uploadImage = multer({
 const locationService = new LocationService(hybridStorage);
 
 export async function registerRoutes(app: Express): Promise<void> {
+  // GA4 Measurement Protocol Relay (ad-blocker bypass)
+  app.use("/api", ga4MpRouter);
+  
   // MEMOPYK Platform Content API Routes
   
   // Hero Videos - Video carousel content
