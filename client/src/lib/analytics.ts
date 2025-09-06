@@ -13,42 +13,13 @@ function isGaDev(): boolean {
   return /[?#&]ga_dev=1\b/.test(location.href) || localStorage.getItem('ga_dev') === '1';
 }
 
-// Initialize Google Analytics
+// DISABLED: Initialize Google Analytics - now handled by direct GA4 module
 export function initGA(): void {
-  if (typeof window === 'undefined') return;
-  
-  // Add gtag script
-  const gtagScript = document.createElement('script');
-  gtagScript.async = true;
-  gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
-  if (document.head) {
-    document.head.appendChild(gtagScript);
-  } else {
-    console.error('document.head not available for GA4 script');
-  }
-  
-  // Initialize gtag
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: any[]) {
-    window.dataLayer.push(args);
-  };
-  
-  window.gtag('js', new Date());
-  window.gtag('config', MEASUREMENT_ID, {
-    send_page_view: false, // We'll handle page views manually
-    debug_mode: true // Always enable debug mode until GA4 reception confirmed
-  });
-  
-  // Set explicit consent in debug mode
-  const isDebugMode = window.location.search.includes('ga_debug=1') || localStorage.getItem('ga_debug') === '1';
-  if (isDebugMode) {
-    window.gtag('consent', 'update', {
-      analytics_storage: 'granted',
-      ad_storage: 'denied'
-    });
-  }
-  
-  console.log('🚀 GA4 initialized with ID:', MEASUREMENT_ID);
+  console.warn('🚫 DEPRECATED: initGA() from lib/analytics.ts is disabled to prevent conflicts with direct GA4 module');
+  // OLD CODE COMMENTED TO PREVENT DUPLICATE SCRIPT LOADING:
+  // This function previously loaded GA4 script but caused conflicts when used alongside
+  // the new direct GA4 integration. The new module in client/src/analytics/ga.ts handles
+  // all GA4 initialization with proper timing and GTM isolation.
 }
 
 // Initialize and display test mode branding

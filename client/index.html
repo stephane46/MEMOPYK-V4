@@ -6,12 +6,15 @@
     <title>MEMOPYK</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
-    <!-- GA4 - Only load on non-admin pages -->
+    <!-- GA4 - Only load on non-admin pages (GTM KILLSWITCH ENABLED) -->
     <script>
       // Check if current path is admin page
       var isAdmin = location.pathname.startsWith('/fr-FR/admin') || location.pathname.startsWith('/admin');
       
-      if (!isAdmin) {
+      // GTM KILLSWITCH: Skip GA4 loading if disabled via query parameter (env var handled in build)
+      var gtmDisabled = location.search.includes('nogtm=1');
+      
+      if (!isAdmin && !gtmDisabled) {
         // Load GA4 script
         var script = document.createElement('script');
         script.async = true;
@@ -47,7 +50,11 @@
           }
         })();
       } else {
-        console.log('🚫 GA4 disabled on admin pages');
+        if (isAdmin) {
+          console.log('🚫 GA4 disabled on admin pages');
+        } else if (gtmDisabled) {
+          console.log('🚫 GA4 disabled by GTM killswitch (VITE_ENABLE_GTM != true OR ?nogtm=1)');
+        }
       }
     </script>
 
