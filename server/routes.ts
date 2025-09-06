@@ -2395,6 +2395,42 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Helper function to extract client IP
+  const getClientIP = (req: any): string | null => {
+    // Priority order for IP extraction
+    const headers = [
+      'x-forwarded-for',
+      'cf-connecting-ip', 
+      'x-real-ip'
+    ];
+
+    for (const header of headers) {
+      const value = req.headers[header];
+      if (value) {
+        // Handle comma-separated IPs (take first one)
+        const ip = Array.isArray(value) ? value[0] : value.toString();
+        const firstIP = ip.split(',')[0].trim();
+        if (firstIP && isValidIP(firstIP)) {
+          return firstIP;
+        }
+      }
+    }
+
+    // Fallback to req.ip
+    if (req.ip && isValidIP(req.ip)) {
+      return req.ip;
+    }
+
+    return null;
+  };
+
+  // Basic IP validation helper
+  const isValidIP = (ip: string): boolean => {
+    const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    const ipv6Regex = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
+    return ipv4Regex.test(ip) || ipv6Regex.test(ip);
+  };
+
   // Current IP Detection - GET current admin IP address
   app.get("/api/analytics/current-ip", async (req, res) => {
     try {
