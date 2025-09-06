@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface DatePreset {
   key: '7d' | '30d' | '90d' | 'custom';
@@ -42,12 +43,15 @@ interface AnalyticsNewFiltersStore extends AnalyticsNewFilters {
   getActiveFilters: () => Partial<AnalyticsNewFilters>;
 }
 
+// Get today's date in YYYY-MM-DD format
+const getTodayDate = () => new Date().toISOString().split('T')[0];
+
 const defaultState: AnalyticsNewFilters = {
   datePreset: '7d',
   customDateStart: '',
   customDateEnd: '',
-  sinceDate: '',
-  sinceDateEnabled: false,
+  sinceDate: getTodayDate(), // Default to today
+  sinceDateEnabled: true, // Enabled by default
   language: 'all',
   country: 'all', 
   videoId: 'all',

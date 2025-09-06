@@ -9,7 +9,8 @@ import { AnalyticsNewVideo } from './AnalyticsNewVideo';
 import DataSourceBadge from './components/DataSourceBadge';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { Badge } from '@/components/ui/badge';
-import { Calendar } from 'lucide-react';
+import { Calendar, Shield } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import './analyticsNew.tokens.css';
 
 // Placeholder components for other tabs
@@ -80,19 +81,22 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<string>('overview');
   const { sinceDate, sinceDateEnabled } = useAnalyticsNewFilters();
 
-  // Format date for display (DD MMMM YYYY)
-  const formatSinceDate = (dateString: string): string => {
-    if (!dateString) return '';
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-      });
-    } catch {
-      return dateString;
-    }
+  // Get IP exclusions count for badge
+  const { data: exclusions = [] } = useQuery<any[]>({
+    queryKey: ['/api/admin/analytics/exclusions'],
+  });
+
+  // Format date for display (YYYY-MM-DD for badges)
+  const formatSinceDateForBadge = (dateString: string): string => {
+    return dateString; // Use YYYY-MM-DD format as requested
+  };
+
+  // Get active IP exclusions count
+  const activeExclusionsCount = exclusions.filter(exc => exc.active).length;
+
+  // Navigation functions for badges
+  const navigateToExclusions = () => {
+    handleTabChange('exclusions');
   };
 
   // Read query parameter on component mount and URL changes
@@ -167,17 +171,35 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
                 Comprehensive analytics platform for MEMOPYK
               </p>
             </div>
-            {/* Since Date Status Badge */}
-            {sinceDateEnabled && sinceDate && (
-              <Badge 
-                variant="outline" 
-                className="bg-orange-50 border-orange-300 text-orange-800 text-sm font-medium flex items-center gap-2"
-                data-testid="since-date-badge"
-              >
-                <Calendar className="h-4 w-4" />
-                Showing data since {formatSinceDate(sinceDate)}
-              </Badge>
-            )}
+            {/* Compact Header Badges */}
+            <div className="flex items-center gap-2">
+              {/* Since Date Badge - Always visible when ON */}
+              {sinceDateEnabled && sinceDate && (
+                <Badge 
+                  variant="outline" 
+                  className="bg-orange-50 border-orange-300 text-orange-800 text-sm font-medium cursor-pointer hover:bg-orange-100 transition-colors"
+                  onClick={navigateToExclusions}
+                  title="Hides data before this date in standard reports."
+                  data-testid="since-badge"
+                >
+                  Since: {formatSinceDateForBadge(sinceDate)}
+                </Badge>
+              )}
+              
+              {/* IP Exclusions Badge - Visible when ≥1 active rule */}
+              {activeExclusionsCount > 0 && (
+                <Badge 
+                  variant="outline" 
+                  className="bg-gray-50 border-gray-300 text-gray-800 text-sm font-medium cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={navigateToExclusions}
+                  title={`${activeExclusionsCount} active IP/CIDR exclusions (relay blocking future events).`}
+                  data-testid="ips-badge"
+                >
+                  <Shield className="h-3 w-3 mr-1" />
+                  IPs: {activeExclusionsCount}
+                </Badge>
+              )}
+            </div>
           </div>
           
           {/* Global Filters */}
