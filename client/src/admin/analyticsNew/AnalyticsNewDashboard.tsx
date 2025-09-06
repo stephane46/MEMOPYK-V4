@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnalyticsNewTabNavigation } from './AnalyticsNewTabNavigation';
 import { AnalyticsNewGlobalFilters } from './AnalyticsNewGlobalFilters';
+import { IpExclusionsManager } from '@/components/admin/IpExclusionsManager';
 import { AnalyticsNewOverview } from './AnalyticsNewOverview';
 import { AnalyticsNewLiveView } from './AnalyticsNewLiveView';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
@@ -122,6 +123,8 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
         return <AnalyticsNewClarity />;
       case 'fallback':
         return <AnalyticsNewFallback />;
+      case 'exclusions':
+        return <IpExclusionsManager />;
       default:
         return <AnalyticsNewOverview />;
     }

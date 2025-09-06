@@ -8,6 +8,7 @@ import {
   TrendingUp,
   Activity,
   AlertTriangle,
+  Shield,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import './analyticsNew.tokens.css';
@@ -67,6 +68,12 @@ export const ANALYTICS_NEW_TABS: AnalyticsNewTab[] = [
     label: 'Fallback',
     icon: AlertTriangle,
     description: 'Error handling and diagnostics',
+  },
+  {
+    id: 'exclusions',
+    label: 'Exclusions',
+    icon: Shield,
+    description: 'IP and user agent exclusions management',
   },
 ];
 
