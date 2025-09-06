@@ -36,10 +36,11 @@ router.post("/ga4/mp", express.json(), async (req, res) => {
       events,
     };
 
-    // Use production endpoint when no API_SECRET (avoids warnings)
-    const base = API_SECRET
+    // Choose endpoint by query flag
+    const useDebug = req.query.debug === "1";
+    const base = useDebug
       ? "https://www.google-analytics.com/debug/mp/collect"
-      : "https://www.google-analytics.com/mp/collect";
+      : "https://www.google-analytics.com/mp/collect"; // <-- ingest
 
     // Build URL with API_SECRET if available
     let url = `${base}?measurement_id=${encodeURIComponent(MID)}`;
@@ -61,16 +62,22 @@ router.post("/ga4/mp", express.json(), async (req, res) => {
       return res.status(gaResponse.status).json({ error: "GA4 MP error", body: text });
     }
 
-    // In debug mode, GA returns validationMessages
+    // Parse debug response if in debug mode
     let debug: any = undefined;
-    try { 
-      debug = JSON.parse(text); 
-    } catch {
-      // Production returns empty body, which is expected
+    if (useDebug) {
+      try { 
+        debug = JSON.parse(text); 
+      } catch {
+        // Debug endpoint should return JSON, but handle parse errors
+      }
     }
 
     console.log(`✅ [GA4 MP] Success - events sent for client ${cid}`);
-    res.json({ ok: true, client_id: cid, debug });
+    const response: any = { ok: true, client_id: cid };
+    if (useDebug) {
+      response.debug = debug;
+    }
+    res.json(response);
   } catch (err: any) {
     console.error('❌ [GA4 MP] Server error:', err);
     res.status(500).json({ error: "server error", message: String(err?.message || err) });
