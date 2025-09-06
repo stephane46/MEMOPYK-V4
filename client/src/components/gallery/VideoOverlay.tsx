@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { Play, Pause, Volume2, VolumeX, X, ImageIcon, Clock } from 'lucide-react';
 import { useVideoAnalytics } from '@/hooks/useVideoAnalytics';
 import { fireGA } from '@/lib/analytics';
-import { sendVideoProgress, sendVideoStart, sendVideoComplete } from '@/analytics/ga';
+import { mpSend } from '@/analytics/mp';
 
 interface VideoOverlayProps {
   videoUrl: string;
@@ -223,14 +223,13 @@ export default function VideoOverlay({
       if (progressValue >= milestone && !milestonesTrackedRef.current.has(milestone)) {
         milestonesTrackedRef.current.add(milestone);
         
-        await sendVideoProgress({
-          progress_percent: milestone as 10 | 25 | 50 | 75 | 90,
+        await mpSend('video_progress', {
+          progress_percent: milestone,
           video_id: videoId,
           video_title: stableProps.title,
           current_time: Math.round(video.currentTime),
           duration_sec: Math.round(video.duration || 0),
-          locale: language,
-          debug_mode: true
+          locale: language
         }).catch(console.warn);
       }
     }
@@ -242,13 +241,12 @@ export default function VideoOverlay({
     resetControlsTimer();
     
     if (!videoStartSentRef.current) {
-      await sendVideoStart({
+      await mpSend('video_start', {
         video_id: videoId,
         video_title: stableProps.title,
         duration_sec: Math.round(duration || 0),
         position_sec: Math.round(currentTime || 0),
-        locale: language,
-        debug_mode: true
+        locale: language
       }).catch(console.warn);
       videoStartSentRef.current = true;
     }
@@ -272,14 +270,13 @@ export default function VideoOverlay({
     setShowControls(true);
     
     if (duration > 0) {
-      await sendVideoComplete({
+      await mpSend('video_complete', {
         video_id: videoId,
         video_title: stableProps.title,
         duration_sec: Math.round(duration),
         current_time: Math.round(duration),
         completion_rate: 100,
-        locale: language,
-        debug_mode: true
+        locale: language
       }).catch(console.warn);
     }
     
