@@ -223,7 +223,7 @@ export default function VideoOverlay({
       if (progressValue >= milestone && !milestonesTrackedRef.current.has(milestone)) {
         milestonesTrackedRef.current.add(milestone);
         
-        sendVideoProgress({
+        await sendVideoProgress({
           progress_percent: milestone as 10 | 25 | 50 | 75 | 90,
           video_id: videoId,
           video_title: stableProps.title,
@@ -231,7 +231,7 @@ export default function VideoOverlay({
           duration_sec: Math.round(video.duration || 0),
           locale: language,
           debug_mode: true
-        });
+        }).catch(console.warn);
       }
     }
   }, [videoId, stableProps.title, language]);
