@@ -4833,6 +4833,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         res.setHeader('X-Cache', 'HIT');
         res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
         res.setHeader('X-GA4-Property', process.env.GA4_PROPERTY_ID || 'unknown');
+        
+        // Add comprehensive Paris timezone headers for cached responses too
+        setParisTimezoneHeaders(res, req.query);
+        
         return res.json(cached);
       }
 
@@ -4870,6 +4874,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.setHeader('X-Cache', 'MISS');
       res.setHeader('X-Data-Source', process.env.GA4_MOCK === 'true' ? 'mock' : 'live');
       res.setHeader('X-GA4-Property', process.env.GA4_PROPERTY_ID || 'unknown');
+      
+      // Add comprehensive Paris timezone headers
+      setParisTimezoneHeaders(res, req.query);
+      
       res.json(result);
     } catch (error: any) {
       console.error('❌ GA4 report error:', error);
@@ -5261,12 +5269,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       setCache(key, data, 300);
       console.log(`✅ Data stored in cache for key: ${key}`);
       
-      // Add timezone headers for debugging and verification
-      res.set({
-        'X-Timezone': 'Europe/Paris',
-        'X-Window-Start': startDate,
-        'X-Window-End': endDate
-      });
+      // Add comprehensive Paris timezone headers
+      setParisTimezoneHeaders(res, req.query);
       
       res.json(data);
     } catch (e) { 
@@ -6337,6 +6341,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Store in both persistent and memory cache
       await setDbCache(key, data, 300);
       setCache(key, data, 300);
+      
+      // Add comprehensive Paris timezone headers
+      setParisTimezoneHeaders(res, req.query);
+      
       res.json(data);
     } catch (e) { 
       console.error('❌ GA4 Top Videos error:', e);
@@ -6367,6 +6375,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Store in both persistent and memory cache
       await setDbCache(key, data, 300);
       setCache(key, data, 300);
+      
+      // Add comprehensive Paris timezone headers
+      setParisTimezoneHeaders(res, req.query);
+      
       res.json(data);
     } catch (e) {
       console.error('❌ GA4 Funnel error:', e);
@@ -6397,6 +6409,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Store in both persistent and memory cache (600s for trend - heavier query)
       await setDbCache(key, data, 600);
       setCache(key, data, 600);
+      
+      // Add comprehensive Paris timezone headers
+      setParisTimezoneHeaders(res, req.query);
+      
       res.json(data);
     } catch (e) {
       console.error('❌ GA4 Trend error:', e);
@@ -6446,6 +6462,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       } catch (error) {
         console.log(`⚠️ Failed to cache realtime data:`, error.message);
       }
+      
+      // Add comprehensive Paris timezone headers (realtime uses current time)
+      setParisTimezoneHeaders(res, { preset: 'today' });
+      
       res.json(data);
     } catch (error: any) {
       console.error("GA4 realtime error:", error);
