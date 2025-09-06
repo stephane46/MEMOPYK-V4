@@ -140,6 +140,24 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()((set, g
   },
 }));
 
+// Helper function to format dates for active window display
+export const formatParisDateWindow = (start: string, end: string): string => {
+  const ZONE = 'Europe/Paris';
+  const startDate = DateTime.fromISO(start).setZone(ZONE);
+  const endDate = DateTime.fromISO(end).setZone(ZONE);
+  
+  // French formatting: DD MMMM YYYY
+  const formatFrench = (date: DateTime) => date.setLocale('fr').toFormat('dd LLLL yyyy');
+  
+  if (start === end) {
+    // Single day
+    return formatFrench(startDate);
+  } else {
+    // Date range
+    return `${formatFrench(startDate)} – ${formatFrench(endDate)}`;
+  }
+};
+
 export const DATE_PRESETS: DatePreset[] = [
   { key: 'today', label: 'Today' },
   { key: 'yesterday', label: 'Yesterday' },

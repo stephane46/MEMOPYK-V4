@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useAnalyticsNewFilters, DATE_PRESETS } from './analyticsNewFilters.store';
+import { useAnalyticsNewFilters, DATE_PRESETS, formatParisDateWindow } from './analyticsNewFilters.store';
 import './analyticsNew.tokens.css';
 
 interface AnalyticsNewGlobalFiltersProps {
@@ -44,23 +44,39 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
     setCountry,
     setVideoId,
     getActiveFilters,
+    getDateRange,
     reset,
   } = useAnalyticsNewFilters();
 
   const activeFilters = getActiveFilters();
   const activeFilterCount = Object.keys(activeFilters).length;
+  const dateRange = getDateRange();
+  const windowDisplay = formatParisDateWindow(dateRange.start, dateRange.end);
 
   return (
     <div className={`analytics-new-container ${className}`}>
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           {/* Date Presets */}
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm font-medium text-gray-700 flex items-center mr-2">
-              <Calendar className="h-4 w-4 mr-1" />
-              Date Range:
-            </span>
-            {DATE_PRESETS.map((preset) => (
+          <div className="flex flex-wrap gap-4 items-center">
+            {/* Active Window Display */}
+            <div className="flex items-center">
+              <Badge 
+                variant="outline" 
+                className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
+                data-testid="active-window-badge"
+              >
+                Fenêtre: {windowDisplay}
+              </Badge>
+            </div>
+            
+            {/* Date Preset Buttons */}
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm font-medium text-gray-700 flex items-center mr-2">
+                <Calendar className="h-4 w-4 mr-1" />
+                Date Range:
+              </span>
+              {DATE_PRESETS.map((preset) => (
               <Button
                 key={preset.key}
                 variant={datePreset === preset.key ? "default" : "outline"}
@@ -72,6 +88,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 {preset.label}
               </Button>
             ))}
+            </div>
           </div>
 
           {/* Custom Date Range - Show when custom is selected */}
