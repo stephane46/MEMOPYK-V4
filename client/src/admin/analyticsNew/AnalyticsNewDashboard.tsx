@@ -7,6 +7,9 @@ import { AnalyticsNewLiveView } from './AnalyticsNewLiveView';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { AnalyticsNewVideo } from './AnalyticsNewVideo';
 import DataSourceBadge from './components/DataSourceBadge';
+import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
+import { Badge } from '@/components/ui/badge';
+import { Calendar } from 'lucide-react';
 import './analyticsNew.tokens.css';
 
 // Placeholder components for other tabs
@@ -75,6 +78,22 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
   className = '' 
 }) => {
   const [activeTab, setActiveTab] = useState<string>('overview');
+  const { sinceDate, sinceDateEnabled } = useAnalyticsNewFilters();
+
+  // Format date for display (DD MMMM YYYY)
+  const formatSinceDate = (dateString: string): string => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
+  };
 
   // Read query parameter on component mount and URL changes
   useEffect(() => {
@@ -148,6 +167,17 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
                 Comprehensive analytics platform for MEMOPYK
               </p>
             </div>
+            {/* Since Date Status Badge */}
+            {sinceDateEnabled && sinceDate && (
+              <Badge 
+                variant="outline" 
+                className="bg-orange-50 border-orange-300 text-orange-800 text-sm font-medium flex items-center gap-2"
+                data-testid="since-date-badge"
+              >
+                <Calendar className="h-4 w-4" />
+                Showing data since {formatSinceDate(sinceDate)}
+              </Badge>
+            )}
           </div>
           
           {/* Global Filters */}
