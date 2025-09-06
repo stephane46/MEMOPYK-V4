@@ -330,23 +330,24 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>IP/CIDR</TableHead>
-                <TableHead>Label</TableHead>
+                <TableHead>Label + IP/CIDR</TableHead>
                 <TableHead>User Agent</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
-                <TableHead className="w-24">Actions</TableHead>
+                <TableHead className="w-32">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {exclusions.map((exclusion) => (
                 <TableRow key={exclusion.id}>
                   <TableCell>
-                    <code className="text-sm bg-gray-100 px-2 py-1 rounded">
-                      {exclusion.ip_cidr}
-                    </code>
+                    <div className="space-y-1">
+                      <div className="font-medium text-gray-900">{exclusion.label}</div>
+                      <code className="text-sm bg-gray-100 px-2 py-1 rounded text-gray-600">
+                        {exclusion.ip_cidr}
+                      </code>
+                    </div>
                   </TableCell>
-                  <TableCell className="font-medium">{exclusion.label}</TableCell>
                   <TableCell>
                     {exclusion.user_agent ? (
                       <code className="text-xs bg-gray-100 px-2 py-1 rounded">
@@ -380,6 +381,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         variant="ghost"
                         size="sm"
                         onClick={() => handleEdit(exclusion)}
+                        title="Edit label"
                         data-testid={`edit-exclusion-${exclusion.id}`}
                       >
                         <Edit className="h-4 w-4" />
@@ -387,8 +389,21 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => 
+                          toggleMutation.mutate({ id: exclusion.id, active: !exclusion.active })
+                        }
+                        disabled={toggleMutation.isPending}
+                        title="Toggle active"
+                        data-testid={`toggle-action-${exclusion.id}`}
+                      >
+                        {exclusion.active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => deleteMutation.mutate(exclusion.id)}
                         disabled={deleteMutation.isPending}
+                        title="Delete"
                         data-testid={`delete-exclusion-${exclusion.id}`}
                       >
                         <Trash2 className="h-4 w-4" />
