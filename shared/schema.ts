@@ -430,6 +430,16 @@ export const countryNames = pgTable("country_names", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
+// Analytics IP exclusions table - for blocking IPs from GA4 data and future event ingestion
+export const analyticsExclusions = pgTable("analytics_exclusions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ipCidr: text("ip_cidr").notNull(), // IP address or CIDR range (e.g., "192.168.1.1" or "192.168.1.0/24")
+  label: text("label").notNull(), // Human-readable reason/description
+  active: boolean("active").notNull().default(true), // Whether this exclusion is currently active
+  createdAt: timestamp("created_at").defaultNow(),
+  appliesFrom: timestamp("applies_from").defaultNow() // When this exclusion takes effect
+});
+
 // Insert schemas for all tables
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertHeroVideoSchema = createInsertSchema(heroVideos).omit({ id: true, createdAt: true, updatedAt: true });
@@ -448,6 +458,7 @@ export const insertSeoGlobalSettingsSchema = createInsertSchema(seoGlobalSetting
 export const insertDeploymentHistorySchema = createInsertSchema(deploymentHistory).omit({ id: true, createdAt: true });
 export const insertCountryNamesSchema = createInsertSchema(countryNames).omit({ createdAt: true, updatedAt: true });
 export const insertWhyMemopykCardsSchema = createInsertSchema(whyMemopykCards).omit({ createdAt: true, updatedAt: true });
+export const insertAnalyticsExclusionSchema = createInsertSchema(analyticsExclusions).omit({ id: true, createdAt: true, appliesFrom: true });
 export const insertAnalyticsSessionSchema = createInsertSchema(analyticsSessions).omit({ id: true, createdAt: true });
 export const insertAnalyticsViewSchema = createInsertSchema(analyticsViews).omit({ id: true, createdAt: true });
 export const insertRealtimeVisitorSchema = createInsertSchema(realtimeVisitors).omit({ id: true, createdAt: true, lastSeen: true });
@@ -479,6 +490,7 @@ export type PerformanceMetric = typeof performanceMetrics.$inferSelect;
 export type EngagementHeatmap = typeof engagementHeatmap.$inferSelect;
 export type ConversionFunnel = typeof conversionFunnel.$inferSelect;
 export type WhyMemopykCards = typeof whyMemopykCards.$inferSelect;
+export type AnalyticsExclusion = typeof analyticsExclusions.$inferSelect;
 
 // Insert types for all tables
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -504,3 +516,4 @@ export type InsertPerformanceMetric = z.infer<typeof insertPerformanceMetricSche
 export type InsertEngagementHeatmap = z.infer<typeof insertEngagementHeatmapSchema>;
 export type InsertConversionFunnel = z.infer<typeof insertConversionFunnelSchema>;
 export type InsertWhyMemopykCards = z.infer<typeof insertWhyMemopykCardsSchema>;
+export type InsertAnalyticsExclusion = z.infer<typeof insertAnalyticsExclusionSchema>;
