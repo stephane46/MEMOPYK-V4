@@ -8,20 +8,46 @@ import { cn } from '@/lib/utils';
 interface TopVideosTableProps {
   onSelect: (video: TopVideoRow) => void;
   preset?: "7d" | "30d" | "90d";
+  liveView?: boolean;
   className?: string;
 }
 
-export function TopVideosTable({ onSelect, preset = "7d", className = "" }: TopVideosTableProps) {
-  const { data, loading, error } = useGa4Report<TopVideosResponse>({ report: "topVideos", preset });
+export function TopVideosTable({ onSelect, preset = "7d", liveView = false, className = "" }: TopVideosTableProps) {
+  const { data, loading, error } = useGa4Report<TopVideosResponse>({ 
+    report: liveView ? "realtimeTopVideos" : "topVideos", 
+    preset 
+  });
   const [sortBy, setSortBy] = useState<keyof TopVideoRow>("plays");
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
 
   const sortedRows = useMemo(() => {
-    if (!data?.topVideos) return [];
+    // Handle both regular topVideos and realtime topVideosRt structures
+    const videos = data?.topVideos || data?.topVideosRt || [];
+    if (!videos.length) return [];
     
-    const sorted = [...data.topVideos].sort((a, b) => {
-      const aVal = a[sortBy];
-      const bVal = b[sortBy];
+    const sorted = [...videos].sort((a, b) => {
+      // Map realtime field names to standard field names for sorting
+      let aVal, bVal;
+      
+      if (liveView) {
+        // Realtime data structure mapping
+        if (sortBy === 'plays') {
+          aVal = a.playsRt;
+          bVal = b.playsRt;
+        } else if (sortBy === 'videoId') {
+          aVal = a.videoId;
+          bVal = b.videoId;
+        } else if (sortBy === 'title') {
+          aVal = a.title;
+          bVal = b.title;
+        } else {
+          aVal = a[sortBy];
+          bVal = b[sortBy];
+        }
+      } else {
+        aVal = a[sortBy];
+        bVal = b[sortBy];
+      }
       
       if (typeof aVal === 'number' && typeof bVal === 'number') {
         return direction === "asc" ? aVal - bVal : bVal - aVal;
@@ -34,7 +60,7 @@ export function TopVideosTable({ onSelect, preset = "7d", className = "" }: TopV
     });
     
     return sorted;
-  }, [data, sortBy, direction]);
+  }, [data, sortBy, direction, liveView]);
 
   const toggleSort = (column: keyof TopVideoRow) => {
     if (column === sortBy) {
@@ -134,35 +160,44 @@ export function TopVideosTable({ onSelect, preset = "7d", className = "" }: TopV
                 data-testid="sort-plays"
               >
                 <div className="flex items-center justify-end space-x-1">
-                  <span>Plays</span>
+                  <span>{liveView ? "Plays (RT)" : "Plays"}</span>
                   {getSortIcon("plays")}
                 </div>
               </th>
-              <th 
-                role="columnheader" 
-                aria-sort={getAriaSortValue("completions")}
-                className="text-right py-3 px-4 text-sm font-medium text-[var(--analytics-new-text)] cursor-pointer hover:bg-gray-50"
-                onClick={() => toggleSort("completions")}
-                data-testid="sort-completions"
-              >
-                <div className="flex items-center justify-end space-x-1">
-                  <span>Completions (90%)</span>
-                  {getSortIcon("completions")}
-                </div>
-              </th>
-              <th 
-                role="columnheader" 
-                aria-sort={getAriaSortValue("completionRate")}
-                className="text-right py-3 px-4 text-sm font-medium text-[var(--analytics-new-text)] cursor-pointer hover:bg-gray-50"
-                onClick={() => toggleSort("completionRate")}
-                title="90% progress ÷ starts"
-                data-testid="sort-completion-rate"
-              >
-                <div className="flex items-center justify-end space-x-1">
-                  <span>Completion Rate</span>
-                  {getSortIcon("completionRate")}
-                </div>
-              </th>
+              {!liveView && (
+                <>
+                  <th 
+                    role="columnheader" 
+                    aria-sort={getAriaSortValue("completions")}
+                    className="text-right py-3 px-4 text-sm font-medium text-[var(--analytics-new-text)] cursor-pointer hover:bg-gray-50"
+                    onClick={() => toggleSort("completions")}
+                    data-testid="sort-completions"
+                  >
+                    <div className="flex items-center justify-end space-x-1">
+                      <span>Completions (90%)</span>
+                      {getSortIcon("completions")}
+                    </div>
+                  </th>
+                  <th 
+                    role="columnheader" 
+                    aria-sort={getAriaSortValue("completionRate")}
+                    className="text-right py-3 px-4 text-sm font-medium text-[var(--analytics-new-text)] cursor-pointer hover:bg-gray-50"
+                    onClick={() => toggleSort("completionRate")}
+                    title="90% progress ÷ starts"
+                    data-testid="sort-completion-rate"
+                  >
+                    <div className="flex items-center justify-end space-x-1">
+                      <span>Completion Rate</span>
+                      {getSortIcon("completionRate")}
+                    </div>
+                  </th>
+                </>
+              )}
+              {liveView && (
+                <th className="text-right py-3 px-4 text-sm font-medium text-[var(--analytics-new-text-muted)]" colSpan={2}>
+                  Realtime Data (Limited)
+                </th>
+              )}
               {sortedRows.some(row => row.avgEngagement !== undefined) && (
                 <th 
                   role="columnheader" 
@@ -203,22 +238,31 @@ export function TopVideosTable({ onSelect, preset = "7d", className = "" }: TopV
                   </div>
                 </td>
                 <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]" data-testid={`plays-${row.videoId}`}>
-                  {row.plays.toLocaleString()}
+                  {liveView ? (row.playsRt || 0).toLocaleString() : (row.plays || 0).toLocaleString()}
                 </td>
-                <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]" data-testid={`completions-${row.videoId}`}>
-                  {row.completions.toLocaleString()}
-                </td>
-                <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]">
-                  <div className="flex items-center justify-end space-x-2">
-                    <span data-testid={`completion-rate-${row.videoId}`}>{row.completionRate}%</span>
-                    <div className="w-12 bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-[var(--analytics-new-accent)] h-1.5 rounded-full transition-all duration-300" 
-                        style={{ width: `${Math.min(row.completionRate, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                </td>
+                {!liveView && (
+                  <>
+                    <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]" data-testid={`completions-${row.videoId}`}>
+                      {(row.completions || 0).toLocaleString()}
+                    </td>
+                    <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]">
+                      <div className="flex items-center justify-end space-x-2">
+                        <span data-testid={`completion-rate-${row.videoId}`}>{row.completionRate || 0}%</span>
+                        <div className="w-12 bg-gray-200 rounded-full h-1.5">
+                          <div 
+                            className="bg-[var(--analytics-new-accent)] h-1.5 rounded-full transition-all duration-300" 
+                            style={{ width: `${Math.min(row.completionRate || 0, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                  </>
+                )}
+                {liveView && (
+                  <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text-muted)]" colSpan={2}>
+                    Realtime data - completion metrics unavailable
+                  </td>
+                )}
                 {row.avgEngagement !== undefined && (
                   <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]" data-testid={`engagement-${row.videoId}`}>
                     {row.avgEngagement}s

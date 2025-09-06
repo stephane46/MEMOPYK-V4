@@ -51,16 +51,27 @@ export async function fetchReport<T>(params: ReportParams): Promise<T> {
   }
 
   // Live mode: call backend
+  let url = "/api/ga4/report";
   const qs = new URLSearchParams();
-  qs.set("report", params.report);
-  if (params.videoId) qs.set("videoId", params.videoId);
-  if (params.preset) qs.set("preset", params.preset);
-  if (params.startDate) qs.set("startDate", params.startDate);
-  if (params.endDate) qs.set("endDate", params.endDate);
-  if (params.lang) qs.set("lang", params.lang);
-  if (params.country) qs.set("country", params.country);
+  
+  // Handle realtime endpoints
+  if (params.report === "realtimeTopVideos") {
+    url = "/api/ga4/realtime/topVideos";
+  } else if (params.report === "realtimeVideoProgress") {
+    url = "/api/ga4/realtime/videoProgress";
+    if (params.videoId) qs.set("videoId", params.videoId);
+  } else {
+    // Standard endpoints
+    qs.set("report", params.report);
+    if (params.videoId) qs.set("videoId", params.videoId);
+    if (params.preset) qs.set("preset", params.preset);
+    if (params.startDate) qs.set("startDate", params.startDate);
+    if (params.endDate) qs.set("endDate", params.endDate);
+    if (params.lang) qs.set("lang", params.lang);
+    if (params.country) qs.set("country", params.country);
+  }
 
-  const resp = await fetch(`/api/ga4/report?${qs.toString()}`);
+  const resp = await fetch(`${url}?${qs.toString()}`);
   
   // Read X-Data-Source header and update state
   const ds = (resp.headers.get("x-data-source") || "unknown").toLowerCase();

@@ -2,11 +2,14 @@ import React from "react";
 import { useGa4Report } from "../hooks/useGa4Report";
 import type { VideoFunnelResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
+import { HelpCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface VideoFunnelProps {
   videoId: string;
   videoTitle?: string;
   preset?: "7d" | "30d" | "90d";
+  liveView?: boolean;
   onClose?: () => void;
   className?: string;
 }
@@ -15,11 +18,12 @@ export function VideoFunnel({
   videoId, 
   videoTitle, 
   preset = "7d", 
+  liveView = false,
   onClose,
   className = "" 
 }: VideoFunnelProps) {
   const { data, loading, error } = useGa4Report<VideoFunnelResponse>({
-    report: "videoFunnel",
+    report: liveView ? "realtimeVideoProgress" : "videoFunnel",
     videoId,
     preset
   });
@@ -72,7 +76,9 @@ export function VideoFunnel({
     );
   }
 
-  if (!data || data.funnel.length === 0) {
+  // Handle both regular and realtime data structures
+  const funnelData = data?.funnel || data?.funnelRt || [];
+  if (!data || funnelData.length === 0) {
     return (
       <div className={`analytics-new-card border-l-4 border-gray-300 ${className}`}>
         <div className="flex items-center justify-between mb-4">
@@ -99,15 +105,31 @@ export function VideoFunnel({
   }
 
   const USE_MOCK = import.meta.env?.VITE_USE_MOCK === "true";
-  const maxCount = Math.max(...data.funnel.map(step => step.count));
+  const maxCount = Math.max(...funnelData.map(step => step.count));
 
   return (
     <div className={`analytics-new-card border-l-4 border-[var(--analytics-new-accent)] ${className}`} data-testid="video-funnel">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
-            Video Engagement Funnel - {videoTitle || videoId}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+              Video Engagement Funnel - {videoTitle || videoId}
+              {liveView && <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">Live</span>}
+            </h3>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-4 w-4 text-[var(--analytics-new-text-muted)] cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-xs">
+                  <p className="text-sm">
+                    Event-based counts. Numbers are total video_progress events at 10/25/50/75/90. 
+                    Replays or scrubbing may add multiple events per viewer.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           {USE_MOCK && (
             <div className="text-xs text-orange-500 font-medium mt-1">🧪 Mock Data</div>
           )}
@@ -124,7 +146,7 @@ export function VideoFunnel({
       </div>
 
       <div className="grid grid-cols-5 gap-4 mb-6">
-        {data.funnel.map(step => (
+        {funnelData.map(step => (
           <div 
             key={step.bucket} 
             className="p-4 rounded-xl border border-gray-200 text-center"
