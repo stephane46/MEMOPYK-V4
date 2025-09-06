@@ -208,7 +208,7 @@ export default function VideoOverlay({
   }, [isPlaying]);
 
   // Progress tracking - stable function with no external dependencies
-  const updateProgress = useCallback(() => {
+  const updateProgress = useCallback(async () => {
     const video = videoRef.current;
     if (!video || !isFinite(video.duration) || video.duration <= 0) return;
     
@@ -237,19 +237,19 @@ export default function VideoOverlay({
   }, [videoId, stableProps.title, language]);
 
   // Event handlers - stable functions
-  const handlePlay = useCallback(() => {
+  const handlePlay = useCallback(async () => {
     setIsPlaying(true);
     resetControlsTimer();
     
     if (!videoStartSentRef.current) {
-      sendVideoStart({
+      await sendVideoStart({
         video_id: videoId,
         video_title: stableProps.title,
         duration_sec: Math.round(duration || 0),
         position_sec: Math.round(currentTime || 0),
         locale: language,
         debug_mode: true
-      });
+      }).catch(console.warn);
       videoStartSentRef.current = true;
     }
     
@@ -266,13 +266,13 @@ export default function VideoOverlay({
     stopHeartbeat();
   }, [stopHeartbeat]);
 
-  const handleEnded = useCallback(() => {
+  const handleEnded = useCallback(async () => {
     setIsPlaying(false);
     setProgress(100);
     setShowControls(true);
     
     if (duration > 0) {
-      sendVideoComplete({
+      await sendVideoComplete({
         video_id: videoId,
         video_title: stableProps.title,
         duration_sec: Math.round(duration),
@@ -280,7 +280,7 @@ export default function VideoOverlay({
         completion_rate: 100,
         locale: language,
         debug_mode: true
-      });
+      }).catch(console.warn);
     }
     
     if (VIDEO_ANALYTICS_ENABLED) {
