@@ -4430,7 +4430,7 @@ export async function registerRoutes(app: Express): Promise<void> {
     return runGa4Report(payload);
   }
 
-  // KPIs: Completions (progress_bucket=90) by date
+  // KPIs: Completions (progress_percent=90) by date
   async function qKpisCompletionsByDate(opts: any) {
     const { dateRange, lang, country } = opts;
     const geoLang = maybeGeoLangFilter({ lang, country });
@@ -4441,7 +4441,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       metrics: [{ name: "eventCount" }],
       dimensionFilter: andExpr(
         dimEquals("eventName", "video_progress"),
-        dimEquals("customEvent:progress_bucket", "90"),
+        dimEquals("customEvent:progress_percent", "90"),
         ...(geoLang ? [geoLang] : [])
       ),
     };
@@ -4486,7 +4486,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       metrics: [{ name: "eventCount" }],
       dimensionFilter: andExpr(
         dimEquals("eventName", "video_progress"),
-        dimEquals("customEvent:progress_bucket", "90"),
+        dimEquals("customEvent:progress_percent", "90"),
         ...(geoLang ? [geoLang] : [])
       ),
       limit: 5000
@@ -4502,14 +4502,14 @@ export async function registerRoutes(app: Express): Promise<void> {
 
     const payload = {
       dateRanges: [dateRange],
-      dimensions: [{ name: "customEvent:progress_bucket" }],
+      dimensions: [{ name: "customEvent:progress_percent" }],
       metrics: [{ name: "eventCount" }],
       dimensionFilter: andExpr(
         dimEquals("eventName", "video_progress"),
         dimEquals("customEvent:video_id", videoId),
         ...(geoLang ? [geoLang] : [])
       ),
-      orderBys: [{ dimension: { dimensionName: "customEvent:progress_bucket" } }],
+      orderBys: [{ dimension: { dimensionName: "customEvent:progress_percent" } }],
     };
 
     return runGa4Report(payload);

@@ -141,7 +141,7 @@ async function runGa4ReportMock(payload: RunReportRequest): Promise<RunReportRes
     return { rows: mockRowsForTopVideos(metrics.map((m) => m.name)) };
   }
 
-  if (dimNames.length === 1 && dimNames[0] === "customEvent:progress_bucket") {
+  if (dimNames.length === 1 && dimNames[0] === "customEvent:progress_percent") {
     return { rows: mockRowsForFunnel() };
   }
 
@@ -207,7 +207,7 @@ async function runGa4ReportReal(payload: RunReportRequest): Promise<RunReportRes
 // Helper function to detect missing custom dimensions
 function checkForMissingCustomDimensions(errorMessage: string, payload: RunReportRequest): string[] {
   const missing: string[] = [];
-  const customDimensions = ['video_id', 'video_title', 'progress_bucket'];
+  const customDimensions = ['video_id', 'video_title', 'progress_percent'];
   
   // Check if any custom dimensions are used in the query
   const usedCustomDims = payload.dimensions?.filter(d => d.name.startsWith('customEvent:')) || [];
