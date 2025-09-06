@@ -225,7 +225,7 @@ export default function VideoOverlay({
         fireGA('video_progress', {
           video_id: videoId,
           video_title: stableProps.title,
-          progress_bucket: milestone,
+          progress_percent: milestone,
           current_time: Math.round(video.currentTime),
           duration_sec: video.duration || 0,
           locale: language,
