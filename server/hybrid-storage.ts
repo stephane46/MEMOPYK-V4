@@ -6319,6 +6319,100 @@ Allow: /contact`;
     console.log(`📊 Generated time-series data for ${timeSeriesData.length} days`);
     return timeSeriesData;
   }
+
+  // Check if an IP address is excluded from analytics tracking
+  async checkIPExclusion(ipAddress: string | null, userAgent: string = ''): Promise<boolean> {
+    if (!ipAddress) {
+      return false;
+    }
+
+    try {
+      // First check database for active exclusions
+      const { data: exclusions, error } = await this.supabase
+        .from('analytics_exclusions')
+        .select('ip_cidr, label, user_agent')
+        .eq('active', true);
+
+      if (error) {
+        console.warn('⚠️ IP Exclusions: Database query failed, checking JSON fallback:', error);
+        // Fallback to legacy analytics settings
+        return this.checkLegacyIPExclusion(ipAddress);
+      }
+
+      if (exclusions && exclusions.length > 0) {
+        for (const exclusion of exclusions) {
+          // Check IP CIDR match
+          if (this.isIPInCIDR(ipAddress, exclusion.ip_cidr)) {
+            console.log(`🚫 IP EXCLUDED: ${ipAddress} matches ${exclusion.ip_cidr} (${exclusion.label})`);
+            return true;
+          }
+          
+          // Check user agent match if specified
+          if (exclusion.user_agent && userAgent.includes(exclusion.user_agent)) {
+            console.log(`🚫 USER AGENT EXCLUDED: ${userAgent} matches ${exclusion.user_agent} (${exclusion.label})`);
+            return true;
+          }
+        }
+      }
+
+      return false;
+    } catch (error) {
+      console.warn('⚠️ IP Exclusions: Database check failed, using legacy fallback:', error);
+      return this.checkLegacyIPExclusion(ipAddress);
+    }
+  }
+
+  // Fallback to legacy IP exclusions from analytics settings
+  private async checkLegacyIPExclusion(ipAddress: string): Promise<boolean> {
+    try {
+      const settings = await this.getAnalyticsSettings();
+      const excludedIps = settings.excludedIps || [];
+      
+      for (const excludedIp of excludedIps) {
+        const ip = typeof excludedIp === 'string' ? excludedIp : excludedIp.ip;
+        if (ip === ipAddress) {
+          console.log(`🚫 IP EXCLUDED (legacy): ${ipAddress}`);
+          return true;
+        }
+      }
+      
+      return false;
+    } catch (error) {
+      console.warn('⚠️ Legacy IP exclusion check failed:', error);
+      return false;
+    }
+  }
+
+  // Helper function to check if an IP is within a CIDR range
+  private isIPInCIDR(ip: string, cidr: string): boolean {
+    try {
+      // If CIDR is just an IP without mask, do exact match
+      if (!cidr.includes('/')) {
+        return ip === cidr;
+      }
+
+      const [network, maskBits] = cidr.split('/');
+      const mask = parseInt(maskBits, 10);
+      
+      if (mask < 0 || mask > 32) {
+        return false;
+      }
+
+      const ipNum = this.ipToNumber(ip);
+      const networkNum = this.ipToNumber(network);
+      const maskNum = (0xFFFFFFFF << (32 - mask)) >>> 0;
+      
+      return (ipNum & maskNum) === (networkNum & maskNum);
+    } catch (error) {
+      console.warn(`⚠️ CIDR check failed for ${ip} in ${cidr}:`, error);
+      return false;
+    }
+  }
+
+  // Convert IP address to 32-bit number
+  private ipToNumber(ip: string): number {
+    return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0) >>> 0;
+  }
 }
 
 // Create singleton instance

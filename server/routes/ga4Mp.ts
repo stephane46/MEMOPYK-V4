@@ -1,7 +1,10 @@
 import express from "express";
 import { randomUUID } from "crypto";
+import { geoResolver } from "../geoResolver";
+import { HybridStorage } from "../hybrid-storage";
 
 const router = express.Router();
+const storage = new HybridStorage();
 
 // Use VITE_GA_MEASUREMENT_ID since it's already available
 const MID = process.env.VITE_GA_MEASUREMENT_ID; // e.g., G-JLRWHE1HV4
@@ -11,6 +14,14 @@ router.post("/ga4/mp", express.json(), async (req, res) => {
   try {
     if (!MID) {
       return res.status(500).json({ error: "GA4 Measurement ID not configured" });
+    }
+    
+    // Check IP exclusions first
+    const clientIP = geoResolver.extractClientIP(req);
+    const isExcluded = await storage.checkIPExclusion(clientIP, req.get('User-Agent') || '');
+    if (isExcluded) {
+      console.log(`🚫 [GA4 MP] Blocked excluded IP: ${clientIP}`);
+      return res.status(204).send(); // Silent success to avoid detection
     }
     
     const { client_id, user_id, events } = req.body || {};
