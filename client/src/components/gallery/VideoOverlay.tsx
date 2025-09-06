@@ -85,6 +85,17 @@ export default function VideoOverlay({
     return stableProps.videoUrl.split('/').pop()?.split('?')[0] || 'unknown';
   }, [stableProps.videoUrl]);
 
+  // QA alias system - read once at app boot
+  const qaAlias = useMemo(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('vidAlias');
+  }, []);
+
+  // Send video ID with QA alias if present
+  const sendVideoId = useMemo(() => {
+    return qaAlias ? `${videoId}#${qaAlias}` : videoId;
+  }, [videoId, qaAlias]);
+
   // Stable video dimensions calculation - memoized
   const videoDimensions = useMemo(() => {
     const viewportRatio = 90;
@@ -176,7 +187,7 @@ export default function VideoOverlay({
     } catch (error) {
       console.warn('⚠ Heartbeat error:', error);
     }
-  }, [videoId, getOrCreateSessionId, stableProps.title]);
+  }, [sendVideoId, getOrCreateSessionId, stableProps.title]);
 
   const startHeartbeat = useCallback(() => {
     if (heartbeatIntervalRef.current) {
@@ -225,7 +236,7 @@ export default function VideoOverlay({
         
         await mpSend('video_progress', {
           progress_percent: milestone,
-          video_id: videoId,
+          video_id: sendVideoId,
           video_title: stableProps.title,
           current_time: Math.round(video.currentTime),
           duration_sec: Math.round(video.duration || 0),
@@ -233,7 +244,7 @@ export default function VideoOverlay({
         }).catch(console.warn);
       }
     }
-  }, [videoId, stableProps.title, language]);
+  }, [sendVideoId, stableProps.title, language]);
 
   // Event handlers - stable functions
   const handlePlay = useCallback(async () => {
@@ -242,7 +253,7 @@ export default function VideoOverlay({
     
     if (!videoStartSentRef.current) {
       await mpSend('video_start', {
-        video_id: videoId,
+        video_id: sendVideoId,
         video_title: stableProps.title,
         duration_sec: Math.round(duration || 0),
         position_sec: Math.round(currentTime || 0),
@@ -256,7 +267,7 @@ export default function VideoOverlay({
     }
     
     startHeartbeat();
-  }, [resetControlsTimer, videoId, stableProps.title, duration, currentTime, language, VIDEO_ANALYTICS_ENABLED, trackVideoView, startHeartbeat]);
+  }, [resetControlsTimer, sendVideoId, stableProps.title, duration, currentTime, language, VIDEO_ANALYTICS_ENABLED, trackVideoView, startHeartbeat]);
 
   const handlePause = useCallback(() => {
     setIsPlaying(false);
@@ -271,7 +282,7 @@ export default function VideoOverlay({
     
     if (duration > 0) {
       await mpSend('video_complete', {
-        video_id: videoId,
+        video_id: sendVideoId,
         video_title: stableProps.title,
         duration_sec: Math.round(duration),
         current_time: Math.round(duration),
@@ -288,7 +299,7 @@ export default function VideoOverlay({
     }
     
     stopHeartbeat();
-  }, [currentTime, duration, videoId, stableProps.title, language, trackVideoView, VIDEO_ANALYTICS_ENABLED, stopHeartbeat]);
+  }, [currentTime, duration, sendVideoId, stableProps.title, language, trackVideoView, VIDEO_ANALYTICS_ENABLED, stopHeartbeat]);
 
   const handleLoadedMetadata = useCallback(() => {
     const video = videoRef.current;
