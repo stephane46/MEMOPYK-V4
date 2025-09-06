@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { DateTime } from 'luxon';
 
 export interface DatePreset {
-  key: '7d' | '30d' | '90d' | 'custom';
+  key: 'today' | 'yesterday' | '7d' | '30d' | '90d' | 'custom';
   label: string;
   days?: number;
 }
@@ -47,7 +48,7 @@ interface AnalyticsNewFiltersStore extends AnalyticsNewFilters {
 const getTodayDate = () => new Date().toISOString().split('T')[0];
 
 const defaultState: AnalyticsNewFilters = {
-  datePreset: '7d',
+  datePreset: 'today',
   customDateStart: '',
   customDateEnd: '',
   sinceDate: getTodayDate(), // Default to today
@@ -90,7 +91,8 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()((set, g
 
   getDateRange: () => {
     const state = get();
-    const now = new Date();
+    const ZONE = 'Europe/Paris';
+    const todayParis = DateTime.now().setZone(ZONE).startOf('day');
     
     if (state.datePreset === 'custom') {
       return {
@@ -99,13 +101,29 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()((set, g
       };
     }
     
+    if (state.datePreset === 'today') {
+      const todayStr = todayParis.toFormat('yyyy-LL-dd');
+      return {
+        start: todayStr,
+        end: todayStr
+      };
+    }
+    
+    if (state.datePreset === 'yesterday') {
+      const yesterdayStr = todayParis.minus({ days: 1 }).toFormat('yyyy-LL-dd');
+      return {
+        start: yesterdayStr,
+        end: yesterdayStr
+      };
+    }
+    
+    // Handle existing day-based presets
     const days = state.datePreset === '7d' ? 7 : state.datePreset === '30d' ? 30 : 90;
-    const startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - days);
+    const startDate = todayParis.minus({ days });
     
     return {
-      start: startDate.toISOString().split('T')[0],
-      end: now.toISOString().split('T')[0]
+      start: startDate.toFormat('yyyy-LL-dd'),
+      end: todayParis.toFormat('yyyy-LL-dd')
     };
   },
 
@@ -123,6 +141,8 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()((set, g
 }));
 
 export const DATE_PRESETS: DatePreset[] = [
+  { key: 'today', label: 'Today' },
+  { key: 'yesterday', label: 'Yesterday' },
   { key: '7d', label: 'Last 7 days', days: 7 },
   { key: '30d', label: 'Last 30 days', days: 30 },
   { key: '90d', label: 'Last 90 days', days: 90 },
