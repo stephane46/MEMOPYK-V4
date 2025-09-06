@@ -29,7 +29,7 @@ import {
   qPlaysByVideo,
   qWatchTimeByVideo,
   qProgressByVideo,
-  // qFunnel, // Temporarily commented out
+  qVideoFunnel,
   qTrend,
   qTrendDaily,
   qRealtime,
@@ -6364,49 +6364,69 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Funnel endpoint - using your exact clean API structure
+  // Funnel endpoint - using your exact clean API structure with graceful fallback
   app.get("/api/ga4/funnel", async (req, res) => {
+    const { videoId, preset, start, end, since, locale, nocache } = req.query as any;
+    
+    // Compute Paris timezone window
+    const w = computeParisWindow({ preset, start, end, since });
+    
+    // Set comprehensive Paris timezone headers
+    res.set({
+      "X-Timezone": "Europe/Paris",
+      "X-Window-Start": w.startStr,
+      "X-Window-End": w.endStr,
+      "X-Effective-Start": w.effStartStr,
+      "X-Effective-End": w.effEndStr,
+    });
+    
+    const WANT = [10, 25, 50, 75, 90];
+    const zero = WANT.map(b => ({ bucket: b, count: 0 }));
+    
     try {
-      let startDate, endDate, locale, nocache;
-      
-      // Check if this is a preset request
-      if (req.query.preset) {
-        const preset = String(req.query.preset);
-        const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(preset);
-        startDate = calcStart;
-        endDate = calcEnd;
-        locale = req.query.locale ? String(req.query.locale) : "all";
-        nocache = req.query.nocache === "1" || req.query.nocache === "true";
-      } else {
-        ({ startDate, endDate, locale, nocache } = getParams(req));
+      if (!videoId) {
+        return res.status(400).json({ error: "Missing videoId" });
       }
-      const key = k(`funnel:${startDate}:${endDate}:${locale}`);
-
+      
+      const localeFilter = locale && locale !== "all" ? locale : undefined;
+      const key = k(`funnel:${w.effStartStr}:${w.effEndStr}:${localeFilter || 'all'}:${videoId}`);
+      
       // Check cache unless bypassed
       if (!nocache) {
-        // Try persistent cache first, then memory cache
         const dbCached = await getDbCache<any>(key);
         if (dbCached) return res.json(dbCached);
-
+        
         const memoryCached = getCache<any>(key);
         if (memoryCached) return res.json(memoryCached);
       }
-
-      console.log(`📊 GA4 Funnel request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
-
-      const data = await qFunnel(startDate, endDate, locale);
+      
+      console.log(`📊 GA4 Funnel request: ${w.effStartStr} to ${w.effEndStr}, locale: ${localeFilter || 'all'}, videoId: ${videoId}${nocache ? ' (cache bypassed)' : ''}`);
+      
+      const rows = await qVideoFunnel(w.effStartStr, w.effEndStr, videoId, localeFilter);
+      
+      const map = new Map(rows.map(r => [Number(r.bucket), Number(r.count) || 0]));
+      const funnel = WANT.map(b => ({ bucket: b, count: map.get(b) ?? 0 }));
+      
+      const data = {
+        funnel,
+        timestamp: new Date().toISOString(),
+        cached: false
+      };
       
       // Store in both persistent and memory cache
       await setDbCache(key, data, 300);
       setCache(key, data, 300);
       
-      // Add comprehensive Paris timezone headers
-      setParisTimezoneHeaders(res, req.query);
-      
-      res.json(data);
-    } catch (e) {
+      return res.json(data);
+    } catch (e: any) {
       console.error('❌ GA4 Funnel error:', e);
-      res.status(500).json({ error: String(e) });
+      // Graceful fallback, never 500 for "no data" cases
+      return res.json({
+        funnel: zero,
+        timestamp: new Date().toISOString(),
+        cached: false,
+        note: "fallback: empty window or GA4 error",
+      });
     }
   });
 
