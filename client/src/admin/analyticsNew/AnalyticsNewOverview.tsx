@@ -37,10 +37,8 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   // Get current filter state
   const { datePreset, customDateStart, customDateEnd, sinceDate, sinceDateEnabled, getDateRange } = useAnalyticsNewFilters();
   
-  // Convert preset to the expected format
-  const preset = (datePreset === '7d' || datePreset === '30d' || datePreset === '90d') 
-    ? datePreset 
-    : '7d';
+  // Get actual date range from preset
+  const { start, end } = getDateRange();
 
   // Get realtime GA4 data for active users
   const { data: ga4Data, isLoading: ga4Loading } = useQuery<any>({
@@ -49,33 +47,42 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
     refetchOnWindowFocus: false,
   });
 
-  // Get GA4 report data based on current filters
+  // Get GA4 KPIs data based on current filters (correct endpoint)
   const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
-    queryKey: ['/api/ga4/report', datePreset, customDateStart, customDateEnd, sinceDateEnabled ? sinceDate : null],
+    queryKey: ['/api/ga4/kpis', datePreset, start, end, sinceDateEnabled ? sinceDate : null],
     queryFn: async () => {
-      const requestBody = {
+      // Use preset parameter if available, otherwise use calculated dates
+      const url = new URL('/api/ga4/kpis', window.location.origin);
+      
+      if (datePreset && datePreset !== 'custom') {
+        url.searchParams.set('preset', datePreset);
+      } else {
+        url.searchParams.set('startDate', start);
+        url.searchParams.set('endDate', end);
+      }
+      
+      url.searchParams.set('locale', 'all');
+      url.searchParams.set('nocache', '1'); // Always get fresh data for overview
+      
+      if (sinceDateEnabled && sinceDate) {
+        url.searchParams.set('since', sinceDate);
+      }
+
+      console.log('📊 OVERVIEW: Calling /api/ga4/kpis with:', {
         preset: datePreset,
-        dateFrom: customDateStart || undefined,
-        dateTo: customDateEnd || undefined,
-        ...(sinceDateEnabled && sinceDate ? { sinceDate } : {}),
-      };
-
-      console.log('📊 OVERVIEW: Calling /api/ga4/report with:', requestBody);
-
-      const response = await fetch('/api/ga4/report', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
+        startDate: start,
+        endDate: end,
+        url: url.toString()
       });
 
+      const response = await fetch(url.toString());
+
       if (!response.ok) {
-        throw new Error(`GA4 report failed: ${response.status}`);
+        throw new Error(`GA4 KPIs failed: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('📊 OVERVIEW: /api/ga4/report response:', data);
+      console.log('📊 OVERVIEW: /api/ga4/kpis response:', data);
       return data;
     },
     refetchOnWindowFocus: false,
