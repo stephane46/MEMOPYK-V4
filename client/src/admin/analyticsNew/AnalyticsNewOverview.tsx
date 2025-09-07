@@ -39,6 +39,11 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   
   // Get actual date range from preset
   const { start, end } = getDateRange();
+  
+  // Convert preset to the expected format for OverviewKpis component
+  const preset = (datePreset === '7d' || datePreset === '30d' || datePreset === '90d') 
+    ? datePreset 
+    : '7d';
 
   // Get realtime GA4 data for active users
   const { data: ga4Data, isLoading: ga4Loading } = useQuery<any>({
