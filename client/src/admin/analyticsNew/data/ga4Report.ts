@@ -60,6 +60,14 @@ export async function fetchReport<T>(params: ReportParams): Promise<T> {
   } else if (params.report === "realtimeVideoProgress") {
     url = "/api/ga4/realtime/videoProgress";
     if (params.videoId) qs.set("videoId", params.videoId);
+  } else if (params.report === "kpis") {
+    // KPIs should use the dedicated /api/ga4/kpis endpoint that supports today/yesterday presets
+    url = "/api/ga4/kpis";
+    if (params.preset) qs.set("preset", params.preset);
+    if (params.startDate) qs.set("startDate", params.startDate);
+    if (params.endDate) qs.set("endDate", params.endDate);
+    if (params.lang) qs.set("locale", params.lang === "all" ? "all" : params.lang);
+    else qs.set("locale", "all");
   } else {
     // Standard endpoints
     qs.set("report", params.report);
