@@ -47,20 +47,14 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
     refetchOnWindowFocus: false,
   });
 
-  // Get GA4 KPIs data based on current filters (correct endpoint)
+  // Get GA4 KPIs data based on current filters (using same pattern as working 7d/30d/90d filters)
   const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
-    queryKey: ['/api/ga4/kpis', datePreset, start, end, sinceDateEnabled ? sinceDate : null],
+    queryKey: ['/api/ga4/kpis', start, end, sinceDateEnabled ? sinceDate : null],
     queryFn: async () => {
-      // Use preset parameter if available, otherwise use calculated dates
+      // Use same pattern as existing working filters: startDate/endDate parameters
       const url = new URL('/api/ga4/kpis', window.location.origin);
-      
-      if (datePreset && datePreset !== 'custom') {
-        url.searchParams.set('preset', datePreset);
-      } else {
-        url.searchParams.set('startDate', start);
-        url.searchParams.set('endDate', end);
-      }
-      
+      url.searchParams.set('startDate', start);
+      url.searchParams.set('endDate', end);
       url.searchParams.set('locale', 'all');
       url.searchParams.set('nocache', '1'); // Always get fresh data for overview
       
@@ -69,7 +63,6 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       }
 
       console.log('📊 OVERVIEW: Calling /api/ga4/kpis with:', {
-        preset: datePreset,
         startDate: start,
         endDate: end,
         url: url.toString()
