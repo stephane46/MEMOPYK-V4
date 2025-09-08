@@ -7,6 +7,7 @@ import { AnalyticsNewLiveView } from './AnalyticsNewLiveView';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { AnalyticsNewVideo } from './AnalyticsNewVideo';
 import { AnalyticsNewTrends } from './AnalyticsNewTrends';
+import { AnalyticsNewGeo } from './AnalyticsNewGeo';
 import DataSourceBadge from './components/DataSourceBadge';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { Badge } from '@/components/ui/badge';
@@ -17,16 +18,6 @@ import './analyticsNew.tokens.css';
 
 // Placeholder components for other tabs
 
-const AnalyticsNewGeo: React.FC = () => (
-  <div className="analytics-new-container space-y-6">
-    <h2 className="text-xl font-bold text-gray-900">Geographic Analytics</h2>
-    <AnalyticsNewLoadingStates 
-      mode="empty" 
-      title="Geographic data coming soon"
-      description="Visitor distribution by location will be displayed here"
-    />
-  </div>
-);
 
 const AnalyticsNewCta: React.FC = () => (
   <div className="analytics-new-container space-y-6">
