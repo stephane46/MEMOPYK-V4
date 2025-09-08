@@ -155,7 +155,7 @@ export class HybridStorage implements HybridStorageInterface {
     this.dataPath = join(process.cwd(), 'server/data');
     this.supabase = createClient(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY!
+      process.env.SUPABASE_ANON_KEY!
     );
     this.db = db;
     console.log("✅ Hybrid storage initialized with JSON fallback system and Supabase integration");

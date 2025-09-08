@@ -4,22 +4,10 @@ import postgres from "postgres";
 type Entry<T> = { value: T; expires: number };
 const store = new Map<string, Entry<any>>();
 
-// Use Supabase VPS for all environments (no Neon)
-let pgClient: ReturnType<typeof postgres> | null = null;
-
-export function getPgClient() {
-  if (!pgClient && process.env.DATABASE_URL) {
-    // Use DATABASE_URL for direct localhost connection (post-nginx fix)
-    console.log('🔄 Cache: Using DATABASE_URL for direct connection...');
-    pgClient = postgres(process.env.DATABASE_URL);
-  }
-  return pgClient;
-}
-
-// Supabase client for REST API
+// Pure Supabase client approach - no PostgreSQL connection
 const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY!
+  process.env.SUPABASE_ANON_KEY!
 );
 
 // Helper function to get current environment info
@@ -36,16 +24,15 @@ export function getCacheEnvironmentInfo() {
 // Manual cleanup function for administrative purposes
 export async function manualCacheCleanup(): Promise<{ deleted: number; error?: string }> {
   try {
-    const pg = getPgClient();
-    if (!pg) return { deleted: 0, error: 'Supabase PostgreSQL client not available' };
+    if (!supabase) return { deleted: 0, error: 'Supabase client not available' };
 
-    const result = await pg`
-      DELETE FROM ga4_cache 
-      WHERE expires_at < NOW() - INTERVAL '1 day'
-      RETURNING *
-    `;
+    const { data, error } = await supabase
+      .from("ga4_cache")
+      .delete()
+      .lt('expires_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
     
-    return { deleted: result.length };
+    if (error) throw error;
+    return { deleted: data?.length || 0 };
   } catch (error) {
     console.error('Manual cache cleanup error:', error);
     return { deleted: 0, error: String(error) };
@@ -76,59 +63,28 @@ export async function getDbCache<T>(key: string): Promise<T | null> {
   try {
     console.log(`🔍 Getting cache: ${key}`);
     
-    // Use Supabase VPS for all environments
-    if (true) {
-      // Use PostgreSQL in development
-      const pg = getPgClient();
-      if (!pg) return null;
+    if (!supabase) return null;
+    
+    const { data, error } = await supabase
+      .from("ga4_cache")
+      .select("value, expires_at")
+      .eq("key", key)
+      .single();
 
-      const result = await pg`
-        SELECT value, expires_at 
-        FROM ga4_cache 
-        WHERE key = ${key}
-      `;
-
-      if (result.length === 0) {
-        console.log(`❌ Cache miss: ${key} (no data)`);
-        return null;
-      }
-
-      const data = result[0];
-      if (new Date(data.expires_at).getTime() < Date.now()) {
-        console.log(`⏰ Cache expired: ${key}`);
-        // Clean up expired entry
-        await pg`DELETE FROM ga4_cache WHERE key = ${key}`;
-        return null;
-      }
-
-      console.log(`✅ Cache hit: ${key}`);
-      // Ensure we return parsed JSON if it's a string (PostgreSQL stores as JSON string)
-      return typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
-    } else {
-      // Use Supabase in production
-      if (!supabase) return null;
-      
-      const { data, error } = await supabase
-        .from("ga4_cache")
-        .select("value, expires_at")
-        .eq("key", key)
-        .single();
-
-      if (error || !data) {
-        console.log(`❌ Cache miss: ${key} (${error?.message || 'no data'})`);
-        return null;
-      }
-      
-      if (new Date(data.expires_at) < new Date()) {
-        console.log(`⏰ Cache expired: ${key}`);
-        // Clean up expired entry
-        await supabase.from("ga4_cache").delete().eq("key", key);
-        return null;
-      }
-
-      console.log(`✅ Cache hit: ${key}`);
-      return data.value as T;
+    if (error || !data) {
+      console.log(`❌ Cache miss: ${key} (${error?.message || 'no data'})`);
+      return null;
     }
+    
+    if (new Date(data.expires_at) < new Date()) {
+      console.log(`⏰ Cache expired: ${key}`);
+      // Clean up expired entry
+      await supabase.from("ga4_cache").delete().eq("key", key);
+      return null;
+    }
+
+    console.log(`✅ Cache hit: ${key}`);
+    return data.value as T;
   } catch (error) {
     console.error('💥 getDbCache error:', error);
     return null;
