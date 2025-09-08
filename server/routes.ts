@@ -2727,74 +2727,69 @@ export async function registerRoutes(app: Express): Promise<void> {
         .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
         .slice(0, 100); // Take last 100 visitors for extended history
 
-      // Conditionally enrich visitor data with location information from ipapi.co
-      let enrichedVisitors;
-      if (skipEnrichment === 'true') {
-        // Skip expensive location enrichment for modal requests, but check JSON fallback for existing location data
-        console.log(`⚡ Recent Visitors: Skipping location enrichment for fast modal response`);
-        
-        // Check JSON fallback for location data when database shows "Unknown", but show visitors regardless
-        enrichedVisitors = recentVisitors.map(visitor => {
-          // Always show visitors, but try to get better location data from JSON fallback if available
-          if (visitor.country === 'Unknown' || visitor.city === 'Unknown') {
-            try {
-              // Try to get location data from JSON fallback (use direct file access since loadJsonFile is private)
-              const fs = require('fs');
-              const path = require('path');
-              const jsonPath = path.join(process.cwd(), 'server/data/analytics-sessions.json');
-              if (fs.existsSync(jsonPath)) {
-                const jsonData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-                const matchingSession = jsonData.find((s: any) => s.ip_address === visitor.ip_address);
-                if (matchingSession && matchingSession.country && matchingSession.country !== 'Unknown') {
-                  console.log(`📄 Using JSON fallback location for IP ${visitor.ip_address}: ${matchingSession.city}, ${matchingSession.country}`);
-                  return {
-                    ...visitor,
-                    country: matchingSession.country,
-                    region: matchingSession.region || visitor.region,
-                    city: matchingSession.city
-                  };
-                }
-              }
-            } catch (error) {
-              console.log(`⚠️ Could not read JSON fallback for IP ${visitor.ip_address}:`, error);
-            }
+      // FAST MODE: Always return immediately with best available data - never wait for external APIs
+      console.log(`⚡ Recent Visitors: Using fast response mode - no blocking external API calls`);
+      
+      // Enhanced JSON fallback that actually works - read the enriched cache data
+      const enrichedVisitors = recentVisitors.map(visitor => {
+        try {
+          // Check if we already have good location data from database
+          if (visitor.country && visitor.country !== 'Unknown' && visitor.city && visitor.city !== 'Unknown') {
+            return visitor;
           }
-          // Return visitor regardless of location data availability
-          return visitor;
-        });
-      } else {
-        // Full enrichment for non-modal requests
-        enrichedVisitors = await Promise.all(
-          recentVisitors.map(async (visitor) => {
-            const locationData = await locationService.getLocationData(visitor.ip_address);
-            if (locationData) {
-              // Update the session record with enriched location data if it was previously 'Unknown'
-              if (visitor.country === 'Unknown' || visitor.city === 'Unknown' || visitor.region === 'Unknown') {
-                try {
-                  await hybridStorage.updateSessionLocation(visitor.ip_address, {
-                    country: locationData.country,
-                    region: locationData.region,
-                    city: locationData.city
-                  });
-                  console.log(`🌍 Location Update: Updated session location for IP ${visitor.ip_address}: ${locationData.city}, ${locationData.country}`);
-                } catch (error) {
-                  console.error(`❌ Location Update: Failed to update session location for IP ${visitor.ip_address}:`, error);
-                }
-              }
-              
+          
+          // Try to get enriched location data from JSON cache
+          const fs = require('fs');
+          const path = require('path');
+          const jsonPath = path.join(process.cwd(), 'server/data/analytics-sessions.json');
+          if (fs.existsSync(jsonPath)) {
+            const jsonData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+            const matchingSession = jsonData.find((s: any) => s.ip_address === visitor.ip_address || s.server_detected_ip === visitor.ip_address);
+            if (matchingSession && matchingSession.country && matchingSession.country !== 'Unknown') {
+              console.log(`📄 Using JSON cache location for IP ${visitor.ip_address}: ${matchingSession.city}, ${matchingSession.country}`);
               return {
                 ...visitor,
-                city: locationData.city,
-                region: locationData.region,
-                country: locationData.country,
-                country_code: locationData.country_code,
-                timezone: locationData.timezone,
-                organization: locationData.org
+                country: matchingSession.country,
+                region: matchingSession.region || visitor.region,
+                city: matchingSession.city,
+                country_code: matchingSession.country_code || null
               };
             }
-            return visitor;
-          })
-        );
+          }
+        } catch (error) {
+          console.log(`⚠️ Could not read JSON cache for IP ${visitor.ip_address}:`, error.message);
+        }
+        
+        // Return visitor with whatever data we have (might be Unknown, but that's okay)
+        return visitor;
+      });
+      
+      // Background enrichment: Start location enrichment in background for Unknown locations (non-blocking)
+      const unknownIPs = enrichedVisitors
+        .filter(v => !v.country || v.country === 'Unknown')
+        .map(v => v.ip_address)
+        .slice(0, 5); // Limit to 5 to avoid rate limits
+      
+      if (unknownIPs.length > 0 && !skipEnrichment) {
+        console.log(`🔄 Background enrichment: Starting for ${unknownIPs.length} unknown IPs`);
+        // Fire and forget - don't wait for this
+        setImmediate(async () => {
+          try {
+            await Promise.all(unknownIPs.map(async (ip) => {
+              const locationData = await locationService.getLocationData(ip);
+              if (locationData) {
+                await hybridStorage.updateSessionLocation(ip, {
+                  country: locationData.country,
+                  region: locationData.region,
+                  city: locationData.city
+                });
+                console.log(`🌍 Background: Updated location for IP ${ip}: ${locationData.city}, ${locationData.country}`);
+              }
+            }));
+          } catch (error) {
+            console.log(`⚠️ Background enrichment failed:`, error.message);
+          }
+        });
       }
       
       console.log(`✅ Recent Visitors: Found ${enrichedVisitors.length} unique visitors ${skipEnrichment === 'true' ? '(fast mode - no enrichment)' : '(enriched with location data)'}`);
