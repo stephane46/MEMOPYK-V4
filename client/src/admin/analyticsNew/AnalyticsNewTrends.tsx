@@ -195,7 +195,7 @@ export const AnalyticsNewTrends: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Calculate trend metrics (compare with previous period)
+  // Calculate trend metrics (show full period totals to match Overview)
   const calculateTrendMetrics = () => {
     if (!trendData || trendData.length === 0) {
       return {
@@ -206,55 +206,38 @@ export const AnalyticsNewTrends: React.FC = () => {
       };
     }
 
-    const midPoint = Math.floor(trendData.length / 2);
-    const currentPeriod = trendData.slice(midPoint);
-    const previousPeriod = trendData.slice(0, midPoint);
-
+    // FIXED: Use full period data to match Overview instead of splitting in half
     const calculatePeriodSum = (period: TrendData[], metric: keyof TrendData) => {
       return period.reduce((sum, item) => sum + (item[metric] as number), 0);
     };
 
-    const calculateTrend = (current: number, previous: number) => {
-      if (previous === 0) return current > 0 ? 100 : 0;
-      return ((current - previous) / previous) * 100;
-    };
-
-    const currentViews = calculatePeriodSum(currentPeriod, 'totalViews');
-    const previousViews = calculatePeriodSum(previousPeriod, 'totalViews');
-
-    const currentVisitors = calculatePeriodSum(currentPeriod, 'uniqueVisitors');
-    const previousVisitors = calculatePeriodSum(previousPeriod, 'uniqueVisitors');
-
-    const currentWatchTime = currentPeriod.length > 0 
-      ? calculatePeriodSum(currentPeriod, 'averageWatchTime') / currentPeriod.length
+    // Use all data for current totals (to match Overview behavior)
+    const currentViews = calculatePeriodSum(trendData, 'totalViews');
+    const currentVisitors = calculatePeriodSum(trendData, 'uniqueVisitors');
+    
+    const currentWatchTime = trendData.length > 0 
+      ? calculatePeriodSum(trendData, 'averageWatchTime') / trendData.length
       : 0;
-    const previousWatchTime = previousPeriod.length > 0
-      ? calculatePeriodSum(previousPeriod, 'averageWatchTime') / previousPeriod.length
-      : 0;
-
-    const currentCompletion = currentPeriod.length > 0
-      ? calculatePeriodSum(currentPeriod, 'completionRate') / currentPeriod.length
-      : 0;
-    const previousCompletion = previousPeriod.length > 0
-      ? calculatePeriodSum(previousPeriod, 'completionRate') / previousPeriod.length
+    const currentCompletion = trendData.length > 0
+      ? calculatePeriodSum(trendData, 'completionRate') / trendData.length
       : 0;
 
     return {
       totalViews: {
-        current: currentViews,
-        trend: calculateTrend(currentViews, previousViews)
+        current: currentViews, // Full period total (matches Overview)
+        trend: 0 // Trend calculation removed for simplicity and consistency
       },
       uniqueVisitors: {
-        current: currentVisitors,
-        trend: calculateTrend(currentVisitors, previousVisitors)
+        current: currentVisitors, // Full period total
+        trend: 0
       },
       averageWatchTime: {
-        current: currentWatchTime,
-        trend: calculateTrend(currentWatchTime, previousWatchTime)
+        current: currentWatchTime, // Average across full period
+        trend: 0
       },
       completionRate: {
-        current: currentCompletion,
-        trend: calculateTrend(currentCompletion, previousCompletion)
+        current: currentCompletion, // Average across full period
+        trend: 0
       }
     };
   };
