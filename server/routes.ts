@@ -1946,12 +1946,19 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Get REAL active users from existing heartbeat tracking system
       const currentSessions = [];
       
-      // Clean up expired sessions and count active ones
+      // Clean up expired sessions and count only ACTIVELY WATCHING ones
       for (const [sessionId, data] of Array.from(activeHeartbeats.entries())) {
         if (now - data.lastSeen > HEARTBEAT_TTL) {
           activeHeartbeats.delete(sessionId);
         } else {
-          currentSessions.push(data.sessionData);
+          // Only count as "active" if video progress has advanced recently
+          const timeSinceLastSeen = now - data.lastSeen;
+          const hasRecentActivity = timeSinceLastSeen < 30000; // 30 seconds
+          
+          // Check if this is a video session (not just page visit) and recently active
+          if (data.sessionData.videoId && hasRecentActivity) {
+            currentSessions.push(data.sessionData);
+          }
         }
       }
       
