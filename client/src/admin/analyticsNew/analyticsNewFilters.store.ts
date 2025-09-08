@@ -167,8 +167,26 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
 // Helper function to format dates for active window display
 export const formatParisDateWindow = (start: string, end: string): string => {
   const ZONE = 'Europe/Paris';
-  const startDate = DateTime.fromISO(start).setZone(ZONE);
-  const endDate = DateTime.fromISO(end).setZone(ZONE);
+  
+  // Handle various input formats: YYYY-MM-DD, ISO strings, etc.
+  const parseDate = (dateStr: string) => {
+    // If it's already a valid ISO string, use it
+    if (dateStr.includes('T')) {
+      return DateTime.fromISO(dateStr).setZone(ZONE);
+    }
+    // Otherwise assume YYYY-MM-DD format and convert to proper DateTime
+    const dt = DateTime.fromFormat(dateStr, 'yyyy-LL-dd', { zone: ZONE });
+    return dt.isValid ? dt : DateTime.fromISO(dateStr).setZone(ZONE);
+  };
+  
+  const startDate = parseDate(start);
+  const endDate = parseDate(end);
+  
+  // Check if parsing was successful
+  if (!startDate.isValid || !endDate.isValid) {
+    console.error('Invalid date format:', { start, end, startValid: startDate.isValid, endValid: endDate.isValid });
+    return 'Invalid DateTime';
+  }
   
   // French formatting: DD MMMM YYYY
   const formatFrench = (date: DateTime) => date.setLocale('fr').toFormat('dd LLLL yyyy');
