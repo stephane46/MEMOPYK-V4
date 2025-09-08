@@ -885,17 +885,21 @@ export async function qSessionsTrend(start: string, end: string, locale?: string
 
 // NEW: Sessions trend with comparison to previous period (for dotted lines)
 export async function qSessionsTrendWithComparison(start: string, end: string, locale?: string) {
+  const formatDate = (date: Date) => date.toISOString().split('T')[0];
+  
   // Calculate previous period of same length
   const startDate = new Date(start);
   const endDate = new Date(end);
-  const periodDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
   
+  // FIXED: Proper period calculation (inclusive days)
+  const periodDays = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+  
+  // Calculate previous period (same length, ending day before current start)
   const prevEndDate = new Date(startDate);
-  prevEndDate.setDate(prevEndDate.getDate() - 1); // Day before current period
-  const prevStartDate = new Date(prevEndDate);
-  prevStartDate.setDate(prevStartDate.getDate() - periodDays + 1);
+  prevEndDate.setDate(startDate.getDate() - 1); // Day before current period starts
   
-  const formatDate = (date: Date) => date.toISOString().split('T')[0];
+  const prevStartDate = new Date(prevEndDate);
+  prevStartDate.setDate(prevEndDate.getDate() - periodDays + 1); // Go back the same number of days
   
   console.log(`🔍 GA4 Sessions Trend WITH COMPARISON`);
   console.log(`   Current Period: ${start} to ${end} (${periodDays} days)`);
