@@ -61,7 +61,23 @@ const TrendCard: React.FC<TrendCardProps> = ({ title, value, trend, icon, descri
 };
 
 const formatDate = (dateStr: string): string => {
+  // Handle GA4 YYYYMMDD format (e.g., "20250906")
+  if (dateStr && dateStr.length === 8 && /^\d{8}$/.test(dateStr)) {
+    const year = dateStr.substring(0, 4);
+    const month = dateStr.substring(4, 6);
+    const day = dateStr.substring(6, 8);
+    const date = new Date(`${year}-${month}-${day}`);
+    return date.toLocaleDateString('fr-FR', { 
+      day: '2-digit', 
+      month: '2-digit' 
+    });
+  }
+  
+  // Fallback for other formats
   const date = new Date(dateStr);
+  if (isNaN(date.getTime())) {
+    return dateStr; // Return original if parsing fails
+  }
   return date.toLocaleDateString('fr-FR', { 
     day: '2-digit', 
     month: '2-digit' 
@@ -69,7 +85,25 @@ const formatDate = (dateStr: string): string => {
 };
 
 const formatTooltipDate = (dateStr: string): string => {
+  // Handle GA4 YYYYMMDD format (e.g., "20250906")
+  if (dateStr && dateStr.length === 8 && /^\d{8}$/.test(dateStr)) {
+    const year = dateStr.substring(0, 4);
+    const month = dateStr.substring(4, 6);
+    const day = dateStr.substring(6, 8);
+    const date = new Date(`${year}-${month}-${day}`);
+    return date.toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+  
+  // Fallback for other formats
   const date = new Date(dateStr);
+  if (isNaN(date.getTime())) {
+    return dateStr; // Return original if parsing fails
+  }
   return date.toLocaleDateString('fr-FR', {
     weekday: 'long',
     day: '2-digit',
@@ -115,28 +149,34 @@ export const AnalyticsNewTrends: React.FC = () => {
         console.warn('📈 TRENDS: Data is not array, checking for trends property');
         const trends = data.trends || data.daily || data;
         if (Array.isArray(trends)) {
-          return trends.map((item: any) => ({
-            date: item.date || item.day,
-            formattedDate: formatDate(item.date || item.day),
-            totalViews: item.plays || item.views || item.totalViews || 0,
-            uniqueVisitors: item.visitors || item.uniqueVisitors || 0,
-            averageWatchTime: item.avg_watch_time || item.averageWatchTime || 0,
-            completionRate: item.completion_rate || item.completionRate || 0,
-            videoViews: item.plays || item.videoViews || 0
-          }));
+          return trends.map((item: any) => {
+            const rawDate = item.date || item.day;
+            return {
+              date: rawDate,
+              formattedDate: formatDate(rawDate),
+              totalViews: item.plays || item.views || item.totalViews || 0,
+              uniqueVisitors: item.visitors || item.uniqueVisitors || 0,
+              averageWatchTime: item.avgWatch || item.avg_watch_time || item.averageWatchTime || 0,
+              completionRate: item.completionRate || item.completion_rate || 0,
+              videoViews: item.plays || item.videoViews || 0
+            };
+          });
         }
       }
       
       // If data is already an array
-      return (Array.isArray(data) ? data : []).map((item: any) => ({
-        date: item.date || item.day,
-        formattedDate: formatDate(item.date || item.day),
-        totalViews: item.plays || item.views || item.totalViews || 0,
-        uniqueVisitors: item.visitors || item.uniqueVisitors || 0,
-        averageWatchTime: item.avg_watch_time || item.averageWatchTime || 0,
-        completionRate: item.completion_rate || item.completionRate || 0,
-        videoViews: item.plays || item.videoViews || 0
-      }));
+      return (Array.isArray(data) ? data : []).map((item: any) => {
+        const rawDate = item.date || item.day;
+        return {
+          date: rawDate,
+          formattedDate: formatDate(rawDate),
+          totalViews: item.plays || item.views || item.totalViews || 0,
+          uniqueVisitors: item.visitors || item.uniqueVisitors || 0,
+          averageWatchTime: item.avgWatch || item.avg_watch_time || item.averageWatchTime || 0,
+          completionRate: item.completionRate || item.completion_rate || 0,
+          videoViews: item.plays || item.videoViews || 0
+        };
+      });
     },
     refetchOnWindowFocus: false,
   });
@@ -345,7 +385,11 @@ export const AnalyticsNewTrends: React.FC = () => {
                 variant={selectedMetric === 'views' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedMetric('views')}
-                className={selectedMetric === 'views' ? 'bg-orange-600 hover:bg-orange-700' : ''}
+                className={`transition-all ${
+                  selectedMetric === 'views' 
+                    ? 'bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]' 
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
+                }`}
               >
                 Vues
               </Button>
@@ -353,7 +397,11 @@ export const AnalyticsNewTrends: React.FC = () => {
                 variant={selectedMetric === 'visitors' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedMetric('visitors')}
-                className={selectedMetric === 'visitors' ? 'bg-orange-600 hover:bg-orange-700' : ''}
+                className={`transition-all ${
+                  selectedMetric === 'visitors' 
+                    ? 'bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]' 
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
+                }`}
               >
                 Visiteurs
               </Button>
@@ -361,7 +409,11 @@ export const AnalyticsNewTrends: React.FC = () => {
                 variant={selectedMetric === 'watchTime' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedMetric('watchTime')}
-                className={selectedMetric === 'watchTime' ? 'bg-orange-600 hover:bg-orange-700' : ''}
+                className={`transition-all ${
+                  selectedMetric === 'watchTime' 
+                    ? 'bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]' 
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
+                }`}
               >
                 Durée
               </Button>
@@ -369,7 +421,11 @@ export const AnalyticsNewTrends: React.FC = () => {
                 variant={selectedMetric === 'completion' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedMetric('completion')}
-                className={selectedMetric === 'completion' ? 'bg-orange-600 hover:bg-orange-700' : ''}
+                className={`transition-all ${
+                  selectedMetric === 'completion' 
+                    ? 'bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]' 
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
+                }`}
               >
                 Complétion
               </Button>
