@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import postgres from "postgres";
 
 type Entry<T> = { value: T; expires: number };
 const store = new Map<string, Entry<any>>();
@@ -97,35 +96,16 @@ export async function setDbCache<T>(key: string, value: T, ttlSec = 300) {
     
     console.log(`💾 Setting cache: ${key} (TTL: ${ttlSec}s)`);
     
-    // Use Supabase VPS for all environments
-    if (true) {
-      // Use PostgreSQL in development
-      const pg = getPgClient();
-      if (!pg) return;
-
-      await pg`
-        INSERT INTO ga4_cache (key, value, expires_at)
-        VALUES (${key}, ${JSON.stringify(value)}, ${expires_at})
-        ON CONFLICT (key) 
-        DO UPDATE SET 
-          value = EXCLUDED.value,
-          expires_at = EXCLUDED.expires_at
-      `;
-      
-      console.log(`✅ Cache set successfully: ${key}`);
+    if (!supabase) return;
+    
+    const { error } = await supabase
+      .from("ga4_cache")
+      .upsert({ key, value, expires_at }, { onConflict: "key" });
+    
+    if (error) {
+      console.error('💥 setDbCache error:', error);
     } else {
-      // Use Supabase in production
-      if (!supabase) return;
-      
-      const { error } = await supabase
-        .from("ga4_cache")
-        .upsert({ key, value, expires_at }, { onConflict: "key" });
-      
-      if (error) {
-        console.error('💥 setDbCache error:', error);
-      } else {
-        console.log(`✅ Cache set successfully: ${key}`);
-      }
+      console.log(`✅ Cache set successfully: ${key}`);
     }
   } catch (error) {
     console.error('💥 setDbCache error:', error);
