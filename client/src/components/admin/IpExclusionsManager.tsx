@@ -317,11 +317,16 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         sinceDate.split('/').reverse().join('-') : sinceDate) : undefined}
                       onSelect={(date) => {
                         if (date) {
-                          const isoDate = date.toISOString().split('T')[0];
+                          // Fix timezone issue - use local date formatting
+                          const year = date.getFullYear();
+                          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                          const day = date.getDate().toString().padStart(2, '0');
+                          const isoDate = `${year}-${month}-${day}`;
                           setSinceDate(isoDate);
                         }
                         setSinceCalendarOpen(false);
                       }}
+                      weekStartsOn={1}
                       initialFocus
                     />
                   </DialogContent>

@@ -157,11 +157,16 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                         customDateStart.split('/').reverse().join('-') : customDateStart) : undefined}
                       onSelect={(date) => {
                         if (date) {
-                          const isoDate = date.toISOString().split('T')[0];
+                          // Fix timezone issue - use local date formatting
+                          const year = date.getFullYear();
+                          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                          const day = date.getDate().toString().padStart(2, '0');
+                          const isoDate = `${year}-${month}-${day}`;
                           setCustomDateRange(isoDate, customDateEnd);
                         }
                         setStartCalendarOpen(false);
                       }}
+                      weekStartsOn={1}
                       initialFocus
                     />
                   </DialogContent>
@@ -227,11 +232,16 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                         customDateEnd.split('/').reverse().join('-') : customDateEnd) : undefined}
                       onSelect={(date) => {
                         if (date) {
-                          const isoDate = date.toISOString().split('T')[0];
+                          // Fix timezone issue - use local date formatting
+                          const year = date.getFullYear();
+                          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                          const day = date.getDate().toString().padStart(2, '0');
+                          const isoDate = `${year}-${month}-${day}`;
                           setCustomDateRange(customDateStart, isoDate);
                         }
                         setEndCalendarOpen(false);
                       }}
+                      weekStartsOn={1}
                       initialFocus
                     />
                   </DialogContent>
