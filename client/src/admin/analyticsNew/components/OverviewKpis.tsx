@@ -4,7 +4,7 @@ import type { KpisResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 
 interface OverviewKpisProps {
-  preset?: "7d" | "30d" | "90d";
+  preset?: "today" | "yesterday" | "7d" | "30d" | "90d";
   className?: string;
 }
 

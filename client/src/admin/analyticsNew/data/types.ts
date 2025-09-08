@@ -37,7 +37,7 @@ export type VideoFunnelResponse = {
 export type ReportParams = {
   report: "kpis" | "topVideos" | "videoFunnel";
   videoId?: string;
-  preset?: "7d" | "30d" | "90d";
+  preset?: "today" | "yesterday" | "7d" | "30d" | "90d";
   startDate?: string; // ISO
   endDate?: string;   // ISO
   lang?: string;      // locale
