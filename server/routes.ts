@@ -1943,18 +1943,52 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.json(ga4RealtimeCache.data);
       }
       
-      // No real-time data available - return zeros for authentic data
+      // Get REAL active users from existing heartbeat tracking system
+      const currentSessions = [];
+      
+      // Clean up expired sessions and count active ones
+      for (const [sessionId, data] of Array.from(activeHeartbeats.entries())) {
+        if (now - data.lastSeen > HEARTBEAT_TTL) {
+          activeHeartbeats.delete(sessionId);
+        } else {
+          currentSessions.push(data.sessionData);
+        }
+      }
+      
+      // Group by country and device from real session data
+      const byCountry = currentSessions.reduce((acc: any[], session) => {
+        const country = session.country || 'Unknown';
+        const existing = acc.find(c => c.country === country);
+        if (existing) {
+          existing.users++;
+        } else {
+          acc.push({ country, users: 1 });
+        }
+        return acc;
+      }, []).sort((a, b) => b.users - a.users).slice(0, 5);
+      
+      const byDevice = currentSessions.reduce((acc: any[], session) => {
+        const device = session.device || 'Unknown';
+        const existing = acc.find(d => d.device === device);
+        if (existing) {
+          existing.users++;
+        } else {
+          acc.push({ device, users: 1 });
+        }
+        return acc;
+      }, []).sort((a, b) => b.users - a.users);
+      
       const realData = {
-        activeUsers: 0, // No fake data - show authentic zero when no real data available
-        byCountry: [],
-        byDevice: [],
+        activeUsers: currentSessions.length, // REAL count from heartbeat system
+        byCountry,
+        byDevice,
         timestamp: new Date().toISOString(),
         cached: false
       };
       
       // Cache the data
       ga4RealtimeCache = { data: { ...realData, cached: true }, timestamp: now };
-      console.log(`✅ GA4 Realtime authentic data (no fake numbers)`);
+      console.log(`✅ GA4 Realtime using REAL heartbeat data: ${currentSessions.length} active users`);
       
       res.json(realData);
     } catch (error) {
