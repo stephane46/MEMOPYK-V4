@@ -32,6 +32,7 @@ import {
   qProgressByVideo,
   qVideoFunnel,
   qTrend,
+  qSessionsTrend,
   qTrendDaily,
   qRealtime,
   getTopVideosTable,
@@ -6630,7 +6631,9 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`📊 GA4 Trend request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
 
-      const data = await qTrend(startDate, endDate, locale);
+      // FIXED: Use website sessions trend instead of video plays trend
+      console.log(`📊 TRENDS: Switching from video plays to website sessions for service business analytics`);
+      const data = await qSessionsTrend(startDate, endDate, locale);
       
       // Store in both persistent and memory cache (600s for trend - heavier query)
       await setDbCache(key, data, 600);

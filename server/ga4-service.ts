@@ -844,6 +844,45 @@ export async function qTrend(start: string, end: string, locale?: string) {
   });
 }
 
+// NEW: Daily website sessions trend (for MEMOPYK service business analytics)
+export async function qSessionsTrend(start: string, end: string, locale?: string) {
+  const requestParams = {
+    property: PROPERTY,
+    dateRanges: [range(start, end)],
+    dimensions: [{ name: "date" }],
+    metrics: [
+      { name: "sessions" },
+      { name: "totalUsers" },
+      { name: "bounceRate" },
+      { name: "averageSessionDuration" }
+    ],
+    // ONLY locale filter, NO eventName filter (get all website sessions)
+    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+  };
+  
+  console.log(`🔍 GA4 Sessions Trend - Daily website sessions for service business analytics`);
+  console.log(`   Date Range: ${start} to ${end}`);
+  console.log(`   Locale: ${locale || 'all'}`);
+  
+  const [res] = await client.runReport(requestParams);
+  
+  return (res.rows ?? []).map(r => {
+    const date = r.dimensionValues?.[0]?.value ?? "";
+    const sessions = Number(r.metricValues?.[0]?.value ?? 0);
+    const users = Number(r.metricValues?.[1]?.value ?? 0);
+    const bounceRate = Number(r.metricValues?.[2]?.value ?? 0) * 100; // Convert to percentage
+    const avgDuration = Number(r.metricValues?.[3]?.value ?? 0);
+    
+    return { 
+      date, 
+      sessions, // Website sessions (matches Overview data)
+      users,    // Unique visitors
+      bounceRate, // Percentage
+      avgSessionDuration: Math.round(avgDuration) // Seconds
+    };
+  });
+}
+
 /* =============  CORE ANALYTICS FUNCTIONS  ============= */
 
 export async function qUniqueUsers(start: string, end: string, locale?: string) {

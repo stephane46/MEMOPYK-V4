@@ -145,7 +145,7 @@ export const AnalyticsNewTrends: React.FC = () => {
       const data = await response.json();
       
       // Transform data for charting (adjust based on actual GA4 trend data format)
-      console.log('📈 TRENDS: Raw data received:', data);
+      console.log('📈 TRENDS: Raw website sessions data received:', data);
       
       if (!Array.isArray(data)) {
         console.warn('📈 TRENDS: Data is not array, checking for trends property');
@@ -156,11 +156,11 @@ export const AnalyticsNewTrends: React.FC = () => {
             return {
               date: rawDate,
               formattedDate: formatDate(rawDate),
-              totalViews: item.plays || item.views || item.totalViews || 0,
-              uniqueVisitors: item.visitors || item.uniqueVisitors || 0,
-              averageWatchTime: item.avgWatch || item.avg_watch_time || item.averageWatchTime || 0,
-              completionRate: item.completionRate || item.completion_rate || 0,
-              videoViews: item.plays || item.videoViews || 0
+              totalViews: item.sessions || item.views || item.totalViews || 0, // FIXED: Use sessions instead of plays
+              uniqueVisitors: item.users || item.visitors || item.uniqueVisitors || 0, // FIXED: Use users from sessions data
+              averageWatchTime: item.avgSessionDuration || item.avg_watch_time || item.averageWatchTime || 0, // FIXED: Use session duration
+              completionRate: item.bounceRate || item.completion_rate || 0, // FIXED: Use bounce rate instead
+              videoViews: item.sessions || item.videoViews || 0 // FIXED: Use sessions
             };
           });
 
@@ -178,11 +178,11 @@ export const AnalyticsNewTrends: React.FC = () => {
         return {
           date: rawDate,
           formattedDate: formatDate(rawDate),
-          totalViews: item.plays || item.views || item.totalViews || 0,
-          uniqueVisitors: item.visitors || item.uniqueVisitors || 0,
-          averageWatchTime: item.avgWatch || item.avg_watch_time || item.averageWatchTime || 0,
-          completionRate: item.completionRate || item.completion_rate || 0,
-          videoViews: item.plays || item.videoViews || 0
+          totalViews: item.sessions || item.views || item.totalViews || 0, // FIXED: Use sessions instead of plays
+          uniqueVisitors: item.users || item.visitors || item.uniqueVisitors || 0, // FIXED: Use users from sessions data
+          averageWatchTime: item.avgSessionDuration || item.avg_watch_time || item.averageWatchTime || 0, // FIXED: Use session duration
+          completionRate: item.bounceRate || item.completion_rate || 0, // FIXED: Use bounce rate instead
+          videoViews: item.sessions || item.videoViews || 0 // FIXED: Use sessions
         };
       });
 
@@ -341,7 +341,7 @@ export const AnalyticsNewTrends: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">📈 Trends</h2>
           <p className="text-gray-600 mt-1">
-            Video performance evolution and engagement over time
+            Website analytics trends and visitor behavior over time
           </p>
         </div>
         <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
@@ -353,7 +353,7 @@ export const AnalyticsNewTrends: React.FC = () => {
       {/* Trend Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <TrendCard
-          title="Total Views"
+          title="Website Sessions"
           value={metrics.totalViews.current.toLocaleString('en-US')}
           trend={metrics.totalViews.trend}
           icon={<Eye className="h-4 w-4" />}
@@ -367,14 +367,14 @@ export const AnalyticsNewTrends: React.FC = () => {
           description="vs previous period"
         />
         <TrendCard
-          title="Average Watch Time"
+          title="Session Duration"
           value={formatWatchTime(metrics.averageWatchTime.current)}
           trend={metrics.averageWatchTime.trend}
           icon={<Clock className="h-4 w-4" />}
           description="vs previous period"
         />
         <TrendCard
-          title="Completion Rate"
+          title="Bounce Rate"
           value={`${Math.round(metrics.completionRate.current)}%`}
           trend={metrics.completionRate.trend}
           icon={<Video className="h-4 w-4" />}
@@ -401,7 +401,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                 onClick={() => setSelectedMetric('views')}
                 className={selectedMetric === 'views' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
               >
-                Views
+                Sessions
               </Button>
               <Button
                 variant={selectedMetric === 'visitors' ? 'default' : 'outline'}
