@@ -883,6 +883,47 @@ export async function qSessionsTrend(start: string, end: string, locale?: string
   });
 }
 
+// NEW: Sessions trend with comparison to previous period (for dotted lines)
+export async function qSessionsTrendWithComparison(start: string, end: string, locale?: string) {
+  // Calculate previous period of same length
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  const periodDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+  
+  const prevEndDate = new Date(startDate);
+  prevEndDate.setDate(prevEndDate.getDate() - 1); // Day before current period
+  const prevStartDate = new Date(prevEndDate);
+  prevStartDate.setDate(prevStartDate.getDate() - periodDays + 1);
+  
+  const formatDate = (date: Date) => date.toISOString().split('T')[0];
+  
+  console.log(`🔍 GA4 Sessions Trend WITH COMPARISON`);
+  console.log(`   Current Period: ${start} to ${end} (${periodDays} days)`);
+  console.log(`   Previous Period: ${formatDate(prevStartDate)} to ${formatDate(prevEndDate)} (${periodDays} days)`);
+  
+  // Fetch both periods
+  const [currentData, previousData] = await Promise.all([
+    qSessionsTrend(start, end, locale),
+    qSessionsTrend(formatDate(prevStartDate), formatDate(prevEndDate), locale)
+  ]);
+  
+  // Map previous data by relative day (day 1, day 2, etc.) for alignment
+  const prevDataByDay = new Map();
+  previousData.forEach((item, index) => {
+    prevDataByDay.set(index, item);
+  });
+  
+  // Combine current and previous data
+  return currentData.map((current, index) => ({
+    ...current,
+    // Add previous period data for comparison dotted lines
+    previousSessions: prevDataByDay.get(index)?.sessions || 0,
+    previousUsers: prevDataByDay.get(index)?.users || 0,
+    previousBounceRate: prevDataByDay.get(index)?.bounceRate || 0,
+    previousAvgDuration: prevDataByDay.get(index)?.avgSessionDuration || 0
+  }));
+}
+
 /* =============  CORE ANALYTICS FUNCTIONS  ============= */
 
 export async function qUniqueUsers(start: string, end: string, locale?: string) {
