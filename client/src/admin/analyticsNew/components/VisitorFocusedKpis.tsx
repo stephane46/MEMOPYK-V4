@@ -22,6 +22,10 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   // Modal data states
   const [recentVisitors, setRecentVisitors] = useState<any[]>([]);
   const [returningVisitors, setReturningVisitors] = useState<any[]>([]);
+  
+  // Loading states for modals
+  const [isLoadingRecentVisitors, setIsLoadingRecentVisitors] = useState(false);
+  const [isLoadingReturningVisitors, setIsLoadingReturningVisitors] = useState(false);
 
   if (loading) {
     return (
@@ -61,37 +65,46 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   // Modal handlers
   const handleTotalViewsModalOpen = async () => {
     setIsTotalViewsModalOpen(true);
-    // Fetch recent visitors data
+    setIsLoadingRecentVisitors(true);
+    // Fetch recent visitors data with fast mode (skip expensive location enrichment)
     try {
-      const response = await fetch('/api/analytics/recent-visitors');
+      const response = await fetch('/api/analytics/recent-visitors?skipEnrichment=true');
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
       console.error('Failed to fetch recent visitors:', error);
+    } finally {
+      setIsLoadingRecentVisitors(false);
     }
   };
 
   const handleUniqueVisitorsModalOpen = async () => {
     setIsUniqueVisitorsModalOpen(true);
-    // Fetch recent visitors data
+    setIsLoadingRecentVisitors(true);
+    // Fetch recent visitors data with fast mode (skip expensive location enrichment)
     try {
-      const response = await fetch('/api/analytics/recent-visitors');
+      const response = await fetch('/api/analytics/recent-visitors?skipEnrichment=true');
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
       console.error('Failed to fetch recent visitors:', error);
+    } finally {
+      setIsLoadingRecentVisitors(false);
     }
   };
 
   const handleReturnVisitorsModalOpen = async () => {
     setIsReturnVisitorsModalOpen(true);
-    // Fetch returning visitors data
+    setIsLoadingReturningVisitors(true);
+    // Fetch returning visitors data with fast mode (skip expensive location enrichment)
     try {
-      const response = await fetch('/api/analytics/returning-visitors');
+      const response = await fetch('/api/analytics/returning-visitors?skipEnrichment=true');
       const data = await response.json();
       setReturningVisitors(data);
     } catch (error) {
       console.error('Failed to fetch returning visitors:', error);
+    } finally {
+      setIsLoadingReturningVisitors(false);
     }
   };
 
@@ -192,7 +205,15 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
-              {recentVisitors && recentVisitors.length > 0 ? (
+              {isLoadingRecentVisitors ? (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    <p style={{ margin: 0 }}>Fetching visitor data...</p>
+                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>This may take up to 30 seconds</p>
+                  </div>
+                </div>
+              ) : recentVisitors && recentVisitors.length > 0 ? (
                 <div className="space-y-4">
                   {recentVisitors.slice(0, 50).map((visitor, index) => (
                     <div 
@@ -287,7 +308,15 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
-              {recentVisitors && recentVisitors.length > 0 ? (
+              {isLoadingRecentVisitors ? (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                    <p style={{ margin: 0 }}>Fetching visitor data...</p>
+                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>This may take up to 30 seconds</p>
+                  </div>
+                </div>
+              ) : recentVisitors && recentVisitors.length > 0 ? (
                 <div className="space-y-4">
                   {recentVisitors.slice(0, 50).map((visitor, index) => (
                     <div 
@@ -382,7 +411,15 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
-              {returningVisitors && returningVisitors.length > 0 ? (
+              {isLoadingReturningVisitors ? (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                    <p style={{ margin: 0 }}>Fetching visitor data...</p>
+                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>This may take up to 30 seconds</p>
+                  </div>
+                </div>
+              ) : returningVisitors && returningVisitors.length > 0 ? (
                 <div className="space-y-4">
                   {returningVisitors.map((visitor, index) => (
                     <div 
