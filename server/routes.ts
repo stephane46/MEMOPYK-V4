@@ -5240,6 +5240,54 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // GA4 Geographic Data endpoint - consistent with Analytics New GA4-only approach
+  app.get("/api/ga4/geo", async (req, res) => {
+    try {
+      const { startDate, endDate, locale } = getParams(req);
+      const key = k(`geo:${startDate}:${endDate}:${locale}`);
+
+      console.log(`🌍 GA4 GEO REQUEST: ${startDate} to ${endDate}, locale: ${locale}`);
+
+      // Try cache first
+      const cached = getCache<any>(key);
+      if (cached) {
+        console.log(`✅ CACHE HIT: Returning cached geo data for ${key}`);
+        return res.json(cached);
+      }
+
+      // Fetch GA4 geographic data
+      const countries = await qTopCountries(startDate, endDate);
+      
+      // Transform to match expected format
+      const data = {
+        countries: countries.map(c => ({
+          country: c.country,
+          sessions: c.visitors, // GA4 provides visitors, map to sessions for consistency
+          visitors: c.visitors
+        })),
+        cities: [], // GA4 doesn't provide city data in basic version
+        timestamp: new Date().toISOString(),
+        cached: false
+      };
+
+      console.log(`🌍 GA4 GEO RESULT: ${countries.length} countries from GA4`);
+      console.log(`🌍 GA4 GEO SAMPLE:`, countries.slice(0, 3));
+
+      // Cache the result
+      setCache(key, data, 300);
+      await setDbCache(key, data, 300);
+
+      res.json(data);
+    } catch (error) {
+      console.error('❌ GA4 geo error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'GA4 geo failed',
+        countries: [],
+        cities: []
+      });
+    }
+  });
+
   // GA4 KPIs endpoint - using your exact clean API structure
   app.get("/api/ga4/kpis", async (req, res, next) => {
     try {

@@ -113,14 +113,14 @@ export const AnalyticsNewGeo: React.FC = () => {
   const { datePreset, customDateStart, customDateEnd, sinceDate, sinceDateEnabled, getDateRange } = useAnalyticsNewFilters();
   const { start, end } = getDateRange();
 
-  // Fetch geographic analytics data
+  // Fetch geographic analytics data from GA4 (consistent with Analytics New GA4-only approach)
   const { data: geoData, isLoading: geoLoading, error: geoError, refetch } = useQuery<GeoAnalyticsData>({
-    queryKey: ['/api/analytics/geo', start, end, sinceDateEnabled ? sinceDate : null],
+    queryKey: ['/api/ga4/geo', start, end, sinceDateEnabled ? sinceDate : null],
     queryFn: async () => {
-      const url = new URL('/api/analytics/geo', window.location.origin);
-      url.searchParams.set('limit', '100');
+      const url = new URL('/api/ga4/geo', window.location.origin);
       url.searchParams.set('startDate', start);
       url.searchParams.set('endDate', end);
+      url.searchParams.set('locale', 'all');
       
       if (sinceDateEnabled && sinceDate) {
         url.searchParams.set('since', sinceDate);
@@ -128,7 +128,7 @@ export const AnalyticsNewGeo: React.FC = () => {
 
       const response = await fetch(url.toString());
       if (!response.ok) {
-        throw new Error(`Geographic data failed: ${response.status}`);
+        throw new Error(`GA4 geographic data failed: ${response.status}`);
       }
 
       return response.json();
