@@ -6605,7 +6605,7 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Trend endpoint - daily plays and avg watch time
   app.get("/api/ga4/trend", async (req, res) => {
     try {
-      let startDate, endDate, locale, nocache;
+      let startDate, endDate, locale, nocache, sinceDate;
       
       // Check if this is a preset request
       if (req.query.preset) {
@@ -6615,9 +6615,17 @@ export async function registerRoutes(app: Express): Promise<void> {
         endDate = calcEnd;
         locale = req.query.locale ? String(req.query.locale) : "all";
         nocache = req.query.nocache === "1" || req.query.nocache === "true";
+        sinceDate = req.query.sinceDate ? String(req.query.sinceDate) : undefined;
       } else {
-        ({ startDate, endDate, locale, nocache } = getParams(req));
+        ({ startDate, endDate, locale, nocache, sinceDate } = getParams(req));
       }
+
+      // APPLY START DATE FILTER from Exclusions tab
+      if (sinceDate && sinceDate > startDate) {
+        console.log(`📅 START DATE FILTER: Adjusting ${startDate} to ${sinceDate} (from Exclusions)`);
+        startDate = sinceDate;
+      }
+
       const key = k(`trend:${startDate}:${endDate}:${locale}`);
 
       // Check cache unless bypassed
@@ -6632,10 +6640,22 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`📊 GA4 Trend request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
 
+      // GET EXCLUDED IPS for filtering  
+      let excludedIps: string[] = [];
+      try {
+        const settings = await hybridStorage.getAnalyticsSettings();
+        excludedIps = (settings.excludedIps || []).map((item: any) => 
+          typeof item === 'string' ? item : item.ip
+        );
+        console.log(`🚫 IP EXCLUSION: Loaded ${excludedIps.length} excluded IPs for trends filtering`);
+      } catch (error) {
+        console.warn('⚠️ IP EXCLUSION: Failed to load excluded IPs for trends:', error);
+      }
+
       // FIXED: Use website sessions trend instead of video plays trend
       console.log(`📊 TRENDS: Switching from video plays to website sessions for service business analytics`);
-      // TEMPORARY: Use simple trends without comparison until date bug is fixed
-      const data = await qSessionsTrend(startDate, endDate, locale);
+      // RE-ENABLE comparison with dotted lines
+      const data = await qSessionsTrendWithComparison(startDate, endDate, locale);
       
       // Store in both persistent and memory cache (600s for trend - heavier query)
       await setDbCache(key, data, 600);
