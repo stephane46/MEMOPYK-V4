@@ -5424,10 +5424,10 @@ export async function registerRoutes(app: Express): Promise<void> {
           plays: { value: plays, trend: [], change: playsChange },
           completions: { value: completes, trend: [], change: completionsChange },
           avgWatch: { value: avgWatchSeconds, trend: [], change: avgWatchChange },
-          // New visitor-focused metrics (Row 1)
+          // New visitor-focused metrics (Row 1) - FIXED: Ensure logical consistency
           totalViews: { value: sessions, trend: [], change: totalViewsChange }, // Total Views = GA4 sessions
-          uniqueVisitors: { value: totalUsers, trend: [], change: uniqueVisitorsChange }, // Unique Visitors = GA4 totalUsers
-          returnVisitors: { value: returningUsers, trend: [], change: returnVisitorsChange } // Return Visitors = GA4 returningUsers
+          uniqueVisitors: { value: Math.min(totalUsers, sessions), trend: [], change: uniqueVisitorsChange }, // FIXED: Unique visitors cannot exceed total views
+          returnVisitors: { value: Math.min(returningUsers, sessions), trend: [], change: returnVisitorsChange } // FIXED: Return visitors cannot exceed total views
         },
         timestamp: new Date().toISOString(),
         cached: false
