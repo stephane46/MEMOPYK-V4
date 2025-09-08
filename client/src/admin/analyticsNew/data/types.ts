@@ -2,10 +2,15 @@ export type TrendPoint = { date: string; value: number };
 
 export type KpisResponse = {
   kpis: {
+    // Technical metrics (Row 2)
     sessions: { value: number; trend: TrendPoint[] };
     plays: { value: number; trend: TrendPoint[] };
     completions: { value: number; trend: TrendPoint[] };
     avgWatch: { value: number; trend: TrendPoint[] };
+    // Visitor-focused metrics (Row 1) 
+    totalViews: { value: number; trend: TrendPoint[] };
+    uniqueVisitors: { value: number; trend: TrendPoint[] };
+    returnVisitors: { value: number; trend: TrendPoint[] };
   };
   timestamp?: string;
   cached?: boolean;

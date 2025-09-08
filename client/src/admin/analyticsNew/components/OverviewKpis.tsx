@@ -2,6 +2,7 @@ import React from 'react';
 import { useGa4Report } from "../hooks/useGa4Report";
 import type { KpisResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
+import { VisitorFocusedKpis } from './VisitorFocusedKpis';
 
 interface OverviewKpisProps {
   preset?: "today" | "yesterday" | "7d" | "30d" | "90d";
@@ -47,31 +48,43 @@ export function OverviewKpis({ preset = "7d", className = "" }: OverviewKpisProp
   const { sessions, plays, completions, avgWatch } = data.kpis;
 
   return (
-    <div className={`grid gap-4 md:grid-cols-4 ${className}`}>
-      <KpiCard 
-        label="Sessions" 
-        value={sessions.value} 
-        trend={sessions.trend}
-        data-testid="kpi-sessions"
-      />
-      <KpiCard 
-        label="Video Plays" 
-        value={plays.value} 
-        trend={plays.trend}
-        data-testid="kpi-plays"
-      />
-      <KpiCard 
-        label="Completions (90%)" 
-        value={completions.value} 
-        trend={completions.trend}
-        data-testid="kpi-completions"
-      />
-      <KpiCard 
-        label="Avg Watch (s)" 
-        value={avgWatch.value} 
-        trend={avgWatch.trend}
-        data-testid="kpi-avg-watch"
-      />
+    <div className={`space-y-6 ${className}`}>
+      {/* Row 1: Visitor-focused metrics (like Analytics Old) */}
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-3">Visitor Overview</h3>
+        <VisitorFocusedKpis preset={preset} />
+      </div>
+
+      {/* Row 2: Technical metrics (existing) */}
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-3">Technical Metrics</h3>
+        <div className="grid gap-4 md:grid-cols-4">
+          <KpiCard 
+            label="Sessions" 
+            value={sessions.value} 
+            trend={sessions.trend}
+            data-testid="kpi-sessions"
+          />
+          <KpiCard 
+            label="Video Plays" 
+            value={plays.value} 
+            trend={plays.trend}
+            data-testid="kpi-plays"
+          />
+          <KpiCard 
+            label="Completions (90%)" 
+            value={completions.value} 
+            trend={completions.trend}
+            data-testid="kpi-completions"
+          />
+          <KpiCard 
+            label="Avg Watch (s)" 
+            value={avgWatch.value} 
+            trend={avgWatch.trend}
+            data-testid="kpi-avg-watch"
+          />
+        </div>
+      </div>
     </div>
   );
 }
