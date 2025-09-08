@@ -384,11 +384,11 @@ export const AnalyticsNewTrends: React.FC = () => {
           description="vs previous period"
         />
         <TrendCard
-          title="Bounce Rate"
+          title="Video Engagement"
           value={`${Math.round(metrics.completionRate.current)}%`}
           trend={metrics.completionRate.trend}
           icon={<Video className="h-4 w-4" />}
-          description="vs previous period"
+          description="visitors who interacted with videos"
         />
       </div>
 
@@ -435,7 +435,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                 onClick={() => setSelectedMetric('completion')}
                 className={selectedMetric === 'completion' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
               >
-                Completion
+                Engagement
               </Button>
             </div>
           </div>
