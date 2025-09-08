@@ -97,22 +97,34 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
             <div className="flex gap-2 items-center">
               <Input
                 type="text"
-                value={customDateStart ? (() => {
+                value={(() => {
+                  if (!customDateStart) return '';
+                  // If it's already in DD/MM/YYYY format, return as-is
+                  if (customDateStart.includes('/')) return customDateStart;
+                  // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
                   const date = new Date(customDateStart);
                   if (isNaN(date.getTime())) return customDateStart;
                   const day = date.getDate().toString().padStart(2, '0');
                   const month = (date.getMonth() + 1).toString().padStart(2, '0');
                   const year = date.getFullYear();
                   return `${day}/${month}/${year}`;
-                })() : ''}
+                })()}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // Convert DD/MM/YYYY to YYYY-MM-DD
-                  const parts = value.split('/');
-                  if (parts.length === 3 && parts[0].length <= 2 && parts[1].length <= 2 && parts[2].length === 4) {
-                    const [day, month, year] = parts;
-                    const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                    setCustomDateRange(isoDate, customDateEnd);
+                  // Allow typing - store the display value temporarily
+                  if (value.length <= 10) {
+                    // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
+                    const parts = value.split('/');
+                    if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+                      const [day, month, year] = parts;
+                      if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
+                        const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                        setCustomDateRange(isoDate, customDateEnd);
+                        return;
+                      }
+                    }
+                    // Otherwise store as display format for partial input
+                    setCustomDateRange(value, customDateEnd);
                   }
                 }}
                 className="w-44"
@@ -123,22 +135,34 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               <span className="text-sm text-gray-500">to</span>
               <Input
                 type="text"
-                value={customDateEnd ? (() => {
+                value={(() => {
+                  if (!customDateEnd) return '';
+                  // If it's already in DD/MM/YYYY format, return as-is
+                  if (customDateEnd.includes('/')) return customDateEnd;
+                  // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
                   const date = new Date(customDateEnd);
                   if (isNaN(date.getTime())) return customDateEnd;
                   const day = date.getDate().toString().padStart(2, '0');
                   const month = (date.getMonth() + 1).toString().padStart(2, '0');
                   const year = date.getFullYear();
                   return `${day}/${month}/${year}`;
-                })() : ''}
+                })()}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // Convert DD/MM/YYYY to YYYY-MM-DD
-                  const parts = value.split('/');
-                  if (parts.length === 3 && parts[0].length <= 2 && parts[1].length <= 2 && parts[2].length === 4) {
-                    const [day, month, year] = parts;
-                    const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                    setCustomDateRange(customDateStart, isoDate);
+                  // Allow typing - store the display value temporarily
+                  if (value.length <= 10) {
+                    // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
+                    const parts = value.split('/');
+                    if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+                      const [day, month, year] = parts;
+                      if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
+                        const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                        setCustomDateRange(customDateStart, isoDate);
+                        return;
+                      }
+                    }
+                    // Otherwise store as display format for partial input
+                    setCustomDateRange(customDateStart, value);
                   }
                 }}
                 className="w-44"

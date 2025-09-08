@@ -261,22 +261,34 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
               <Label className="text-sm text-orange-700">Since:</Label>
               <Input
                 type="text"
-                value={sinceDate ? (() => {
+                value={(() => {
+                  if (!sinceDate) return '';
+                  // If it's already in DD/MM/YYYY format, return as-is
+                  if (sinceDate.includes('/')) return sinceDate;
+                  // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
                   const date = new Date(sinceDate);
                   if (isNaN(date.getTime())) return sinceDate;
                   const day = date.getDate().toString().padStart(2, '0');
                   const month = (date.getMonth() + 1).toString().padStart(2, '0');
                   const year = date.getFullYear();
                   return `${day}/${month}/${year}`;
-                })() : ''}
+                })()}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // Convert DD/MM/YYYY to YYYY-MM-DD
-                  const parts = value.split('/');
-                  if (parts.length === 3 && parts[0].length <= 2 && parts[1].length <= 2 && parts[2].length === 4) {
-                    const [day, month, year] = parts;
-                    const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                    setSinceDate(isoDate);
+                  // Allow typing - store the display value temporarily
+                  if (value.length <= 10) {
+                    // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
+                    const parts = value.split('/');
+                    if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+                      const [day, month, year] = parts;
+                      if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
+                        const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                        setSinceDate(isoDate);
+                        return;
+                      }
+                    }
+                    // Otherwise store as display format for partial input
+                    setSinceDate(value);
                   }
                 }}
                 className="w-40 border-orange-300 focus:border-orange-500 focus:ring-orange-500"
