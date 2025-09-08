@@ -68,7 +68,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
     setIsLoadingRecentVisitors(true);
     // Fetch recent visitors data (normal mode - should be fast after first load)
     try {
-      const response = await fetch(`/api/analytics/recent-visitors?datePreset=${preset}`);
+      const response = await fetch(`/api/ga4/visitor-details?datePreset=${preset}`);
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
@@ -83,7 +83,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
     setIsLoadingRecentVisitors(true);
     // Fetch recent visitors data (normal mode - should be fast after first load)
     try {
-      const response = await fetch(`/api/analytics/recent-visitors?datePreset=${preset}`);
+      const response = await fetch(`/api/ga4/visitor-details?datePreset=${preset}`);
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
@@ -98,7 +98,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
     setIsLoadingReturningVisitors(true);
     // Fetch returning visitors data (normal mode - should be fast after first load)
     try {
-      const response = await fetch('/api/analytics/returning-visitors');
+      const response = await fetch(`/api/ga4/visitor-details?datePreset=${preset}&type=returning`);
       const data = await response.json();
       setReturningVisitors(data);
     } catch (error) {
