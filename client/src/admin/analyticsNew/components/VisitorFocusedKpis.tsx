@@ -135,7 +135,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
           icon={Eye}
           color="blue"
           onDetailClick={handleTotalViewsModalOpen}
-          change={0} // TODO: Calculate from previous period
+          change={totalViews?.change || 0}
           description="Page views across site"
           data-testid="kpi-total-views"
         />
@@ -146,7 +146,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
           icon={Users}
           color="green"
           onDetailClick={handleUniqueVisitorsModalOpen}
-          change={0} // TODO: Calculate from previous period
+          change={uniqueVisitors?.change || 0}
           description="Distinct visitors (IP-based)"
           data-testid="kpi-unique-visitors"
         />
@@ -157,7 +157,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
           icon={RotateCcw}
           color="purple"
           onDetailClick={handleReturnVisitorsModalOpen}
-          change={0} // TODO: Calculate from previous period
+          change={returnVisitors?.change || 0}
           description="Returning visitors"
           data-testid="kpi-return-visitors"
         />

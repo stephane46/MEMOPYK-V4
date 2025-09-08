@@ -5319,18 +5319,67 @@ export async function registerRoutes(app: Express): Promise<void> {
       const avgWatchSeconds = (totalWatch > 0 && plays > 0) ? Math.round(totalWatch / plays) : 0;
       const completionRate = plays > 0 ? (completes / plays) * 100 : 0;
 
+      // Calculate previous period for comparison
+      let prevSessions = 0, prevTotalUsers = 0, prevReturningUsers = 0, prevPlays = 0, prevCompletes = 0, prevTotalWatch = 0;
+      
+      try {
+        const { compareStartDate, compareEndDate } = calculateDateRange(
+          req.query.preset as string || '7d', 
+          startDate, 
+          endDate
+        );
+        
+        console.log(`📊 Fetching previous period data: ${compareStartDate} to ${compareEndDate}`);
+        
+        // Fetch previous period data
+        const [prevSessionsData, prevTotalUsersData, prevReturningUsersData, prevPlaysData, prevCompletesData, prevTotalWatchData] = await Promise.all([
+          qSessions(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qSessions failed:', e.message); return 0; }),
+          qTotalUsers(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qTotalUsers failed:', e.message); return 0; }),
+          qReturningUsers(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qReturningUsers failed:', e.message); return 0; }),
+          qPlays(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qPlays failed:', e.message); return 0; }),
+          qCompletes(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qCompletes failed:', e.message); return 0; }),
+          qWatchTimeTotal(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qWatchTimeTotal failed:', e.message); return 0; })
+        ]);
+        
+        prevSessions = prevSessionsData;
+        prevTotalUsers = prevTotalUsersData;
+        prevReturningUsers = prevReturningUsersData;
+        prevPlays = prevPlaysData;
+        prevCompletes = prevCompletesData;
+        prevTotalWatch = prevTotalWatchData;
+        
+        console.log(`📊 Previous period data: Sessions ${prevSessions}, Users ${prevTotalUsers}, Returning ${prevReturningUsers}, Plays ${prevPlays}`);
+      } catch (e) {
+        console.error('❌ Failed to fetch previous period data:', e);
+      }
+      
+      // Calculate percentage changes
+      const calculatePercentageChange = (current: number, previous: number): number => {
+        if (previous === 0) return current > 0 ? 100 : 0;
+        return Math.round(((current - previous) / previous) * 100);
+      };
+      
+      const totalViewsChange = calculatePercentageChange(sessions, prevSessions);
+      const uniqueVisitorsChange = calculatePercentageChange(totalUsers, prevTotalUsers);
+      const returnVisitorsChange = calculatePercentageChange(returningUsers, prevReturningUsers);
+      const playsChange = calculatePercentageChange(plays, prevPlays);
+      const completionsChange = calculatePercentageChange(completes, prevCompletes);
+      const avgWatchChange = calculatePercentageChange(avgWatchSeconds, prevTotalWatch > 0 && prevPlays > 0 ? Math.round(prevTotalWatch / prevPlays) : 0);
+      
+      console.log(`🔍 CHANGE CALCULATIONS: Views ${totalViewsChange}%, Visitors ${uniqueVisitorsChange}%, Returns ${returnVisitorsChange}%, Plays ${playsChange}%`);
+
       // Transform into the expected KpisResponse format for frontend
       const data = {
         kpis: {
           // Existing technical metrics (Row 2)
-          sessions: { value: sessions, trend: [] }, // Actual GA4 sessions now
-          plays: { value: plays, trend: [] },
-          completions: { value: completes, trend: [] },
-          avgWatch: { value: avgWatchSeconds, trend: [] },
+          sessions: { value: sessions, trend: [], change: calculatePercentageChange(sessions, prevSessions) },
+          plays: { value: plays, trend: [], change: playsChange },
+          completions: { value: completes, trend: [], change: completionsChange },
+          avgWatch: { value: avgWatchSeconds, trend: [], change: avgWatchChange },
           // New visitor-focused metrics (Row 1)
-          totalViews: { value: sessions, trend: [] }, // Total Views = GA4 sessions
-          uniqueVisitors: { value: totalUsers, trend: [] }, // Unique Visitors = GA4 totalUsers
-          returnVisitors: { value: returningUsers, trend: [] } // Return Visitors = GA4 returningUsers
+          totalViews: { value: sessions, trend: [], change: totalViewsChange }, // Total Views = GA4 sessions
+          uniqueVisitors: { value: totalUsers, trend: [], change: uniqueVisitorsChange }, // Unique Visitors = GA4 totalUsers
+          returnVisitors: { value: returningUsers, trend: [], change: returnVisitorsChange } // Return Visitors = GA4 returningUsers
         },
         timestamp: new Date().toISOString(),
         cached: false

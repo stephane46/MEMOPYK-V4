@@ -3,14 +3,14 @@ export type TrendPoint = { date: string; value: number };
 export type KpisResponse = {
   kpis: {
     // Technical metrics (Row 2)
-    sessions: { value: number; trend: TrendPoint[] };
-    plays: { value: number; trend: TrendPoint[] };
-    completions: { value: number; trend: TrendPoint[] };
-    avgWatch: { value: number; trend: TrendPoint[] };
+    sessions: { value: number; trend: TrendPoint[]; change?: number };
+    plays: { value: number; trend: TrendPoint[]; change?: number };
+    completions: { value: number; trend: TrendPoint[]; change?: number };
+    avgWatch: { value: number; trend: TrendPoint[]; change?: number };
     // Visitor-focused metrics (Row 1) 
-    totalViews: { value: number; trend: TrendPoint[] };
-    uniqueVisitors: { value: number; trend: TrendPoint[] };
-    returnVisitors: { value: number; trend: TrendPoint[] };
+    totalViews: { value: number; trend: TrendPoint[]; change?: number };
+    uniqueVisitors: { value: number; trend: TrendPoint[]; change?: number };
+    returnVisitors: { value: number; trend: TrendPoint[]; change?: number };
   };
   timestamp?: string;
   cached?: boolean;
