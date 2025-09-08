@@ -44,14 +44,20 @@ interface AnalyticsNewFiltersStore extends AnalyticsNewFilters {
   getActiveFilters: () => Partial<AnalyticsNewFilters>;
 }
 
-// Get today's date in YYYY-MM-DD format
+// Get yesterday's date in YYYY-MM-DD format
+const getYesterdayDate = () => {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  return yesterday.toISOString().split('T')[0];
+};
+
 const getTodayDate = () => new Date().toISOString().split('T')[0];
 
 const defaultState: AnalyticsNewFilters = {
   datePreset: 'today',
   customDateStart: '',
   customDateEnd: '',
-  sinceDate: getTodayDate(), // Default to today
+  sinceDate: getYesterdayDate(), // Default to yesterday
   sinceDateEnabled: true, // Enabled by default
   language: 'all',
   country: 'all', 
@@ -60,34 +66,37 @@ const defaultState: AnalyticsNewFilters = {
   error: null,
 };
 
-export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()((set, get) => ({
-  ...defaultState,
+export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
+  // Add persistence with localStorage
+  persist(
+    (set, get) => ({
+      ...defaultState,
 
-  setDatePreset: (preset) => {
-    set({ datePreset: preset });
-    if (preset !== 'custom') {
-      set({ customDateStart: '', customDateEnd: '' });
-    }
-  },
+      setDatePreset: (preset) => {
+        set({ datePreset: preset });
+        if (preset !== 'custom') {
+          set({ customDateStart: '', customDateEnd: '' });
+        }
+      },
 
-  setCustomDateRange: (start, end) => {
-    set({ 
-      customDateStart: start, 
-      customDateEnd: end,
-      datePreset: 'custom'
-    });
-  },
+      setCustomDateRange: (start, end) => {
+        set({ 
+          customDateStart: start, 
+          customDateEnd: end,
+          datePreset: 'custom'
+        });
+      },
 
-  setSinceDate: (date) => set({ sinceDate: date }),
-  setSinceDateEnabled: (enabled) => set({ sinceDateEnabled: enabled }),
+      setSinceDate: (date) => set({ sinceDate: date }),
+      setSinceDateEnabled: (enabled) => set({ sinceDateEnabled: enabled }),
 
-  setLanguage: (language) => set({ language }),
-  setCountry: (country) => set({ country }),
-  setVideoId: (videoId) => set({ videoId }),
-  setLoading: (loading) => set({ isLoading: loading }),
-  setError: (error) => set({ error }),
+      setLanguage: (language) => set({ language }),
+      setCountry: (country) => set({ country }),
+      setVideoId: (videoId) => set({ videoId }),
+      setLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
 
-  reset: () => set(defaultState),
+      reset: () => set(defaultState),
 
   getDateRange: () => {
     const state = get();
@@ -138,7 +147,22 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()((set, g
     
     return filters;
   },
-}));
+    }),
+    {
+      name: 'analytics-new-filters', // localStorage key
+      partialize: (state) => ({
+        sinceDate: state.sinceDate,
+        sinceDateEnabled: state.sinceDateEnabled,
+        datePreset: state.datePreset,
+        customDateStart: state.customDateStart,
+        customDateEnd: state.customDateEnd,
+        language: state.language,
+        country: state.country,
+        videoId: state.videoId,
+      }),
+    }
+  )
+);
 
 // Helper function to format dates for active window display
 export const formatParisDateWindow = (start: string, end: string): string => {

@@ -106,11 +106,18 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
   };
 
   // Read query parameter on component mount and URL changes
+  // Default to overview when since date is enabled
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlTab = urlParams.get('an_tab');
-    setActiveTab(urlTab || 'overview');
-  }, []);
+    
+    // If since date is enabled and no specific tab requested, default to overview
+    if (!urlTab && sinceDateEnabled) {
+      setActiveTab('overview');
+    } else {
+      setActiveTab(urlTab || 'overview');
+    }
+  }, [sinceDateEnabled]);
 
   // Listen for browser Back/Forward navigation
   useEffect(() => {

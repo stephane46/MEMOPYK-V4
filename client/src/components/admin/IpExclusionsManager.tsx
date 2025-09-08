@@ -254,16 +254,17 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
               Enable Start Date Filter
             </Label>
           </div>
+          
+          {/* Date Picker - Show when enabled */}
           {sinceDateEnabled && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-orange-700">From:</span>
+            <div className="flex items-center space-x-2">
+              <Label className="text-sm text-orange-700">Since:</Label>
               <Input
                 type="date"
                 value={sinceDate}
                 onChange={(e) => setSinceDate(e.target.value)}
-                className="w-32 border-orange-300 focus:border-orange-500 focus:ring-orange-500"
-                placeholder="Select start date"
-                data-testid="since-date-input"
+                className="w-40 border-orange-300 focus:border-orange-500 focus:ring-orange-500"
+                data-testid="since-date-picker"
               />
             </div>
           )}
