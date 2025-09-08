@@ -187,6 +187,17 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
             {/* Compact Header Badges */}
             <div className="flex items-center gap-2">
               {/* Since Date Badge - Always visible when ON */}
+              {sinceDateEnabled && sinceDate && (
+                <Badge 
+                  variant="outline" 
+                  className="seo-language-btn-active text-sm font-medium cursor-pointer transition-colors"
+                  onClick={navigateToExclusions}
+                  title="Hides data before this date in standard reports."
+                  data-testid="since-badge"
+                >
+                  Since: {formatSinceDateForBadge(sinceDate)}
+                </Badge>
+              )}
               
               {/* IP Exclusions Badge - Visible when ≥1 active rule */}
               {activeExclusionsCount > 0 && (

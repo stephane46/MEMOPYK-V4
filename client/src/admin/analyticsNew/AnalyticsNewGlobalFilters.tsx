@@ -352,51 +352,6 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
           </div>
         </div>
 
-        {/* Active Filters Display */}
-        {activeFilterCount > 0 && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-xs font-medium text-gray-600">Active filters:</span>
-              {language !== 'all' && (
-                <Badge variant="outline" className="text-xs">
-                  Language: {language}
-                  <X 
-                    className="h-3 w-3 ml-1 cursor-pointer" 
-                    onClick={() => setLanguage('all')}
-                  />
-                </Badge>
-              )}
-              {country !== 'all' && (
-                <Badge variant="outline" className="text-xs">
-                  Country: {country}
-                  <X 
-                    className="h-3 w-3 ml-1 cursor-pointer" 
-                    onClick={() => setCountry('all')}
-                  />
-                </Badge>
-              )}
-              {videoId !== 'all' && (
-                <Badge variant="outline" className="text-xs">
-                  Video: {videoId}
-                  <X 
-                    className="h-3 w-3 ml-1 cursor-pointer" 
-                    onClick={() => setVideoId('all')}
-                  />
-                </Badge>
-              )}
-              {sinceDateEnabled && sinceDate && (
-                <Badge variant="outline" className="text-xs seo-language-btn-active">
-                  <Clock className="h-3 w-3 mr-1" />
-                  Since: {formatFrenchDate(sinceDate)}
-                  <X 
-                    className="h-3 w-3 ml-1 cursor-pointer" 
-                    onClick={() => setSinceDateEnabled(false)}
-                  />
-                </Badge>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
