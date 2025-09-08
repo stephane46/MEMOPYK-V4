@@ -36,6 +36,7 @@ import {
   qSessionsTrendWithComparison,
   qTrendDaily,
   qRealtime,
+  qTopCountries,
   getTopVideosTable,
   client as ga4Client,
   PROPERTY as GA4_PROPERTY
@@ -5255,7 +5256,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.json(cached);
       }
 
-      // Fetch GA4 geographic data
+      // Fetch GA4 geographic data using the existing qTopCountries function
       const countries = await qTopCountries(startDate, endDate);
       
       // Transform to match expected format
