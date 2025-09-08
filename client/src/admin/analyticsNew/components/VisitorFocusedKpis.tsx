@@ -1,8 +1,10 @@
-import React from 'react';
-import { Eye, Users, UserCheck, RotateCcw } from 'lucide-react';
+import React, { useState } from 'react';
+import { Eye, Users, UserCheck, RotateCcw, X, MapPin, Clock, Languages } from 'lucide-react';
 import { useGa4Report } from "../hooks/useGa4Report";
 import type { KpisResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
+import { Badge } from '@/components/ui/badge';
+import { CountryFlag } from '@/components/admin/CountryFlag';
 
 interface VisitorFocusedKpisProps {
   preset?: "today" | "yesterday" | "7d" | "30d" | "90d";
@@ -11,6 +13,15 @@ interface VisitorFocusedKpisProps {
 
 export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFocusedKpisProps) {
   const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset });
+  
+  // Modal states
+  const [isTotalViewsModalOpen, setIsTotalViewsModalOpen] = useState(false);
+  const [isUniqueVisitorsModalOpen, setIsUniqueVisitorsModalOpen] = useState(false);
+  const [isReturnVisitorsModalOpen, setIsReturnVisitorsModalOpen] = useState(false);
+  
+  // Modal data states
+  const [recentVisitors, setRecentVisitors] = useState<any[]>([]);
+  const [returningVisitors, setReturningVisitors] = useState<any[]>([]);
 
   if (loading) {
     return (
@@ -47,42 +58,399 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
 
   const { totalViews, uniqueVisitors, returnVisitors } = data.kpis;
 
-  const handleDetailClick = (metric: string) => {
-    console.log(`Opening detailed view for: ${metric}`);
-    // TODO: Implement navigation to detailed view
-    // For now, just log the action
+  // Modal handlers
+  const handleTotalViewsModalOpen = async () => {
+    setIsTotalViewsModalOpen(true);
+    // Fetch recent visitors data
+    try {
+      const response = await fetch('/api/analytics/recent-visitors');
+      const data = await response.json();
+      setRecentVisitors(data);
+    } catch (error) {
+      console.error('Failed to fetch recent visitors:', error);
+    }
+  };
+
+  const handleUniqueVisitorsModalOpen = async () => {
+    setIsUniqueVisitorsModalOpen(true);
+    // Fetch recent visitors data
+    try {
+      const response = await fetch('/api/analytics/recent-visitors');
+      const data = await response.json();
+      setRecentVisitors(data);
+    } catch (error) {
+      console.error('Failed to fetch recent visitors:', error);
+    }
+  };
+
+  const handleReturnVisitorsModalOpen = async () => {
+    setIsReturnVisitorsModalOpen(true);
+    // Fetch returning visitors data
+    try {
+      const response = await fetch('/api/analytics/returning-visitors');
+      const data = await response.json();
+      setReturningVisitors(data);
+    } catch (error) {
+      console.error('Failed to fetch returning visitors:', error);
+    }
+  };
+
+  const formatLanguage = (lang: string) => {
+    const languageMap: { [key: string]: { flag: string; display: string } } = {
+      'fr': { flag: '🇫🇷', display: 'French' },
+      'fr-FR': { flag: '🇫🇷', display: 'French' },
+      'fr-fr': { flag: '🇫🇷', display: 'French' },
+      'en': { flag: '🇺🇸', display: 'English' },
+      'en-US': { flag: '🇺🇸', display: 'English (US)' },
+      'en-us': { flag: '🇺🇸', display: 'English (US)' },
+      'en-GB': { flag: '🇬🇧', display: 'English (UK)' }
+    };
+    return languageMap[lang] || { flag: '🌐', display: lang || 'Unknown' };
+  };
+
+  const getRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes}m ago`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours}h ago`;
+    } else {
+      return `${diffInDays}d ago`;
+    }
   };
 
   return (
-    <div className={`grid gap-4 md:grid-cols-3 ${className}`}>
-      <VisitorKpiCard 
-        label="Total Views" 
-        value={totalViews?.value || 0}
-        trend={totalViews?.trend || []}
-        icon={Eye}
-        color="blue"
-        onDetailClick={() => handleDetailClick('totalViews')}
-        data-testid="kpi-total-views"
-      />
-      <VisitorKpiCard 
-        label="Unique Visitors" 
-        value={uniqueVisitors?.value || 0}
-        trend={uniqueVisitors?.trend || []}
-        icon={Users}
-        color="green"
-        onDetailClick={() => handleDetailClick('uniqueVisitors')}
-        data-testid="kpi-unique-visitors"
-      />
-      <VisitorKpiCard 
-        label="Return Visitors" 
-        value={returnVisitors?.value || 0}
-        trend={returnVisitors?.trend || []}
-        icon={RotateCcw}
-        color="purple"
-        onDetailClick={() => handleDetailClick('returnVisitors')}
-        data-testid="kpi-return-visitors"
-      />
-    </div>
+    <>
+      <div className={`grid gap-4 md:grid-cols-3 ${className}`}>
+        <VisitorKpiCard 
+          label="Total Views" 
+          value={totalViews?.value || 0}
+          trend={totalViews?.trend || []}
+          icon={Eye}
+          color="blue"
+          onDetailClick={handleTotalViewsModalOpen}
+          change={0} // TODO: Calculate from previous period
+          description="Page views across site"
+          data-testid="kpi-total-views"
+        />
+        <VisitorKpiCard 
+          label="Unique Visitors" 
+          value={uniqueVisitors?.value || 0}
+          trend={uniqueVisitors?.trend || []}
+          icon={Users}
+          color="green"
+          onDetailClick={handleUniqueVisitorsModalOpen}
+          change={0} // TODO: Calculate from previous period
+          description="Distinct visitors (IP-based)"
+          data-testid="kpi-unique-visitors"
+        />
+        <VisitorKpiCard 
+          label="Return Visitors" 
+          value={returnVisitors?.value || 0}
+          trend={returnVisitors?.trend || []}
+          icon={RotateCcw}
+          color="purple"
+          onDetailClick={handleReturnVisitorsModalOpen}
+          change={0} // TODO: Calculate from previous period
+          description="Returning visitors"
+          data-testid="kpi-return-visitors"
+        />
+      </div>
+
+      {/* Total Views Modal */}
+      {isTotalViewsModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => e.target === e.currentTarget && setIsTotalViewsModalOpen(false)}
+        >
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
+            <div 
+              className="p-6 border-b border-gray-200"
+              style={{
+                background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
+                color: '#ffffff'
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Eye style={{ width: '24px', height: '24px' }} />
+                  Total Views Details
+                </div>
+                <button
+                  onClick={() => setIsTotalViewsModalOpen(false)}
+                  className="text-white hover:text-gray-200 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {recentVisitors && recentVisitors.length > 0 ? (
+                <div className="space-y-4">
+                  {recentVisitors.slice(0, 50).map((visitor, index) => (
+                    <div 
+                      key={`${visitor.ip_address}-${index}`}
+                      className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <MapPin className="h-4 w-4 text-blue-600" />
+                            <span className="font-medium text-gray-900">Location</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CountryFlag country={visitor.country_code || visitor.country} size={20} />
+                            <div>
+                              <div className="text-sm font-medium">{visitor.country || 'Unknown'}</div>
+                              {visitor.city && visitor.region && (
+                                <div className="text-xs text-gray-600">
+                                  {visitor.city}, {visitor.region}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Languages className="h-4 w-4 text-green-600" />
+                            <span className="font-medium text-gray-900">Language</span>
+                          </div>
+                          <Badge variant="outline">
+                            {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                          </Badge>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="h-4 w-4 text-orange-600" />
+                            <span className="font-medium text-gray-900">Visit Time</span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {getRelativeTime(visitor.last_visit || visitor.created_at)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <Eye style={{ 
+                      width: '48px', 
+                      height: '48px',
+                      color: '#d1d5db'
+                    }} />
+                    <p style={{ margin: 0 }}>No recent views found</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Unique Visitors Modal */}
+      {isUniqueVisitorsModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => e.target === e.currentTarget && setIsUniqueVisitorsModalOpen(false)}
+        >
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
+            <div 
+              className="p-6 border-b border-gray-200"
+              style={{
+                background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
+                color: '#ffffff'
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Users style={{ width: '24px', height: '24px' }} />
+                  Unique Visitors Details
+                </div>
+                <button
+                  onClick={() => setIsUniqueVisitorsModalOpen(false)}
+                  className="text-white hover:text-gray-200 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {recentVisitors && recentVisitors.length > 0 ? (
+                <div className="space-y-4">
+                  {recentVisitors.slice(0, 50).map((visitor, index) => (
+                    <div 
+                      key={`${visitor.ip_address}-${index}`}
+                      className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <MapPin className="h-4 w-4 text-blue-600" />
+                            <span className="font-medium text-gray-900">Location</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CountryFlag country={visitor.country_code || visitor.country} size={20} />
+                            <div>
+                              <div className="text-sm font-medium">{visitor.country || 'Unknown'}</div>
+                              {visitor.city && visitor.region && (
+                                <div className="text-xs text-gray-600">
+                                  {visitor.city}, {visitor.region}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Languages className="h-4 w-4 text-green-600" />
+                            <span className="font-medium text-gray-900">Language</span>
+                          </div>
+                          <Badge variant="outline">
+                            {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                          </Badge>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="h-4 w-4 text-orange-600" />
+                            <span className="font-medium text-gray-900">First Visit</span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {getRelativeTime(visitor.last_visit || visitor.created_at)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <Users style={{ 
+                      width: '48px', 
+                      height: '48px',
+                      color: '#d1d5db'
+                    }} />
+                    <p style={{ margin: 0 }}>No unique visitors found</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Return Visitors Modal */}
+      {isReturnVisitorsModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={(e) => e.target === e.currentTarget && setIsReturnVisitorsModalOpen(false)}
+        >
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
+            <div 
+              className="p-6 border-b border-gray-200"
+              style={{
+                background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
+                color: '#ffffff'
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <UserCheck style={{ width: '24px', height: '24px' }} />
+                  Return Visitors Details
+                </div>
+                <button
+                  onClick={() => setIsReturnVisitorsModalOpen(false)}
+                  className="text-white hover:text-gray-200 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {returningVisitors && returningVisitors.length > 0 ? (
+                <div className="space-y-4">
+                  {returningVisitors.map((visitor, index) => (
+                    <div 
+                      key={`${visitor.ip_address}-${index}`}
+                      className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <MapPin className="h-4 w-4 text-blue-600" />
+                            <span className="font-medium text-gray-900">Location</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CountryFlag country={visitor.country_code || visitor.country} size={20} />
+                            <div>
+                              <div className="text-sm font-medium">{visitor.country || 'Unknown'}</div>
+                              {visitor.city && visitor.region && (
+                                <div className="text-xs text-gray-600">
+                                  {visitor.city}, {visitor.region}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Languages className="h-4 w-4 text-green-600" />
+                            <span className="font-medium text-gray-900">Language</span>
+                          </div>
+                          <Badge variant="outline">
+                            {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                          </Badge>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="h-4 w-4 text-orange-600" />
+                            <span className="font-medium text-gray-900">Last Visit</span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {getRelativeTime(visitor.last_visit)}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            {visitor.visit_count} visits total
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="flex flex-col items-center gap-3">
+                    <UserCheck style={{ 
+                      width: '48px', 
+                      height: '48px',
+                      color: '#d1d5db'
+                    }} />
+                    <p style={{ margin: 0 }}>No returning visitors found</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -93,6 +461,8 @@ interface VisitorKpiCardProps {
   icon: React.ElementType;
   color: 'blue' | 'green' | 'purple' | 'orange' | 'red';
   onDetailClick: () => void;
+  change: number; // Percentage change vs previous period
+  description: string; // Descriptive text under the value
   'data-testid'?: string;
 }
 
@@ -102,7 +472,9 @@ function VisitorKpiCard({
   trend, 
   icon: Icon, 
   color, 
-  onDetailClick, 
+  onDetailClick,
+  change,
+  description,
   'data-testid': testId 
 }: VisitorKpiCardProps) {
   const USE_MOCK = import.meta.env?.VITE_USE_MOCK === "true";
@@ -159,6 +531,18 @@ function VisitorKpiCard({
       <div className="text-2xl font-bold text-[var(--analytics-new-text)] mb-2">
         {value.toLocaleString()}
       </div>
+
+      {/* Percentage change */}
+      <div className={`text-xs flex items-center gap-1 mt-1 ${
+        change >= 0 ? "text-green-600" : "text-red-600"
+      }`}>
+        {change >= 0 ? "▲" : "▼"} {Math.abs(change)}% vs previous period
+      </div>
+
+      {/* Description */}
+      <p className="text-xs text-[var(--analytics-new-text-muted)] mt-1">
+        {description}
+      </p>
 
       {/* Sparkline trend */}
       {trend && trend.length > 0 && (
