@@ -2873,6 +2873,25 @@ export async function registerRoutes(app: Express): Promise<void> {
         .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
         .slice(0, 50); // Take last 50 returning visitors
       
+      // Apply location enrichment (same as recent visitors)
+      console.log('⚡ Returning Visitors: Using fast response mode - no blocking external API calls');
+      const enrichedReturningVisitors = await Promise.all(returningVisitors.map(async (visitor) => {
+        const cachedLocation = await locationService.getLocationFromCache(visitor.ip_address);
+        if (cachedLocation) {
+          console.log(`📄 Using JSON cache location for IP ${visitor.ip_address}: ${cachedLocation.city}, ${cachedLocation.country}`);
+          return {
+            ...visitor,
+            country: cachedLocation.country,
+            country_code: cachedLocation.country_code,
+            region: cachedLocation.region,
+            city: cachedLocation.city
+          };
+        }
+        return visitor;
+      }));
+      
+      returningVisitors = enrichedReturningVisitors;
+      
       // DEBUG: Log IP addresses and their enrichment status  
       console.log('🔍 RETURNING VISITORS DEBUG:');
       returningVisitors.forEach(visitor => {
