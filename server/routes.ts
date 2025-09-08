@@ -1943,30 +1943,20 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.json(ga4RealtimeCache.data);
       }
       
-      // Mock data for Phase 2 - Following task document requirement for mock-first approach
-      const mockData = {
-        activeUsers: Math.floor(Math.random() * 50) + 10, // Random between 10-60
-        byCountry: [
-          { country: "France", users: Math.floor(Math.random() * 20) + 5 },
-          { country: "Canada", users: Math.floor(Math.random() * 15) + 3 },
-          { country: "United States", users: Math.floor(Math.random() * 10) + 2 },
-          { country: "Switzerland", users: Math.floor(Math.random() * 8) + 1 },
-          { country: "Belgium", users: Math.floor(Math.random() * 6) + 1 }
-        ],
-        byDevice: [
-          { device: "Mobile", users: Math.floor(Math.random() * 25) + 8 },
-          { device: "Desktop", users: Math.floor(Math.random() * 20) + 5 },
-          { device: "Tablet", users: Math.floor(Math.random() * 10) + 2 }
-        ],
+      // No real-time data available - return zeros for authentic data
+      const realData = {
+        activeUsers: 0, // No fake data - show authentic zero when no real data available
+        byCountry: [],
+        byDevice: [],
         timestamp: new Date().toISOString(),
         cached: false
       };
       
       // Cache the data
-      ga4RealtimeCache = { data: { ...mockData, cached: true }, timestamp: now };
-      console.log(`🔄 GA4 Realtime data generated and cached`);
+      ga4RealtimeCache = { data: { ...realData, cached: true }, timestamp: now };
+      console.log(`✅ GA4 Realtime authentic data (no fake numbers)`);
       
-      res.json(mockData);
+      res.json(realData);
     } catch (error) {
       console.error('❌ GA4 Realtime error:', error);
       res.status(500).json({ error: "Failed to get GA4 realtime data" });
