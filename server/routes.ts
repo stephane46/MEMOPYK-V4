@@ -5256,65 +5256,6 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // GA4 Visitor Details endpoint - for Analytics New eye icons (GA4 consistency)
-  app.get("/api/ga4/visitor-details", async (req, res) => {
-    try {
-      const { startDate, endDate, datePreset } = req.query;
-      
-      console.log(`🔍 GA4 Visitor Details Request: datePreset=${datePreset}, startDate=${startDate}, endDate=${endDate}`);
-      
-      // Handle datePreset parameter
-      let calcStartDate = startDate;
-      let calcEndDate = endDate;
-      
-      if (datePreset && !startDate && !endDate) {
-        const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(
-          datePreset as string
-        );
-        calcStartDate = calcStart;
-        calcEndDate = calcEnd;
-        console.log(`📅 GA4 Date preset '${datePreset}' resolved to: ${calcStartDate} to ${calcEndDate}`);
-      }
-      
-      // For now, return mock visitor details based on GA4 counts to match the cards
-      const totalSessions = await qSessions(calcStartDate as string, calcEndDate as string, 'all');
-      const totalUsers = await qTotalUsers(calcStartDate as string, calcEndDate as string, 'all');
-      const returningUsers = await qReturningUsers(calcStartDate as string, calcEndDate as string, 'all');
-      
-      console.log(`🔍 GA4 Visitor Details: ${totalSessions} sessions, ${totalUsers} users, ${returningUsers} returning`);
-      
-      // Generate mock visitor details that match GA4 counts
-      const visitors = [];
-      const countries = ['France', 'Vietnam', 'United States', 'Germany', 'Canada'];
-      const cities = ['Paris', 'Ho Chi Minh City', 'New York', 'Berlin', 'Toronto'];
-      
-      for (let i = 0; i < Math.min(totalUsers, 20); i++) {
-        const country = countries[i % countries.length];
-        const city = cities[i % cities.length];
-        visitors.push({
-          ip_address: `192.168.1.${100 + i}`,
-          country,
-          region: `Region-${country}`,
-          city,
-          language: country === 'France' ? 'fr-FR' : 'en-US',
-          last_visit: new Date(Date.now() - i * 3600000).toISOString(), // Hours apart
-          user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36...',
-          visit_count: i < returningUsers ? 2 : 1, // Match returning users count
-          session_duration: Math.floor(Math.random() * 300 + 60),
-          previous_visit: i < returningUsers ? new Date(Date.now() - (i + 24) * 3600000).toISOString() : null
-        });
-      }
-      
-      console.log(`✅ GA4 Visitor Details: Generated ${visitors.length} visitors to match GA4 data`);
-      res.json(visitors);
-      
-    } catch (error) {
-      console.error('❌ GA4 visitor details error:', error);
-      res.status(500).json({ 
-        error: error instanceof Error ? error.message : 'GA4 visitor details failed'
-      });
-    }
-  });
 
   // GA4 Geographic Data endpoint - consistent with Analytics New GA4-only approach
   app.get("/api/ga4/geo", async (req, res) => {
