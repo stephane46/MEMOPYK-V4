@@ -465,7 +465,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                     return value;
                   }}
                   formatter={(value: number, name: string) => {
-                    const label = name === 'previousValue' ? `${chartConfig.label} (Previous Period)` : chartConfig.label;
+                    const label = name === 'previousValue' ? 'Previous Period' : 'Current Period';
                     return [chartConfig.format(value), label];
                   }}
                   contentStyle={{
@@ -497,8 +497,46 @@ export const AnalyticsNewTrends: React.FC = () => {
               </ComposedChart>
             </ResponsiveContainer>
           </div>
+          
+          {/* Metric Explanation */}
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg border-l-4 border-orange-400">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-orange-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h4 className="text-sm font-medium text-gray-900 mb-1">
+                  About this metric
+                </h4>
+                <p className="text-sm text-gray-700">
+                  {getMetricExplanation(selectedMetric)}
+                </p>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
   );
+};
+
+// Helper function for metric explanations  
+const getMetricExplanation = (metric: string) => {
+  
+  switch (metric) {
+    case 'sessions':
+      return "Website Sessions represent individual visits to your MEMOPYK site. Each session includes all page views and interactions during a single visit, helping you understand your site's reach and visitor engagement.";
+    case 'visitors':
+      return "Unique Visitors shows the number of different people who visited your MEMOPYK website during the selected period. This metric helps you understand your actual audience size, as each person is counted only once regardless of how many times they visit.";
+    case 'watchTime':
+    case 'duration':
+      return "Session Duration measures the average time visitors spend on your MEMOPYK website during each visit. Longer durations typically indicate higher engagement with your video portfolio and content, suggesting visitors are genuinely interested in your film creation services.";
+    case 'completion':
+    case 'engagement':
+      return "Video Engagement tracks the percentage of visitors who actively interact with your video portfolio. This includes playing videos, watching significant portions, or engaging with video controls. High engagement suggests your portfolio effectively showcases your film creation capabilities.";
+    default:
+      return "This metric provides insights into your website's performance and visitor behavior, helping you understand how effectively your MEMOPYK portfolio converts visitors into potential clients.";
+  }
 };
