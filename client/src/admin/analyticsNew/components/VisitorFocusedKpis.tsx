@@ -193,7 +193,23 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Eye style={{ width: '24px', height: '24px' }} />
-                  Total Views Details
+                  <span>Total Views Details</span>
+                  {(() => {
+                    const missingCount = recentVisitors.filter(visitor => 
+                      !visitor.country || visitor.country === 'Unknown' || 
+                      !visitor.city || visitor.city === 'Unknown'
+                    ).length;
+                    
+                    return missingCount > 0 ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full ml-3">
+                        🏴‍☠️ {missingCount} pending
+                      </span>
+                    ) : recentVisitors.length > 0 ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full ml-3">
+                        ✅ All enriched
+                      </span>
+                    ) : null;
+                  })()}
                 </div>
                 <button
                   onClick={() => setIsTotalViewsModalOpen(false)}
@@ -296,7 +312,23 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Users style={{ width: '24px', height: '24px' }} />
-                  Unique Visitors Details
+                  <span>Unique Visitors Details</span>
+                  {(() => {
+                    const missingCount = recentVisitors.filter(visitor => 
+                      !visitor.country || visitor.country === 'Unknown' || 
+                      !visitor.city || visitor.city === 'Unknown'
+                    ).length;
+                    
+                    return missingCount > 0 ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full ml-3">
+                        🏴‍☠️ {missingCount} pending
+                      </span>
+                    ) : recentVisitors.length > 0 ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full ml-3">
+                        ✅ All enriched
+                      </span>
+                    ) : null;
+                  })()}
                 </div>
                 <button
                   onClick={() => setIsUniqueVisitorsModalOpen(false)}
@@ -399,7 +431,23 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <UserCheck style={{ width: '24px', height: '24px' }} />
-                  Return Visitors Details
+                  <span>Return Visitors Details</span>
+                  {(() => {
+                    const missingCount = returningVisitors.filter(visitor => 
+                      !visitor.country || visitor.country === 'Unknown' || 
+                      !visitor.city || visitor.city === 'Unknown'
+                    ).length;
+                    
+                    return missingCount > 0 ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full ml-3">
+                        🏴‍☠️ {missingCount} pending
+                      </span>
+                    ) : returningVisitors.length > 0 ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full ml-3">
+                        ✅ All enriched
+                      </span>
+                    ) : null;
+                  })()}
                 </div>
                 <button
                   onClick={() => setIsReturnVisitorsModalOpen(false)}
