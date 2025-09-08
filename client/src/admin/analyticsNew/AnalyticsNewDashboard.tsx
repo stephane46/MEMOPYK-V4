@@ -6,6 +6,7 @@ import { AnalyticsNewOverview } from './AnalyticsNewOverview';
 import { AnalyticsNewLiveView } from './AnalyticsNewLiveView';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { AnalyticsNewVideo } from './AnalyticsNewVideo';
+import { AnalyticsNewTrends } from './AnalyticsNewTrends';
 import DataSourceBadge from './components/DataSourceBadge';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { Badge } from '@/components/ui/badge';
@@ -38,16 +39,6 @@ const AnalyticsNewCta: React.FC = () => (
   </div>
 );
 
-const AnalyticsNewTrends: React.FC = () => (
-  <div className="analytics-new-container space-y-6">
-    <h2 className="text-xl font-bold text-gray-900">Trends</h2>
-    <AnalyticsNewLoadingStates 
-      mode="empty" 
-      title="Trend analysis coming soon"
-      description="Time-series analytics and comparisons will be displayed here"
-    />
-  </div>
-);
 
 const AnalyticsNewClarity: React.FC = () => (
   <div className="analytics-new-container space-y-6">
