@@ -4396,8 +4396,27 @@ Allow: /contact`;
         console.log(`✅ Updated ${updatedCount} session(s) in JSON fallback for IP ${ipAddress}`);
         return { updated: updatedCount, ip: ipAddress };
       } else {
-        console.log(`ℹ️ No sessions found for IP ${ipAddress}`);
-        return { updated: 0, ip: ipAddress };
+        // No existing sessions, but SAVE location data for future lookups
+        console.log(`ℹ️ No sessions found for IP ${ipAddress}, creating location cache entry`);
+        
+        // Create a minimal location cache entry for future API calls
+        const locationCacheEntry = {
+          id: `location_cache_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          ip_address: ipAddress,
+          server_detected_ip: ipAddress,
+          country: locationData.country,
+          region: locationData.region,
+          city: locationData.city,
+          country_code: null, // Will be enriched later if available
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_location_cache: true // Flag to identify cache entries
+        };
+        
+        sessions.push(locationCacheEntry);
+        this.saveJsonFile('analytics-sessions.json', sessions);
+        console.log(`💾 Created location cache entry for IP ${ipAddress}: ${locationData.city}, ${locationData.country}`);
+        return { updated: 1, ip: ipAddress, cached: true };
       }
     } catch (error) {
       console.error(`❌ Session location: JSON fallback failed:`, error);
