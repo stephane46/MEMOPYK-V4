@@ -13,10 +13,10 @@ const supabase = createClient(
 export function getCacheEnvironmentInfo() {
   return {
     environment: process.env.NODE_ENV || 'development',
-    database: 'Supabase VPS (PostgreSQL)',
-    connection: 'SUPABASE_URL',
+    database: 'Supabase VPS (Pure Client)',
+    connection: 'SUPABASE_URL + SUPABASE_ANON_KEY',
     autoCleanup: 'Enabled (24h retention + TTL expiry)',
-    features: ['Persistent storage', 'Auto-cleanup trigger', 'TTL expiry', 'Admin bypass']
+    features: ['Persistent storage', 'Auto-cleanup trigger', 'TTL expiry', 'Pure Supabase client']
   };
 }
 
