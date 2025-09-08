@@ -141,7 +141,8 @@ export const AnalyticsNewGeo: React.FC = () => {
   const processedData = React.useMemo(() => {
     if (!geoData?.countries) return null;
     
-    const countries = geoData.countries.filter(c => c.country !== 'Unknown');
+    // Include all countries (including Unknown) until geolocation is fully operational
+    const countries = geoData.countries;
     const totalSessions = countries.reduce((sum, c) => sum + c.sessions, 0);
     const totalVisitors = countries.reduce((sum, c) => sum + c.visitors, 0);
     

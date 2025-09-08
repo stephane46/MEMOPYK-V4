@@ -57,7 +57,7 @@ const defaultState: AnalyticsNewFilters = {
   customDateStart: '',
   customDateEnd: '',
   sinceDate: getYesterdayDate(), // Default to yesterday in Paris timezone
-  sinceDateEnabled: false, // Changed to false by default
+  sinceDateEnabled: true, // Enable start date filter by default
   language: 'all',
   country: 'all', 
   videoId: 'all',
