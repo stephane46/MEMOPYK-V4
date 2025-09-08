@@ -303,11 +303,75 @@ export const AnalyticsNewGeo: React.FC = () => {
             <Badge variant="outline">Interactive Map</Badge>
           </CardHeader>
           <CardContent>
-            <div className="h-80 flex items-center justify-center bg-gray-50 rounded-lg border">
-              <div className="text-center text-gray-500">
-                <BarChart3 className="h-12 w-12 mx-auto mb-2 text-gray-400" />
-                <div className="font-medium">World Map Loading</div>
-                <div className="text-sm">Geographic visualization will render here</div>
+            <div className="h-80 relative">
+              <ComposableMap
+                projection="geoMercator"
+                projectionConfig={{
+                  rotate: [0, 0, 0],
+                  scale: 120,
+                }}
+                width={800}
+                height={320}
+                className="w-full h-full"
+              >
+                <ZoomableGroup zoom={1}>
+                  <Geographies geography={geoUrl}>
+                    {({ geographies }) =>
+                      geographies.map(geo => {
+                        const countryName = geo.properties.NAME;
+                        const countryData = countries.find(c => 
+                          c.country.toLowerCase().includes(countryName.toLowerCase()) ||
+                          countryName.toLowerCase().includes(c.country.toLowerCase())
+                        );
+                        const sessions = countryData?.sessions || 0;
+                        const maxSessions = Math.max(...countries.map(c => c.sessions));
+                        const intensity = sessions > 0 ? sessions / maxSessions : 0;
+                        
+                        // Color scale from light blue to dark blue
+                        const colorScale = scaleSequential(interpolateBlues).domain([0, 1]);
+                        const fillColor = sessions > 0 ? colorScale(intensity) : '#f3f4f6';
+                        
+                        return (
+                          <Geography
+                            key={geo.rsmKey}
+                            geography={geo}
+                            fill={fillColor}
+                            stroke="#e2e8f0"
+                            strokeWidth={0.5}
+                            style={{
+                              default: { outline: "none" },
+                              hover: { 
+                                fill: sessions > 0 ? "#1e40af" : "#e5e7eb",
+                                outline: "none",
+                                cursor: "pointer"
+                              },
+                              pressed: { outline: "none" }
+                            }}
+                            onMouseEnter={() => {
+                              if (sessions > 0) {
+                                // Show tooltip logic could go here
+                              }
+                            }}
+                          />
+                        );
+                      })
+                    }
+                  </Geographies>
+                </ZoomableGroup>
+              </ComposableMap>
+              
+              {/* Map Legend */}
+              <div className="absolute bottom-2 left-2 bg-white p-2 rounded shadow-sm border text-xs">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-gray-200 rounded"></div>
+                  <span>No data</span>
+                  <div className="w-3 h-3" style={{ backgroundColor: interpolateBlues(0.3) }}></div>
+                  <span>Low</span>
+                  <div className="w-3 h-3" style={{ backgroundColor: interpolateBlues(0.7) }}></div>
+                  <span>High</span>
+                  <div className="w-3 h-3" style={{ backgroundColor: interpolateBlues(1) }}></div>
+                  <span>Max</span>
+                </div>
               </div>
             </div>
             <div className="mt-4 text-center">
