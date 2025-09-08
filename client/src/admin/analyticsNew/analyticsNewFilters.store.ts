@@ -50,7 +50,7 @@ const getYesterdayDate = () => {
   return DateTime.now().setZone(ZONE).minus({ days: 1 }).toFormat('yyyy-LL-dd');
 };
 
-const getTodayDate = () => new Date().toISOString().split('T')[0];
+// Removed unused getTodayDate function - using Paris timezone consistently
 
 const defaultState: AnalyticsNewFilters = {
   datePreset: 'today',
