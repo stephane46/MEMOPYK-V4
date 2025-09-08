@@ -1,5 +1,7 @@
-import React from 'react';
-import { Calendar, ChevronDown, Filter, X, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calendar, ChevronDown, Filter, X, Clock, CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -28,6 +30,9 @@ interface AnalyticsNewGlobalFiltersProps {
 export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps> = ({ 
   className = '' 
 }) => {
+  const [startCalendarOpen, setStartCalendarOpen] = useState(false);
+  const [endCalendarOpen, setEndCalendarOpen] = useState(false);
+  const [sinceCalendarOpen, setSinceCalendarOpen] = useState(false);
   const {
     datePreset,
     customDateStart,
@@ -95,81 +100,143 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
           {/* Custom Date Range - Show when custom is selected */}
           {datePreset === 'custom' && (
             <div className="flex gap-2 items-center">
-              <Input
-                type="text"
-                value={(() => {
-                  if (!customDateStart) return '';
-                  // If it's already in DD/MM/YYYY format, return as-is
-                  if (customDateStart.includes('/')) return customDateStart;
-                  // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
-                  const date = new Date(customDateStart);
-                  if (isNaN(date.getTime())) return customDateStart;
-                  const day = date.getDate().toString().padStart(2, '0');
-                  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                  const year = date.getFullYear();
-                  return `${day}/${month}/${year}`;
-                })()}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Allow typing - store the display value temporarily
-                  if (value.length <= 10) {
-                    // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
-                    const parts = value.split('/');
-                    if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
-                      const [day, month, year] = parts;
-                      if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
-                        const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                        setCustomDateRange(isoDate, customDateEnd);
-                        return;
+              {/* Start Date with Calendar */}
+              <div className="relative">
+                <Input
+                  type="text"
+                  value={(() => {
+                    if (!customDateStart) return '';
+                    // If it's already in DD/MM/YYYY format, return as-is
+                    if (customDateStart.includes('/')) return customDateStart;
+                    // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
+                    const date = new Date(customDateStart);
+                    if (isNaN(date.getTime())) return customDateStart;
+                    const day = date.getDate().toString().padStart(2, '0');
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                  })()}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Allow typing - store the display value temporarily
+                    if (value.length <= 10) {
+                      // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
+                      const parts = value.split('/');
+                      if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+                        const [day, month, year] = parts;
+                        if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
+                          const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                          setCustomDateRange(isoDate, customDateEnd);
+                          return;
+                        }
                       }
+                      // Otherwise store as display format for partial input
+                      setCustomDateRange(value, customDateEnd);
                     }
-                    // Otherwise store as display format for partial input
-                    setCustomDateRange(value, customDateEnd);
-                  }
-                }}
-                className="w-44"
-                data-testid="filter-custom-start"
-                placeholder="dd/mm/yyyy"
-                maxLength={10}
-              />
+                  }}
+                  className="w-44 pr-8"
+                  data-testid="filter-custom-start"
+                  placeholder="dd/mm/yyyy"
+                  maxLength={10}
+                />
+                <Dialog open={startCalendarOpen} onOpenChange={setStartCalendarOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
+                      data-testid="start-date-calendar-trigger"
+                    >
+                      <CalendarIcon className="h-4 w-4 text-gray-500" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="w-auto">
+                    <CalendarComponent
+                      mode="single"
+                      selected={customDateStart ? new Date(customDateStart.includes('/') ? 
+                        customDateStart.split('/').reverse().join('-') : customDateStart) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          const isoDate = date.toISOString().split('T')[0];
+                          setCustomDateRange(isoDate, customDateEnd);
+                        }
+                        setStartCalendarOpen(false);
+                      }}
+                      initialFocus
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+              
               <span className="text-sm text-gray-500">to</span>
-              <Input
-                type="text"
-                value={(() => {
-                  if (!customDateEnd) return '';
-                  // If it's already in DD/MM/YYYY format, return as-is
-                  if (customDateEnd.includes('/')) return customDateEnd;
-                  // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
-                  const date = new Date(customDateEnd);
-                  if (isNaN(date.getTime())) return customDateEnd;
-                  const day = date.getDate().toString().padStart(2, '0');
-                  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                  const year = date.getFullYear();
-                  return `${day}/${month}/${year}`;
-                })()}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Allow typing - store the display value temporarily
-                  if (value.length <= 10) {
-                    // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
-                    const parts = value.split('/');
-                    if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
-                      const [day, month, year] = parts;
-                      if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
-                        const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                        setCustomDateRange(customDateStart, isoDate);
-                        return;
+              
+              {/* End Date with Calendar */}
+              <div className="relative">
+                <Input
+                  type="text"
+                  value={(() => {
+                    if (!customDateEnd) return '';
+                    // If it's already in DD/MM/YYYY format, return as-is
+                    if (customDateEnd.includes('/')) return customDateEnd;
+                    // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
+                    const date = new Date(customDateEnd);
+                    if (isNaN(date.getTime())) return customDateEnd;
+                    const day = date.getDate().toString().padStart(2, '0');
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                  })()}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Allow typing - store the display value temporarily
+                    if (value.length <= 10) {
+                      // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
+                      const parts = value.split('/');
+                      if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+                        const [day, month, year] = parts;
+                        if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
+                          const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                          setCustomDateRange(customDateStart, isoDate);
+                          return;
+                        }
                       }
+                      // Otherwise store as display format for partial input
+                      setCustomDateRange(customDateStart, value);
                     }
-                    // Otherwise store as display format for partial input
-                    setCustomDateRange(customDateStart, value);
-                  }
-                }}
-                className="w-44"
-                data-testid="filter-custom-end"
-                placeholder="dd/mm/yyyy"
-                maxLength={10}
-              />
+                  }}
+                  className="w-44 pr-8"
+                  data-testid="filter-custom-end"
+                  placeholder="dd/mm/yyyy"
+                  maxLength={10}
+                />
+                <Dialog open={endCalendarOpen} onOpenChange={setEndCalendarOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
+                      data-testid="end-date-calendar-trigger"
+                    >
+                      <CalendarIcon className="h-4 w-4 text-gray-500" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="w-auto">
+                    <CalendarComponent
+                      mode="single"
+                      selected={customDateEnd ? new Date(customDateEnd.includes('/') ? 
+                        customDateEnd.split('/').reverse().join('-') : customDateEnd) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          const isoDate = date.toISOString().split('T')[0];
+                          setCustomDateRange(customDateStart, isoDate);
+                        }
+                        setEndCalendarOpen(false);
+                      }}
+                      initialFocus
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
           )}
 
