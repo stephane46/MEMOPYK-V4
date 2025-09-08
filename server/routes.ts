@@ -6630,7 +6630,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`📊 GA4 Trend request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
 
-      const data = await qTrendDaily(startDate, endDate, locale);
+      const data = await qTrend(startDate, endDate, locale);
       
       // Store in both persistent and memory cache (600s for trend - heavier query)
       await setDbCache(key, data, 600);
