@@ -63,13 +63,15 @@ const TrendCard: React.FC<TrendCardProps> = ({ title, value, trend, icon, descri
 const formatDate = (dateStr: string): string => {
   // Handle GA4 YYYYMMDD format (e.g., "20250906")
   if (dateStr && dateStr.length === 8 && /^\d{8}$/.test(dateStr)) {
-    const year = dateStr.substring(0, 4);
-    const month = dateStr.substring(4, 6);
-    const day = dateStr.substring(6, 8);
-    const date = new Date(`${year}-${month}-${day}`);
-    return date.toLocaleDateString('fr-FR', { 
-      day: '2-digit', 
-      month: '2-digit' 
+    const year = parseInt(dateStr.substring(0, 4));
+    const month = parseInt(dateStr.substring(4, 6)) - 1; // Month is 0-indexed
+    const day = parseInt(dateStr.substring(6, 8));
+    const date = new Date(year, month, day);
+    
+    // Use US format to match Overview consistency
+    return date.toLocaleDateString('en-US', { 
+      month: '2-digit', 
+      day: '2-digit' 
     });
   }
   
@@ -78,9 +80,9 @@ const formatDate = (dateStr: string): string => {
   if (isNaN(date.getTime())) {
     return dateStr; // Return original if parsing fails
   }
-  return date.toLocaleDateString('fr-FR', { 
-    day: '2-digit', 
-    month: '2-digit' 
+  return date.toLocaleDateString('en-US', { 
+    month: '2-digit', 
+    day: '2-digit' 
   });
 };
 
@@ -325,46 +327,46 @@ export const AnalyticsNewTrends: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">📈 Tendances</h2>
+          <h2 className="text-2xl font-bold text-gray-900">📈 Trends</h2>
           <p className="text-gray-600 mt-1">
-            Évolution des performances vidéo et engagement au fil du temps
+            Video performance evolution and engagement over time
           </p>
         </div>
         <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-          {datePreset === '7d' ? '7 derniers jours' : 
-           datePreset === '30d' ? '30 derniers jours' : '90 derniers jours'}
+          {datePreset === '7d' ? 'Last 7 days' : 
+           datePreset === '30d' ? 'Last 30 days' : 'Last 90 days'}
         </Badge>
       </div>
 
       {/* Trend Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <TrendCard
-          title="Vues Totales"
-          value={metrics.totalViews.current.toLocaleString('fr-FR')}
+          title="Total Views"
+          value={metrics.totalViews.current.toLocaleString('en-US')}
           trend={metrics.totalViews.trend}
           icon={<Eye className="h-4 w-4" />}
-          description="vs période précédente"
+          description="vs previous period"
         />
         <TrendCard
-          title="Visiteurs Uniques"
-          value={metrics.uniqueVisitors.current.toLocaleString('fr-FR')}
+          title="Unique Visitors"
+          value={metrics.uniqueVisitors.current.toLocaleString('en-US')}
           trend={metrics.uniqueVisitors.trend}
           icon={<Users className="h-4 w-4" />}
-          description="vs période précédente"
+          description="vs previous period"
         />
         <TrendCard
-          title="Temps Moyen"
+          title="Average Watch Time"
           value={formatWatchTime(metrics.averageWatchTime.current)}
           trend={metrics.averageWatchTime.trend}
           icon={<Clock className="h-4 w-4" />}
-          description="vs période précédente"
+          description="vs previous period"
         />
         <TrendCard
-          title="Taux Complétion"
+          title="Completion Rate"
           value={`${Math.round(metrics.completionRate.current)}%`}
           trend={metrics.completionRate.trend}
           icon={<Video className="h-4 w-4" />}
-          description="vs période précédente"
+          description="vs previous period"
         />
       </div>
 
@@ -374,10 +376,10 @@ export const AnalyticsNewTrends: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg font-semibold text-gray-900">
-                Évolution Temporelle
+                Time Series Evolution
               </CardTitle>
               <CardDescription className="text-gray-600">
-                Analyse des tendances par jour
+                Daily trend analysis
               </CardDescription>
             </div>
             <div className="flex gap-2">
@@ -391,7 +393,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                     : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
                 }`}
               >
-                Vues
+                Views
               </Button>
               <Button
                 variant={selectedMetric === 'visitors' ? 'default' : 'outline'}
@@ -403,7 +405,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                     : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
                 }`}
               >
-                Visiteurs
+                Visitors
               </Button>
               <Button
                 variant={selectedMetric === 'watchTime' ? 'default' : 'outline'}
@@ -415,7 +417,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                     : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
                 }`}
               >
-                Durée
+                Duration
               </Button>
               <Button
                 variant={selectedMetric === 'completion' ? 'default' : 'outline'}
@@ -427,7 +429,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                     : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
                 }`}
               >
-                Complétion
+                Completion
               </Button>
             </div>
           </div>
