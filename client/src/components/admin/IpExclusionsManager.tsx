@@ -264,6 +264,8 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                 value={sinceDate}
                 onChange={(e) => setSinceDate(e.target.value)}
                 className="w-40 border-orange-300 focus:border-orange-500 focus:ring-orange-500"
+                style={{ direction: 'ltr' }}
+                lang="fr-FR"
                 data-testid="since-date-picker"
               />
             </div>

@@ -100,6 +100,8 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 value={customDateStart}
                 onChange={(e) => setCustomDateRange(e.target.value, customDateEnd)}
                 className="w-44"
+                style={{ direction: 'ltr' }}
+                lang="fr-FR"
                 data-testid="filter-custom-start"
                 placeholder="Date de début"
               />
@@ -109,6 +111,8 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 value={customDateEnd}
                 onChange={(e) => setCustomDateRange(customDateStart, e.target.value)}
                 className="w-44"
+                style={{ direction: 'ltr' }}
+                lang="fr-FR"
                 data-testid="filter-custom-end"
                 placeholder="Date de fin"
               />
