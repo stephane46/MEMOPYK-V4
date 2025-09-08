@@ -151,7 +151,7 @@ export const AnalyticsNewTrends: React.FC = () => {
         console.warn('📈 TRENDS: Data is not array, checking for trends property');
         const trends = data.trends || data.daily || data;
         if (Array.isArray(trends)) {
-          return trends.map((item: any) => {
+          const mappedTrends = trends.map((item: any) => {
             const rawDate = item.date || item.day;
             return {
               date: rawDate,
@@ -163,11 +163,17 @@ export const AnalyticsNewTrends: React.FC = () => {
               videoViews: item.plays || item.videoViews || 0
             };
           });
+
+          // CRITICAL FIX: Sort data chronologically by date to prevent artifacts
+          return mappedTrends.sort((a, b) => {
+            // GA4 dates are in YYYYMMDD format, so string comparison works
+            return a.date.localeCompare(b.date);
+          });
         }
       }
       
       // If data is already an array
-      return (Array.isArray(data) ? data : []).map((item: any) => {
+      const mappedData = (Array.isArray(data) ? data : []).map((item: any) => {
         const rawDate = item.date || item.day;
         return {
           date: rawDate,
@@ -178,6 +184,12 @@ export const AnalyticsNewTrends: React.FC = () => {
           completionRate: item.completionRate || item.completion_rate || 0,
           videoViews: item.plays || item.videoViews || 0
         };
+      });
+
+      // CRITICAL FIX: Sort data chronologically by date to prevent artifacts
+      return mappedData.sort((a, b) => {
+        // GA4 dates are in YYYYMMDD format, so string comparison works
+        return a.date.localeCompare(b.date);
       });
     },
     refetchOnWindowFocus: false,
