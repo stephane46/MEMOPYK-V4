@@ -308,15 +308,49 @@ export async function qSiteLanguageChoice(start: string, end: string) {
   }
 }
 
-export async function qReturningUsers(start: string, end: string) {
+export async function qTotalUsers(start: string, end: string, locale?: string) {
+  console.log(`🎯 qTotalUsers CALLED: ${start} to ${end} - Getting unique visitors count`);
+  
+  const requestParams = {
+    property: PROPERTY,
+    dateRanges: [{ startDate: start, endDate: end }],
+    metrics: [{ name: "totalUsers" }],
+    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+  };
+
+  console.log(`🔍 GA4 EXACT REQUEST PARAMETERS (qTotalUsers):`, JSON.stringify(requestParams, null, 2));
+  
+  const timeoutPromise = new Promise<never>((_, reject) => 
+    setTimeout(() => reject(new Error('GA4 API timeout - qTotalUsers took too long')), 2000)
+  );
+  
+  const queryPromise = client.runReport(requestParams);
+  const [res] = await Promise.race([queryPromise, timeoutPromise]);
+  
+  const totalUsers = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
+  console.log(`✅ GA4 Response (qTotalUsers): ${totalUsers} total users (unique visitors)`);
+  return totalUsers;
+}
+
+export async function qReturningUsers(start: string, end: string, locale?: string) {
   console.log(`🎯 qReturningUsers CALLED: ${start} to ${end} - Getting returning visitor count`);
   
-  const [res] = await client.runReport({
+  const requestParams = {
     property: PROPERTY,
     dateRanges: [{ startDate: start, endDate: end }],
     metrics: [{ name: "activeUsers" }],
-    dimensions: [{ name: "newVsReturning" }]
-  });
+    dimensions: [{ name: "newVsReturning" }],
+    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+  };
+
+  console.log(`🔍 GA4 EXACT REQUEST PARAMETERS (qReturningUsers):`, JSON.stringify(requestParams, null, 2));
+  
+  const timeoutPromise = new Promise<never>((_, reject) => 
+    setTimeout(() => reject(new Error('GA4 API timeout - qReturningUsers took too long')), 2000)
+  );
+  
+  const queryPromise = client.runReport(requestParams);
+  const [res] = await Promise.race([queryPromise, timeoutPromise]);
 
   console.log(`🎯 qReturningUsers RAW RESPONSE:`, JSON.stringify(res.rows, null, 2));
 

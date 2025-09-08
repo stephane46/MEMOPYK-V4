@@ -25,6 +25,7 @@ import {
   qTopLanguages,
   qTopReferrers,
   qSiteLanguageChoice,
+  qTotalUsers,
   qReturningUsers,
   qPlaysByVideo,
   qWatchTimeByVideo,
@@ -5236,6 +5237,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       // Test each query individually to identify which is failing
       let plays = 0, completes = 0, totalWatch = 0, topLocale = { locale: "n/a", plays: 0 };
+      let totalUsers = 0, returningUsers = 0, sessions = 0;
 
       try {
         console.log('Testing qPlays...');
@@ -5282,6 +5284,37 @@ export async function registerRoutes(app: Express): Promise<void> {
         throw new Error(`qTopLanguages failed: ${(e as Error).message}`);
       }
 
+      // Fetch visitor metrics for Analytics New
+      try {
+        console.log('Testing qSessions...');
+        sessions = await Promise.race([qSessions(startDate, endDate, locale), timeoutPromise('qSessions')]);
+        console.log(`✅ qSessions: ${sessions}`);
+      } catch (e) {
+        console.error('❌ qSessions failed:', (e as Error).message);
+        sessions = plays; // Fallback to plays count
+        console.log(`⚠️ qSessions fallback: using plays count ${sessions}`);
+      }
+
+      try {
+        console.log('Testing qTotalUsers...');
+        totalUsers = await Promise.race([qTotalUsers(startDate, endDate, locale), timeoutPromise('qTotalUsers')]);
+        console.log(`✅ qTotalUsers: ${totalUsers}`);
+      } catch (e) {
+        console.error('❌ qTotalUsers failed:', (e as Error).message);
+        totalUsers = 0; // No fallback - use authentic GA4 data only
+        console.log(`⚠️ qTotalUsers fallback: ${totalUsers}`);
+      }
+
+      try {
+        console.log('Testing qReturningUsers...');
+        returningUsers = await Promise.race([qReturningUsers(startDate, endDate, locale), timeoutPromise('qReturningUsers')]);
+        console.log(`✅ qReturningUsers: ${returningUsers}`);
+      } catch (e) {
+        console.error('❌ qReturningUsers failed:', (e as Error).message);
+        returningUsers = 0; // No fallback - use authentic GA4 data only
+        console.log(`⚠️ qReturningUsers fallback: ${returningUsers}`);
+      }
+
       // CRITICAL FIX: Use ONLY authentic GA4 totalWatch data - NO estimations or calculations
       const avgWatchSeconds = (totalWatch > 0 && plays > 0) ? Math.round(totalWatch / plays) : 0;
       const completionRate = plays > 0 ? (completes / plays) * 100 : 0;
@@ -5289,10 +5322,15 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Transform into the expected KpisResponse format for frontend
       const data = {
         kpis: {
-          sessions: { value: plays, trend: [] }, // Using plays as sessions for now
+          // Existing technical metrics (Row 2)
+          sessions: { value: sessions, trend: [] }, // Actual GA4 sessions now
           plays: { value: plays, trend: [] },
           completions: { value: completes, trend: [] },
-          avgWatch: { value: avgWatchSeconds, trend: [] }
+          avgWatch: { value: avgWatchSeconds, trend: [] },
+          // New visitor-focused metrics (Row 1)
+          totalViews: { value: sessions, trend: [] }, // Total Views = GA4 sessions
+          uniqueVisitors: { value: totalUsers, trend: [] }, // Unique Visitors = GA4 totalUsers
+          returnVisitors: { value: returningUsers, trend: [] } // Return Visitors = GA4 returningUsers
         },
         timestamp: new Date().toISOString(),
         cached: false
