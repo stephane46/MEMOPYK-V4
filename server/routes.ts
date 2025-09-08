@@ -5252,13 +5252,16 @@ export async function registerRoutes(app: Express): Promise<void> {
       const avgWatchSeconds = (totalWatch > 0 && plays > 0) ? Math.round(totalWatch / plays) : 0;
       const completionRate = plays > 0 ? (completes / plays) * 100 : 0;
 
+      // Transform into the expected KpisResponse format for frontend
       const data = {
-        plays,
-        completes,
-        totals: { watchTimeSeconds: totalWatch },
-        avgWatchSeconds,
-        completionRate,
-        topLocale
+        kpis: {
+          sessions: { value: plays, trend: [] }, // Using plays as sessions for now
+          plays: { value: plays, trend: [] },
+          completions: { value: completes, trend: [] },
+          avgWatch: { value: avgWatchSeconds, trend: [] }
+        },
+        timestamp: new Date().toISOString(),
+        cached: false
       };
 
       console.log(`📊 FINAL GA4 KPIs DATA for ${key}:`, JSON.stringify(data, null, 2));
