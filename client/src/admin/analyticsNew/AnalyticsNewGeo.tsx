@@ -319,10 +319,12 @@ export const AnalyticsNewGeo: React.FC = () => {
                   <Geographies geography={geoUrl}>
                     {({ geographies }) =>
                       geographies.map(geo => {
-                        const countryName = geo.properties.NAME;
+                        const countryName = geo.properties?.NAME;
                         const countryData = countries.find(c => 
-                          c.country.toLowerCase().includes(countryName.toLowerCase()) ||
-                          countryName.toLowerCase().includes(c.country.toLowerCase())
+                          countryName && c.country && (
+                            c.country.toLowerCase().includes(countryName.toLowerCase()) ||
+                            countryName.toLowerCase().includes(c.country.toLowerCase())
+                          )
                         );
                         const sessions = countryData?.sessions || 0;
                         const maxSessions = Math.max(...countries.map(c => c.sessions));
