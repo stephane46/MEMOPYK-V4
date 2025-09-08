@@ -81,6 +81,8 @@ export default function ExportRangeControls({ report, className }: Props) {
         value={from ?? ""}
         onChange={(e) => setFrom(e.target.value || undefined)}
         className="h-9 rounded-md border px-2 text-sm"
+        style={{ direction: 'ltr' }}
+        lang="fr-FR"
         aria-label="From date"
       />
       <span className="text-sm text-muted-foreground">→</span>
@@ -89,6 +91,8 @@ export default function ExportRangeControls({ report, className }: Props) {
         value={to ?? ""}
         onChange={(e) => setTo(e.target.value || undefined)}
         className="h-9 rounded-md border px-2 text-sm"
+        style={{ direction: 'ltr' }}
+        lang="fr-FR"
         aria-label="To date"
       />
 

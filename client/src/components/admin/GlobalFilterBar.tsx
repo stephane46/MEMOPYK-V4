@@ -110,6 +110,8 @@ export default function GlobalFilterBar() {
           className={`h-9 rounded-md px-2 text-sm ${
             isFromManual ? 'date-input-selected' : 'date-input-default'
           }`}
+          style={{ direction: 'ltr' }}
+          lang="fr-FR"
           placeholder="From"
         />
         <span className="text-gray-500">→</span>
@@ -123,6 +125,8 @@ export default function GlobalFilterBar() {
           className={`h-9 rounded-md px-2 text-sm ${
             isToManual ? 'date-input-selected' : 'date-input-default'
           }`}
+          style={{ direction: 'ltr' }}
+          lang="fr-FR"
           placeholder="To"
         />
       </div>

@@ -679,7 +679,8 @@ export default function CleanGA4Analytics() {
                       value={customDateFrom}
                       onChange={(e) => setCustomDateFrom(e.target.value)}
                       className="h-11 border-slate-300 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-500 rounded-xl font-medium text-slate-700 dark:text-slate-300"
-                      lang="en-GB"
+                      lang="fr-FR"
+                      style={{ direction: 'ltr' }}
                       placeholder="dd/mm/yyyy"
                     />
                   </div>
@@ -693,7 +694,8 @@ export default function CleanGA4Analytics() {
                       value={customDateTo}
                       onChange={(e) => setCustomDateTo(e.target.value)}
                       className="h-11 border-slate-300 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-500 rounded-xl font-medium text-slate-700 dark:text-slate-300"
-                      lang="en-GB"
+                      lang="fr-FR"
+                      style={{ direction: 'ltr' }}
                       placeholder="dd/mm/yyyy"
                     />
                   </div>
