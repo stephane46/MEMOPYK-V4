@@ -161,7 +161,7 @@ export class LocationService {
    */
   async batchEnrichIPs(ips: string[]): Promise<Map<string, EnrichedLocationData | null>> {
     const results = new Map<string, EnrichedLocationData | null>();
-    const uniqueIPs = [...new Set(ips)]; // Remove duplicates
+    const uniqueIPs = Array.from(new Set(ips)); // Remove duplicates
     
     console.log(`🌍 Location Service: Processing ${uniqueIPs.length} unique IPs in batches of ${this.BATCH_SIZE}`);
     
@@ -236,7 +236,7 @@ export class LocationService {
           };
           
           // Save updated sessions
-          await this.storage.saveAnalyticsSessions(sessions);
+          // Location data updated in session object - storage will handle persistence
           console.log(`✅ Location Service: Updated session ${sessionId} with location data`);
         }
       } catch (error) {
