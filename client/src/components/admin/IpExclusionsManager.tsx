@@ -248,7 +248,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
               checked={sinceDateEnabled}
               onCheckedChange={setSinceDateEnabled}
               data-testid="since-date-toggle"
-              className="data-[state=checked]:bg-orange-600"
+              className="switch-orange"
             />
             <Label htmlFor="since-date-toggle" className="text-sm font-medium text-orange-700">
               Enable Start Date Filter
