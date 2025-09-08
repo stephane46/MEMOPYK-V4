@@ -387,11 +387,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                 variant={selectedMetric === 'views' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedMetric('views')}
-                className={`transition-all ${
-                  selectedMetric === 'views' 
-                    ? 'bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]' 
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
-                }`}
+                className={selectedMetric === 'views' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
               >
                 Views
               </Button>
@@ -399,11 +395,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                 variant={selectedMetric === 'visitors' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedMetric('visitors')}
-                className={`transition-all ${
-                  selectedMetric === 'visitors' 
-                    ? 'bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]' 
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
-                }`}
+                className={selectedMetric === 'visitors' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
               >
                 Visitors
               </Button>
@@ -411,11 +403,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                 variant={selectedMetric === 'watchTime' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedMetric('watchTime')}
-                className={`transition-all ${
-                  selectedMetric === 'watchTime' 
-                    ? 'bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]' 
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
-                }`}
+                className={selectedMetric === 'watchTime' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
               >
                 Duration
               </Button>
@@ -423,11 +411,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                 variant={selectedMetric === 'completion' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedMetric('completion')}
-                className={`transition-all ${
-                  selectedMetric === 'completion' 
-                    ? 'bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white border-[#D67C4A]' 
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-[#D67C4A]'
-                }`}
+                className={selectedMetric === 'completion' ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
               >
                 Completion
               </Button>
