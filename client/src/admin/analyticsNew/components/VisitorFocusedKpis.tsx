@@ -66,9 +66,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   const handleTotalViewsModalOpen = async () => {
     setIsTotalViewsModalOpen(true);
     setIsLoadingRecentVisitors(true);
-    // Fetch recent visitors data with fast mode (skip expensive location enrichment)
+    // Fetch recent visitors data (normal mode - should be fast after first load)
     try {
-      const response = await fetch('/api/analytics/recent-visitors?skipEnrichment=true');
+      const response = await fetch('/api/analytics/recent-visitors');
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
@@ -81,9 +81,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   const handleUniqueVisitorsModalOpen = async () => {
     setIsUniqueVisitorsModalOpen(true);
     setIsLoadingRecentVisitors(true);
-    // Fetch recent visitors data with fast mode (skip expensive location enrichment)
+    // Fetch recent visitors data (normal mode - should be fast after first load)
     try {
-      const response = await fetch('/api/analytics/recent-visitors?skipEnrichment=true');
+      const response = await fetch('/api/analytics/recent-visitors');
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
@@ -96,9 +96,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   const handleReturnVisitorsModalOpen = async () => {
     setIsReturnVisitorsModalOpen(true);
     setIsLoadingReturningVisitors(true);
-    // Fetch returning visitors data with fast mode (skip expensive location enrichment)
+    // Fetch returning visitors data (normal mode - should be fast after first load)
     try {
-      const response = await fetch('/api/analytics/returning-visitors?skipEnrichment=true');
+      const response = await fetch('/api/analytics/returning-visitors');
       const data = await response.json();
       setReturningVisitors(data);
     } catch (error) {
