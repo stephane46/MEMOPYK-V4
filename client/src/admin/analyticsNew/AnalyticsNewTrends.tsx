@@ -510,9 +510,9 @@ export const AnalyticsNewTrends: React.FC = () => {
                 <h4 className="text-sm font-medium text-gray-900 mb-1">
                   About this metric
                 </h4>
-                <p className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700">
                   {getMetricExplanation(selectedMetric)}
-                </p>
+                </div>
               </div>
             </div>
           </div>
@@ -527,16 +527,61 @@ const getMetricExplanation = (metric: string) => {
   
   switch (metric) {
     case 'sessions':
-      return "Website Sessions represent individual visits to your MEMOPYK site. Each session includes all page views and interactions during a single visit, helping you understand your site's reach and visitor engagement.";
+      return (
+        <>
+          <p className="mb-2">
+            Website Sessions represent individual visits to the site. Each session includes all page views and interactions during a single visit, helping you understand reach and visitor engagement patterns.
+          </p>
+          <p className="text-xs text-gray-600">
+            A session begins when someone arrives on the site and ends after 30 minutes of inactivity or when they close the browser. Multiple page views within this timeframe count as one session. If someone returns after the timeout, it starts a new session.
+          </p>
+        </>
+      );
     case 'visitors':
-      return "Unique Visitors shows the number of different people who visited your MEMOPYK website during the selected period. This metric helps you understand your actual audience size, as each person is counted only once regardless of how many times they visit.";
+      return (
+        <>
+          <p className="mb-2">
+            Unique Visitors shows the number of different people who visited the site during the selected period. This metric helps you understand actual audience size, as each person is counted only once regardless of how many times they visit.
+          </p>
+          <p className="text-xs text-gray-600">
+            Identification is based on browser cookies and device fingerprinting. The same person using different devices or browsers may be counted separately. Visitors who clear cookies will appear as new visitors on their next visit.
+          </p>
+        </>
+      );
     case 'watchTime':
     case 'duration':
-      return "Session Duration measures the average time visitors spend on your MEMOPYK website during each visit. Longer durations typically indicate higher engagement with your video portfolio and content, suggesting visitors are genuinely interested in your film creation services.";
+      return (
+        <>
+          <p className="mb-2">
+            Session Duration measures the average time visitors spend on the site during each visit. Longer durations typically indicate higher engagement with the video portfolio and content, suggesting genuine interest in the film creation services.
+          </p>
+          <p className="text-xs text-gray-600">
+            Duration is calculated from page load to the last recorded interaction (clicks, scrolls, video plays). Passive time like forgotten tabs doesn't count - sessions automatically timeout after 30 minutes of inactivity, preventing inflated numbers from zombie tabs.
+          </p>
+        </>
+      );
     case 'completion':
     case 'engagement':
-      return "Video Engagement tracks the percentage of visitors who actively interact with your video portfolio. This includes playing videos, watching significant portions, or engaging with video controls. High engagement suggests your portfolio effectively showcases your film creation capabilities.";
+      return (
+        <>
+          <p className="mb-2">
+            Video Engagement tracks the percentage of visitors who actively interact with the video portfolio. This includes playing videos, watching significant portions, or engaging with video controls. High engagement suggests the portfolio effectively showcases film creation capabilities.
+          </p>
+          <p className="text-xs text-gray-600">
+            Engagement is triggered by video play events, progress milestones (25%, 50%, 75%, completion), and control interactions. Only active engagement counts - autoplay views without user interaction are excluded to ensure meaningful engagement metrics.
+          </p>
+        </>
+      );
     default:
-      return "This metric provides insights into your website's performance and visitor behavior, helping you understand how effectively your MEMOPYK portfolio converts visitors into potential clients.";
+      return (
+        <>
+          <p className="mb-2">
+            This metric provides insights into website performance and visitor behavior, helping you understand how effectively the portfolio converts visitors into potential clients.
+          </p>
+          <p className="text-xs text-gray-600">
+            Data is collected through Google Analytics 4 with real-time processing. Metrics are filtered to exclude internal traffic and bot visits for accurate business intelligence.
+          </p>
+        </>
+      );
   }
 };
