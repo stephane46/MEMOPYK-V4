@@ -320,17 +320,47 @@ export const AnalyticsNewGeo: React.FC = () => {
                     {({ geographies }) =>
                       geographies.map(geo => {
                         const countryName = geo.properties?.NAME;
-                        const countryData = countries.find(c => 
-                          countryName && c.country && (
-                            c.country.toLowerCase().includes(countryName.toLowerCase()) ||
-                            countryName.toLowerCase().includes(c.country.toLowerCase())
-                          )
-                        );
+                        
+                        // Enhanced country name matching with common variations
+                        const countryData = countries.find(c => {
+                          if (!countryName || !c.country) return false;
+                          
+                          const geoNameLower = countryName.toLowerCase();
+                          const ga4NameLower = c.country.toLowerCase();
+                          
+                          // Direct match
+                          if (geoNameLower === ga4NameLower) return true;
+                          
+                          // Common country name mappings
+                          const countryMappings: Record<string, string[]> = {
+                            'vietnam': ['viet nam', 'vietnam'],
+                            'france': ['france', 'french republic'],
+                            'united states': ['united states of america', 'usa', 'us'],
+                            'united kingdom': ['uk', 'great britain', 'britain'],
+                            'germany': ['deutschland'],
+                          };
+                          
+                          // Check if either name appears in the other
+                          if (geoNameLower.includes(ga4NameLower) || ga4NameLower.includes(geoNameLower)) {
+                            return true;
+                          }
+                          
+                          // Check mapping variations
+                          for (const [key, variations] of Object.entries(countryMappings)) {
+                            if ((variations.includes(geoNameLower) && ga4NameLower === key) ||
+                                (variations.includes(ga4NameLower) && geoNameLower === key)) {
+                              return true;
+                            }
+                          }
+                          
+                          return false;
+                        });
+                        
                         const sessions = countryData?.sessions || 0;
                         
                         // Debug logging to understand country mapping
-                        if (countryName && sessions > 0) {
-                          console.log(`🗺️ MAP MATCH: "${countryName}" → "${countryData?.country}" (${sessions} sessions)`);
+                        if (countryName) {
+                          console.log(`🗺️ MAP: "${countryName}" → ${sessions > 0 ? `"${countryData?.country}" (${sessions} sessions)` : 'NO MATCH'}`);
                         }
                         const maxSessions = Math.max(...countries.map(c => c.sessions));
                         const intensity = sessions > 0 ? sessions / maxSessions : 0;
