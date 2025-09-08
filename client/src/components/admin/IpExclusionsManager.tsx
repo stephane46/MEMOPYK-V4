@@ -48,6 +48,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedExclusion, setSelectedExclusion] = useState<IpExclusion | null>(null);
   const [currentIpVisible, setCurrentIpVisible] = useState(false);
+  const [sinceCalendarOpen, setSinceCalendarOpen] = useState(false);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -260,43 +261,72 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
           {sinceDateEnabled && (
             <div className="flex items-center space-x-2">
               <Label className="text-sm text-orange-700">Since:</Label>
-              <Input
-                type="text"
-                value={(() => {
-                  if (!sinceDate) return '';
-                  // If it's already in DD/MM/YYYY format, return as-is
-                  if (sinceDate.includes('/')) return sinceDate;
-                  // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
-                  const date = new Date(sinceDate);
-                  if (isNaN(date.getTime())) return sinceDate;
-                  const day = date.getDate().toString().padStart(2, '0');
-                  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                  const year = date.getFullYear();
-                  return `${day}/${month}/${year}`;
-                })()}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Allow typing - store the display value temporarily
-                  if (value.length <= 10) {
-                    // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
-                    const parts = value.split('/');
-                    if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
-                      const [day, month, year] = parts;
-                      if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
-                        const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                        setSinceDate(isoDate);
-                        return;
+              <div className="relative">
+                <Input
+                  type="text"
+                  value={(() => {
+                    if (!sinceDate) return '';
+                    // If it's already in DD/MM/YYYY format, return as-is
+                    if (sinceDate.includes('/')) return sinceDate;
+                    // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
+                    const date = new Date(sinceDate);
+                    if (isNaN(date.getTime())) return sinceDate;
+                    const day = date.getDate().toString().padStart(2, '0');
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                  })()}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Allow typing - store the display value temporarily
+                    if (value.length <= 10) {
+                      // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
+                      const parts = value.split('/');
+                      if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+                        const [day, month, year] = parts;
+                        if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
+                          const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                          setSinceDate(isoDate);
+                          return;
+                        }
                       }
+                      // Otherwise store as display format for partial input
+                      setSinceDate(value);
                     }
-                    // Otherwise store as display format for partial input
-                    setSinceDate(value);
-                  }
-                }}
-                className="w-40 border-orange-300 focus:border-orange-500 focus:ring-orange-500"
-                data-testid="since-date-picker"
-                placeholder="dd/mm/yyyy"
-                maxLength={10}
-              />
+                  }}
+                  className="w-40 pr-8 border-orange-300 focus:border-orange-500 focus:ring-orange-500"
+                  data-testid="since-date-picker"
+                  placeholder="dd/mm/yyyy"
+                  maxLength={10}
+                />
+                <Dialog open={sinceCalendarOpen} onOpenChange={setSinceCalendarOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-orange-50"
+                      data-testid="since-date-calendar-trigger"
+                    >
+                      <CalendarIcon className="h-4 w-4 text-orange-500" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="w-auto">
+                    <CalendarComponent
+                      mode="single"
+                      selected={sinceDate ? new Date(sinceDate.includes('/') ? 
+                        sinceDate.split('/').reverse().join('-') : sinceDate) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          const isoDate = date.toISOString().split('T')[0];
+                          setSinceDate(isoDate);
+                        }
+                        setSinceCalendarOpen(false);
+                      }}
+                      initialFocus
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
           )}
         </div>
