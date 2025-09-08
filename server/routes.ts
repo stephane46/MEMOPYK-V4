@@ -2792,6 +2792,13 @@ export async function registerRoutes(app: Express): Promise<void> {
         });
       }
       
+      // DEBUG: Log IP addresses and their enrichment status
+      console.log('🔍 RECENT VISITORS DEBUG:');
+      enrichedVisitors.forEach(visitor => {
+        const enriched = visitor.country !== 'Unknown' && visitor.city !== 'Unknown';
+        console.log(`  IP: ${visitor.ip_address} | ${enriched ? '✅' : '🏴‍☠️'} | ${visitor.city}, ${visitor.country}`);
+      });
+      
       console.log(`✅ Recent Visitors: Found ${enrichedVisitors.length} unique visitors ${skipEnrichment === 'true' ? '(fast mode - no enrichment)' : '(enriched with location data)'}`);
       res.json(enrichedVisitors);
     } catch (error) {
@@ -2865,6 +2872,13 @@ export async function registerRoutes(app: Express): Promise<void> {
       let returningVisitors = Array.from(visitorMap.values())
         .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
         .slice(0, 50); // Take last 50 returning visitors
+      
+      // DEBUG: Log IP addresses and their enrichment status  
+      console.log('🔍 RETURNING VISITORS DEBUG:');
+      returningVisitors.forEach(visitor => {
+        const enriched = visitor.country !== 'Unknown' && visitor.city !== 'Unknown';
+        console.log(`  IP: ${visitor.ip_address} | ${enriched ? '✅' : '🏴‍☠️'} | ${visitor.city}, ${visitor.country}`);
+      });
       
       console.log(`✅ Returning Visitors: Found ${returningVisitors.length} returning visitors`);
       res.json(returningVisitors);
