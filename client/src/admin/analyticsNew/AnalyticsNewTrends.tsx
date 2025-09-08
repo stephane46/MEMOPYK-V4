@@ -68,9 +68,9 @@ const formatDate = (dateStr: string): string => {
     const day = parseInt(dateStr.substring(6, 8));
     const date = new Date(year, month, day);
     
-    // Use US format to match Overview consistency
+    // Use "Sep 05" format as requested
     return date.toLocaleDateString('en-US', { 
-      month: '2-digit', 
+      month: 'short', 
       day: '2-digit' 
     });
   }
@@ -81,7 +81,7 @@ const formatDate = (dateStr: string): string => {
     return dateStr; // Return original if parsing fails
   }
   return date.toLocaleDateString('en-US', { 
-    month: '2-digit', 
+    month: 'short', 
     day: '2-digit' 
   });
 };
@@ -89,11 +89,11 @@ const formatDate = (dateStr: string): string => {
 const formatTooltipDate = (dateStr: string): string => {
   // Handle GA4 YYYYMMDD format (e.g., "20250906")
   if (dateStr && dateStr.length === 8 && /^\d{8}$/.test(dateStr)) {
-    const year = dateStr.substring(0, 4);
-    const month = dateStr.substring(4, 6);
-    const day = dateStr.substring(6, 8);
-    const date = new Date(`${year}-${month}-${day}`);
-    return date.toLocaleDateString('fr-FR', {
+    const year = parseInt(dateStr.substring(0, 4));
+    const month = parseInt(dateStr.substring(4, 6)) - 1; // Month is 0-indexed
+    const day = parseInt(dateStr.substring(6, 8));
+    const date = new Date(year, month, day);
+    return date.toLocaleDateString('en-US', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -106,7 +106,7 @@ const formatTooltipDate = (dateStr: string): string => {
   if (isNaN(date.getTime())) {
     return dateStr; // Return original if parsing fails
   }
-  return date.toLocaleDateString('fr-FR', {
+  return date.toLocaleDateString('en-US', {
     weekday: 'long',
     day: '2-digit',
     month: 'long',
