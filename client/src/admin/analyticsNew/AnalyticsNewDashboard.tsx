@@ -177,7 +177,7 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
               {sinceDateEnabled && sinceDate && (
                 <Badge 
                   variant="outline" 
-                  className="bg-orange-50 border-orange-300 text-orange-800 text-sm font-medium cursor-pointer hover:bg-orange-100 transition-colors"
+                  className="seo-language-btn-active text-sm font-medium cursor-pointer transition-colors"
                   onClick={navigateToExclusions}
                   title="Hides data before this date in standard reports."
                   data-testid="since-badge"

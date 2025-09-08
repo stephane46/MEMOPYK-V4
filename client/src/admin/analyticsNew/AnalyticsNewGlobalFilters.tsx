@@ -247,7 +247,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 </Badge>
               )}
               {sinceDateEnabled && sinceDate && (
-                <Badge variant="outline" className="text-xs bg-orange-50 border-orange-200 text-orange-800">
+                <Badge variant="outline" className="text-xs seo-language-btn-active">
                   <Clock className="h-3 w-3 mr-1" />
                   Since: {sinceDate}
                   <X 
