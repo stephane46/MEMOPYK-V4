@@ -206,7 +206,7 @@ export const AnalyticsNewTrends: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Calculate trend metrics (show full period totals to match Overview)
+  // Calculate trend metrics with actual percentage changes
   const calculateTrendMetrics = () => {
     if (!trendData || trendData.length === 0) {
       return {
@@ -217,15 +217,18 @@ export const AnalyticsNewTrends: React.FC = () => {
       };
     }
 
-    // FIXED: Use full period data to match Overview instead of splitting in half
     const calculatePeriodSum = (period: TrendData[], metric: keyof TrendData) => {
       return period.reduce((sum, item) => sum + (item[metric] as number), 0);
     };
 
-    // Use all data for current totals (to match Overview behavior)
+    const calculatePercentageChange = (current: number, previous: number): number => {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return ((current - previous) / previous) * 100;
+    };
+
+    // Current period totals
     const currentViews = calculatePeriodSum(trendData, 'totalViews');
     const currentVisitors = calculatePeriodSum(trendData, 'uniqueVisitors');
-    
     const currentWatchTime = trendData.length > 0 
       ? calculatePeriodSum(trendData, 'averageWatchTime') / trendData.length
       : 0;
@@ -233,22 +236,32 @@ export const AnalyticsNewTrends: React.FC = () => {
       ? calculatePeriodSum(trendData, 'completionRate') / trendData.length
       : 0;
 
+    // Previous period totals  
+    const previousViews = calculatePeriodSum(trendData, 'previousTotalViews');
+    const previousVisitors = calculatePeriodSum(trendData, 'previousUniqueVisitors');
+    const previousWatchTime = trendData.length > 0 
+      ? calculatePeriodSum(trendData, 'previousAverageWatchTime') / trendData.length
+      : 0;
+    const previousCompletion = trendData.length > 0
+      ? calculatePeriodSum(trendData, 'previousCompletionRate') / trendData.length
+      : 0;
+
     return {
       totalViews: {
-        current: currentViews, // Full period total (matches Overview)
-        trend: 0 // Trend calculation removed for simplicity and consistency
+        current: currentViews,
+        trend: calculatePercentageChange(currentViews, previousViews)
       },
       uniqueVisitors: {
-        current: currentVisitors, // Full period total
-        trend: 0
+        current: currentVisitors,
+        trend: calculatePercentageChange(currentVisitors, previousVisitors)
       },
       averageWatchTime: {
-        current: currentWatchTime, // Average across full period
-        trend: 0
+        current: currentWatchTime,
+        trend: calculatePercentageChange(currentWatchTime, previousWatchTime)
       },
       completionRate: {
-        current: currentCompletion, // Average across full period
-        trend: 0
+        current: currentCompletion,
+        trend: calculatePercentageChange(currentCompletion, previousCompletion)
       }
     };
   };
