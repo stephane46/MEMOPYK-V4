@@ -11,6 +11,7 @@ import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Shield } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { DateTime } from 'luxon';
 import './analyticsNew.tokens.css';
 
 // Placeholder components for other tabs
@@ -86,9 +87,14 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
     queryKey: ['/api/admin/analytics/exclusions'],
   });
 
-  // Format date for display (YYYY-MM-DD for badges)
+  // Format date for display (DD MMMM YYYY French format)
   const formatSinceDateForBadge = (dateString: string): string => {
-    return dateString; // Use YYYY-MM-DD format as requested
+    try {
+      const date = DateTime.fromISO(dateString).setZone('Europe/Paris');
+      return date.setLocale('fr').toFormat('dd LLLL yyyy');
+    } catch (error) {
+      return dateString; // Fallback to original if parsing fails
+    }
   };
 
   // Get active IP exclusions count

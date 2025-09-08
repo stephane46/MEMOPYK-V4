@@ -18,6 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAnalyticsNewFilters, DATE_PRESETS, formatParisDateWindow } from './analyticsNewFilters.store';
+import { formatFrenchDate } from '@/utils/date-format';
 import './analyticsNew.tokens.css';
 
 interface AnalyticsNewGlobalFiltersProps {
@@ -98,16 +99,18 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 type="date"
                 value={customDateStart}
                 onChange={(e) => setCustomDateRange(e.target.value, customDateEnd)}
-                className="w-32"
+                className="w-44"
                 data-testid="filter-custom-start"
+                placeholder="Date de début"
               />
               <span className="text-sm text-gray-500">to</span>
               <Input
                 type="date"
                 value={customDateEnd}
                 onChange={(e) => setCustomDateRange(customDateStart, e.target.value)}
-                className="w-32"
+                className="w-44"
                 data-testid="filter-custom-end"
+                placeholder="Date de fin"
               />
             </div>
           )}
@@ -249,7 +252,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               {sinceDateEnabled && sinceDate && (
                 <Badge variant="outline" className="text-xs seo-language-btn-active">
                   <Clock className="h-3 w-3 mr-1" />
-                  Since: {sinceDate}
+                  Since: {formatFrenchDate(sinceDate)}
                   <X 
                     className="h-3 w-3 ml-1 cursor-pointer" 
                     onClick={() => setSinceDateEnabled(false)}
