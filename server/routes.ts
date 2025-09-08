@@ -1943,50 +1943,53 @@ export async function registerRoutes(app: Express): Promise<void> {
         return res.json(ga4RealtimeCache.data);
       }
       
-      // Get REAL active users from existing heartbeat tracking system
-      const currentSessions = [];
+      // Use existing GA4 Realtime API integration
+      const { BetaAnalyticsDataClient } = await import("@google-analytics/data");
       
-      // Clean up expired sessions and count only ACTIVELY WATCHING ones
-      for (const [sessionId, data] of Array.from(activeHeartbeats.entries())) {
-        if (now - data.lastSeen > HEARTBEAT_TTL) {
-          activeHeartbeats.delete(sessionId);
-        } else {
-          // Only count as "active" if video progress has advanced recently
-          const timeSinceLastSeen = now - data.lastSeen;
-          const hasRecentActivity = timeSinceLastSeen < 30000; // 30 seconds
-          
-          // Check if this is a video session (not just page visit) and recently active
-          if (data.sessionData.videoId && hasRecentActivity) {
-            currentSessions.push(data.sessionData);
-          }
-        }
-      }
+      // Initialize GA4 client with service account credentials
+      const client = new BetaAnalyticsDataClient({
+        credentials: JSON.parse(process.env.GA4_SERVICE_ACCOUNT_KEY!)
+      });
       
-      // Group by country and device from real session data
-      const byCountry = currentSessions.reduce((acc: any[], session) => {
-        const country = session.country || 'Unknown';
-        const existing = acc.find(c => c.country === country);
-        if (existing) {
-          existing.users++;
-        } else {
-          acc.push({ country, users: 1 });
-        }
-        return acc;
-      }, []).sort((a, b) => b.users - a.users).slice(0, 5);
+      const property = `properties/${process.env.GA4_PROPERTY_ID}`;
       
-      const byDevice = currentSessions.reduce((acc: any[], session) => {
-        const device = session.device || 'Unknown';
-        const existing = acc.find(d => d.device === device);
-        if (existing) {
-          existing.users++;
-        } else {
-          acc.push({ device, users: 1 });
-        }
-        return acc;
-      }, []).sort((a, b) => b.users - a.users);
+      // Get active users from GA4 Realtime API
+      const [activeUsersResponse] = await client.runRealtimeReport({
+        property,
+        metrics: [{ name: "activeUsers" }]
+      });
+      
+      // Get active users by country
+      const [countryResponse] = await client.runRealtimeReport({
+        property,
+        dimensions: [{ name: "country" }],
+        metrics: [{ name: "activeUsers" }],
+        orderBys: [{ metric: { metricName: "activeUsers" }, desc: true }],
+        limit: 5
+      });
+      
+      // Get active users by device category
+      const [deviceResponse] = await client.runRealtimeReport({
+        property,
+        dimensions: [{ name: "deviceCategory" }],
+        metrics: [{ name: "activeUsers" }],
+        orderBys: [{ metric: { metricName: "activeUsers" }, desc: true }]
+      });
+      
+      const activeUsers = Number(activeUsersResponse.rows?.[0]?.metricValues?.[0]?.value || 0);
+      
+      const byCountry = (countryResponse.rows || []).map(row => ({
+        country: row.dimensionValues?.[0]?.value || 'Unknown',
+        users: Number(row.metricValues?.[0]?.value || 0)
+      }));
+      
+      const byDevice = (deviceResponse.rows || []).map(row => ({
+        device: row.dimensionValues?.[0]?.value || 'Unknown',
+        users: Number(row.metricValues?.[0]?.value || 0)
+      }));
       
       const realData = {
-        activeUsers: currentSessions.length, // REAL count from heartbeat system
+        activeUsers,
         byCountry,
         byDevice,
         timestamp: new Date().toISOString(),
@@ -1995,7 +1998,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       // Cache the data
       ga4RealtimeCache = { data: { ...realData, cached: true }, timestamp: now };
-      console.log(`✅ GA4 Realtime using REAL heartbeat data: ${currentSessions.length} active users`);
+      console.log(`✅ GA4 Realtime using REAL GA4 API: ${activeUsers} active users`);
       
       res.json(realData);
     } catch (error) {
