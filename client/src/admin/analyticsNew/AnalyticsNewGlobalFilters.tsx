@@ -103,7 +103,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 style={{ direction: 'ltr' }}
                 lang="fr-FR"
                 data-testid="filter-custom-start"
-                placeholder="Date de début"
+                placeholder="dd/mm/yyyy"
               />
               <span className="text-sm text-gray-500">to</span>
               <Input
@@ -114,7 +114,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 style={{ direction: 'ltr' }}
                 lang="fr-FR"
                 data-testid="filter-custom-end"
-                placeholder="Date de fin"
+                placeholder="dd/mm/yyyy"
               />
             </div>
           )}

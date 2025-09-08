@@ -103,6 +103,14 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
     const todayParis = DateTime.now().setZone(ZONE).startOf('day');
     
     if (state.datePreset === 'custom') {
+      // If custom dates are empty, fallback to today
+      if (!state.customDateStart || !state.customDateEnd) {
+        const todayStr = todayParis.toFormat('yyyy-LL-dd');
+        return {
+          start: todayStr,
+          end: todayStr
+        };
+      }
       return {
         start: state.customDateStart,
         end: state.customDateEnd
@@ -167,35 +175,53 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
 export const formatParisDateWindow = (start: string, end: string): string => {
   const ZONE = 'Europe/Paris';
   
-  // Handle various input formats: YYYY-MM-DD, ISO strings, etc.
-  const parseDate = (dateStr: string) => {
-    // If it's already a valid ISO string, use it
-    if (dateStr.includes('T')) {
-      return DateTime.fromISO(dateStr).setZone(ZONE);
+  try {
+    // Handle empty or undefined inputs
+    if (!start || !end) {
+      console.warn('formatParisDateWindow: Missing dates', { start, end });
+      return 'Date manquante';
     }
-    // Otherwise assume YYYY-MM-DD format and convert to proper DateTime
-    const dt = DateTime.fromFormat(dateStr, 'yyyy-LL-dd', { zone: ZONE });
-    return dt.isValid ? dt : DateTime.fromISO(dateStr).setZone(ZONE);
-  };
-  
-  const startDate = parseDate(start);
-  const endDate = parseDate(end);
-  
-  // Check if parsing was successful
-  if (!startDate.isValid || !endDate.isValid) {
-    console.error('Invalid date format:', { start, end, startValid: startDate.isValid, endValid: endDate.isValid });
-    return 'Invalid DateTime';
-  }
-  
-  // French formatting: DD MMMM YYYY
-  const formatFrench = (date: DateTime) => date.setLocale('fr').toFormat('dd LLLL yyyy');
-  
-  if (start === end) {
-    // Single day
-    return formatFrench(startDate);
-  } else {
-    // Date range
-    return `${formatFrench(startDate)} – ${formatFrench(endDate)}`;
+    
+    // Handle various input formats: YYYY-MM-DD, ISO strings, etc.
+    const parseDate = (dateStr: string) => {
+      // If it's already a valid ISO string, use it
+      if (dateStr.includes('T')) {
+        return DateTime.fromISO(dateStr).setZone(ZONE);
+      }
+      // Otherwise assume YYYY-MM-DD format and convert to proper DateTime
+      const dt = DateTime.fromFormat(dateStr, 'yyyy-LL-dd', { zone: ZONE });
+      return dt.isValid ? dt : DateTime.fromISO(dateStr).setZone(ZONE);
+    };
+    
+    const startDate = parseDate(start);
+    const endDate = parseDate(end);
+    
+    // Check if parsing was successful
+    if (!startDate.isValid || !endDate.isValid) {
+      console.error('formatParisDateWindow: Invalid date format:', { 
+        start, 
+        end, 
+        startValid: startDate.isValid, 
+        endValid: endDate.isValid,
+        startError: startDate.invalidExplanation,
+        endError: endDate.invalidExplanation 
+      });
+      return `Dates invalides: ${start} - ${end}`;
+    }
+    
+    // French formatting: DD MMMM YYYY
+    const formatFrench = (date: DateTime) => date.setLocale('fr').toFormat('dd LLLL yyyy');
+    
+    if (start === end) {
+      // Single day
+      return formatFrench(startDate);
+    } else {
+      // Date range
+      return `${formatFrench(startDate)} – ${formatFrench(endDate)}`;
+    }
+  } catch (error) {
+    console.error('formatParisDateWindow: Exception:', error, { start, end });
+    return 'Erreur de formatage';
   }
 };
 
