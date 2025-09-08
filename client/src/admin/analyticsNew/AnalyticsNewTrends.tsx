@@ -4,7 +4,7 @@ import { TrendingUp, TrendingDown, Minus, Video, Clock, Users, Eye } from 'lucid
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart, ComposedChart } from 'recharts';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import './analyticsNew.tokens.css';
@@ -17,6 +17,11 @@ interface TrendData {
   averageWatchTime: number;
   completionRate: number;
   videoViews: number;
+  // Previous period data for comparison
+  previousTotalViews: number;
+  previousUniqueVisitors: number;
+  previousAverageWatchTime: number;
+  previousCompletionRate: number;
 }
 
 interface TrendCardProps {
@@ -178,11 +183,17 @@ export const AnalyticsNewTrends: React.FC = () => {
         return {
           date: rawDate,
           formattedDate: formatDate(rawDate),
-          totalViews: item.sessions || item.views || item.totalViews || 0, // FIXED: Use sessions instead of plays
-          uniqueVisitors: item.users || item.visitors || item.uniqueVisitors || 0, // FIXED: Use users from sessions data
-          averageWatchTime: item.avgSessionDuration || item.avg_watch_time || item.averageWatchTime || 0, // FIXED: Use session duration
-          completionRate: item.bounceRate || item.completion_rate || 0, // FIXED: Use bounce rate instead
-          videoViews: item.sessions || item.videoViews || 0 // FIXED: Use sessions
+          // Current period data (solid lines)
+          totalViews: item.sessions || item.views || item.totalViews || 0,
+          uniqueVisitors: item.users || item.visitors || item.uniqueVisitors || 0,
+          averageWatchTime: item.avgSessionDuration || item.avg_watch_time || item.averageWatchTime || 0,
+          completionRate: item.bounceRate || item.completion_rate || 0,
+          videoViews: item.sessions || item.videoViews || 0,
+          // Previous period data (dotted comparison lines)
+          previousTotalViews: item.previousSessions || 0,
+          previousUniqueVisitors: item.previousUsers || 0,
+          previousAverageWatchTime: item.previousAvgDuration || 0,
+          previousCompletionRate: item.previousBounceRate || 0
         };
       });
 
@@ -255,13 +266,29 @@ export const AnalyticsNewTrends: React.FC = () => {
     
     switch (selectedMetric) {
       case 'visitors':
-        return trendData.map(item => ({ ...item, value: item.uniqueVisitors }));
+        return trendData.map(item => ({ 
+          ...item, 
+          value: item.uniqueVisitors,
+          previousValue: item.previousUniqueVisitors
+        }));
       case 'watchTime':
-        return trendData.map(item => ({ ...item, value: item.averageWatchTime }));
+        return trendData.map(item => ({ 
+          ...item, 
+          value: item.averageWatchTime,
+          previousValue: item.previousAverageWatchTime
+        }));
       case 'completion':
-        return trendData.map(item => ({ ...item, value: item.completionRate }));
+        return trendData.map(item => ({ 
+          ...item, 
+          value: item.completionRate,
+          previousValue: item.previousCompletionRate
+        }));
       default:
-        return trendData.map(item => ({ ...item, value: item.totalViews }));
+        return trendData.map(item => ({ 
+          ...item, 
+          value: item.totalViews,
+          previousValue: item.previousTotalViews
+        }));
     }
   };
 
@@ -416,13 +443,7 @@ export const AnalyticsNewTrends: React.FC = () => {
         <CardContent>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={chartConfig.color} stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor={chartConfig.color} stopOpacity={0.05}/>
-                  </linearGradient>
-                </defs>
+              <ComposedChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis 
                   dataKey="formattedDate" 
@@ -443,7 +464,10 @@ export const AnalyticsNewTrends: React.FC = () => {
                     }
                     return value;
                   }}
-                  formatter={(value: number) => [chartConfig.format(value), chartConfig.label]}
+                  formatter={(value: number, name: string) => {
+                    const label = name === 'previousValue' ? `${chartConfig.label} (Previous Period)` : chartConfig.label;
+                    return [chartConfig.format(value), label];
+                  }}
                   contentStyle={{
                     backgroundColor: 'white',
                     border: '1px solid #e5e7eb',
@@ -451,14 +475,26 @@ export const AnalyticsNewTrends: React.FC = () => {
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                   }}
                 />
-                <Area
+                {/* Current period - solid line */}
+                <Line
                   type="monotone"
                   dataKey="value"
                   stroke={chartConfig.color}
-                  strokeWidth={2}
-                  fill="url(#colorGradient)"
+                  strokeWidth={3}
+                  dot={{ fill: chartConfig.color, strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: chartConfig.color }}
                 />
-              </AreaChart>
+                {/* Previous period - dotted line */}
+                <Line
+                  type="monotone"
+                  dataKey="previousValue"
+                  stroke={chartConfig.color}
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
+                  dot={{ fill: 'transparent', stroke: chartConfig.color, strokeWidth: 1, r: 3 }}
+                  opacity={0.7}
+                />
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
