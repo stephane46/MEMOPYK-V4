@@ -153,46 +153,27 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
       className={`analytics-new-container min-h-screen bg-[var(--analytics-new-background)] ${className}`}
       data-testid="analytics-new-dashboard"
     >
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      {/* Fixed Header Section - Not scrollable */}
+      <div className="sticky top-0 z-50 bg-[var(--analytics-new-background)] border-b border-gray-200">
+        <div className="max-w-7xl mx-auto p-6 pb-3">
+          {/* Compact Header */}
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-[var(--analytics-new-text)] flex items-center gap-3">
-                Analytics New Dashboard
+              <h1 className="text-xl font-bold text-[var(--analytics-new-text)] flex items-center gap-2">
+                Analytics Dashboard
                 <DataSourceBadge />
               </h1>
-              <p className="text-[var(--analytics-new-text-muted)] mt-1">
-                Comprehensive analytics platform for MEMOPYK
-              </p>
             </div>
-            {/* Compact Header Badges */}
-            <div className="flex items-center gap-2">
-              {/* Since Date Badge - Always visible when ON */}
+            {/* Compact Header Info */}
+            <div className="flex items-center gap-3 text-xs text-gray-600">
               {sinceDateEnabled && sinceDate && (
-                <Badge 
-                  variant="outline" 
-                  className="seo-language-btn-active text-sm font-medium cursor-pointer transition-colors"
-                  onClick={navigateToExclusions}
-                  title="Hides data before this date in standard reports."
-                  data-testid="since-badge"
-                >
-                  Since: {formatSinceDateForBadge(sinceDate)}
-                </Badge>
+                <span>Since: {formatSinceDateForBadge(sinceDate)}</span>
               )}
-              
-              {/* IP Exclusions Badge - Visible when ≥1 active rule */}
               {activeExclusionsCount > 0 && (
-                <Badge 
-                  variant="outline" 
-                  className="bg-gray-50 border-gray-300 text-gray-800 text-sm font-medium cursor-pointer hover:bg-gray-100 transition-colors"
-                  onClick={navigateToExclusions}
-                  title={`${activeExclusionsCount} active IP/CIDR exclusions (relay blocking future events).`}
-                  data-testid="ips-badge"
-                >
-                  <Shield className="h-3 w-3 mr-1" />
-                  IPs: {activeExclusionsCount}
-                </Badge>
+                <>
+                  <span>•</span>
+                  <span>IPs: {activeExclusionsCount}</span>
+                </>
               )}
             </div>
           </div>
@@ -202,12 +183,16 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <AnalyticsNewTabNavigation 
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-        />
+        <div className="max-w-7xl mx-auto px-6">
+          <AnalyticsNewTabNavigation 
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+          />
+        </div>
+      </div>
 
-        {/* Tab Content */}
+      {/* Scrollable Content */}
+      <div className="max-w-7xl mx-auto p-6 pt-0">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[400px]">
           {renderTabContent()}
         </div>
