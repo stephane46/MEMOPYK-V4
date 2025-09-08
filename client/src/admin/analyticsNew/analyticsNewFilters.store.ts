@@ -44,11 +44,10 @@ interface AnalyticsNewFiltersStore extends AnalyticsNewFilters {
   getActiveFilters: () => Partial<AnalyticsNewFilters>;
 }
 
-// Get yesterday's date in YYYY-MM-DD format
+// Get yesterday's date in YYYY-MM-DD format in Paris timezone
 const getYesterdayDate = () => {
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  return yesterday.toISOString().split('T')[0];
+  const ZONE = 'Europe/Paris';
+  return DateTime.now().setZone(ZONE).minus({ days: 1 }).toFormat('yyyy-LL-dd');
 };
 
 const getTodayDate = () => new Date().toISOString().split('T')[0];
@@ -57,8 +56,8 @@ const defaultState: AnalyticsNewFilters = {
   datePreset: 'today',
   customDateStart: '',
   customDateEnd: '',
-  sinceDate: getYesterdayDate(), // Default to yesterday
-  sinceDateEnabled: true, // Enabled by default
+  sinceDate: getYesterdayDate(), // Default to yesterday in Paris timezone
+  sinceDateEnabled: false, // Changed to false by default
   language: 'all',
   country: 'all', 
   videoId: 'all',
