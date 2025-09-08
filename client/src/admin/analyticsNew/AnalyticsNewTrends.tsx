@@ -85,14 +85,13 @@ export const AnalyticsNewTrends: React.FC = () => {
   const { datePreset, getDateRange } = useAnalyticsNewFilters();
   const { start, end } = getDateRange();
 
-  // Fetch trend data from GA4 API
+  // Fetch trend data from GA4 API (using existing endpoint)
   const { data: trendData, isLoading, error } = useQuery<TrendData[]>({
-    queryKey: ['/api/ga4/trends', start, end, selectedMetric],
+    queryKey: ['/api/ga4/trend', start, end, selectedMetric],
     queryFn: async () => {
-      const url = new URL('/api/ga4/trends', window.location.origin);
+      const url = new URL('/api/ga4/trend', window.location.origin);
       url.searchParams.set('startDate', start);
       url.searchParams.set('endDate', end);
-      url.searchParams.set('metric', selectedMetric);
       url.searchParams.set('locale', 'all');
 
       console.log('📈 TRENDS: Fetching trend data:', {
@@ -109,15 +108,34 @@ export const AnalyticsNewTrends: React.FC = () => {
       
       const data = await response.json();
       
-      // Transform data for charting
-      return data.map((item: any) => ({
-        date: item.date,
-        formattedDate: formatDate(item.date),
-        totalViews: item.totalViews || 0,
-        uniqueVisitors: item.uniqueVisitors || 0,
-        averageWatchTime: item.averageWatchTime || 0,
-        completionRate: item.completionRate || 0,
-        videoViews: item.videoViews || 0
+      // Transform data for charting (adjust based on actual GA4 trend data format)
+      console.log('📈 TRENDS: Raw data received:', data);
+      
+      if (!Array.isArray(data)) {
+        console.warn('📈 TRENDS: Data is not array, checking for trends property');
+        const trends = data.trends || data.daily || data;
+        if (Array.isArray(trends)) {
+          return trends.map((item: any) => ({
+            date: item.date || item.day,
+            formattedDate: formatDate(item.date || item.day),
+            totalViews: item.plays || item.views || item.totalViews || 0,
+            uniqueVisitors: item.visitors || item.uniqueVisitors || 0,
+            averageWatchTime: item.avg_watch_time || item.averageWatchTime || 0,
+            completionRate: item.completion_rate || item.completionRate || 0,
+            videoViews: item.plays || item.videoViews || 0
+          }));
+        }
+      }
+      
+      // If data is already an array
+      return (Array.isArray(data) ? data : []).map((item: any) => ({
+        date: item.date || item.day,
+        formattedDate: formatDate(item.date || item.day),
+        totalViews: item.plays || item.views || item.totalViews || 0,
+        uniqueVisitors: item.visitors || item.uniqueVisitors || 0,
+        averageWatchTime: item.avg_watch_time || item.averageWatchTime || 0,
+        completionRate: item.completion_rate || item.completionRate || 0,
+        videoViews: item.plays || item.videoViews || 0
       }));
     },
     refetchOnWindowFocus: false,
