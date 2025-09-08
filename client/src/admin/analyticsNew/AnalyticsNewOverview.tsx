@@ -249,11 +249,11 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       ];
     }
 
-    // Calculate changes and trends
-    const sessionsChange = calculateChange(kpis.sessions, previousKpis?.sessions || 0);
-    const playsChange = calculateChange(kpis.plays, previousKpis?.plays || 0);
-    const watchTimeChange = calculateChange(kpis.avgWatchTimeSec, previousKpis?.avgWatchTimeSec || 0);
-    const completionChange = calculateChange(kpis.completionRatePct, previousKpis?.completionRatePct || 0);
+    // Calculate changes and trends - extract values from API response objects
+    const sessionsChange = calculateChange(kpis.sessions?.value || 0, previousKpis?.sessions?.value || 0);
+    const playsChange = calculateChange(kpis.plays?.value || 0, previousKpis?.plays?.value || 0);
+    const watchTimeChange = calculateChange(kpis.avgWatch?.value || 0, previousKpis?.avgWatch?.value || 0);
+    const completionChange = calculateChange(kpis.completions?.value || 0, previousKpis?.completions?.value || 0);
 
     const getTrend = (change: number) => {
       if (Math.abs(change) < 1) return 'flat';
@@ -264,10 +264,10 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       {
         id: 'sessions',
         title: 'Total Sessions',
-        value: kpis.sessions,
+        value: kpis.sessions?.value || 0,
         change: sessionsChange,
         trend: getTrend(sessionsChange),
-        sparklineData: sparklines?.sessions || [],
+        sparklineData: kpis.sessions?.trend || [],
         icon: Users,
         color: 'blue',
         isLoading: false,
@@ -276,10 +276,10 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       {
         id: 'video-plays',
         title: 'Video Plays',
-        value: kpis.plays,
+        value: kpis.plays?.value || 0,
         change: playsChange,
         trend: getTrend(playsChange),
-        sparklineData: sparklines?.plays || [],
+        sparklineData: kpis.plays?.trend || [],
         icon: Video,
         color: 'green',
         isLoading: false,
@@ -288,10 +288,10 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       {
         id: 'avg-watch-time',
         title: 'Avg Watch Time',
-        value: formatWatchTime(kpis.avgWatchTimeSec),
+        value: formatWatchTime(kpis.avgWatch?.value || 0),
         change: watchTimeChange,
         trend: getTrend(watchTimeChange),
-        sparklineData: sparklines?.avgWatchTimeSec || [],
+        sparklineData: kpis.avgWatch?.trend || [],
         icon: Clock,
         color: 'orange',
         isLoading: false,
@@ -300,10 +300,10 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       {
         id: 'completion-rate',
         title: 'Completion Rate',
-        value: `${kpis.completionRatePct}%`,
+        value: kpis.completions?.value || 0,
         change: completionChange,
         trend: getTrend(completionChange),
-        sparklineData: sparklines?.completionRatePct || [],
+        sparklineData: kpis.completions?.trend || [],
         icon: Eye,
         color: 'red',
         isLoading: false,
