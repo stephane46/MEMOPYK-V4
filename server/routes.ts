@@ -2645,15 +2645,30 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Recent Visitors - GET last 10 visitor details for flip card  
+  // Recent Visitors - GET visitor details filtered by date range (for Analytics New eye icons)
   app.get("/api/analytics/recent-visitors", async (req, res) => {
     try {
-      const { dateFrom, dateTo, skipEnrichment } = req.query;
+      const { dateFrom, dateTo, skipEnrichment, datePreset } = req.query;
       
-      // Get recent sessions from last 7 days
+      console.log(`🔍 Recent Visitors Request: datePreset=${datePreset}, dateFrom=${dateFrom}, dateTo=${dateTo}`);
+      
+      // Handle datePreset parameter for Analytics New consistency
+      let startDate = dateFrom;
+      let endDate = dateTo;
+      
+      if (datePreset && !dateFrom && !dateTo) {
+        const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(
+          datePreset as string
+        );
+        startDate = calcStart;
+        endDate = calcEnd;
+        console.log(`📅 Date preset '${datePreset}' resolved to: ${startDate} to ${endDate}`);
+      }
+      
+      // Get sessions with proper date filtering
       const sessions = await hybridStorage.getAnalyticsSessions(
-        undefined, // Get broader range for recent data
-        undefined, // Get broader range for recent data 
+        startDate as string,
+        endDate as string,
         undefined
       );
       

@@ -327,6 +327,11 @@ export const AnalyticsNewGeo: React.FC = () => {
                           )
                         );
                         const sessions = countryData?.sessions || 0;
+                        
+                        // Debug logging to understand country mapping
+                        if (countryName && sessions > 0) {
+                          console.log(`🗺️ MAP MATCH: "${countryName}" → "${countryData?.country}" (${sessions} sessions)`);
+                        }
                         const maxSessions = Math.max(...countries.map(c => c.sessions));
                         const intensity = sessions > 0 ? sessions / maxSessions : 0;
                         
