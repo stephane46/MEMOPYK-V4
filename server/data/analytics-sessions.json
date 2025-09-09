@@ -71900,7 +71900,7 @@
     "city": "Monte Vista",
     "country_code": null,
     "created_at": "2025-09-08T13:31:49.602Z",
-    "updated_at": "2025-09-09T13:49:14.357Z",
+    "updated_at": "2025-09-09T13:51:02.554Z",
     "is_location_cache": true
   },
   {
@@ -71912,7 +71912,7 @@
     "city": "Warsaw",
     "country_code": null,
     "created_at": "2025-09-08T13:31:50.071Z",
-    "updated_at": "2025-09-09T13:48:13.678Z",
+    "updated_at": "2025-09-09T13:50:01.885Z",
     "is_location_cache": true
   },
   {
@@ -71924,7 +71924,7 @@
     "city": "London",
     "country_code": null,
     "created_at": "2025-09-08T13:31:50.096Z",
-    "updated_at": "2025-09-09T13:48:45.146Z",
+    "updated_at": "2025-09-09T13:52:33.575Z",
     "is_location_cache": true
   },
   {
@@ -71936,7 +71936,7 @@
     "city": "Mountain View",
     "country_code": null,
     "created_at": "2025-09-08T13:31:50.156Z",
-    "updated_at": "2025-09-09T13:49:49.860Z",
+    "updated_at": "2025-09-09T13:52:03.238Z",
     "is_location_cache": true
   },
   {
@@ -71948,7 +71948,7 @@
     "city": "Mountain View",
     "country_code": null,
     "created_at": "2025-09-08T13:31:50.254Z",
-    "updated_at": "2025-09-09T13:49:44.686Z",
+    "updated_at": "2025-09-09T13:51:32.900Z",
     "is_location_cache": true
   },
   {
@@ -71960,7 +71960,7 @@
     "city": "Sao Paulo",
     "country_code": null,
     "created_at": "2025-09-08T13:32:38.902Z",
-    "updated_at": "2025-09-09T13:50:00.958Z",
+    "updated_at": "2025-09-09T13:52:16.360Z",
     "is_location_cache": true
   },
   {
@@ -71972,7 +71972,7 @@
     "city": "Craigavon",
     "country_code": null,
     "created_at": "2025-09-08T13:32:38.940Z",
-    "updated_at": "2025-09-09T13:49:15.477Z",
+    "updated_at": "2025-09-09T13:53:03.918Z",
     "is_location_cache": true
   },
   {
@@ -71984,7 +71984,7 @@
     "city": "Toulouse",
     "country_code": null,
     "created_at": "2025-09-08T13:32:39.437Z",
-    "updated_at": "2025-09-09T13:49:45.811Z",
+    "updated_at": "2025-09-09T13:53:34.300Z",
     "is_location_cache": true
   },
   {
@@ -72008,7 +72008,7 @@
     "city": "Council Bluffs",
     "country_code": null,
     "created_at": "2025-09-09T09:49:59.852Z",
-    "updated_at": "2025-09-09T13:48:44.012Z",
+    "updated_at": "2025-09-09T13:50:32.214Z",
     "is_location_cache": true
   }
 ]
