@@ -126,8 +126,13 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       }
       
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
-      const data = await response.json();
-      setRecentVisitors(data);
+      const allData = await response.json();
+      
+      // Filter to match the Total Views count from GA4 KPIs
+      const totalViewsCount = totalViews?.value || 0;
+      const limitedData = allData.slice(0, totalViewsCount);
+      
+      setRecentVisitors(limitedData);
     } catch (error) {
       console.error('Failed to fetch recent visitors:', error);
     } finally {
@@ -151,8 +156,20 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       }
       
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
-      const data = await response.json();
-      setRecentVisitors(data);
+      const allData = await response.json();
+      
+      // Filter to show unique visitors only (deduplicate by IP address)
+      const uniqueVisitorsCount = uniqueVisitors?.value || 0;
+      const seenIPs = new Set();
+      const uniqueData = allData.filter((visitor: any) => {
+        if (seenIPs.has(visitor.ip_address)) {
+          return false;
+        }
+        seenIPs.add(visitor.ip_address);
+        return true;
+      }).slice(0, uniqueVisitorsCount);
+      
+      setRecentVisitors(uniqueData);
     } catch (error) {
       console.error('Failed to fetch recent visitors:', error);
     } finally {
@@ -175,9 +192,26 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         calcEndDate = dateRange.endDate;
       }
       
-      const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}&type=returning`);
-      const data = await response.json();
-      setReturningVisitors(data);
+      const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
+      const allData = await response.json();
+      
+      // Filter to show returning visitors only (simulate return visitor detection)
+      // For now, we'll show visitors that appear multiple times in the dataset
+      const returnVisitorsCount = returnVisitors?.value || 0;
+      const ipCounts = new Map();
+      
+      // Count visits per IP
+      allData.forEach((visitor: any) => {
+        const count = ipCounts.get(visitor.ip_address) || 0;
+        ipCounts.set(visitor.ip_address, count + 1);
+      });
+      
+      // Filter visitors that have multiple visits (returning visitors)
+      const returningData = allData.filter((visitor: any) => 
+        ipCounts.get(visitor.ip_address) > 1
+      ).slice(0, returnVisitorsCount);
+      
+      setReturningVisitors(returningData);
     } catch (error) {
       console.error('Failed to fetch returning visitors:', error);
     } finally {
