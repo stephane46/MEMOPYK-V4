@@ -6,7 +6,7 @@ export default function ClarityRouteListener() {
 
   useEffect(() => {
     // Don't run Clarity on admin pages
-    if (location.startsWith('/admin') || location.startsWith('/fr-FR/admin')) return;
+    if (location.startsWith('/admin') || location.startsWith('/fr-FR/admin') || location.startsWith('/en-US/admin')) return;
     
     if (typeof window === "undefined" || !(window as any).clarity) return;
 

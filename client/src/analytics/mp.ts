@@ -15,7 +15,9 @@ export async function mpSend(
   params: Record<string, any>
 ) {
   // Skip on admin pages
-  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
+                  window.location.pathname.startsWith('/en-US/admin') || 
+                  window.location.pathname.startsWith('/admin');
   if (isAdmin) {
     console.log(`[MP] Skipped ${name} - admin page detected`);
     return;

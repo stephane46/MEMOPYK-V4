@@ -40,7 +40,9 @@ export function initTestMode() {
 // Track page views on route changes (SPA navigation)
 export function sendPageView() {
   // Don't track on admin pages
-  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
+                  window.location.pathname.startsWith('/en-US/admin') || 
+                  window.location.pathname.startsWith('/admin');
   if (isAdmin) return;
   
   if (typeof window === 'undefined' || !window.gtag) return;
@@ -66,7 +68,9 @@ export const trackEvent = (
   value?: number
 ) => {
   // Don't track on admin pages
-  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
+                  window.location.pathname.startsWith('/en-US/admin') || 
+                  window.location.pathname.startsWith('/admin');
   if (isAdmin) return;
   
   if (typeof window === 'undefined' || !window.gtag) return;
@@ -88,7 +92,9 @@ export const trackEvent = (
 // GA4 Standardized Video Events for BigQuery Export
 export const trackVideoStart = (videoId: string, videoTitle?: string, locale?: string) => {
   // Don't track on admin pages
-  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
+                  window.location.pathname.startsWith('/en-US/admin') || 
+                  window.location.pathname.startsWith('/admin');
   if (isAdmin) return;
   
   if (typeof window === 'undefined' || !window.gtag) return;
@@ -105,7 +111,9 @@ export const trackVideoStart = (videoId: string, videoTitle?: string, locale?: s
 
 export const trackVideoProgress = (videoId: string, progressPercent: number, currentTimeSeconds: number, videoTitle?: string, locale?: string) => {
   // Don't track on admin pages
-  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
+                  window.location.pathname.startsWith('/en-US/admin') || 
+                  window.location.pathname.startsWith('/admin');
   if (isAdmin) return;
   
   if (typeof window === 'undefined' || !window.gtag) return;
@@ -124,7 +132,9 @@ export const trackVideoProgress = (videoId: string, progressPercent: number, cur
 
 export const trackVideoComplete = (videoId: string, watchTimeSeconds: number, videoTitle?: string, locale?: string) => {
   // Don't track on admin pages
-  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
+                  window.location.pathname.startsWith('/en-US/admin') || 
+                  window.location.pathname.startsWith('/admin');
   if (isAdmin) return;
   
   if (typeof window === 'undefined' || !window.gtag) return;
@@ -143,7 +153,9 @@ export const trackVideoComplete = (videoId: string, watchTimeSeconds: number, vi
 
 export const trackVideoPause = (videoId: string, progressPercent: number, currentTimeSeconds: number, videoTitle?: string, locale?: string) => {
   // Don't track on admin pages
-  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
+                  window.location.pathname.startsWith('/en-US/admin') || 
+                  window.location.pathname.startsWith('/admin');
   if (isAdmin) return;
   
   if (typeof window === 'undefined' || !window.gtag) return;
@@ -163,7 +175,9 @@ export const trackVideoPause = (videoId: string, progressPercent: number, curren
 // GA4 Standardized CTA Click Events for BigQuery Export
 export const trackCtaClick = (ctaId: string, pagePath?: string, locale?: string) => {
   // Don't track on admin pages
-  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
+                  window.location.pathname.startsWith('/en-US/admin') || 
+                  window.location.pathname.startsWith('/admin');
   if (isAdmin) return;
   
   if (typeof window === 'undefined' || !window.gtag) return;
@@ -225,7 +239,9 @@ function waitForGA4Ready(maxWaitMs = 3000): Promise<boolean> {
 // Centralized GA4 fire function with transport reliability and debug HUD support
 export function fireGA(eventName: string, params: any = {}) {
   // Don't track on admin pages
-  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || window.location.pathname.startsWith('/admin');
+  const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
+                  window.location.pathname.startsWith('/en-US/admin') || 
+                  window.location.pathname.startsWith('/admin');
   if (isAdmin) {
     console.log('[GA4] SKIPPED - Admin page detected:', window.location.pathname);
     return;
