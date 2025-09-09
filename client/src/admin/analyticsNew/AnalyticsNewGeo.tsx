@@ -370,17 +370,28 @@ export const AnalyticsNewGeo: React.FC = () => {
                         });
                         
                         const sessions = countryData?.sessions || 0;
-                        
-                        // Debug logging to understand country mapping
-                        if (countryName) {
-                          console.log(`🗺️ MAP: "${countryName}" → ${sessions > 0 ? `"${countryData?.country}" (${sessions} sessions)` : 'NO MATCH'}`);
-                        }
                         const maxSessions = Math.max(...countries.map(c => c.sessions));
                         const intensity = sessions > 0 ? sessions / maxSessions : 0;
                         
                         // Color scale from light blue to dark blue
                         const colorScale = scaleSequential(interpolateBlues).domain([0, 1]);
                         const fillColor = sessions > 0 ? colorScale(intensity) : '#f3f4f6';
+                        
+                        // Debug logging to understand country mapping
+                        if (countryName) {
+                          console.log(`🗺️ MAP: "${countryName}" → ${sessions > 0 ? `"${countryData?.country}" (${sessions} sessions)` : 'NO MATCH'}`);
+                        }
+                        
+                        // Debug map interactivity
+                        if (countryName === 'France') {
+                          console.log('🇫🇷 FRANCE MAP DEBUG:', {
+                            countryName,
+                            countryData,
+                            sessions,
+                            fillColor,
+                            hasTooltipHandlers: true
+                          });
+                        }
                         
                         return (
                           <Geography
@@ -400,8 +411,10 @@ export const AnalyticsNewGeo: React.FC = () => {
                               pressed: { outline: "none" }
                             }}
                             onMouseEnter={(event) => {
+                              console.log('🖱️ MOUSE ENTER:', countryName, { sessions, countryData });
                               if (sessions > 0 && countryData) {
                                 const engagementRate = Math.round((countryData.sessions / countryData.visitors) * 100);
+                                console.log('✨ SHOWING TOOLTIP for', countryData.country);
                                 setTooltip({
                                   show: true,
                                   content: `${countryData.country}\n${countryData.sessions.toLocaleString()} sessions\n${countryData.visitors.toLocaleString()} visitors\n${engagementRate}% engagement`,
