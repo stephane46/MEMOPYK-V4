@@ -508,7 +508,7 @@ export const AnalyticsNewGeo: React.FC = () => {
             <div className="space-y-1 max-h-80 overflow-y-auto">
               {countries.slice(0, 10).map((country, index) => (
                 <CountryRow
-                  key={country.country}
+                  key={`${country.country}-${index}-${country.sessions}-${country.visitors}`}
                   rank={index + 1}
                   country={country.country}
                   sessions={country.sessions}
