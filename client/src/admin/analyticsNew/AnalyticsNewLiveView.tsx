@@ -236,8 +236,8 @@ export const AnalyticsNewLiveView: React.FC = () => {
             <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
               Active Users by Country
             </h3>
-            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-              Private Log
+            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 font-medium">
+              MEMOPYK
             </Badge>
           </div>
           
@@ -282,8 +282,8 @@ export const AnalyticsNewLiveView: React.FC = () => {
             <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
               Active Users by Device
             </h3>
-            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-              Private Log
+            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 font-medium">
+              MEMOPYK
             </Badge>
           </div>
           
@@ -333,8 +333,8 @@ export const AnalyticsNewLiveView: React.FC = () => {
             <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
               Recent Visitors
             </h3>
-            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-              Private Log
+            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 font-medium">
+              MEMOPYK
             </Badge>
           </div>
           
@@ -445,6 +445,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
             <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
               Currently Watching
             </h3>
+            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 font-medium">
+              MEMOPYK
+            </Badge>
             {watchingData && (
               <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm">
                 {watchingData.totalActive} active sessions
