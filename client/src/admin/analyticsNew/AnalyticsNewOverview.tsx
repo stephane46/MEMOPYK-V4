@@ -53,7 +53,7 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   // Get GA4 KPIs data based on current filters (using same pattern as working 7d/30d/90d filters)
   const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
     queryKey: ['/api/ga4/kpis', start, end, sinceDateEnabled ? sinceDate : null],
-    enabled: !!(start && end), // Only run query when dates are available
+    enabled: !!(start && end && start.length > 0 && end.length > 0), // Only run query when dates are available and non-empty
     queryFn: async () => {
       // Use same pattern as existing working filters: startDate/endDate parameters
       const url = new URL('/api/ga4/kpis', window.location.origin);
