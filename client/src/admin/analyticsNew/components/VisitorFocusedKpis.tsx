@@ -367,6 +367,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                     >
+                      {/* Card Title */}
+                      <div className="mb-4 pb-2 border-b border-gray-300">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Visitor from {visitor.country || 'Unknown Location'}
+                        </h3>
+                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -481,6 +487,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                     >
+                      {/* Card Title */}
+                      <div className="mb-4 pb-2 border-b border-gray-300">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Visitor from {visitor.country || 'Unknown Location'}
+                        </h3>
+                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -595,6 +607,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                     >
+                      {/* Card Title */}
+                      <div className="mb-4 pb-2 border-b border-gray-300">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Visitor from {visitor.country || 'Unknown Location'}
+                        </h3>
+                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
