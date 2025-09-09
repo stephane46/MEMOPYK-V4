@@ -408,7 +408,6 @@ export const AnalyticsNewGeo: React.FC = () => {
                                   y: event.clientY
                                 });
                                 // Set legend highlight based on country's intensity
-                                console.log('🟠 HOVER SET:', countryData.country, 'intensity:', intensity);
                                 setHoveredIntensity(intensity);
                               }
                             }}
@@ -436,25 +435,22 @@ export const AnalyticsNewGeo: React.FC = () => {
                   <span className="text-xs text-gray-500">Low</span>
                   <div className="flex space-x-1">
                     {[0.2, 0.4, 0.6, 0.8, 1.0].map((intensity, index) => {
-                      const isHighlighted = hoveredIntensity !== null && 
-                        Math.abs(hoveredIntensity - intensity) < 0.25;
-                      const bgColors = ['bg-blue-200', 'bg-blue-300', 'bg-blue-400', 'bg-blue-600', 'bg-blue-800'];
-                      
-                      if (isHighlighted) {
-                        console.log('🟠 HIGHLIGHTED SQUARE:', index, 'intensity:', intensity, 'hovered:', hoveredIntensity);
+                      // Find the closest intensity match (only highlight the single closest one)
+                      let isHighlighted = false;
+                      if (hoveredIntensity !== null) {
+                        const distances = [0.2, 0.4, 0.6, 0.8, 1.0].map(i => Math.abs(hoveredIntensity - i));
+                        const closestIndex = distances.indexOf(Math.min(...distances));
+                        isHighlighted = index === closestIndex;
                       }
+                      
+                      const bgColors = ['bg-blue-200', 'bg-blue-300', 'bg-blue-400', 'bg-blue-600', 'bg-blue-800'];
                       
                       return (
                         <div
                           key={index}
-                          className={`w-4 h-4 transition-all duration-200 ${bgColors[index]} ${
-                            isHighlighted 
-                              ? 'border-4' 
-                              : 'border border-gray-200'
-                          }`}
+                          className={`w-4 h-4 transition-all duration-200 ${bgColors[index]} border-2`}
                           style={{
-                            borderColor: isHighlighted ? '#ff7b00' : '#e5e7eb',
-                            borderWidth: isHighlighted ? '4px' : '1px'
+                            borderColor: isHighlighted ? '#f97316' : '#e5e7eb'
                           }}
                         />
                       );
