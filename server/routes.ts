@@ -3135,7 +3135,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         await new Promise(resolve => setTimeout(resolve, 300));
       }
       
-      const cacheStats = locationService.getCacheStats();
+      const cacheStats = locationService.getStats();
       
       res.json({
         success: true,
