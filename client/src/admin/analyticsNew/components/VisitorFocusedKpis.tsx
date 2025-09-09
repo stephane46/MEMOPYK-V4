@@ -62,13 +62,58 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
 
   const { totalViews, uniqueVisitors, returnVisitors } = data.kpis;
 
+  // Helper function to calculate date range from preset
+  const getDateRangeFromPreset = (preset: string) => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    switch (preset) {
+      case 'today':
+        return {
+          startDate: today.toISOString().slice(0, 10),
+          endDate: today.toISOString().slice(0, 10)
+        };
+      case 'yesterday':
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+        return {
+          startDate: yesterday.toISOString().slice(0, 10),
+          endDate: yesterday.toISOString().slice(0, 10)
+        };
+      case '7d':
+        const sevenDaysAgo = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000);
+        return {
+          startDate: sevenDaysAgo.toISOString().slice(0, 10),
+          endDate: today.toISOString().slice(0, 10)
+        };
+      case '30d':
+        const thirtyDaysAgo = new Date(today.getTime() - 29 * 24 * 60 * 60 * 1000);
+        return {
+          startDate: thirtyDaysAgo.toISOString().slice(0, 10),
+          endDate: today.toISOString().slice(0, 10)
+        };
+      case '90d':
+        const ninetyDaysAgo = new Date(today.getTime() - 89 * 24 * 60 * 60 * 1000);
+        return {
+          startDate: ninetyDaysAgo.toISOString().slice(0, 10),
+          endDate: today.toISOString().slice(0, 10)
+        };
+      default:
+        const defaultSevenDaysAgo = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000);
+        return {
+          startDate: defaultSevenDaysAgo.toISOString().slice(0, 10),
+          endDate: today.toISOString().slice(0, 10)
+        };
+    }
+  };
+
   // Modal handlers
   const handleTotalViewsModalOpen = async () => {
     setIsTotalViewsModalOpen(true);
     setIsLoadingRecentVisitors(true);
-    // Fetch recent visitors data (normal mode - should be fast after first load)
+    // Fetch recent visitors data using explicit date range
     try {
-      const response = await fetch(`/api/private-log/visitor-details?datePreset=${preset}`);
+      const { startDate, endDate } = getDateRangeFromPreset(preset);
+      const response = await fetch(`/api/private-log/visitor-details?startDate=${startDate}&endDate=${endDate}`);
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
@@ -81,9 +126,10 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   const handleUniqueVisitorsModalOpen = async () => {
     setIsUniqueVisitorsModalOpen(true);
     setIsLoadingRecentVisitors(true);
-    // Fetch recent visitors data (normal mode - should be fast after first load)
+    // Fetch recent visitors data using explicit date range
     try {
-      const response = await fetch(`/api/private-log/visitor-details?datePreset=${preset}`);
+      const { startDate, endDate } = getDateRangeFromPreset(preset);
+      const response = await fetch(`/api/private-log/visitor-details?startDate=${startDate}&endDate=${endDate}`);
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
@@ -96,9 +142,10 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   const handleReturnVisitorsModalOpen = async () => {
     setIsReturnVisitorsModalOpen(true);
     setIsLoadingReturningVisitors(true);
-    // Fetch returning visitors data (normal mode - should be fast after first load)
+    // Fetch returning visitors data using explicit date range
     try {
-      const response = await fetch(`/api/private-log/visitor-details?datePreset=${preset}&type=returning`);
+      const { startDate, endDate } = getDateRangeFromPreset(preset);
+      const response = await fetch(`/api/private-log/visitor-details?startDate=${startDate}&endDate=${endDate}&type=returning`);
       const data = await response.json();
       setReturningVisitors(data);
     } catch (error) {

@@ -5264,17 +5264,27 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       console.log(`🔍 Private Log Visitor Details Request: datePreset=${datePreset}, startDate=${startDate}, endDate=${endDate}`);
       
-      // Handle datePreset parameter for consistency with GA4 endpoints
+      // Handle datePreset parameter for consistency with GA4 endpoints OR explicit dates
       let calcStartDate = startDate;
       let calcEndDate = endDate;
       
-      if (datePreset && !startDate && !endDate) {
-        const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(
-          datePreset as string
-        );
-        calcStartDate = calcStart;
-        calcEndDate = calcEnd;
-        console.log(`📅 Private Log Date preset '${datePreset}' resolved to: ${calcStartDate} to ${calcEndDate}`);
+      if (!startDate || !endDate) {
+        if (datePreset) {
+          const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(
+            datePreset as string
+          );
+          calcStartDate = calcStart;
+          calcEndDate = calcEnd;
+          console.log(`📅 Private Log Date preset '${datePreset}' resolved to: ${calcStartDate} to ${calcEndDate}`);
+        } else {
+          // Default to last 7 days if no dates or preset provided
+          const { startDate: calcStart, endDate: calcEnd } = calculateDateRange("7d");
+          calcStartDate = calcStart;
+          calcEndDate = calcEnd;
+          console.log(`📅 Private Log Default to 7d: ${calcStartDate} to ${calcEndDate}`);
+        }
+      } else {
+        console.log(`📅 Private Log Using explicit dates: ${calcStartDate} to ${calcEndDate}`);
       }
       
       // Get analytics sessions from private log (Supabase) with IP exclusion filtering
