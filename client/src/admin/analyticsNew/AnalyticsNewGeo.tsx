@@ -377,21 +377,6 @@ export const AnalyticsNewGeo: React.FC = () => {
                         const colorScale = scaleSequential(interpolateBlues).domain([0, 1]);
                         const fillColor = sessions > 0 ? colorScale(intensity) : '#f3f4f6';
                         
-                        // Debug logging to understand country mapping
-                        if (countryName) {
-                          console.log(`🗺️ MAP: "${countryName}" → ${sessions > 0 ? `"${countryData?.country}" (${sessions} sessions)` : 'NO MATCH'}`);
-                        }
-                        
-                        // Debug map interactivity
-                        if (countryName === 'France') {
-                          console.log('🇫🇷 FRANCE MAP DEBUG:', {
-                            countryName,
-                            countryData,
-                            sessions,
-                            fillColor,
-                            hasTooltipHandlers: true
-                          });
-                        }
                         
                         return (
                           <Geography
@@ -411,10 +396,8 @@ export const AnalyticsNewGeo: React.FC = () => {
                               pressed: { outline: "none" }
                             }}
                             onMouseEnter={(event) => {
-                              console.log('🖱️ MOUSE ENTER:', countryName, { sessions, countryData });
                               if (sessions > 0 && countryData) {
                                 const engagementRate = Math.round((countryData.sessions / countryData.visitors) * 100);
-                                console.log('✨ SHOWING TOOLTIP for', countryData.country);
                                 setTooltip({
                                   show: true,
                                   content: `${countryData.country}\n${countryData.sessions.toLocaleString()} sessions\n${countryData.visitors.toLocaleString()} visitors\n${engagementRate}% engagement`,
@@ -439,6 +422,30 @@ export const AnalyticsNewGeo: React.FC = () => {
                 </ZoomableGroup>
               </ComposableMap>
               
+              {/* Map Legend */}
+              <div className="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-md border">
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">Sessions</h4>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs text-gray-500">Low</span>
+                  <div className="flex space-x-1">
+                    {[0.2, 0.4, 0.6, 0.8, 1.0].map((intensity, index) => {
+                      const colorScale = scaleSequential(interpolateBlues).domain([0, 1]);
+                      return (
+                        <div
+                          key={index}
+                          className="w-4 h-4 border border-gray-200"
+                          style={{ backgroundColor: colorScale(intensity) }}
+                        />
+                      );
+                    })}
+                  </div>
+                  <span className="text-xs text-gray-500">High</span>
+                </div>
+                <div className="text-xs text-gray-400 mt-1">
+                  {countries.length > 0 ? `Max: ${Math.max(...countries.map(c => c.sessions))} sessions` : 'No data'}
+                </div>
+              </div>
+
               {/* Tooltip */}
               {tooltip.show && (
                 <div 
