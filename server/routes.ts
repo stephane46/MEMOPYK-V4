@@ -3128,8 +3128,18 @@ export async function registerRoutes(app: Express): Promise<void> {
       for (const ip of uniqueIPs) {
         const locationData = await locationService.getLocationData(ip);
         if (locationData) {
+          // Update all sessions with this IP to have the location data
+          try {
+            await hybridStorage.updateSessionLocation(ip, {
+              country: locationData.country,
+              region: locationData.region,
+              city: locationData.city
+            });
+          } catch (updateError) {
+            console.log(`⚠️ Failed to update sessions for IP ${ip}:`, updateError.message);
+          }
           enrichedCount++;
-          console.log(`✅ Enriched ${ip}: ${locationData.city}, ${locationData.region}, ${locationData.country_name}`);
+          console.log(`✅ Enriched ${ip}: ${locationData.city}, ${locationData.region}, ${locationData.country_name} (updated ${sessionsWithIP.length} sessions)`);
         }
         // Small delay to respect rate limits
         await new Promise(resolve => setTimeout(resolve, 300));
