@@ -452,14 +452,13 @@ export const AnalyticsNewGeo: React.FC = () => {
                           style={{
                             width: '16px',
                             height: '16px',
-                            backgroundColor: index === 0 ? 'red' : bgColors[index],
-                            background: index === 0 ? 'red !important' : bgColors[index],
                             borderWidth: '2px',
                             borderStyle: 'solid',
                             borderColor: isHighlighted ? '#f97316' : '#e5e7eb',
                             transition: 'all 0.2s',
                             display: 'block'
                           }}
+                          className={`legend-square-${index}`}
                         />
                       );
                     })}

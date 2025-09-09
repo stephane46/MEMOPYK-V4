@@ -1038,3 +1038,45 @@ html, body {
   display: none !important;
 }
 
+/* Analytics Geo Legend Square Color Fix - Force background colors */
+.legend-square-test {
+  background-color: red !important;
+  background: red !important;
+  background-image: none !important;
+}
+
+.legend-square {
+  background-image: none !important;
+}
+
+/* Individual legend square color classes */
+.legend-square-0 {
+  background-color: #bfdbfe !important;
+  background: #bfdbfe !important;
+  background-image: none !important;
+}
+
+.legend-square-1 {
+  background-color: #93c5fd !important;
+  background: #93c5fd !important;
+  background-image: none !important;
+}
+
+.legend-square-2 {
+  background-color: #60a5fa !important;
+  background: #60a5fa !important;
+  background-image: none !important;
+}
+
+.legend-square-3 {
+  background-color: #2563eb !important;
+  background: #2563eb !important;
+  background-image: none !important;
+}
+
+.legend-square-4 {
+  background-color: #1e40af !important;
+  background: #1e40af !important;
+  background-image: none !important;
+}
+
