@@ -444,6 +444,7 @@ export const AnalyticsNewGeo: React.FC = () => {
                       }
                       
                       const bgColors = ['#bfdbfe', '#93c5fd', '#60a5fa', '#2563eb', '#1e40af']; // Blue gradient
+                      console.log('🟦 LEGEND SQUARE:', index, 'bgColor:', bgColors[index], 'isHighlighted:', isHighlighted);
                       
                       return (
                         <div
@@ -451,7 +452,8 @@ export const AnalyticsNewGeo: React.FC = () => {
                           style={{
                             width: '16px',
                             height: '16px',
-                            backgroundColor: bgColors[index],
+                            backgroundColor: index === 0 ? 'red' : bgColors[index],
+                            background: index === 0 ? 'red !important' : bgColors[index],
                             borderWidth: '2px',
                             borderStyle: 'solid',
                             borderColor: isHighlighted ? '#f97316' : '#e5e7eb',
