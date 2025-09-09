@@ -128,61 +128,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
       const allData = await response.json();
       
-      if (allData.length === 0) {
-        // Try broader date range as fallback
-        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, trying broader range...`);
-        
-        // Calculate 7-day range around the target date
-        const targetDate = new Date(calcEndDate);
-        const fallbackStart = new Date(targetDate.getTime() - 6 * 24 * 60 * 60 * 1000);
-        const fallbackStartStr = fallbackStart.toISOString().slice(0, 10);
-        const fallbackEndStr = calcEndDate;
-        
-        const fallbackResponse = await fetch(`/api/private-log/visitor-details?startDate=${fallbackStartStr}&endDate=${fallbackEndStr}`);
-        const fallbackData = await fallbackResponse.json();
-        
-        if (fallbackData.length === 0) {
-          // Still no data even with broader range
-          setRecentVisitors([{
-            id: 'no-data',
-            ip_address: 'N/A',
-            country: 'No private log data available',
-            region: `GA4 shows ${totalViews?.value || 0} views for this period`,
-            city: 'but private log is empty',
-            language: 'N/A',
-            last_visit: new Date().toISOString(),
-            user_agent: 'Private log tracking may be disabled or delayed',
-            visit_count: 0,
-            session_duration: 0,
-            previous_visit: null,
-            source: 'system_message'
-          }]);
-          return;
-        }
-        
-        // Use fallback data but limit to match GA4 count
-        console.log(`✅ Using broader range data (${fallbackData.length} sessions) to match GA4 count`);
-        const totalViewsCount = totalViews?.value || 0;
-        const limitedData = fallbackData.slice(0, totalViewsCount);
-        
-        // Add notice that broader period data is being used
-        const dataWithNotice = limitedData.map((visitor: any, index: number) => ({
-          ...visitor,
-          // Add notice to first visitor only
-          ...(index === 0 && {
-            fallback_notice: `⚠️ Showing recent data (${fallbackStartStr} to ${fallbackEndStr}) - no data for selected date`
-          })
-        }));
-        
-        setRecentVisitors(dataWithNotice);
-        return;
-      }
+      // No fallback - show exactly what private log has for the selected period
+      // The badge system will indicate missing data count
       
-      // Filter to match the Total Views count from GA4 KPIs
-      const totalViewsCount = totalViews?.value || 0;
-      const limitedData = allData.slice(0, totalViewsCount);
-      
-      setRecentVisitors(limitedData);
+      // Show all available private log data (don't limit to GA4 count)
+      // The badge will show missing count vs GA4
+      setRecentVisitors(allData);
     } catch (error) {
       console.error('Failed to fetch recent visitors:', error);
     } finally {
@@ -208,63 +159,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
       const allData = await response.json();
       
-      if (allData.length === 0) {
-        // Try broader date range as fallback
-        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, trying broader range...`);
-        
-        const targetDate = new Date(calcEndDate);
-        const fallbackStart = new Date(targetDate.getTime() - 6 * 24 * 60 * 60 * 1000);
-        const fallbackStartStr = fallbackStart.toISOString().slice(0, 10);
-        const fallbackEndStr = calcEndDate;
-        
-        const fallbackResponse = await fetch(`/api/private-log/visitor-details?startDate=${fallbackStartStr}&endDate=${fallbackEndStr}`);
-        const fallbackData = await fallbackResponse.json();
-        
-        if (fallbackData.length === 0) {
-          setRecentVisitors([{
-            id: 'no-data',
-            ip_address: 'N/A',
-            country: 'No private log data available',
-            region: `GA4 shows ${uniqueVisitors?.value || 0} unique visitors for this period`,
-            city: 'but private log is empty',
-            language: 'N/A',
-            last_visit: new Date().toISOString(),
-            user_agent: 'Private log tracking may be disabled or delayed',
-            visit_count: 0,
-            session_duration: 0,
-            previous_visit: null,
-            source: 'system_message'
-          }]);
-          return;
-        }
-        
-        // Use fallback data and apply unique visitor logic
-        console.log(`✅ Using broader range data (${fallbackData.length} sessions) for unique visitors`);
-        const uniqueVisitorsCount = uniqueVisitors?.value || 0;
-        const seenIPs = new Set();
-        const uniqueData = fallbackData.filter((visitor: any) => {
-          if (seenIPs.has(visitor.ip_address)) {
-            return false;
-          }
-          seenIPs.add(visitor.ip_address);
-          return true;
-        }).slice(0, uniqueVisitorsCount);
-        
-        // Add notice that broader period data is being used
-        const dataWithNotice = uniqueData.map((visitor: any, index: number) => ({
-          ...visitor,
-          // Add notice to first visitor only
-          ...(index === 0 && {
-            fallback_notice: `⚠️ Showing recent data (${fallbackStartStr} to ${fallbackEndStr}) - no unique visitor data for selected date`
-          })
-        }));
-        
-        setRecentVisitors(dataWithNotice);
-        return;
-      }
+      // No fallback - show exactly what private log has for the selected period
+      // The badge system will indicate missing data count
       
       // Filter to show unique visitors only (deduplicate by IP address)
-      const uniqueVisitorsCount = uniqueVisitors?.value || 0;
+      // Don't limit to GA4 count - show all available unique visitors
       const seenIPs = new Set();
       const uniqueData = allData.filter((visitor: any) => {
         if (seenIPs.has(visitor.ip_address)) {
@@ -272,7 +171,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         }
         seenIPs.add(visitor.ip_address);
         return true;
-      }).slice(0, uniqueVisitorsCount);
+      });
       
       setRecentVisitors(uniqueData);
     } catch (error) {
@@ -300,66 +199,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
       const allData = await response.json();
       
-      if (allData.length === 0) {
-        // Try broader date range as fallback
-        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, trying broader range...`);
-        
-        const targetDate = new Date(calcEndDate);
-        const fallbackStart = new Date(targetDate.getTime() - 6 * 24 * 60 * 60 * 1000);
-        const fallbackStartStr = fallbackStart.toISOString().slice(0, 10);
-        const fallbackEndStr = calcEndDate;
-        
-        const fallbackResponse = await fetch(`/api/private-log/visitor-details?startDate=${fallbackStartStr}&endDate=${fallbackEndStr}`);
-        const fallbackData = await fallbackResponse.json();
-        
-        if (fallbackData.length === 0) {
-          setReturningVisitors([{
-            id: 'no-data',
-            ip_address: 'N/A',
-            country: 'No private log data available',
-            region: `GA4 shows ${returnVisitors?.value || 0} return visitors for this period`,
-            city: 'but private log is empty',
-            language: 'N/A',
-            last_visit: new Date().toISOString(),
-            user_agent: 'Private log tracking may be disabled or delayed',
-            visit_count: 0,
-            session_duration: 0,
-            previous_visit: null,
-            source: 'system_message'
-          }]);
-          return;
-        }
-        
-        // Use fallback data and apply returning visitor logic
-        console.log(`✅ Using broader range data (${fallbackData.length} sessions) for return visitors`);
-        const returnVisitorsCount = returnVisitors?.value || 0;
-        const ipCounts = new Map();
-        
-        fallbackData.forEach((visitor: any) => {
-          const count = ipCounts.get(visitor.ip_address) || 0;
-          ipCounts.set(visitor.ip_address, count + 1);
-        });
-        
-        const returningData = fallbackData.filter((visitor: any) => 
-          ipCounts.get(visitor.ip_address) > 1
-        ).slice(0, returnVisitorsCount);
-        
-        // Add notice that broader period data is being used
-        const dataWithNotice = returningData.map((visitor: any, index: number) => ({
-          ...visitor,
-          // Add notice to first visitor only
-          ...(index === 0 && {
-            fallback_notice: `⚠️ Showing recent data (${fallbackStartStr} to ${fallbackEndStr}) - no return visitor data for selected date`
-          })
-        }));
-        
-        setReturningVisitors(dataWithNotice);
-        return;
-      }
+      // No fallback - show exactly what private log has for the selected period
+      // The badge system will indicate missing data count
       
       // Filter to show returning visitors only (simulate return visitor detection)
-      // For now, we'll show visitors that appear multiple times in the dataset
-      const returnVisitorsCount = returnVisitors?.value || 0;
+      // Don't limit to GA4 count - show all available returning visitors
       const ipCounts = new Map();
       
       // Count visits per IP
@@ -371,7 +215,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       // Filter visitors that have multiple visits (returning visitors)
       const returningData = allData.filter((visitor: any) => 
         ipCounts.get(visitor.ip_address) > 1
-      ).slice(0, returnVisitorsCount);
+      );
       
       setReturningVisitors(returningData);
     } catch (error) {
@@ -468,18 +312,25 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   <Eye style={{ width: '24px', height: '24px' }} />
                   <span>Total Views Details</span>
                   {(() => {
-                    const missingCount = recentVisitors.filter(visitor => 
-                      !visitor.country || visitor.country === 'Unknown' || 
-                      !visitor.city || visitor.city === 'Unknown'
-                    ).length;
+                    const ga4Count = totalViews?.value || 0;
+                    const privateLogCount = recentVisitors?.length || 0;
                     
+                    if (privateLogCount === 0 && ga4Count > 0) {
+                      return (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full ml-3">
+                          ❌ No private log data
+                        </span>
+                      );
+                    }
+                    
+                    const missingCount = Math.max(0, ga4Count - privateLogCount);
                     return missingCount > 0 ? (
                       <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full ml-3">
-                        🏴‍☠️ {missingCount} pending
+                        🏴‍☠️ {missingCount} missing
                       </span>
-                    ) : recentVisitors.length > 0 ? (
+                    ) : privateLogCount > 0 ? (
                       <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full ml-3">
-                        ✅ All enriched
+                        ✅ Complete data
                       </span>
                     ) : null;
                   })()}
@@ -494,18 +345,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
-              {/* Fallback Notice Banner */}
-              {recentVisitors && recentVisitors.length > 0 && recentVisitors[0]?.fallback_notice && (
-                <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <div className="text-orange-600">⚠️</div>
-                    <div className="text-sm text-orange-800">
-                      <strong>Data from broader period:</strong> No private log data found for the selected date.
-                      Showing recent visitor data from a 7-day range to match GA4 metrics.
-                    </div>
-                  </div>
-                </div>
-              )}
+
               
               {isLoadingRecentVisitors ? (
                 <div className="text-center py-8">
@@ -600,18 +440,25 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   <Users style={{ width: '24px', height: '24px' }} />
                   <span>Unique Visitors Details</span>
                   {(() => {
-                    const missingCount = recentVisitors.filter(visitor => 
-                      !visitor.country || visitor.country === 'Unknown' || 
-                      !visitor.city || visitor.city === 'Unknown'
-                    ).length;
+                    const ga4Count = totalViews?.value || 0;
+                    const privateLogCount = recentVisitors?.length || 0;
                     
+                    if (privateLogCount === 0 && ga4Count > 0) {
+                      return (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full ml-3">
+                          ❌ No private log data
+                        </span>
+                      );
+                    }
+                    
+                    const missingCount = Math.max(0, ga4Count - privateLogCount);
                     return missingCount > 0 ? (
                       <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full ml-3">
-                        🏴‍☠️ {missingCount} pending
+                        🏴‍☠️ {missingCount} missing
                       </span>
-                    ) : recentVisitors.length > 0 ? (
+                    ) : privateLogCount > 0 ? (
                       <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full ml-3">
-                        ✅ All enriched
+                        ✅ Complete data
                       </span>
                     ) : null;
                   })()}
@@ -626,18 +473,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
-              {/* Fallback Notice Banner */}
-              {recentVisitors && recentVisitors.length > 0 && recentVisitors[0]?.fallback_notice && (
-                <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <div className="text-orange-600">⚠️</div>
-                    <div className="text-sm text-orange-800">
-                      <strong>Data from broader period:</strong> No private log data found for the selected date.
-                      Showing recent visitor data from a 7-day range to match GA4 metrics.
-                    </div>
-                  </div>
-                </div>
-              )}
+
               
               {isLoadingRecentVisitors ? (
                 <div className="text-center py-8">
