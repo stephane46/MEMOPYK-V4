@@ -428,11 +428,11 @@ export const AnalyticsNewGeo: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <span className="text-xs text-gray-500">Low</span>
                   <div className="flex space-x-1">
-                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#c6dbef' }} />
-                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#9ecae1' }} />
-                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#6baed6' }} />
-                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#3182bd' }} />
-                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#08519c' }} />
+                    <div className="w-4 h-4 border border-gray-200 bg-blue-200"></div>
+                    <div className="w-4 h-4 border border-gray-200 bg-blue-300"></div>
+                    <div className="w-4 h-4 border border-gray-200 bg-blue-400"></div>
+                    <div className="w-4 h-4 border border-gray-200 bg-blue-600"></div>
+                    <div className="w-4 h-4 border border-gray-200 bg-blue-800"></div>
                   </div>
                   <span className="text-xs text-gray-500">High</span>
                 </div>
