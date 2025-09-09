@@ -12,7 +12,7 @@ interface OverviewKpisProps {
 }
 
 export function OverviewKpis({ preset = "7d", className = "", startDate, endDate }: OverviewKpisProps) {
-  const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset });
+  const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset, startDate, endDate });
 
   if (loading) {
     return (

@@ -16,7 +16,7 @@ interface VisitorFocusedKpisProps {
 
 // Cache bust v3.0 - FORCE COMPLETE REFRESH FOR BADGE FIXES
 export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, endDate }: VisitorFocusedKpisProps) {
-  const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset });
+  const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset, startDate, endDate });
   
   // Modal states
   const [isTotalViewsModalOpen, setIsTotalViewsModalOpen] = useState(false);
