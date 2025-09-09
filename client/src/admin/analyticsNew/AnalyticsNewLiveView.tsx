@@ -177,14 +177,21 @@ export const AnalyticsNewLiveView: React.FC = () => {
     }
   }, [watchingData?.timestamp]);
 
-  // Error states
-  if (privateError || watchingError || visitorsError) {
+  // Error states - be more specific about which services are failing
+  const hasAnyErrors = privateError || watchingError || visitorsError;
+  const errorDetails = [];
+  if (privateError) errorDetails.push('Live tracking');
+  if (watchingError) errorDetails.push('Currently watching');
+  if (visitorsError) errorDetails.push('Recent visitors');
+  
+  // Only show error if ALL services are failing, not just some
+  if (hasAnyErrors && errorDetails.length >= 2) {
     return (
       <div className="analytics-new-container space-y-6">
         <AnalyticsNewLoadingStates 
           mode="error" 
           title="Failed to load live data"
-          description="Unable to connect to realtime analytics. Please check your connection."
+          description={`Unable to connect to: ${errorDetails.join(', ')}. Please check your connection.`}
           showRetry={true}
           onRetry={() => {
             queryClient.invalidateQueries({ queryKey: ['/api/analytics/live-tracking'] });
@@ -195,9 +202,21 @@ export const AnalyticsNewLiveView: React.FC = () => {
       </div>
     );
   }
+  
+  // Debug: Add console logging to see what's failing
+  if (hasAnyErrors) {
+    console.log('Live View - Some services failing:', {
+      privateError: privateError?.message,
+      watchingError: watchingError?.message,
+      visitorsError: visitorsError?.message,
+      privateData,
+      watchingData,
+      recentVisitors
+    });
+  }
 
-  // Loading state
-  if (privateLoading && watchingLoading && visitorsLoading) {
+  // Loading state - show loading only if ALL are loading
+  if ((privateLoading && !privateData) && (watchingLoading && !watchingData) && (visitorsLoading && !recentVisitors)) {
     return (
       <div className="analytics-new-container space-y-6">
         <AnalyticsNewLoadingStates 
