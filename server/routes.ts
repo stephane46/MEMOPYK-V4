@@ -5257,6 +5257,75 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
 
+  // Private Log Visitor Details endpoint - for Analytics New diagnostics (IP-aware)
+  app.get("/api/private-log/visitor-details", async (req, res) => {
+    try {
+      const { startDate, endDate, datePreset } = req.query;
+      
+      console.log(`🔍 Private Log Visitor Details Request: datePreset=${datePreset}, startDate=${startDate}, endDate=${endDate}`);
+      
+      // Handle datePreset parameter for consistency with GA4 endpoints
+      let calcStartDate = startDate;
+      let calcEndDate = endDate;
+      
+      if (datePreset && !startDate && !endDate) {
+        const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(
+          datePreset as string
+        );
+        calcStartDate = calcStart;
+        calcEndDate = calcEnd;
+        console.log(`📅 Private Log Date preset '${datePreset}' resolved to: ${calcStartDate} to ${calcEndDate}`);
+      }
+      
+      // Get analytics sessions from private log (Supabase) with IP exclusion filtering
+      const sessions = await hybridStorage.getAnalyticsSessions(
+        calcStartDate as string,
+        calcEndDate as string,
+        undefined // no language filter
+      );
+      
+      console.log(`🔍 Private Log: Found ${sessions.length} sessions after IP exclusion filtering`);
+      
+      // Transform sessions into visitor details format with IP masking
+      const visitorDetails = sessions.map((session, index) => {
+        // Mask IP for privacy (keep first 3 octets, mask last)
+        const maskIP = (ip: string) => {
+          if (!ip || ip === '0.0.0.0' || ip === '127.0.0.1') return 'Local';
+          const parts = ip.split('.');
+          if (parts.length === 4) {
+            return `${parts[0]}.${parts[1]}.${parts[2]}.xxx`;
+          }
+          return 'Masked';
+        };
+        
+        return {
+          id: session.session_id || `session_${index}`,
+          ip_address: maskIP(session.ip_address),
+          country: session.country || 'Unknown',
+          region: session.region || 'Unknown', 
+          city: session.city || 'Unknown',
+          language: session.language || 'Unknown',
+          last_visit: session.created_at,
+          user_agent: session.user_agent ? session.user_agent.substring(0, 80) + '...' : 'Unknown',
+          visit_count: 1, // Event-based, not deduplicated
+          session_duration: session.session_duration || 0,
+          previous_visit: null, // Not tracking in this minimal implementation
+          source: 'private_log' // Clear data source labeling
+        };
+      });
+      
+      console.log(`✅ Private Log Visitor Details: Returning ${visitorDetails.length} masked visitor records`);
+      res.json(visitorDetails);
+      
+    } catch (error) {
+      console.error('❌ Private Log visitor details error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'Private log visitor details failed',
+        source: 'private_log'
+      });
+    }
+  });
+
   // GA4 Geographic Data endpoint - consistent with Analytics New GA4-only approach
   app.get("/api/ga4/geo", async (req, res) => {
     try {
