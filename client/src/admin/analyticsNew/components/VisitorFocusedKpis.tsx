@@ -98,7 +98,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
     setIsLoadingReturningVisitors(true);
     // Fetch returning visitors data (normal mode - should be fast after first load)
     try {
-      const response = await fetch(`/api/ga4/visitor-details?datePreset=${preset}&type=returning`);
+      const response = await fetch(`/api/private-log/visitor-details?datePreset=${preset}&type=returning`);
       const data = await response.json();
       setReturningVisitors(data);
     } catch (error) {
