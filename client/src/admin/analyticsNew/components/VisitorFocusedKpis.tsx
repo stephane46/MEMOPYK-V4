@@ -448,7 +448,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   <Users style={{ width: '24px', height: '24px' }} />
                   <span>Unique Visitors Details</span>
                   {(() => {
-                    const ga4Count = (newUsers?.value || 0) + (returnVisitors?.value || 0);
+                    const ga4Count = (uniqueVisitors?.value || 0);
                     const privateLogCount = recentVisitors?.length || 0;
                     
                     if (privateLogCount === 0 && ga4Count > 0) {
