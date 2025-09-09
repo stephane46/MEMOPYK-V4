@@ -14,6 +14,7 @@ interface VisitorFocusedKpisProps {
   endDate?: string;
 }
 
+// Cache bust v2.1 - Force browser refresh for badge fixes
 export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, endDate }: VisitorFocusedKpisProps) {
   const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset });
   
@@ -335,7 +336,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                     
                     if (privateLogCount === 0 && ga4Count > 0) {
                       return (
-                        <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-red-100 text-red-700 rounded-full ml-3">
+                        <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-red-100 text-red-700 rounded-full ml-3">
                           ❌ No private log data
                         </span>
                       );
@@ -343,11 +344,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                     
                     const missingCount = Math.max(0, ga4Count - privateLogCount);
                     return missingCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-orange-100 text-orange-700 rounded-full ml-3">
+                      <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-orange-100 text-orange-700 rounded-full ml-3">
                         🏴‍☠️ {missingCount} missing
                       </span>
                     ) : privateLogCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-green-100 text-green-700 rounded-full ml-3">
+                      <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-green-100 text-green-700 rounded-full ml-3">
                         ✅ Complete data
                       </span>
                     ) : null;
