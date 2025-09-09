@@ -341,6 +341,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {/* Details Card Title */}
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Visitor Details from Private Log</h2>
+              </div>
+
               {/* Data Source Explanation */}
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <h4 className="text-sm font-medium text-blue-900 mb-2">Why do the numbers differ?</h4>
@@ -367,12 +372,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                     >
-                      {/* Card Title */}
-                      <div className="mb-4 pb-2 border-b border-gray-300">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Visitor from {visitor.country || 'Unknown Location'}
-                        </h3>
-                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -461,6 +460,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {/* Details Card Title */}
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Unique Visitor Details from Private Log</h2>
+              </div>
+
               {/* Data Source Explanation */}
               <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <h4 className="text-sm font-medium text-green-900 mb-2">Why do the numbers differ?</h4>
@@ -487,12 +491,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                     >
-                      {/* Card Title */}
-                      <div className="mb-4 pb-2 border-b border-gray-300">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Visitor from {visitor.country || 'Unknown Location'}
-                        </h3>
-                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
@@ -581,6 +579,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {/* Details Card Title */}
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Returning Visitor Details from Private Log</h2>
+              </div>
+
               {/* Data Source Explanation */}
               <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
                 <h4 className="text-sm font-medium text-purple-900 mb-2">Why do the numbers differ?</h4>
@@ -607,12 +610,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                     >
-                      {/* Card Title */}
-                      <div className="mb-4 pb-2 border-b border-gray-300">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Visitor from {visitor.country || 'Unknown Location'}
-                        </h3>
-                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
