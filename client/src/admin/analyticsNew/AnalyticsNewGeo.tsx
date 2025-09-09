@@ -112,6 +112,14 @@ export const AnalyticsNewGeo: React.FC = () => {
   // Get current filter state
   const { datePreset, customDateStart, customDateEnd, sinceDate, sinceDateEnabled, getDateRange } = useAnalyticsNewFilters();
   const { start, end } = getDateRange();
+  
+  // Tooltip state for map
+  const [tooltip, setTooltip] = useState<{
+    show: boolean;
+    content: string;
+    x: number;
+    y: number;
+  }>({ show: false, content: '', x: 0, y: 0 });
 
   // Fetch geographic analytics data from GA4 (consistent with Analytics New GA4-only approach)
   const { data: geoData, isLoading: geoLoading, error: geoError, refetch } = useQuery<GeoAnalyticsData>({
@@ -384,16 +392,31 @@ export const AnalyticsNewGeo: React.FC = () => {
                             style={{
                               default: { outline: "none" },
                               hover: { 
-                                fill: sessions > 0 ? "#1e40af" : "#e5e7eb",
+                                fill: sessions > 0 ? colorScale(Math.min(intensity + 0.2, 1)) : "#e5e7eb",
                                 outline: "none",
-                                cursor: "pointer"
+                                cursor: "pointer",
+                                filter: sessions > 0 ? "brightness(0.9)" : "none"
                               },
                               pressed: { outline: "none" }
                             }}
-                            onMouseEnter={() => {
-                              if (sessions > 0) {
-                                // Show tooltip logic could go here
+                            onMouseEnter={(event) => {
+                              if (sessions > 0 && countryData) {
+                                const engagementRate = Math.round((countryData.sessions / countryData.visitors) * 100);
+                                setTooltip({
+                                  show: true,
+                                  content: `${countryData.country}\n${countryData.sessions.toLocaleString()} sessions\n${countryData.visitors.toLocaleString()} visitors\n${engagementRate}% engagement`,
+                                  x: event.clientX,
+                                  y: event.clientY
+                                });
                               }
+                            }}
+                            onMouseMove={(event) => {
+                              if (tooltip.show) {
+                                setTooltip(prev => ({ ...prev, x: event.clientX, y: event.clientY }));
+                              }
+                            }}
+                            onMouseLeave={() => {
+                              setTooltip({ show: false, content: '', x: 0, y: 0 });
                             }}
                           />
                         );
@@ -402,6 +425,24 @@ export const AnalyticsNewGeo: React.FC = () => {
                   </Geographies>
                 </ZoomableGroup>
               </ComposableMap>
+              
+              {/* Tooltip */}
+              {tooltip.show && (
+                <div 
+                  className="fixed z-50 bg-gray-900 text-white text-xs rounded-md px-3 py-2 shadow-lg pointer-events-none"
+                  style={{
+                    left: tooltip.x + 10,
+                    top: tooltip.y - 10,
+                    transform: 'translateY(-100%)'
+                  }}
+                >
+                  {tooltip.content.split('\n').map((line, index) => (
+                    <div key={index} className={index === 0 ? 'font-semibold' : ''}>
+                      {line}
+                    </div>
+                  ))}
+                </div>
+              )}
               
               {/* Map Legend */}
               <div className="absolute bottom-2 left-2 bg-white p-2 rounded shadow-sm border text-xs">
@@ -419,7 +460,7 @@ export const AnalyticsNewGeo: React.FC = () => {
             </div>
             <div className="mt-4 text-center">
               <div className="text-xs text-gray-500">
-                Hover over countries to see detailed metrics
+                ✨ Hover over countries to see visitor metrics and engagement rates
               </div>
             </div>
           </CardContent>
