@@ -463,20 +463,6 @@ export const AnalyticsNewGeo: React.FC = () => {
                   ))}
                 </div>
               )}
-              
-              {/* Map Legend */}
-              <div className="absolute bottom-2 left-2 bg-white p-2 rounded shadow-sm border text-xs">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-gray-200 rounded"></div>
-                  <span>No data</span>
-                  <div className="w-3 h-3" style={{ backgroundColor: interpolateBlues(0.3) }}></div>
-                  <span>Low</span>
-                  <div className="w-3 h-3" style={{ backgroundColor: interpolateBlues(0.7) }}></div>
-                  <span>High</span>
-                  <div className="w-3 h-3" style={{ backgroundColor: interpolateBlues(1) }}></div>
-                  <span>Max</span>
-                </div>
-              </div>
             </div>
             <div className="mt-4 text-center">
               <div className="text-xs text-gray-500">
