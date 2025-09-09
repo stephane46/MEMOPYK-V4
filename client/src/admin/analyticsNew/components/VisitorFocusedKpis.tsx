@@ -125,6 +125,16 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         calcEndDate = dateRange.endDate;
       }
       
+      // First trigger location enrichment for unknown visitors
+      try {
+        await fetch(`/api/analytics/enrich-locations?startDate=${calcStartDate}&endDate=${calcEndDate}`, {
+          method: 'POST'
+        });
+        console.log('🌍 Location enrichment triggered for unknown visitors');
+      } catch (enrichError) {
+        console.warn('Location enrichment failed:', enrichError);
+      }
+      
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
       const allData = await response.json();
       
@@ -154,6 +164,16 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         const dateRange = getDateRangeFromPreset(preset);
         calcStartDate = dateRange.startDate;
         calcEndDate = dateRange.endDate;
+      }
+      
+      // First trigger location enrichment for unknown visitors
+      try {
+        await fetch(`/api/analytics/enrich-locations?startDate=${calcStartDate}&endDate=${calcEndDate}`, {
+          method: 'POST'
+        });
+        console.log('🌍 Location enrichment triggered for unknown visitors');
+      } catch (enrichError) {
+        console.warn('Location enrichment failed:', enrichError);
       }
       
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
@@ -194,6 +214,16 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         const dateRange = getDateRangeFromPreset(preset);
         calcStartDate = dateRange.startDate;
         calcEndDate = dateRange.endDate;
+      }
+      
+      // First trigger location enrichment for unknown visitors
+      try {
+        await fetch(`/api/analytics/enrich-locations?startDate=${calcStartDate}&endDate=${calcEndDate}`, {
+          method: 'POST'
+        });
+        console.log('🌍 Location enrichment triggered for unknown visitors');
+      } catch (enrichError) {
+        console.warn('Location enrichment failed:', enrichError);
       }
       
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
