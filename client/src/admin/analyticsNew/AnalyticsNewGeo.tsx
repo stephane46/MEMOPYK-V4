@@ -437,10 +437,10 @@ export const AnalyticsNewGeo: React.FC = () => {
                       return (
                         <div
                           key={index}
+                          className={`legend-square-${index}`}
                           style={{
                             width: '16px',
                             height: '16px',
-                            backgroundColor: bgColors[index],
                             border: '1px solid #e5e7eb',
                             display: 'block'
                           }}
