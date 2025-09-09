@@ -14,7 +14,7 @@ interface VisitorFocusedKpisProps {
   endDate?: string;
 }
 
-// Cache bust v2.1 - Force browser refresh for badge fixes
+// Cache bust v3.0 - FORCE COMPLETE REFRESH FOR BADGE FIXES
 export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, endDate }: VisitorFocusedKpisProps) {
   const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset });
   
@@ -721,17 +721,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   </div>
                 </div>
               )}
-
-              {/* Data Source Explanation */}
-              <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                <h4 className="text-sm font-medium text-purple-900 mb-2">Why do the numbers differ?</h4>
-                <div className="text-xs text-purple-800 space-y-1">
-                  <div>• <strong>GA4</strong> tracks visitors across longer periods with advanced identification</div>
-                  <div>• <strong>Private Log</strong> only captures visitors who hit our tracking system</div>
-                  <div>• Missing visitors may have: blocked cookies, visited before logging started, are filtered bots, or use excluded IPs</div>
-                  <div>• GA4 provides the complete picture, Private Log provides detailed drill-down for available data</div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
