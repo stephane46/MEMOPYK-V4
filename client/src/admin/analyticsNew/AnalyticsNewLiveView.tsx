@@ -1,16 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Users, Globe, Monitor, Smartphone, Tablet, Eye, Info } from 'lucide-react';
+import { Users, Globe, Monitor, Smartphone, Tablet, Eye, Info, MapPin, Clock, Languages } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { CountryFlag } from '@/components/admin/CountryFlag';
 
-interface GA4RealtimeData {
+interface PrivateTrackingData {
   activeUsers: number;
-  byCountry: Array<{ country: string; users: number }>;
+  byCountry: Array<{ country: string; users: number; countryCode?: string }>;
   byDevice: Array<{ device: string; users: number }>;
   timestamp: string;
-  cached: boolean;
+}
+
+interface RecentVisitor {
+  ip_address: string;
+  country: string;
+  region: string;
+  city: string;
+  language: string;
+  last_visit: string;
+  user_agent: string;
+  visit_count: number;
+  session_duration: number;
+  previous_visit: string | null;
 }
 
 interface CurrentlyWatchingSession {
@@ -122,12 +135,22 @@ export const AnalyticsNewLiveView: React.FC = () => {
   // Calculate whether polling should be enabled
   const shouldPoll = isVisible && isLiveTabActive;
   
-  // GA4 Realtime data - refetch every 10 seconds when active
-  const { data: ga4Data, isLoading: ga4Loading, error: ga4Error } = useQuery<GA4RealtimeData>({
-    queryKey: ['/api/ga4/realtime'],
+  // Private tracking data - refetch every 10 seconds when active
+  const { data: privateData, isLoading: privateLoading, error: privateError } = useQuery<PrivateTrackingData>({
+    queryKey: ['/api/analytics/live-tracking'],
     refetchInterval: shouldPoll ? 10000 : false, // 10 seconds when active
     refetchOnWindowFocus: false,
     enabled: shouldPoll, // Only query when tab is active and visible
+  });
+
+  // Recent visitors data - refetch every 15 seconds when active 
+  const { data: recentVisitors, isLoading: visitorsLoading, error: visitorsError } = useQuery<RecentVisitor[]>({
+    queryKey: ['/api/analytics/recent-visitors', { datePreset: 'today', skipEnrichment: true }],
+    refetchInterval: shouldPoll ? 15000 : false, // 15 seconds when active
+    refetchOnWindowFocus: true,
+    staleTime: 0,
+    gcTime: 5000,
+    enabled: shouldPoll,
   });
 
   // Currently watching data - refetch every 15 seconds when active
@@ -142,10 +165,10 @@ export const AnalyticsNewLiveView: React.FC = () => {
 
   // Update last refresh time
   useEffect(() => {
-    if (ga4Data?.timestamp) {
-      setLastUpdate(new Date(ga4Data.timestamp).toLocaleTimeString());
+    if (privateData?.timestamp) {
+      setLastUpdate(new Date(privateData.timestamp).toLocaleTimeString());
     }
-  }, [ga4Data?.timestamp]);
+  }, [privateData?.timestamp]);
 
   // Update last watching refresh time
   useEffect(() => {
@@ -155,7 +178,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
   }, [watchingData?.timestamp]);
 
   // Error states
-  if (ga4Error || watchingError) {
+  if (privateError || watchingError || visitorsError) {
     return (
       <div className="analytics-new-container space-y-6">
         <AnalyticsNewLoadingStates 
@@ -164,8 +187,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
           description="Unable to connect to realtime analytics. Please check your connection."
           showRetry={true}
           onRetry={() => {
-            queryClient.invalidateQueries({ queryKey: ['/api/ga4/realtime'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/analytics/live-tracking'] });
             queryClient.invalidateQueries({ queryKey: ['/api/tracker/currently-watching'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/analytics/recent-visitors'] });
           }}
         />
       </div>
@@ -173,7 +197,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
   }
 
   // Loading state
-  if (ga4Loading && watchingLoading) {
+  if (privateLoading && watchingLoading && visitorsLoading) {
     return (
       <div className="analytics-new-container space-y-6">
         <AnalyticsNewLoadingStates 
@@ -191,10 +215,10 @@ export const AnalyticsNewLiveView: React.FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <h2 className="text-xl font-bold text-[var(--analytics-new-text)]">Live View</h2>
-          {ga4Data && (
+          {privateData && (
             <AnalyticsNewActiveUsersBadge 
-              count={ga4Data.activeUsers} 
-              loading={ga4Loading}
+              count={privateData.activeUsers} 
+              loading={privateLoading}
             />
           )}
         </div>
@@ -203,7 +227,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
         </div>
       </div>
 
-      {/* GA4 Realtime Stats */}
+      {/* Private Tracking Stats - 2x2 Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Active Users by Country */}
         <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -212,9 +236,12 @@ export const AnalyticsNewLiveView: React.FC = () => {
             <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
               Active Users by Country
             </h3>
+            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+              Private Log
+            </Badge>
           </div>
           
-          {ga4Loading ? (
+          {privateLoading ? (
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map(i => (
                 <div key={i} className="animate-pulse">
@@ -223,21 +250,28 @@ export const AnalyticsNewLiveView: React.FC = () => {
                 </div>
               ))}
             </div>
-          ) : ga4Data?.byCountry ? (
+          ) : privateData?.byCountry && privateData.byCountry.length > 0 ? (
             <div className="space-y-4">
-              {ga4Data.byCountry.map((item, index) => (
-                <AnalyticsNewProgressBar
-                  key={item.country}
-                  label={item.country}
-                  value={item.users}
-                  max={ga4Data.activeUsers}
-                  color={index === 0 ? 'bg-[var(--analytics-new-orange)]' : 'bg-gray-400'}
-                  animate={true}
-                />
+              {privateData.byCountry.map((item, index) => (
+                <div key={item.country} className="flex items-center space-x-3">
+                  <CountryFlag country={item.countryCode || item.country} size={16} />
+                  <div className="flex-1">
+                    <AnalyticsNewProgressBar
+                      label={item.country}
+                      value={item.users}
+                      max={privateData.activeUsers}
+                      color={index === 0 ? 'bg-[var(--analytics-new-orange)]' : 'bg-gray-400'}
+                      animate={true}
+                    />
+                  </div>
+                </div>
               ))}
             </div>
           ) : (
-            <div className="text-[var(--analytics-new-text-muted)]">No country data available</div>
+            <div className="text-center py-4 text-[var(--analytics-new-text-muted)]">
+              <Globe className="w-6 h-6 mx-auto mb-2 text-gray-400" />
+              <div>No active users by country</div>
+            </div>
           )}
         </div>
 
@@ -248,9 +282,12 @@ export const AnalyticsNewLiveView: React.FC = () => {
             <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
               Active Users by Device
             </h3>
+            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+              Private Log
+            </Badge>
           </div>
           
-          {ga4Loading ? (
+          {privateLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
                 <div key={i} className="animate-pulse">
@@ -259,9 +296,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
                 </div>
               ))}
             </div>
-          ) : ga4Data?.byDevice ? (
+          ) : privateData?.byDevice && privateData.byDevice.length > 0 ? (
             <div className="space-y-4">
-              {ga4Data.byDevice.map((item, index) => {
+              {privateData.byDevice.map((item, index) => {
                 const DeviceIcon = item.device === 'Mobile' ? Smartphone : 
                                  item.device === 'Tablet' ? Tablet : Monitor;
                 
@@ -272,7 +309,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
                       <AnalyticsNewProgressBar
                         label={item.device}
                         value={item.users}
-                        max={ga4Data.activeUsers}
+                        max={privateData.activeUsers}
                         color={index === 0 ? 'bg-[var(--analytics-new-orange)]' : 'bg-blue-400'}
                         animate={true}
                       />
@@ -282,7 +319,120 @@ export const AnalyticsNewLiveView: React.FC = () => {
               })}
             </div>
           ) : (
-            <div className="text-[var(--analytics-new-text-muted)]">No device data available</div>
+            <div className="text-center py-4 text-[var(--analytics-new-text-muted)]">
+              <Monitor className="w-6 h-6 mx-auto mb-2 text-gray-400" />
+              <div>No active users by device</div>
+            </div>
+          )}
+        </div>
+
+        {/* Recent Visitors */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center space-x-2 mb-4">
+            <Users className="w-5 h-5 text-[var(--analytics-new-orange)]" />
+            <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+              Recent Visitors
+            </h3>
+            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+              Private Log
+            </Badge>
+          </div>
+          
+          {visitorsLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded mb-2" />
+                  <div className="h-3 bg-gray-200 rounded w-3/4" />
+                </div>
+              ))}
+            </div>
+          ) : recentVisitors && recentVisitors.length > 0 ? (
+            <div className="space-y-4 max-h-48 overflow-y-auto">
+              {recentVisitors.slice(0, 5).map((visitor, index) => {
+                const formatLanguage = (lang: string) => {
+                  const languageMap: { [key: string]: { flag: string; display: string } } = {
+                    'fr': { flag: '🇫🇷', display: 'French' },
+                    'fr-FR': { flag: '🇫🇷', display: 'French' },
+                    'fr-fr': { flag: '🇫🇷', display: 'French' },
+                    'en': { flag: '🇺🇸', display: 'English' },
+                    'en-US': { flag: '🇺🇸', display: 'English (US)' },
+                    'en-us': { flag: '🇺🇸', display: 'English (US)' },
+                    'en-GB': { flag: '🇬🇧', display: 'English (UK)' }
+                  };
+                  return languageMap[lang] || { flag: '🌐', display: lang || 'Unknown' };
+                };
+                
+                const getRelativeTime = (dateString: string) => {
+                  const date = new Date(dateString);
+                  const now = new Date();
+                  const diffInMs = now.getTime() - date.getTime();
+                  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+                  const diffInHours = Math.floor(diffInMinutes / 60);
+                  const diffInDays = Math.floor(diffInHours / 24);
+                
+                  if (diffInMinutes < 60) {
+                    return `${diffInMinutes}m ago`;
+                  } else if (diffInHours < 24) {
+                    return `${diffInHours}h ago`;
+                  } else {
+                    return `${diffInDays}d ago`;
+                  }
+                };
+                
+                return (
+                  <div 
+                    key={`${visitor.ip_address}-${index}`}
+                    className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                  >
+                    <div className="grid grid-cols-3 gap-3 text-sm">
+                      <div>
+                        <div className="flex items-center gap-1 mb-1">
+                          <MapPin className="h-3 w-3 text-blue-600" />
+                          <span className="font-medium text-gray-900">Location</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <CountryFlag country={visitor.country} size={14} />
+                          <div className="text-xs">
+                            <div className="font-medium">{visitor.country || 'Unknown'}</div>
+                            {visitor.city && (
+                              <div className="text-gray-600">
+                                {visitor.city}, {visitor.region}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                
+                      <div>
+                        <div className="flex items-center gap-1 mb-1">
+                          <Languages className="h-3 w-3 text-green-600" />
+                          <span className="font-medium text-gray-900">Language</span>
+                        </div>
+                        <div className="text-xs">
+                          {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                        </div>
+                      </div>
+                
+                      <div>
+                        <div className="flex items-center gap-1 mb-1">
+                          <Clock className="h-3 w-3 text-orange-600" />
+                          <span className="font-medium text-gray-900">Visit Time</span>
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          {getRelativeTime(visitor.last_visit)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-4 text-[var(--analytics-new-text-muted)]">
+              <Users className="w-6 h-6 mx-auto mb-2 text-gray-400" />
+              <div>No recent visitors</div>
+            </div>
           )}
         </div>
       </div>
@@ -405,7 +555,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
                     {locationData.hasFlag ? (
                       <>
                         <div className="flex items-center space-x-2">
-                          <CountryFlag country={locationData.country} size={16} />
+                          <CountryFlag country={locationData.country || 'Unknown'} size={16} />
                           {locationData.cityRegion && (
                             <span className="text-sm font-bold text-[var(--analytics-new-text)]">
                               {locationData.cityRegion}
