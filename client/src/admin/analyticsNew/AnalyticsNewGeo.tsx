@@ -444,17 +444,19 @@ export const AnalyticsNewGeo: React.FC = () => {
                       }
                       
                       const bgColors = ['#bfdbfe', '#93c5fd', '#60a5fa', '#2563eb', '#1e40af']; // Blue gradient
-                      console.log('🟦 LEGEND SQUARE:', index, 'bgColor:', bgColors[index], 'isHighlighted:', isHighlighted);
                       
                       return (
                         <div
                           key={index}
-                          className="w-4 h-4 transition-all duration-200 border-2"
                           style={{
+                            width: '16px',
+                            height: '16px',
                             backgroundColor: bgColors[index],
+                            borderWidth: '2px',
+                            borderStyle: 'solid',
                             borderColor: isHighlighted ? '#f97316' : '#e5e7eb',
-                            minWidth: '16px',
-                            minHeight: '16px'
+                            transition: 'all 0.2s',
+                            display: 'block'
                           }}
                         />
                       );
