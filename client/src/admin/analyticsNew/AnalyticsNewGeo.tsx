@@ -428,16 +428,11 @@ export const AnalyticsNewGeo: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <span className="text-xs text-gray-500">Low</span>
                   <div className="flex space-x-1">
-                    {[0.2, 0.4, 0.6, 0.8, 1.0].map((intensity, index) => {
-                      const colorScale = scaleSequential(interpolateBlues).domain([0, 1]);
-                      return (
-                        <div
-                          key={index}
-                          className="w-4 h-4 border border-gray-200"
-                          style={{ backgroundColor: colorScale(intensity) }}
-                        />
-                      );
-                    })}
+                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#c6dbef' }} />
+                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#9ecae1' }} />
+                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#6baed6' }} />
+                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#3182bd' }} />
+                    <div className="w-4 h-4 border border-gray-200" style={{ backgroundColor: '#08519c' }} />
                   </div>
                   <span className="text-xs text-gray-500">High</span>
                 </div>
