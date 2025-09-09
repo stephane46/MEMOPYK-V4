@@ -122,7 +122,6 @@ export const AnalyticsNewGeo: React.FC = () => {
   }>({ show: false, content: '', x: 0, y: 0 });
 
   // Legend highlight state
-  const [hoveredIntensity, setHoveredIntensity] = useState<number | null>(null);
 
   // Fetch geographic analytics data from GA4 (consistent with Analytics New GA4-only approach)
   const { data: geoData, isLoading: geoLoading, error: geoError, refetch } = useQuery<GeoAnalyticsData>({
@@ -408,7 +407,6 @@ export const AnalyticsNewGeo: React.FC = () => {
                                   y: event.clientY
                                 });
                                 // Set legend highlight based on country's intensity
-                                setHoveredIntensity(intensity);
                               }
                             }}
                             onMouseMove={(event) => {
@@ -418,7 +416,6 @@ export const AnalyticsNewGeo: React.FC = () => {
                             }}
                             onMouseLeave={() => {
                               setTooltip({ show: false, content: '', x: 0, y: 0 });
-                              setHoveredIntensity(null);
                             }}
                           />
                         );
@@ -435,37 +432,19 @@ export const AnalyticsNewGeo: React.FC = () => {
                   <span className="text-xs text-gray-500">Low</span>
                   <div className="flex space-x-1">
                     {[0.2, 0.4, 0.6, 0.8, 1.0].map((intensity, index) => {
-                      // Find the closest intensity match (only highlight the single closest one)
-                      let isHighlighted = false;
-                      if (hoveredIntensity !== null) {
-                        const distances = [0.2, 0.4, 0.6, 0.8, 1.0].map(i => Math.abs(hoveredIntensity - i));
-                        const closestIndex = distances.indexOf(Math.min(...distances));
-                        isHighlighted = index === closestIndex;
-                      }
-                      
                       const bgColors = ['#bfdbfe', '#93c5fd', '#60a5fa', '#2563eb', '#1e40af']; // Blue gradient
                       
                       return (
-                        <svg
+                        <div
                           key={index}
-                          width="16"
-                          height="16"
                           style={{
-                            borderWidth: '2px',
-                            borderStyle: 'solid',
-                            borderColor: isHighlighted ? '#f97316' : '#e5e7eb',
-                            transition: 'all 0.2s',
+                            width: '16px',
+                            height: '16px',
+                            backgroundColor: bgColors[index],
+                            border: '1px solid #e5e7eb',
                             display: 'block'
                           }}
-                        >
-                          <rect
-                            x="0"
-                            y="0"
-                            width="16"
-                            height="16"
-                            fill={bgColors[index]}
-                          />
-                        </svg>
+                        />
                       );
                     })}
                   </div>
