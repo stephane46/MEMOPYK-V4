@@ -314,7 +314,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                     
                     if (privateLogCount === 0 && ga4Count > 0) {
                       return (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full ml-3">
+                        <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-red-100 text-red-700 rounded-full ml-3">
                           ❌ No private log data
                         </span>
                       );
@@ -322,11 +322,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                     
                     const missingCount = Math.max(0, ga4Count - privateLogCount);
                     return missingCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full ml-3">
+                      <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-orange-100 text-orange-700 rounded-full ml-3">
                         🏴‍☠️ {missingCount} missing
                       </span>
                     ) : privateLogCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full ml-3">
+                      <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-green-100 text-green-700 rounded-full ml-3">
                         ✅ Complete data
                       </span>
                     ) : null;
@@ -413,6 +413,17 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   </div>
                 </div>
               )}
+
+              {/* Data Source Explanation */}
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h4 className="text-sm font-medium text-blue-900 mb-2">Why do the numbers differ?</h4>
+                <div className="text-xs text-blue-800 space-y-1">
+                  <div>• <strong>GA4</strong> tracks visitors across longer periods with advanced identification</div>
+                  <div>• <strong>Private Log</strong> only captures visitors who hit our tracking system</div>
+                  <div>• Missing visitors may have: blocked cookies, visited before logging started, are filtered bots, or use excluded IPs</div>
+                  <div>• GA4 provides the complete picture, Private Log provides detailed drill-down for available data</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -437,12 +448,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   <Users style={{ width: '24px', height: '24px' }} />
                   <span>Unique Visitors Details</span>
                   {(() => {
-                    const ga4Count = totalViews?.value || 0;
+                    const ga4Count = (newUsers?.value || 0) + (returnVisitors?.value || 0);
                     const privateLogCount = recentVisitors?.length || 0;
                     
                     if (privateLogCount === 0 && ga4Count > 0) {
                       return (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full ml-3">
+                        <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-red-100 text-red-700 rounded-full ml-3">
                           ❌ No private log data
                         </span>
                       );
@@ -450,11 +461,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                     
                     const missingCount = Math.max(0, ga4Count - privateLogCount);
                     return missingCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full ml-3">
+                      <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-orange-100 text-orange-700 rounded-full ml-3">
                         🏴‍☠️ {missingCount} missing
                       </span>
                     ) : privateLogCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full ml-3">
+                      <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-green-100 text-green-700 rounded-full ml-3">
                         ✅ Complete data
                       </span>
                     ) : null;
@@ -541,6 +552,17 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   </div>
                 </div>
               )}
+
+              {/* Data Source Explanation */}
+              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <h4 className="text-sm font-medium text-green-900 mb-2">Why do the numbers differ?</h4>
+                <div className="text-xs text-green-800 space-y-1">
+                  <div>• <strong>GA4</strong> tracks visitors across longer periods with advanced identification</div>
+                  <div>• <strong>Private Log</strong> only captures visitors who hit our tracking system</div>
+                  <div>• Missing visitors may have: blocked cookies, visited before logging started, are filtered bots, or use excluded IPs</div>
+                  <div>• GA4 provides the complete picture, Private Log provides detailed drill-down for available data</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -570,7 +592,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                     
                     if (privateLogCount === 0 && ga4Count > 0) {
                       return (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full ml-3">
+                        <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-red-100 text-red-700 rounded-full ml-3">
                           ❌ No private log data
                         </span>
                       );
@@ -578,11 +600,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                     
                     const missingCount = Math.max(0, ga4Count - privateLogCount);
                     return missingCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full ml-3">
+                      <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-orange-100 text-orange-700 rounded-full ml-3">
                         🏴‍☠️ {missingCount} missing
                       </span>
                     ) : privateLogCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full ml-3">
+                      <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium bg-green-100 text-green-700 rounded-full ml-3">
                         ✅ Complete data
                       </span>
                     ) : null;
@@ -670,6 +692,17 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   </div>
                 </div>
               )}
+
+              {/* Data Source Explanation */}
+              <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                <h4 className="text-sm font-medium text-purple-900 mb-2">Why do the numbers differ?</h4>
+                <div className="text-xs text-purple-800 space-y-1">
+                  <div>• <strong>GA4</strong> tracks visitors across longer periods with advanced identification</div>
+                  <div>• <strong>Private Log</strong> only captures visitors who hit our tracking system</div>
+                  <div>• Missing visitors may have: blocked cookies, visited before logging started, are filtered bots, or use excluded IPs</div>
+                  <div>• GA4 provides the complete picture, Private Log provides detailed drill-down for available data</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
