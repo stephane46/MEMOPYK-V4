@@ -408,6 +408,7 @@ export const AnalyticsNewGeo: React.FC = () => {
                                   y: event.clientY
                                 });
                                 // Set legend highlight based on country's intensity
+                                console.log('🟠 HOVER SET:', countryData.country, 'intensity:', intensity);
                                 setHoveredIntensity(intensity);
                               }
                             }}
@@ -439,15 +440,22 @@ export const AnalyticsNewGeo: React.FC = () => {
                         Math.abs(hoveredIntensity - intensity) < 0.25;
                       const bgColors = ['bg-blue-200', 'bg-blue-300', 'bg-blue-400', 'bg-blue-600', 'bg-blue-800'];
                       
+                      if (isHighlighted) {
+                        console.log('🟠 HIGHLIGHTED SQUARE:', index, 'intensity:', intensity, 'hovered:', hoveredIntensity);
+                      }
+                      
                       return (
                         <div
                           key={index}
-                          className={`w-4 h-4 border transition-all duration-200 ${bgColors[index]} ${
+                          className={`w-4 h-4 transition-all duration-200 ${bgColors[index]} ${
                             isHighlighted 
-                              ? 'border-gray-200' 
-                              : 'border-gray-200'
+                              ? 'border-4' 
+                              : 'border border-gray-200'
                           }`}
-                          style={isHighlighted ? { borderColor: '#f97316 !important', borderWidth: '2px !important' } : {}}
+                          style={{
+                            borderColor: isHighlighted ? '#ff7b00' : '#e5e7eb',
+                            borderWidth: isHighlighted ? '4px' : '1px'
+                          }}
                         />
                       );
                     })}
