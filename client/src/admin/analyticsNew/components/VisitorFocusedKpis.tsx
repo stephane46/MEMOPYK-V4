@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, Users, UserCheck, RotateCcw, X, MapPin, Clock, Languages } from 'lucide-react';
 import { useGa4Report } from "../hooks/useGa4Report";
 import type { KpisResponse } from "../data/types";
@@ -29,6 +29,27 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
   // Loading states for modals
   const [isLoadingRecentVisitors, setIsLoadingRecentVisitors] = useState(false);
   const [isLoadingReturningVisitors, setIsLoadingReturningVisitors] = useState(false);
+
+  // ESC key functionality to close modals
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsTotalViewsModalOpen(false);
+        setIsUniqueVisitorsModalOpen(false);
+        setIsReturnVisitorsModalOpen(false);
+      }
+    };
+
+    // Add event listener only when any modal is open
+    if (isTotalViewsModalOpen || isUniqueVisitorsModalOpen || isReturnVisitorsModalOpen) {
+      document.addEventListener('keydown', handleEscKey);
+    }
+
+    // Cleanup event listener
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [isTotalViewsModalOpen, isUniqueVisitorsModalOpen, isReturnVisitorsModalOpen]);
 
   if (loading) {
     return (
