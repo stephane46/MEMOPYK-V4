@@ -5387,22 +5387,11 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // GA4 KPIs endpoint - using your exact clean API structure
+  // GA4 KPIs endpoint - using consistent date handling like Geo API
   app.get("/api/ga4/kpis", async (req, res, next) => {
     try {
-      let startDate, endDate, locale, nocache;
-      
-      // Check if this is a preset request
-      if (req.query.preset) {
-        const preset = String(req.query.preset);
-        const { startDate: calcStart, endDate: calcEnd } = calculateDateRange(preset);
-        startDate = calcStart;
-        endDate = calcEnd;
-        locale = req.query.locale ? String(req.query.locale) : "all";
-        nocache = req.query.nocache === "1" || req.query.nocache === "true";
-      } else {
-        ({ startDate, endDate, locale, nocache } = getParams(req));
-      }
+      // Always use getParams for consistent date handling across all GA4 endpoints
+      const { startDate, endDate, locale, nocache } = getParams(req);
       const key = k(`kpis:${startDate}:${endDate}:${locale}`);
 
       console.log(`🔍 GA4 KPIs REQUEST: ${startDate} to ${endDate}, locale: ${locale}, cache key: ${key}`);
