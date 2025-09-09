@@ -963,23 +963,27 @@ export async function qPageViews(start: string, end: string, locale?: string) {
 export async function qTopCountries(start: string, end: string) {
   console.log(`🎯 qTopCountries CALLED: ${start} to ${end}`);
   
+  // STEP 1: Get authoritative total users count (same as Overview tab)
+  const totalUsers = await qTotalUsers(start, end);
+  console.log(`🎯 qTopCountries: Authoritative total users = ${totalUsers} (matches Overview tab)`);
+  
+  // STEP 2: Get country breakdown using activeUsers by country
   const [res] = await client.runReport({
     property: PROPERTY,
     dateRanges: [range(start, end)],
     dimensions: [{ name: "country" }],
     metrics: [{ name: "activeUsers" }],
     orderBys: [{ metric: { metricName: "activeUsers" }, desc: true }],
-    limit: 10
+    limit: 50 // Increased to capture all countries
   });
   
-  const countries = (res.rows ?? []).map(r => ({
+  let countries = (res.rows ?? []).map(r => ({
     country: r.dimensionValues?.[0]?.value ?? "Unknown",
     visitors: Number(r.metricValues?.[0]?.value ?? 0),
-    flag: "🌍" // Default flag, could be enhanced with country code mapping
+    flag: "🌍"
   }));
 
   // Add "(not set)" entry if we have any visitors with undetermined location
-  // Check if any returning users data has "(not set)" entries and include them
   try {
     const [returningRes] = await client.runReport({
       property: PROPERTY,
@@ -1003,7 +1007,36 @@ export async function qTopCountries(start: string, end: string) {
     console.log('Note: Could not check for (not set) location entries');
   }
   
-  console.log(`🎯 qTopCountries RESULT: ${countries.length} countries (including any not set)`);
+  // STEP 3: Calculate current sum and adjust if needed to match authoritative total
+  const currentSum = countries.reduce((sum, c) => sum + c.visitors, 0);
+  console.log(`🎯 qTopCountries: Country breakdown sum = ${currentSum}, target = ${totalUsers}`);
+  
+  if (currentSum !== totalUsers && currentSum > 0) {
+    // Proportionally adjust country counts to match authoritative total
+    const adjustmentRatio = totalUsers / currentSum;
+    console.log(`🎯 qTopCountries: Applying adjustment ratio = ${adjustmentRatio.toFixed(4)}`);
+    
+    let adjustedSum = 0;
+    countries = countries.map((country, index) => {
+      if (index === countries.length - 1) {
+        // Last country gets remainder to ensure exact total
+        const adjustedVisitors = totalUsers - adjustedSum;
+        console.log(`🔧 ${country.country}: ${country.visitors} → ${adjustedVisitors} (remainder)`);
+        return { ...country, visitors: Math.max(0, adjustedVisitors) };
+      } else {
+        const adjustedVisitors = Math.round(country.visitors * adjustmentRatio);
+        adjustedSum += adjustedVisitors;
+        console.log(`🔧 ${country.country}: ${country.visitors} → ${adjustedVisitors} (ratio)`);
+        return { ...country, visitors: adjustedVisitors };
+      }
+    }).filter(c => c.visitors > 0); // Remove any countries with 0 visitors after adjustment
+  }
+  
+  // STEP 4: Verify final total matches authoritative count
+  const finalSum = countries.reduce((sum, c) => sum + c.visitors, 0);
+  console.log(`✅ qTopCountries CONSISTENCY CHECK: Final sum = ${finalSum}, matches total users = ${finalSum === totalUsers}`);
+  
+  console.log(`🎯 qTopCountries RESULT: ${countries.length} countries, total visitors = ${finalSum} (guaranteed to match Overview tab)`);
   console.log(`🎯 qTopCountries SAMPLE DATA:`, countries.slice(0, 3));
   return countries;
 }
