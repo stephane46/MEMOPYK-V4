@@ -443,13 +443,14 @@ export const AnalyticsNewGeo: React.FC = () => {
                         isHighlighted = index === closestIndex;
                       }
                       
-                      const bgColors = ['bg-blue-200', 'bg-blue-300', 'bg-blue-400', 'bg-blue-600', 'bg-blue-800'];
+                      const bgColors = ['#bfdbfe', '#93c5fd', '#60a5fa', '#2563eb', '#1e40af']; // Blue gradient
                       
                       return (
                         <div
                           key={index}
-                          className={`w-4 h-4 transition-all duration-200 ${bgColors[index]} border-2`}
+                          className="w-4 h-4 transition-all duration-200 border-2"
                           style={{
+                            backgroundColor: bgColors[index],
                             borderColor: isHighlighted ? '#f97316' : '#e5e7eb'
                           }}
                         />
