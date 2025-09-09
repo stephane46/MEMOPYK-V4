@@ -320,7 +320,12 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       {/* Header with Active Users Badge */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Analytics Overview</h1>
+          <div className="flex items-center space-x-3">
+            <h1 className="text-2xl font-bold text-gray-900">Analytics Overview</h1>
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 text-xs">
+              Source: GA4 (agrégats)
+            </Badge>
+          </div>
           <p className="text-gray-600 mt-1">Key performance metrics for your MEMOPYK platform</p>
         </div>
         
