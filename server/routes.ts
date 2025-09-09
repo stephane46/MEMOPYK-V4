@@ -5288,19 +5288,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       // Transform sessions into visitor details format with IP masking
       const visitorDetails = sessions.map((session, index) => {
-        // Mask IP for privacy (keep first 3 octets, mask last)
-        const maskIP = (ip: string) => {
-          if (!ip || ip === '0.0.0.0' || ip === '127.0.0.1') return 'Local';
-          const parts = ip.split('.');
-          if (parts.length === 4) {
-            return `${parts[0]}.${parts[1]}.${parts[2]}.xxx`;
-          }
-          return 'Masked';
-        };
-        
         return {
           id: session.session_id || `session_${index}`,
-          ip_address: maskIP(session.ip_address),
+          ip_address: session.ip_address || 'Unknown',
           country: session.country || 'Unknown',
           region: session.region || 'Unknown', 
           city: session.city || 'Unknown',

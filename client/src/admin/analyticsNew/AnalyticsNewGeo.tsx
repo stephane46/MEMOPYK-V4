@@ -248,7 +248,12 @@ export const AnalyticsNewGeo: React.FC = () => {
     <div className="analytics-new-container space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Geographic Market Analysis</h2>
+        <div className="flex items-center space-x-3">
+          <h2 className="text-xl font-bold text-gray-900">Geographic Market Analysis</h2>
+          <Badge variant="outline" className="bg-blue-50 text-blue-700 text-xs">
+            Source: GA4 (agrégats)
+          </Badge>
+        </div>
         <div className="flex items-center space-x-2">
           <Badge variant="secondary" className="bg-blue-50 text-blue-700">
             🌍 {coverageCount} Markets
