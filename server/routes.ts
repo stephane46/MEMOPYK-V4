@@ -6963,6 +6963,112 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Live Tracking endpoint - Private system replacement for GA4 Realtime
+  app.get("/api/analytics/live-tracking", async (req, res) => {
+    try {
+      console.log('🎯 LIVE TRACKING REQUEST: Fetching private system realtime data');
+      
+      // Get sessions from the last 30 minutes for "active" users
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+      
+      // **REPLIT PREVIEW PRODUCTION ANALYTICS**
+      const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
+      
+      const recentSessions = await hybridStorage.getAnalyticsSessions(
+        thirtyMinutesAgo.toISOString(),
+        new Date().toISOString(),
+        undefined,
+        shouldIncludeProduction
+      );
+      
+      // Filter out test data and admin IPs (like the rest of the private system)
+      const realSessions = recentSessions.filter(session => {
+        return !session.is_test_data && 
+               session.ip_address && 
+               session.ip_address !== '0.0.0.0' &&
+               session.ip_address !== '127.0.0.1' &&
+               session.ip_address !== null &&
+               !session.session_id?.includes('anonymous');
+      });
+      
+      // Get unique active users (by IP)
+      const activeUserMap = new Map();
+      realSessions.forEach(session => {
+        const ip = session.ip_address;
+        if (!activeUserMap.has(ip)) {
+          activeUserMap.set(ip, {
+            ip_address: ip,
+            country: session.country || 'Unknown',
+            user_agent: session.user_agent || '',
+            language: session.language || 'Unknown',
+            created_at: session.created_at
+          });
+        }
+      });
+      
+      const activeUsers = Array.from(activeUserMap.values());
+      
+      // Aggregate by country
+      const countryMap = new Map();
+      activeUsers.forEach(user => {
+        const country = user.country || 'Unknown';
+        const current = countryMap.get(country) || 0;
+        countryMap.set(country, current + 1);
+      });
+      
+      const byCountry = Array.from(countryMap.entries())
+        .map(([country, users]) => ({ country, users }))
+        .sort((a, b) => b.users - a.users) // Sort by user count descending
+        .slice(0, 10); // Top 10 countries
+      
+      // Aggregate by device (using user agent)
+      const deviceMap = new Map();
+      activeUsers.forEach(user => {
+        const userAgent = user.user_agent || '';
+        let device = 'Desktop';
+        
+        if (/Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
+          if (/iPad|Tablet/i.test(userAgent)) {
+            device = 'Tablet';
+          } else {
+            device = 'Mobile';
+          }
+        }
+        
+        const current = deviceMap.get(device) || 0;
+        deviceMap.set(device, current + 1);
+      });
+      
+      const byDevice = Array.from(deviceMap.entries())
+        .map(([device, users]) => ({ device, users }))
+        .sort((a, b) => b.users - a.users); // Sort by user count descending
+      
+      console.log(`📊 LIVE TRACKING: Found ${activeUsers.length} active users`);
+      console.log(`🌍 Countries: ${byCountry.map(c => `${c.country}(${c.users})`).join(', ')}`);
+      console.log(`📱 Devices: ${byDevice.map(d => `${d.device}(${d.users})`).join(', ')}`);
+      
+      const response = {
+        activeUsers: activeUsers.length,
+        byCountry,
+        byDevice,
+        timestamp: new Date().toISOString()
+      };
+      
+      res.json(response);
+      
+    } catch (error) {
+      console.error('❌ LIVE TRACKING ERROR:', error);
+      res.status(500).json({ 
+        error: "Failed to fetch live tracking data", 
+        message: error.message,
+        activeUsers: 0,
+        byCountry: [],
+        byDevice: [],
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   // Analytics Sessions endpoint - GET analytics sessions  
   app.get("/api/analytics/sessions", async (req, res) => {
     try {
