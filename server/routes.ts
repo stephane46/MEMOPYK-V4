@@ -5392,28 +5392,26 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       let startDate, endDate, locale, nocache;
       
-      // ALWAYS use frontend-calculated dates from startDate/endDate params
-      // This ensures 100% consistency with Geo API and other tabs
-      if (req.query.startDate && req.query.endDate) {
-        startDate = String(req.query.startDate);
-        endDate = String(req.query.endDate);
+      // Handle both preset and direct date parameters for consistency with Geo API
+      if (req.query.preset) {
+        // For preset requests, use frontend-calculated dates from startDate/endDate params
+        // This ensures consistency with Geo API which always gets calculated dates from frontend
+        const preset = String(req.query.preset);
+        if (req.query.startDate && req.query.endDate) {
+          // Frontend already calculated dates based on preset, use them directly
+          startDate = String(req.query.startDate);
+          endDate = String(req.query.endDate);
+          console.log(`📅 FRONTEND DATES: Using frontend dates: ${startDate} to ${endDate}`);
+        } else {
+          // This should never happen - but if it does, return error
+          return res.status(400).json({ error: 'Missing startDate/endDate for preset request' });
+        }
         locale = req.query.locale ? String(req.query.locale) : "all";
         nocache = req.query.nocache === "1" || req.query.nocache === "true";
-        console.log(`📅 FRONTEND DATES: Using dates from frontend: ${startDate} to ${endDate}`);
       } else {
-        // Handle missing parameters - default to last 7 days to prevent errors
-        console.log(`❌ MISSING DATES: No startDate/endDate provided, defaulting to 7d`);
-        const { formatInTimeZone } = require('date-fns-tz');
-        const today = new Date();
-        const endDateObj = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        const startDateObj = new Date(endDateObj.getTime() - (7 * 24 * 60 * 60 * 1000));
-        
-        startDate = formatInTimeZone(startDateObj, 'Europe/Paris', 'yyyy-MM-dd');
-        endDate = formatInTimeZone(endDateObj, 'Europe/Paris', 'yyyy-MM-dd');
-        locale = req.query.locale ? String(req.query.locale) : "all";
-        nocache = req.query.nocache === "1" || req.query.nocache === "true";
-        
-        console.log(`📅 DEFAULT DATES: Using fallback dates: ${startDate} to ${endDate}`);
+        // Direct date parameters - use getParams for consistency with Geo API
+        ({ startDate, endDate, locale, nocache } = getParams(req));
+        console.log(`📅 DIRECT DATES: Using direct dates: ${startDate} to ${endDate}`);
       }
       const key = k(`kpis:${startDate}:${endDate}:${locale}`);
 
