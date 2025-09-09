@@ -164,7 +164,17 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         console.log(`✅ Using broader range data (${fallbackData.length} sessions) to match GA4 count`);
         const totalViewsCount = totalViews?.value || 0;
         const limitedData = fallbackData.slice(0, totalViewsCount);
-        setRecentVisitors(limitedData);
+        
+        // Add notice that broader period data is being used
+        const dataWithNotice = limitedData.map((visitor: any, index: number) => ({
+          ...visitor,
+          // Add notice to first visitor only
+          ...(index === 0 && {
+            fallback_notice: `⚠️ Showing recent data (${fallbackStartStr} to ${fallbackEndStr}) - no data for selected date`
+          })
+        }));
+        
+        setRecentVisitors(dataWithNotice);
         return;
       }
       
@@ -240,7 +250,16 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
           return true;
         }).slice(0, uniqueVisitorsCount);
         
-        setRecentVisitors(uniqueData);
+        // Add notice that broader period data is being used
+        const dataWithNotice = uniqueData.map((visitor: any, index: number) => ({
+          ...visitor,
+          // Add notice to first visitor only
+          ...(index === 0 && {
+            fallback_notice: `⚠️ Showing recent data (${fallbackStartStr} to ${fallbackEndStr}) - no unique visitor data for selected date`
+          })
+        }));
+        
+        setRecentVisitors(dataWithNotice);
         return;
       }
       
@@ -325,7 +344,16 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
           ipCounts.get(visitor.ip_address) > 1
         ).slice(0, returnVisitorsCount);
         
-        setReturningVisitors(returningData);
+        // Add notice that broader period data is being used
+        const dataWithNotice = returningData.map((visitor: any, index: number) => ({
+          ...visitor,
+          // Add notice to first visitor only
+          ...(index === 0 && {
+            fallback_notice: `⚠️ Showing recent data (${fallbackStartStr} to ${fallbackEndStr}) - no return visitor data for selected date`
+          })
+        }));
+        
+        setReturningVisitors(dataWithNotice);
         return;
       }
       
@@ -466,6 +494,19 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {/* Fallback Notice Banner */}
+              {recentVisitors && recentVisitors.length > 0 && recentVisitors[0]?.fallback_notice && (
+                <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <div className="text-orange-600">⚠️</div>
+                    <div className="text-sm text-orange-800">
+                      <strong>Data from broader period:</strong> No private log data found for the selected date.
+                      Showing recent visitor data from a 7-day range to match GA4 metrics.
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {isLoadingRecentVisitors ? (
                 <div className="text-center py-8">
                   <div className="flex flex-col items-center gap-3">
@@ -585,6 +626,19 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {/* Fallback Notice Banner */}
+              {recentVisitors && recentVisitors.length > 0 && recentVisitors[0]?.fallback_notice && (
+                <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <div className="text-orange-600">⚠️</div>
+                    <div className="text-sm text-orange-800">
+                      <strong>Data from broader period:</strong> No private log data found for the selected date.
+                      Showing recent visitor data from a 7-day range to match GA4 metrics.
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {isLoadingRecentVisitors ? (
                 <div className="text-center py-8">
                   <div className="flex flex-col items-center gap-3">
