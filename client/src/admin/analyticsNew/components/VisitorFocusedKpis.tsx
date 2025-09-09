@@ -330,29 +330,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                 <div className="flex items-center gap-3">
                   <Eye style={{ width: '24px', height: '24px' }} />
                   <span>Total Views Details</span>
-                  {(() => {
-                    const ga4Count = totalViews?.value || 0;
-                    const privateLogCount = recentVisitors?.length || 0;
-                    
-                    if (privateLogCount === 0 && ga4Count > 0) {
-                      return (
-                        <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-red-100 text-red-700 rounded-full ml-3">
-                          ❌ No private log data
-                        </span>
-                      );
-                    }
-                    
-                    const missingCount = Math.max(0, ga4Count - privateLogCount);
-                    return missingCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-orange-100 text-orange-700 rounded-full ml-3">
-                        🏴‍☠️ {missingCount} missing
-                      </span>
-                    ) : privateLogCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-green-100 text-green-700 rounded-full ml-3">
-                        ✅ Complete data
-                      </span>
-                    ) : null;
-                  })()}
                 </div>
                 <button
                   onClick={() => setIsTotalViewsModalOpen(false)}
@@ -467,29 +444,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                 <div className="flex items-center gap-3">
                   <Users style={{ width: '24px', height: '24px' }} />
                   <span>Unique Visitors Details</span>
-                  {(() => {
-                    const ga4Count = (uniqueVisitors?.value || 0);
-                    const privateLogCount = recentVisitors?.length || 0;
-                    
-                    if (privateLogCount === 0 && ga4Count > 0) {
-                      return (
-                        <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-red-100 text-red-700 rounded-full ml-3">
-                          ❌ No private log data
-                        </span>
-                      );
-                    }
-                    
-                    const missingCount = Math.max(0, ga4Count - privateLogCount);
-                    return missingCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-orange-100 text-orange-700 rounded-full ml-3">
-                        🏴‍☠️ {missingCount} missing
-                      </span>
-                    ) : privateLogCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-green-100 text-green-700 rounded-full ml-3">
-                        ✅ Complete data
-                      </span>
-                    ) : null;
-                  })()}
                 </div>
                 <button
                   onClick={() => setIsUniqueVisitorsModalOpen(false)}
@@ -604,29 +558,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                 <div className="flex items-center gap-3">
                   <UserCheck style={{ width: '24px', height: '24px' }} />
                   <span>Return Visitors Details</span>
-                  {(() => {
-                    const ga4Count = returnVisitors?.value || 0;
-                    const privateLogCount = returningVisitors?.length || 0;
-                    
-                    if (privateLogCount === 0 && ga4Count > 0) {
-                      return (
-                        <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-red-100 text-red-700 rounded-full ml-3">
-                          ❌ No private log data
-                        </span>
-                      );
-                    }
-                    
-                    const missingCount = Math.max(0, ga4Count - privateLogCount);
-                    return missingCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-orange-100 text-orange-700 rounded-full ml-3">
-                        🏴‍☠️ {missingCount} missing
-                      </span>
-                    ) : privateLogCount > 0 ? (
-                      <span className="inline-flex items-center gap-1 px-4 py-3 text-base font-bold bg-green-100 text-green-700 rounded-full ml-3">
-                        ✅ Complete data
-                      </span>
-                    ) : null;
-                  })()}
                 </div>
                 <button
                   onClick={() => setIsReturnVisitorsModalOpen(false)}
