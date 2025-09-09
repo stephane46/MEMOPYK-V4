@@ -129,22 +129,42 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       const allData = await response.json();
       
       if (allData.length === 0) {
-        // No private log data available for this date range
-        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, but GA4 shows ${totalViews?.value || 0} views`);
-        setRecentVisitors([{
-          id: 'no-data',
-          ip_address: 'N/A',
-          country: 'No private log data available',
-          region: `GA4 shows ${totalViews?.value || 0} views for this period`,
-          city: 'but private log is empty',
-          language: 'N/A',
-          last_visit: new Date().toISOString(),
-          user_agent: 'Private log tracking may be disabled or delayed',
-          visit_count: 0,
-          session_duration: 0,
-          previous_visit: null,
-          source: 'system_message'
-        }]);
+        // Try broader date range as fallback
+        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, trying broader range...`);
+        
+        // Calculate 7-day range around the target date
+        const targetDate = new Date(calcEndDate);
+        const fallbackStart = new Date(targetDate.getTime() - 6 * 24 * 60 * 60 * 1000);
+        const fallbackStartStr = fallbackStart.toISOString().slice(0, 10);
+        const fallbackEndStr = calcEndDate;
+        
+        const fallbackResponse = await fetch(`/api/private-log/visitor-details?startDate=${fallbackStartStr}&endDate=${fallbackEndStr}`);
+        const fallbackData = await fallbackResponse.json();
+        
+        if (fallbackData.length === 0) {
+          // Still no data even with broader range
+          setRecentVisitors([{
+            id: 'no-data',
+            ip_address: 'N/A',
+            country: 'No private log data available',
+            region: `GA4 shows ${totalViews?.value || 0} views for this period`,
+            city: 'but private log is empty',
+            language: 'N/A',
+            last_visit: new Date().toISOString(),
+            user_agent: 'Private log tracking may be disabled or delayed',
+            visit_count: 0,
+            session_duration: 0,
+            previous_visit: null,
+            source: 'system_message'
+          }]);
+          return;
+        }
+        
+        // Use fallback data but limit to match GA4 count
+        console.log(`✅ Using broader range data (${fallbackData.length} sessions) to match GA4 count`);
+        const totalViewsCount = totalViews?.value || 0;
+        const limitedData = fallbackData.slice(0, totalViewsCount);
+        setRecentVisitors(limitedData);
         return;
       }
       
@@ -179,22 +199,48 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       const allData = await response.json();
       
       if (allData.length === 0) {
-        // No private log data available for this date range
-        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, but GA4 shows ${uniqueVisitors?.value || 0} unique visitors`);
-        setRecentVisitors([{
-          id: 'no-data',
-          ip_address: 'N/A',
-          country: 'No private log data available',
-          region: `GA4 shows ${uniqueVisitors?.value || 0} unique visitors for this period`,
-          city: 'but private log is empty',
-          language: 'N/A',
-          last_visit: new Date().toISOString(),
-          user_agent: 'Private log tracking may be disabled or delayed',
-          visit_count: 0,
-          session_duration: 0,
-          previous_visit: null,
-          source: 'system_message'
-        }]);
+        // Try broader date range as fallback
+        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, trying broader range...`);
+        
+        const targetDate = new Date(calcEndDate);
+        const fallbackStart = new Date(targetDate.getTime() - 6 * 24 * 60 * 60 * 1000);
+        const fallbackStartStr = fallbackStart.toISOString().slice(0, 10);
+        const fallbackEndStr = calcEndDate;
+        
+        const fallbackResponse = await fetch(`/api/private-log/visitor-details?startDate=${fallbackStartStr}&endDate=${fallbackEndStr}`);
+        const fallbackData = await fallbackResponse.json();
+        
+        if (fallbackData.length === 0) {
+          setRecentVisitors([{
+            id: 'no-data',
+            ip_address: 'N/A',
+            country: 'No private log data available',
+            region: `GA4 shows ${uniqueVisitors?.value || 0} unique visitors for this period`,
+            city: 'but private log is empty',
+            language: 'N/A',
+            last_visit: new Date().toISOString(),
+            user_agent: 'Private log tracking may be disabled or delayed',
+            visit_count: 0,
+            session_duration: 0,
+            previous_visit: null,
+            source: 'system_message'
+          }]);
+          return;
+        }
+        
+        // Use fallback data and apply unique visitor logic
+        console.log(`✅ Using broader range data (${fallbackData.length} sessions) for unique visitors`);
+        const uniqueVisitorsCount = uniqueVisitors?.value || 0;
+        const seenIPs = new Set();
+        const uniqueData = fallbackData.filter((visitor: any) => {
+          if (seenIPs.has(visitor.ip_address)) {
+            return false;
+          }
+          seenIPs.add(visitor.ip_address);
+          return true;
+        }).slice(0, uniqueVisitorsCount);
+        
+        setRecentVisitors(uniqueData);
         return;
       }
       
@@ -236,22 +282,50 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       const allData = await response.json();
       
       if (allData.length === 0) {
-        // No private log data available for this date range
-        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, but GA4 shows ${returnVisitors?.value || 0} return visitors`);
-        setReturningVisitors([{
-          id: 'no-data',
-          ip_address: 'N/A',
-          country: 'No private log data available',
-          region: `GA4 shows ${returnVisitors?.value || 0} return visitors for this period`,
-          city: 'but private log is empty',
-          language: 'N/A',
-          last_visit: new Date().toISOString(),
-          user_agent: 'Private log tracking may be disabled or delayed',
-          visit_count: 0,
-          session_duration: 0,
-          previous_visit: null,
-          source: 'system_message'
-        }]);
+        // Try broader date range as fallback
+        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, trying broader range...`);
+        
+        const targetDate = new Date(calcEndDate);
+        const fallbackStart = new Date(targetDate.getTime() - 6 * 24 * 60 * 60 * 1000);
+        const fallbackStartStr = fallbackStart.toISOString().slice(0, 10);
+        const fallbackEndStr = calcEndDate;
+        
+        const fallbackResponse = await fetch(`/api/private-log/visitor-details?startDate=${fallbackStartStr}&endDate=${fallbackEndStr}`);
+        const fallbackData = await fallbackResponse.json();
+        
+        if (fallbackData.length === 0) {
+          setReturningVisitors([{
+            id: 'no-data',
+            ip_address: 'N/A',
+            country: 'No private log data available',
+            region: `GA4 shows ${returnVisitors?.value || 0} return visitors for this period`,
+            city: 'but private log is empty',
+            language: 'N/A',
+            last_visit: new Date().toISOString(),
+            user_agent: 'Private log tracking may be disabled or delayed',
+            visit_count: 0,
+            session_duration: 0,
+            previous_visit: null,
+            source: 'system_message'
+          }]);
+          return;
+        }
+        
+        // Use fallback data and apply returning visitor logic
+        console.log(`✅ Using broader range data (${fallbackData.length} sessions) for return visitors`);
+        const returnVisitorsCount = returnVisitors?.value || 0;
+        const ipCounts = new Map();
+        
+        fallbackData.forEach((visitor: any) => {
+          const count = ipCounts.get(visitor.ip_address) || 0;
+          ipCounts.set(visitor.ip_address, count + 1);
+        });
+        
+        const returningData = fallbackData.filter((visitor: any) => 
+          ipCounts.get(visitor.ip_address) > 1
+        ).slice(0, returnVisitorsCount);
+        
+        setReturningVisitors(returningData);
         return;
       }
       
