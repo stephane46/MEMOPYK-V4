@@ -121,6 +121,9 @@ export const AnalyticsNewGeo: React.FC = () => {
     y: number;
   }>({ show: false, content: '', x: 0, y: 0 });
 
+  // Legend highlight state
+  const [hoveredIntensity, setHoveredIntensity] = useState<number | null>(null);
+
   // Fetch geographic analytics data from GA4 (consistent with Analytics New GA4-only approach)
   const { data: geoData, isLoading: geoLoading, error: geoError, refetch } = useQuery<GeoAnalyticsData>({
     queryKey: ['/api/ga4/geo', start, end, sinceDateEnabled ? sinceDate : null],
@@ -404,6 +407,8 @@ export const AnalyticsNewGeo: React.FC = () => {
                                   x: event.clientX,
                                   y: event.clientY
                                 });
+                                // Set legend highlight based on country's intensity
+                                setHoveredIntensity(intensity);
                               }
                             }}
                             onMouseMove={(event) => {
@@ -413,6 +418,7 @@ export const AnalyticsNewGeo: React.FC = () => {
                             }}
                             onMouseLeave={() => {
                               setTooltip({ show: false, content: '', x: 0, y: 0 });
+                              setHoveredIntensity(null);
                             }}
                           />
                         );
@@ -428,11 +434,22 @@ export const AnalyticsNewGeo: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <span className="text-xs text-gray-500">Low</span>
                   <div className="flex space-x-1">
-                    <div className="w-4 h-4 border border-gray-200 bg-blue-200"></div>
-                    <div className="w-4 h-4 border border-gray-200 bg-blue-300"></div>
-                    <div className="w-4 h-4 border border-gray-200 bg-blue-400"></div>
-                    <div className="w-4 h-4 border border-gray-200 bg-blue-600"></div>
-                    <div className="w-4 h-4 border border-gray-200 bg-blue-800"></div>
+                    {[0.2, 0.4, 0.6, 0.8, 1.0].map((intensity, index) => {
+                      const isHighlighted = hoveredIntensity !== null && 
+                        Math.abs(hoveredIntensity - intensity) < 0.25;
+                      const bgColors = ['bg-blue-200', 'bg-blue-300', 'bg-blue-400', 'bg-blue-600', 'bg-blue-800'];
+                      
+                      return (
+                        <div
+                          key={index}
+                          className={`w-4 h-4 border transition-all duration-200 ${bgColors[index]} ${
+                            isHighlighted 
+                              ? 'border-orange-500 border-2 scale-110 shadow-md' 
+                              : 'border-gray-200'
+                          }`}
+                        />
+                      );
+                    })}
                   </div>
                   <span className="text-xs text-gray-500">High</span>
                 </div>
