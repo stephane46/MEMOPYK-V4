@@ -568,18 +568,25 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   <UserCheck style={{ width: '24px', height: '24px' }} />
                   <span>Return Visitors Details</span>
                   {(() => {
-                    const missingCount = returningVisitors.filter(visitor => 
-                      !visitor.country || visitor.country === 'Unknown' || 
-                      !visitor.city || visitor.city === 'Unknown'
-                    ).length;
+                    const ga4Count = returnVisitors?.value || 0;
+                    const privateLogCount = returningVisitors?.length || 0;
                     
+                    if (privateLogCount === 0 && ga4Count > 0) {
+                      return (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full ml-3">
+                          ❌ No private log data
+                        </span>
+                      );
+                    }
+                    
+                    const missingCount = Math.max(0, ga4Count - privateLogCount);
                     return missingCount > 0 ? (
                       <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full ml-3">
-                        🏴‍☠️ {missingCount} pending
+                        🏴‍☠️ {missingCount} missing
                       </span>
-                    ) : returningVisitors.length > 0 ? (
+                    ) : privateLogCount > 0 ? (
                       <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full ml-3">
-                        ✅ All enriched
+                        ✅ Complete data
                       </span>
                     ) : null;
                   })()}
