@@ -5524,26 +5524,31 @@ export async function registerRoutes(app: Express): Promise<void> {
       const avgWatchSeconds = (totalWatch > 0 && plays > 0) ? Math.round(totalWatch / plays) : 0;
       const completionRate = plays > 0 ? (completes / plays) * 100 : 0;
 
-      // Calculate previous period for comparison
+      // Calculate previous period for comparison - ONLY calculate comparison period, NOT current period
       let prevSessions = 0, prevTotalUsers = 0, prevReturningUsers = 0, prevPlays = 0, prevCompletes = 0, prevTotalWatch = 0;
       
       try {
-        const { compareStartDate, compareEndDate } = calculateDateRange(
-          req.query.preset as string || '7d', 
-          startDate, 
-          endDate
-        );
+        // Calculate comparison period without overriding current dates from frontend
+        const startDateObj = new Date(startDate + 'T00:00:00.000Z');
+        const endDateObj = new Date(endDate + 'T00:00:00.000Z');
+        const rangeDays = Math.ceil((endDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24)) + 1;
         
-        console.log(`📊 Fetching previous period data: ${compareStartDate} to ${compareEndDate}`);
+        const compareEndDate = new Date(startDateObj.getTime() - (1000 * 60 * 60 * 24));
+        const compareStartDate = new Date(compareEndDate.getTime() - ((rangeDays - 1) * 1000 * 60 * 60 * 24));
+        
+        const compareStartDateStr = compareStartDate.toISOString().split('T')[0];
+        const compareEndDateStr = compareEndDate.toISOString().split('T')[0];
+        
+        console.log(`📊 Fetching previous period data: ${compareStartDateStr} to ${compareEndDateStr}`);
         
         // Fetch previous period data
         const [prevSessionsData, prevTotalUsersData, prevReturningUsersData, prevPlaysData, prevCompletesData, prevTotalWatchData] = await Promise.all([
-          qSessions(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qSessions failed:', e.message); return 0; }),
-          qTotalUsers(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qTotalUsers failed:', e.message); return 0; }),
-          qReturningUsers(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qReturningUsers failed:', e.message); return 0; }),
-          qPlays(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qPlays failed:', e.message); return 0; }),
-          qCompletes(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qCompletes failed:', e.message); return 0; }),
-          qWatchTimeTotal(compareStartDate, compareEndDate, locale).catch(e => { console.error('❌ Previous qWatchTimeTotal failed:', e.message); return 0; })
+          qSessions(compareStartDateStr, compareEndDateStr, locale).catch(e => { console.error('❌ Previous qSessions failed:', e.message); return 0; }),
+          qTotalUsers(compareStartDateStr, compareEndDateStr).catch(e => { console.error('❌ Previous qTotalUsers failed:', e.message); return 0; }),
+          qReturningUsers(compareStartDateStr, compareEndDateStr).catch(e => { console.error('❌ Previous qReturningUsers failed:', e.message); return 0; }),
+          qPlays(compareStartDateStr, compareEndDateStr, locale).catch(e => { console.error('❌ Previous qPlays failed:', e.message); return 0; }),
+          qCompletes(compareStartDateStr, compareEndDateStr, locale).catch(e => { console.error('❌ Previous qCompletes failed:', e.message); return 0; }),
+          qWatchTimeTotal(compareStartDateStr, compareEndDateStr, locale).catch(e => { console.error('❌ Previous qWatchTimeTotal failed:', e.message); return 0; })
         ]);
         
         prevSessions = prevSessionsData;
