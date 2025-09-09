@@ -432,8 +432,6 @@ export const AnalyticsNewGeo: React.FC = () => {
                   <span className="text-xs text-gray-500">Low</span>
                   <div className="flex space-x-1">
                     {[0.2, 0.4, 0.6, 0.8, 1.0].map((intensity, index) => {
-                      const bgColors = ['#bfdbfe', '#93c5fd', '#60a5fa', '#2563eb', '#1e40af']; // Blue gradient
-                      
                       return (
                         <div
                           key={index}

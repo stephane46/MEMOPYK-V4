@@ -1039,12 +1039,6 @@ html, body {
 }
 
 /* Analytics Geo Legend Square Color Fix - Force background colors */
-.legend-square-test {
-  background-color: red !important;
-  background: red !important;
-  background-image: none !important;
-}
-
 .legend-square {
   background-image: none !important;
 }
