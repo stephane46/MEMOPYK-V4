@@ -134,15 +134,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         console.warn('Location enrichment failed:', enrichError);
       });
       
-      const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
-      const allData = await response.json();
+      const response = await fetch(`/api/analytics/recent-visitors?dateFrom=${calcStartDate}&dateTo=${calcEndDate}&skipEnrichment=true`);
+      const allVisitors = await response.json();
       
-      // No fallback - show exactly what private log has for the selected period
-      // The badge system will indicate missing data count
-      
-      // Show all available private log data (don't limit to GA4 count)
-      // The badge will show missing count vs GA4
-      setRecentVisitors(allData);
+      // Show all unique visitors (server already handles deduplication)
+      setRecentVisitors(allVisitors);
     } catch (error) {
       console.error('Failed to fetch recent visitors:', error);
     } finally {
@@ -174,24 +170,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         console.warn('Location enrichment failed:', enrichError);
       });
       
-      const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
-      const allData = await response.json();
+      const response = await fetch(`/api/analytics/recent-visitors?dateFrom=${calcStartDate}&dateTo=${calcEndDate}&skipEnrichment=true`);
+      const allVisitors = await response.json();
       
-      // No fallback - show exactly what private log has for the selected period
-      // The badge system will indicate missing data count
-      
-      // Filter to show unique visitors only (deduplicate by IP address)
-      // Don't limit to GA4 count - show all available unique visitors
-      const seenIPs = new Set();
-      const uniqueData = allData.filter((visitor: any) => {
-        if (seenIPs.has(visitor.ip_address)) {
-          return false;
-        }
-        seenIPs.add(visitor.ip_address);
-        return true;
-      });
-      
-      setRecentVisitors(uniqueData);
+      // Show all unique visitors (server already handles deduplication)
+      setRecentVisitors(allVisitors);
     } catch (error) {
       console.error('Failed to fetch recent visitors:', error);
     } finally {
@@ -223,25 +206,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         console.warn('Location enrichment failed:', enrichError);
       });
       
-      const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
-      const allData = await response.json();
+      const response = await fetch(`/api/analytics/recent-visitors?dateFrom=${calcStartDate}&dateTo=${calcEndDate}&skipEnrichment=true`);
+      const allVisitors = await response.json();
       
-      // No fallback - show exactly what private log has for the selected period
-      // The badge system will indicate missing data count
-      
-      // Filter to show returning visitors only (simulate return visitor detection)
-      // Don't limit to GA4 count - show all available returning visitors
-      const ipCounts = new Map();
-      
-      // Count visits per IP
-      allData.forEach((visitor: any) => {
-        const count = ipCounts.get(visitor.ip_address) || 0;
-        ipCounts.set(visitor.ip_address, count + 1);
-      });
-      
-      // Filter visitors that have multiple visits (returning visitors)
-      const returningData = allData.filter((visitor: any) => 
-        ipCounts.get(visitor.ip_address) > 1
+      // Filter to show returning visitors only (server already deduplicates and tracks visit counts)
+      const returningData = allVisitors.filter((visitor: any) => 
+        visitor.visit_count > 1
       );
       
       setReturningVisitors(returningData);
