@@ -332,7 +332,7 @@ export const AnalyticsNewGeo: React.FC = () => {
                   <Geographies geography={geoUrl}>
                     {({ geographies }) =>
                       geographies.map(geo => {
-                        const countryName = geo.properties?.NAME;
+                        const countryName = geo.properties?.name;
                         
                         // Enhanced country name matching with common variations
                         const countryData = countries.find(c => {
