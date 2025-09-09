@@ -5401,9 +5401,19 @@ export async function registerRoutes(app: Express): Promise<void> {
         nocache = req.query.nocache === "1" || req.query.nocache === "true";
         console.log(`📅 FRONTEND DATES: Using dates from frontend: ${startDate} to ${endDate}`);
       } else {
-        // Use getParams for direct date requests (no preset)
-        ({ startDate, endDate, locale, nocache } = getParams(req));
-        console.log(`📅 DIRECT DATES: Using direct dates: ${startDate} to ${endDate}`);
+        // Handle missing parameters - default to last 7 days to prevent errors
+        console.log(`❌ MISSING DATES: No startDate/endDate provided, defaulting to 7d`);
+        const { formatInTimeZone } = require('date-fns-tz');
+        const today = new Date();
+        const endDateObj = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const startDateObj = new Date(endDateObj.getTime() - (7 * 24 * 60 * 60 * 1000));
+        
+        startDate = formatInTimeZone(startDateObj, 'Europe/Paris', 'yyyy-MM-dd');
+        endDate = formatInTimeZone(endDateObj, 'Europe/Paris', 'yyyy-MM-dd');
+        locale = req.query.locale ? String(req.query.locale) : "all";
+        nocache = req.query.nocache === "1" || req.query.nocache === "true";
+        
+        console.log(`📅 DEFAULT DATES: Using fallback dates: ${startDate} to ${endDate}`);
       }
       const key = k(`kpis:${startDate}:${endDate}:${locale}`);
 
