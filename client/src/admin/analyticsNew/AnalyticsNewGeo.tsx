@@ -444,22 +444,28 @@ export const AnalyticsNewGeo: React.FC = () => {
                       }
                       
                       const bgColors = ['#bfdbfe', '#93c5fd', '#60a5fa', '#2563eb', '#1e40af']; // Blue gradient
-                      console.log('🟦 LEGEND SQUARE:', index, 'bgColor:', bgColors[index], 'isHighlighted:', isHighlighted);
                       
                       return (
-                        <div
+                        <svg
                           key={index}
+                          width="16"
+                          height="16"
                           style={{
-                            width: '16px',
-                            height: '16px',
                             borderWidth: '2px',
                             borderStyle: 'solid',
                             borderColor: isHighlighted ? '#f97316' : '#e5e7eb',
                             transition: 'all 0.2s',
                             display: 'block'
                           }}
-                          className={`legend-square-${index}`}
-                        />
+                        >
+                          <rect
+                            x="0"
+                            y="0"
+                            width="16"
+                            height="16"
+                            fill={bgColors[index]}
+                          />
+                        </svg>
                       );
                     })}
                   </div>
