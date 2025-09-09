@@ -128,6 +128,26 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
       const allData = await response.json();
       
+      if (allData.length === 0) {
+        // No private log data available for this date range
+        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, but GA4 shows ${totalViews?.value || 0} views`);
+        setRecentVisitors([{
+          id: 'no-data',
+          ip_address: 'N/A',
+          country: 'No private log data available',
+          region: `GA4 shows ${totalViews?.value || 0} views for this period`,
+          city: 'but private log is empty',
+          language: 'N/A',
+          last_visit: new Date().toISOString(),
+          user_agent: 'Private log tracking may be disabled or delayed',
+          visit_count: 0,
+          session_duration: 0,
+          previous_visit: null,
+          source: 'system_message'
+        }]);
+        return;
+      }
+      
       // Filter to match the Total Views count from GA4 KPIs
       const totalViewsCount = totalViews?.value || 0;
       const limitedData = allData.slice(0, totalViewsCount);
@@ -157,6 +177,26 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
       const allData = await response.json();
+      
+      if (allData.length === 0) {
+        // No private log data available for this date range
+        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, but GA4 shows ${uniqueVisitors?.value || 0} unique visitors`);
+        setRecentVisitors([{
+          id: 'no-data',
+          ip_address: 'N/A',
+          country: 'No private log data available',
+          region: `GA4 shows ${uniqueVisitors?.value || 0} unique visitors for this period`,
+          city: 'but private log is empty',
+          language: 'N/A',
+          last_visit: new Date().toISOString(),
+          user_agent: 'Private log tracking may be disabled or delayed',
+          visit_count: 0,
+          session_duration: 0,
+          previous_visit: null,
+          source: 'system_message'
+        }]);
+        return;
+      }
       
       // Filter to show unique visitors only (deduplicate by IP address)
       const uniqueVisitorsCount = uniqueVisitors?.value || 0;
@@ -194,6 +234,26 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       
       const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
       const allData = await response.json();
+      
+      if (allData.length === 0) {
+        // No private log data available for this date range
+        console.log(`⚠️ No private log data for ${calcStartDate} to ${calcEndDate}, but GA4 shows ${returnVisitors?.value || 0} return visitors`);
+        setReturningVisitors([{
+          id: 'no-data',
+          ip_address: 'N/A',
+          country: 'No private log data available',
+          region: `GA4 shows ${returnVisitors?.value || 0} return visitors for this period`,
+          city: 'but private log is empty',
+          language: 'N/A',
+          last_visit: new Date().toISOString(),
+          user_agent: 'Private log tracking may be disabled or delayed',
+          visit_count: 0,
+          session_duration: 0,
+          previous_visit: null,
+          source: 'system_message'
+        }]);
+        return;
+      }
       
       // Filter to show returning visitors only (simulate return visitor detection)
       // For now, we'll show visitors that appear multiple times in the dataset
