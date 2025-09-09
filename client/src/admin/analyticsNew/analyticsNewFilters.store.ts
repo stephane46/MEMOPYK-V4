@@ -53,11 +53,11 @@ const getYesterdayDate = () => {
 // Removed unused getTodayDate function - using Paris timezone consistently
 
 const defaultState: AnalyticsNewFilters = {
-  datePreset: 'today',
+  datePreset: '7d',
   customDateStart: '',
   customDateEnd: '',
   sinceDate: getYesterdayDate(), // Default to yesterday in Paris timezone
-  sinceDateEnabled: true, // Enable start date filter by default
+  sinceDateEnabled: false, // Disable start date filter by default to use preset
   language: 'all',
   country: 'all', 
   videoId: 'all',

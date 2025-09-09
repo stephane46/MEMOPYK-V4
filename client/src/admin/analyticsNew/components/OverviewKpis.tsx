@@ -7,9 +7,11 @@ import { VisitorFocusedKpis } from './VisitorFocusedKpis';
 interface OverviewKpisProps {
   preset?: "today" | "yesterday" | "7d" | "30d" | "90d";
   className?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
-export function OverviewKpis({ preset = "7d", className = "" }: OverviewKpisProps) {
+export function OverviewKpis({ preset = "7d", className = "", startDate, endDate }: OverviewKpisProps) {
   const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset });
 
   if (loading) {
@@ -52,7 +54,11 @@ export function OverviewKpis({ preset = "7d", className = "" }: OverviewKpisProp
       {/* Row 1: Visitor-focused metrics (like Analytics Old) */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-3">Visitor Overview</h3>
-        <VisitorFocusedKpis preset={preset} />
+        <VisitorFocusedKpis 
+          preset={preset} 
+          startDate={startDate} 
+          endDate={endDate} 
+        />
       </div>
 
       {/* Row 2: Technical metrics (existing) */}

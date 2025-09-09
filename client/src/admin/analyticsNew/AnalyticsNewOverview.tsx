@@ -348,6 +348,8 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       {/* KPI Cards Grid - Phase 3 Fixtures */}
       <OverviewKpis 
         preset={preset}
+        startDate={start}
+        endDate={end}
         className="mb-6"
       />
 

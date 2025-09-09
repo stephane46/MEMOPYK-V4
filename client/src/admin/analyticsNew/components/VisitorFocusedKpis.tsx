@@ -9,9 +9,12 @@ import { CountryFlag } from '@/components/admin/CountryFlag';
 interface VisitorFocusedKpisProps {
   preset?: "today" | "yesterday" | "7d" | "30d" | "90d";
   className?: string;
+  // Add explicit start/end dates to ensure synchronization with main dashboard
+  startDate?: string;
+  endDate?: string;
 }
 
-export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFocusedKpisProps) {
+export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, endDate }: VisitorFocusedKpisProps) {
   const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset });
   
   // Modal states
@@ -110,10 +113,19 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   const handleTotalViewsModalOpen = async () => {
     setIsTotalViewsModalOpen(true);
     setIsLoadingRecentVisitors(true);
-    // Fetch recent visitors data using explicit date range
+    // Fetch recent visitors data using explicit date range (prioritize props over preset)
     try {
-      const { startDate, endDate } = getDateRangeFromPreset(preset);
-      const response = await fetch(`/api/private-log/visitor-details?startDate=${startDate}&endDate=${endDate}`);
+      let calcStartDate, calcEndDate;
+      if (startDate && endDate) {
+        calcStartDate = startDate;
+        calcEndDate = endDate;
+      } else {
+        const dateRange = getDateRangeFromPreset(preset);
+        calcStartDate = dateRange.startDate;
+        calcEndDate = dateRange.endDate;
+      }
+      
+      const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
@@ -126,10 +138,19 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   const handleUniqueVisitorsModalOpen = async () => {
     setIsUniqueVisitorsModalOpen(true);
     setIsLoadingRecentVisitors(true);
-    // Fetch recent visitors data using explicit date range
+    // Fetch recent visitors data using explicit date range (prioritize props over preset)
     try {
-      const { startDate, endDate } = getDateRangeFromPreset(preset);
-      const response = await fetch(`/api/private-log/visitor-details?startDate=${startDate}&endDate=${endDate}`);
+      let calcStartDate, calcEndDate;
+      if (startDate && endDate) {
+        calcStartDate = startDate;
+        calcEndDate = endDate;
+      } else {
+        const dateRange = getDateRangeFromPreset(preset);
+        calcStartDate = dateRange.startDate;
+        calcEndDate = dateRange.endDate;
+      }
+      
+      const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}`);
       const data = await response.json();
       setRecentVisitors(data);
     } catch (error) {
@@ -142,10 +163,19 @@ export function VisitorFocusedKpis({ preset = "7d", className = "" }: VisitorFoc
   const handleReturnVisitorsModalOpen = async () => {
     setIsReturnVisitorsModalOpen(true);
     setIsLoadingReturningVisitors(true);
-    // Fetch returning visitors data using explicit date range
+    // Fetch returning visitors data using explicit date range (prioritize props over preset)
     try {
-      const { startDate, endDate } = getDateRangeFromPreset(preset);
-      const response = await fetch(`/api/private-log/visitor-details?startDate=${startDate}&endDate=${endDate}&type=returning`);
+      let calcStartDate, calcEndDate;
+      if (startDate && endDate) {
+        calcStartDate = startDate;
+        calcEndDate = endDate;
+      } else {
+        const dateRange = getDateRangeFromPreset(preset);
+        calcStartDate = dateRange.startDate;
+        calcEndDate = dateRange.endDate;
+      }
+      
+      const response = await fetch(`/api/private-log/visitor-details?startDate=${calcStartDate}&endDate=${calcEndDate}&type=returning`);
       const data = await response.json();
       setReturningVisitors(data);
     } catch (error) {
