@@ -444,9 +444,10 @@ export const AnalyticsNewGeo: React.FC = () => {
                           key={index}
                           className={`w-4 h-4 border transition-all duration-200 ${bgColors[index]} ${
                             isHighlighted 
-                              ? 'border-orange-500 border-2 scale-110 shadow-md' 
+                              ? 'border-gray-200' 
                               : 'border-gray-200'
                           }`}
+                          style={isHighlighted ? { borderColor: '#f97316 !important', borderWidth: '2px !important' } : {}}
                         />
                       );
                     })}
