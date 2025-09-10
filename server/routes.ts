@@ -90,6 +90,11 @@ function computeParisWindow(query: any) {
     endStr: end.toFormat("yyyy-LL-dd"),
     effStartStr: effStart.toFormat("yyyy-LL-dd"),
     effEndStr: end.toFormat("yyyy-LL-dd"),
+    // NEW: ISO timestamps for exclusive filtering
+    startIso: start.toUTC().toISO(),
+    endIso: end.toUTC().toISO(),
+    effStartIso: effStart.toUTC().toISO(),
+    effEndIso: end.toUTC().toISO(),
     timezone: PARIS_ZONE
   };
 }
@@ -7202,6 +7207,22 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { dateFrom, dateTo, language, includeProduction } = req.query;
       console.log('📊 Analytics sessions request:', { dateFrom, dateTo, language, includeProduction });
       
+      // **CRITICAL FIX**: Use computeParisWindow for proper exclusive date filtering
+      let finalDateFrom = dateFrom as string;
+      let finalDateTo = dateTo as string;
+      
+      // If we detect preset-style parameters or potential zero-width windows, use computeParisWindow
+      if (req.query.preset || (dateFrom === dateTo)) {
+        console.log('🔧 FIXING DATE RANGE: Using computeParisWindow for proper exclusive bounds');
+        const window = computeParisWindow(req.query);
+        finalDateFrom = window.effStartIso!;
+        finalDateTo = window.effEndIso!;
+        console.log(`📅 FIXED RANGE: ${finalDateFrom} to ${finalDateTo} (was: ${dateFrom} to ${dateTo})`);
+        
+        // Set headers for debugging
+        setParisTimezoneHeaders(res, req.query);
+      }
+      
       // **REPLIT PREVIEW PRODUCTION ANALYTICS** 
       // Always show production data in Replit preview dashboard
       const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
@@ -7211,12 +7232,13 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
       
       const sessions = await hybridStorage.getAnalyticsSessions(
-        dateFrom as string,
-        dateTo as string, 
+        finalDateFrom,
+        finalDateTo, 
         language as string,
         shouldIncludeProduction
       );
       
+      console.log(`✅ SESSIONS RESULT: Found ${sessions?.length || 0} detailed records for range ${finalDateFrom} to ${finalDateTo}`);
       res.json(sessions);
     } catch (error) {
       console.error('❌ Analytics sessions error:', error);
