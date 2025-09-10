@@ -56,22 +56,8 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
   const activeFilters = getActiveFilters();
   const activeFilterCount = Object.keys(activeFilters).length;
-  
-  // Display logic: Show what the user selected, not the calculated range
-  const getDisplayText = () => {
-    const preset = DATE_PRESETS.find(p => p.key === datePreset);
-    if (preset && datePreset !== 'custom') {
-      // Show the preset label for standard presets
-      return preset.label;
-    } else if (datePreset === 'custom') {
-      // For custom, show the actual date range
-      const dateRange = getDateRange();
-      return formatParisDateWindow(dateRange.start, dateRange.end);
-    }
-    return 'Unknown preset';
-  };
-  
-  const windowDisplay = getDisplayText();
+  const dateRange = getDateRange();
+  const windowDisplay = formatParisDateWindow(dateRange.start, dateRange.end);
 
   return (
     <div className={`analytics-new-container ${className}`}>
@@ -80,7 +66,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
           {/* Date Presets */}
           <div className="flex flex-wrap gap-4 items-center">
             {/* Active Window Display */}
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <Badge 
                 variant="outline" 
                 className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
@@ -88,6 +74,15 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               >
                 Fenêtre: {windowDisplay}
               </Badge>
+              {sinceDateEnabled && sinceDate && (
+                <Badge 
+                  variant="outline" 
+                  className="bg-orange-50 border-orange-300 text-orange-800 text-xs font-medium"
+                  data-testid="since-date-override-badge"
+                >
+                  ⚠️ Début forcé: {formatFrenchDate(sinceDate)}
+                </Badge>
+              )}
             </div>
             
             {/* Date Preset Buttons */}
