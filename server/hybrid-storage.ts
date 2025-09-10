@@ -3588,6 +3588,42 @@ Allow: /contact`;
   }
 
   // Analytics methods implementation
+  // **SHARED JSON FALLBACK LOADER**
+  private loadAnalyticsSessionsFromJson(dateFrom?: string, dateTo?: string, language?: string, includeProduction?: boolean, excludedIpRanges: string[] = []): any[] {
+    console.log('📄 JSON CACHE FALLBACK: Loading analytics sessions from JSON');
+    const sessions = this.loadJsonFile('analytics-sessions.json');
+    
+    // Apply includeProduction filter
+    let filtered = sessions.filter((session: any) => includeProduction ? true : !session.is_test_data);
+    console.log(`📄 JSON: Loaded ${sessions.length} sessions, ${filtered.length} after production filter (includeProduction=${includeProduction})`);
+
+    // Apply IP exclusion filter
+    if (excludedIpRanges.length > 0) {
+      const beforeFiltering = filtered.length;
+      filtered = filtered.filter((session: any) => {
+        const sessionIp = session.ip_address;
+        return !excludedIpRanges.some(cidr => this.isIPInCIDR(sessionIp, cidr));
+      });
+      console.log(`🚫 IP FILTER (JSON): Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpRanges.length} IP ranges`);
+    }
+
+    // Apply date filters
+    if (dateFrom) {
+      filtered = filtered.filter((session: any) => session.created_at >= dateFrom);
+    }
+    if (dateTo) {
+      filtered = filtered.filter((session: any) => session.created_at <= dateTo);
+    }
+    
+    // Apply language filter  
+    if (language) {
+      filtered = filtered.filter((session: any) => session.language === language);
+    }
+
+    console.log(`✅ JSON CACHE FALLBACK: Found ${filtered.length} sessions for range ${dateFrom} to ${dateTo}`);
+    return filtered;
+  }
+
   async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string, includeProduction?: boolean): Promise<any[]> {
     console.log(`📊 Analytics Sessions: ${dateFrom} to ${dateTo}, language: ${language}, includeProduction: ${includeProduction}`);
     
@@ -3698,42 +3734,21 @@ Allow: /contact`;
 
           console.log(`✅ SUPABASE: Found ${filtered.length} recent sessions`);
           return filtered;
+        } else {
+          // **CRITICAL FIX**: Supabase returned no data, try JSON fallback
+          console.log('📊 SUPABASE EMPTY: No recent data found, trying JSON fallback');
+          return this.loadAnalyticsSessionsFromJson(finalDateFrom, finalDateTo, language, includeProduction, excludedIpRanges);
         }
-      } catch (error) {
-        console.warn('⚠️ Analytics Sessions: Supabase failed, falling back to JSON cache:', error);
-      }
-      
-      // Fallback to JSON cache if PostgreSQL fails
-      try {
-        const sessions = this.loadJsonFile('analytics-sessions.json');
-        // **REPLIT PREVIEW PRODUCTION ANALYTICS** 
-        // Include both development and production data when includeProduction is true
-        let filtered = sessions.filter((session: any) => includeProduction ? true : !session.is_test_data);
-
-        // **IP EXCLUSION FILTER - RETROACTIVE HISTORICAL DATA FILTERING**
-        if (excludedIpRanges.length > 0) {
-          const beforeFiltering = filtered.length;
-          filtered = filtered.filter((session: any) => {
-            const sessionIp = session.ip_address;
-            return !excludedIpRanges.some(cidr => this.isIPInCIDR(sessionIp, cidr));
-          });
-          console.log(`🚫 IP FILTER (JSON): Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpRanges.length} IP ranges`);
+      } catch (supabaseError) {
+        console.warn('⚠️ Analytics Sessions: Supabase failed, trying JSON fallback:', supabaseError);
+        
+        // Use shared JSON loader for consistent fallback
+        try {
+          return this.loadAnalyticsSessionsFromJson(finalDateFrom, finalDateTo, language, includeProduction, excludedIpRanges);
+        } catch (jsonError) {
+          console.error('❌ Analytics Sessions: Both Supabase and JSON cache failed');
+          throw new Error(`Analytics data unavailable: Supabase (${supabaseError.message}), JSON fallback (${jsonError.message})`);
         }
-
-        if (dateFrom) {
-          filtered = filtered.filter((session: any) => session.created_at >= dateFrom);
-        }
-        if (dateTo) {
-          filtered = filtered.filter((session: any) => session.created_at <= dateTo);
-        }
-        if (language) {
-          filtered = filtered.filter((session: any) => session.language === language);
-        }
-
-        console.log(`✅ JSON CACHE FALLBACK: Found ${filtered.length} recent sessions`);
-        return filtered;
-      } catch (error) {
-        console.warn('⚠️ Analytics Sessions: JSON cache also failed:', error);
       }
     }
 
@@ -3783,14 +3798,24 @@ Allow: /contact`;
         console.log(`✅ SUPABASE: Found ${filtered.length} historical sessions`);
         return filtered;
       } else {
-        console.log('⚠️ Analytics Sessions: No historical data found in Supabase');
-        return [];
+        // **CRITICAL FIX**: Supabase returned no historical data, try JSON fallback
+        console.log('📊 SUPABASE EMPTY: No historical data found, trying JSON fallback');
+        try {
+          return this.loadAnalyticsSessionsFromJson(dateFrom, dateTo, language, includeProduction, excludedIpRanges);
+        } catch (jsonError) {
+          console.error('❌ Analytics Sessions: Historical data unavailable in both Supabase and JSON');
+          throw new Error(`Analytics data unavailable: Supabase empty, JSON fallback (${jsonError.message})`);
+        }
       }
-    } catch (error) {
-      console.warn('⚠️ Analytics Sessions: Supabase connection failed for historical data:', error);
-      // Fallback to JSON cache when Supabase fails
-      console.log('📊 FALLBACK: Using JSON cache due to Supabase connection failure');
-      return this.getRecentAnalyticsSessions(dateFrom, dateTo, language);
+    } catch (supabaseError) {
+      console.warn('⚠️ Analytics Sessions: Supabase connection failed for historical data:', supabaseError);
+      // **CRITICAL FIX**: Use shared JSON loader instead of broken method call
+      try {
+        return this.loadAnalyticsSessionsFromJson(dateFrom, dateTo, language, includeProduction, excludedIpRanges);
+      } catch (jsonError) {
+        console.error('❌ Analytics Sessions: Both Supabase and JSON cache failed for historical data');
+        throw new Error(`Analytics data unavailable: Supabase (${supabaseError.message}), JSON fallback (${jsonError.message})`);
+      }
     }
   }
 

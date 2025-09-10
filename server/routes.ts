@@ -7223,13 +7223,11 @@ export async function registerRoutes(app: Express): Promise<void> {
         setParisTimezoneHeaders(res, req.query);
       }
       
-      // **REPLIT PREVIEW PRODUCTION ANALYTICS** 
-      // Always show production data in Replit preview dashboard
-      const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
+      // **CRITICAL FIX**: Default includeProduction to true to show real visitor traffic
+      // Only exclude production if explicitly set to false in query
+      const shouldIncludeProduction = includeProduction === 'false' ? false : true;
       
-      if (shouldIncludeProduction) {
-        console.log('🌍 REPLIT PREVIEW: Including production analytics data');
-      }
+      console.log(`🌍 PRODUCTION FILTER: includeProduction=${shouldIncludeProduction} (from query: ${includeProduction})`);
       
       const sessions = await hybridStorage.getAnalyticsSessions(
         finalDateFrom,
@@ -7242,7 +7240,17 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(sessions);
     } catch (error) {
       console.error('❌ Analytics sessions error:', error);
-      res.status(500).json({ error: "Failed to get analytics sessions" });
+      
+      // Check if this is a data source availability error
+      if (error.message && error.message.includes('Analytics data unavailable')) {
+        res.status(503).json({ 
+          error: "Analytics service temporarily unavailable", 
+          details: "Database connection failed",
+          retry: true 
+        });
+      } else {
+        res.status(500).json({ error: "Failed to get analytics sessions" });
+      }
     }
   });
 
