@@ -3589,6 +3589,20 @@ Allow: /contact`;
 
   // Analytics methods implementation
   async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string, includeProduction?: boolean): Promise<any[]> {
+    console.log(`📊 Analytics Sessions: ${dateFrom} to ${dateTo}, language: ${language}, includeProduction: ${includeProduction}`);
+    
+    // **CRITICAL FIX**: Detect and fix zero-width date windows (YESTERDAY bug)
+    let finalDateFrom = dateFrom;
+    let finalDateTo = dateTo;
+    if (dateFrom && dateTo && dateFrom === dateTo) {
+      console.log('🔧 FIXING ZERO-WIDTH WINDOW: Converting same-day range to proper bounds');
+      const date = new Date(dateFrom + 'T00:00:00.000Z');
+      const nextDay = new Date(date);
+      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+      finalDateTo = nextDay.toISOString().split('T')[0]; // Next day for exclusive end
+      console.log(`📅 FIXED RANGE: ${finalDateFrom} to ${finalDateTo} (was: ${dateFrom} to ${dateTo})`);
+    }
+    
     // Load excluded IP ranges for filtering (modern system only)
     let excludedIpRanges: string[] = [];
     try {
@@ -3604,14 +3618,14 @@ Allow: /contact`;
     // SMART 7-DAY ROLLING CACHE STRATEGY
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const isRecentQuery = !dateFrom || new Date(dateFrom) >= sevenDaysAgo;
+    const isRecentQuery = !finalDateFrom || new Date(finalDateFrom) >= sevenDaysAgo;
 
     // For recent data (last 7 days), use JSON cache for speed
-    if (isRecentQuery && !dateFrom?.startsWith('2024-')) { // Exclude obvious historical queries
+    if (isRecentQuery && !finalDateFrom?.startsWith('2024-')) { // Exclude obvious historical queries
       console.log('📊 ANALYTICS SESSIONS: Using Supabase for recent data (includes new sessions)');
       try {
         // Get sessions from Supabase database - RESPECT USER'S DATE FILTER
-        const fromDate = dateFrom ? new Date(dateFrom).toISOString() : sevenDaysAgo.toISOString();
+        const fromDate = finalDateFrom ? new Date(finalDateFrom).toISOString() : sevenDaysAgo.toISOString();
         let query = this.supabase
           .from('analytics_sessions')
           .select('*')
@@ -3619,8 +3633,8 @@ Allow: /contact`;
           .order('created_at', { ascending: false });
         
         // Add dateTo filter to the database query if provided
-        if (dateTo) {
-          const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
+        if (finalDateTo) {
+          const dateToEndOfDay = finalDateTo.includes('T') ? finalDateTo : finalDateTo + 'T23:59:59.999Z';
           query = query.lte('created_at', dateToEndOfDay);
         }
 
