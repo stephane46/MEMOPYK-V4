@@ -448,16 +448,16 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                     <div className="flex items-center gap-1">
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="default"
                         onClick={() => handleEdit(exclusion)}
                         title="Edit label"
                         data-testid={`edit-exclusion-${exclusion.id}`}
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-5 w-5" />
                       </Button>
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="default"
                         onClick={() => 
                           toggleMutation.mutate({ id: exclusion.id, active: !exclusion.active })
                         }
@@ -465,17 +465,17 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         title="Toggle active"
                         data-testid={`toggle-action-${exclusion.id}`}
                       >
-                        {exclusion.active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {exclusion.active ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </Button>
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="default"
                         onClick={() => deleteMutation.mutate(exclusion.id)}
                         disabled={deleteMutation.isPending}
                         title="Delete"
                         data-testid={`delete-exclusion-${exclusion.id}`}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-5 w-5" />
                       </Button>
                     </div>
                   </TableCell>
