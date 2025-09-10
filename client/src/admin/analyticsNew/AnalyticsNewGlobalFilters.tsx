@@ -20,6 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAnalyticsNewFilters, DATE_PRESETS, formatParisDateWindow } from './analyticsNewFilters.store';
+import { DateTime } from 'luxon';
 import './analyticsNew.tokens.css';
 
 interface AnalyticsNewGlobalFiltersProps {
@@ -71,8 +72,42 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
   const activeFilters = getActiveFilters();
   const activeFilterCount = Object.keys(activeFilters).length;
-  const dateRange = getDateRange();
-  const windowDisplay = formatParisDateWindow(dateRange.start, dateRange.end);
+  
+  // Display logic: Show what the user actually selected (ignoring exclusions)
+  const getDisplayDateRange = () => {
+    const ZONE = 'Europe/Paris';
+    const todayParis = DateTime.now().setZone(ZONE).startOf('day');
+    
+    if (datePreset === 'custom') {
+      if (!customDateStart || !customDateEnd) {
+        const todayStr = todayParis.toFormat('yyyy-LL-dd');
+        return { start: todayStr, end: todayStr };
+      }
+      return { start: customDateStart, end: customDateEnd };
+    }
+    
+    if (datePreset === 'today') {
+      const todayStr = todayParis.toFormat('yyyy-LL-dd');
+      return { start: todayStr, end: todayStr };
+    }
+    
+    if (datePreset === 'yesterday') {
+      const yesterdayStr = todayParis.minus({ days: 1 }).toFormat('yyyy-LL-dd');
+      return { start: yesterdayStr, end: yesterdayStr };
+    }
+    
+    // Handle day-based presets without exclusions
+    const days = datePreset === '7d' ? 7 : datePreset === '30d' ? 30 : 90;
+    const startDate = todayParis.minus({ days });
+    
+    return {
+      start: startDate.toFormat('yyyy-LL-dd'),
+      end: todayParis.toFormat('yyyy-LL-dd')
+    };
+  };
+  
+  const displayRange = getDisplayDateRange();
+  const windowDisplay = formatParisDateWindow(displayRange.start, displayRange.end);
 
   return (
     <div className={`analytics-new-container ${className}`}>
