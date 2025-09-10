@@ -3,6 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Menu, X, Mail, Phone } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
+import { openCookieSettings } from '@/components/ui/CookieBanner';
 
 interface LayoutProps {
   children: ReactNode;
@@ -476,6 +477,15 @@ export function Layout({ children }: LayoutProps) {
                 <li><Link href={getLocalizedPath('/legal/cookie-policy')} className="hover:text-white">
                   {language === 'fr-FR' ? 'Politique des cookies' : 'Cookie Policy'}
                 </Link></li>
+                <li>
+                  <button 
+                    onClick={openCookieSettings}
+                    className="hover:text-white transition-colors"
+                    data-testid="footer-cookie-settings"
+                  >
+                    {language === 'fr-FR' ? 'Paramètres des cookies' : 'Cookie settings'}
+                  </button>
+                </li>
               </ul>
             </div>
             

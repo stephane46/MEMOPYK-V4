@@ -15,6 +15,7 @@ import GV2Page from './pages/GV2Page';
 import NotFoundPage from './pages/not-found';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
+import { CookieBanner } from '@/components/ui/CookieBanner';
 import GallerySectionWrapper from './components/sections/GallerySectionWrapper';
 import ClarityRouteListener from './components/ClarityRouteListener';
 import { useEffect } from 'react';
@@ -156,6 +157,7 @@ function App() {
         </LanguageProvider>
       </AuthProvider>
       <Toaster />
+      <CookieBanner />
     </QueryClientProvider>
   );
 }
