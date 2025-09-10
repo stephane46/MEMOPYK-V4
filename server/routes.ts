@@ -59,9 +59,11 @@ function computeParisWindow(query: any) {
   let end = today;
 
   if (query.preset === "yesterday") { 
-    start = end = today.minus({ days: 1 }); 
+    start = today.minus({ days: 1 });
+    end = today; // End of yesterday = start of today (exclusive)
   } else if (query.preset === "today") {
-    start = end = today;
+    start = today;
+    end = today.plus({ days: 1 }); // End of today = start of tomorrow (exclusive)
   } else if (query.preset === "7d") { 
     start = today.minus({ days: 6 }); 
     end = today;
