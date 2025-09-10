@@ -113,9 +113,12 @@ function App() {
       }
     } else {
       // Check if this is the analytics dashboard which needs GA4 for data fetching
-      const isAnalyticsDashboard = window.location.pathname.includes('/analytics');
+      const urlParams = new URLSearchParams(window.location.search);
+      const isAnalyticsDashboard = urlParams.has('an_tab'); // Analytics tabs use an_tab parameter
       console.log('🔍 PATH DEBUG:', { 
         pathname: window.location.pathname, 
+        search: window.location.search,
+        an_tab: urlParams.get('an_tab'),
         isAnalyticsDashboard, 
         isAdminPage: window.location.pathname.includes('/admin') 
       });
