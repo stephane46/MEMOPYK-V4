@@ -452,8 +452,9 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         onClick={() => handleEdit(exclusion)}
                         title="Edit label"
                         data-testid={`edit-exclusion-${exclusion.id}`}
+                        className="hover:bg-gray-100"
                       >
-                        <Edit className="h-5 w-5" />
+                        <Edit className="h-5 w-5 text-gray-600 hover:text-blue-600" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -464,8 +465,13 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         disabled={toggleMutation.isPending}
                         title="Toggle active"
                         data-testid={`toggle-action-${exclusion.id}`}
+                        className="hover:bg-gray-100"
                       >
-                        {exclusion.active ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {exclusion.active ? (
+                          <EyeOff className="h-5 w-5 text-gray-600 hover:text-orange-600" />
+                        ) : (
+                          <Eye className="h-5 w-5 text-gray-600 hover:text-green-600" />
+                        )}
                       </Button>
                       <Button
                         variant="ghost"
@@ -474,8 +480,9 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         disabled={deleteMutation.isPending}
                         title="Delete"
                         data-testid={`delete-exclusion-${exclusion.id}`}
+                        className="hover:bg-gray-100"
                       >
-                        <Trash2 className="h-5 w-5" />
+                        <Trash2 className="h-5 w-5 text-gray-600 hover:text-red-600" />
                       </Button>
                     </div>
                   </TableCell>
