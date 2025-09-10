@@ -445,16 +445,16 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                     {formatDate(exclusion.created_at)}
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 ipx-icon-reset">
                       <Button
                         variant="ghost"
                         size="default"
                         onClick={() => handleEdit(exclusion)}
                         title="Edit label"
                         data-testid={`edit-exclusion-${exclusion.id}`}
-                        className="hover:bg-gray-100 !opacity-100"
+                        className="hover:bg-gray-100"
                       >
-                        <Edit className="h-5 w-5 !text-gray-600" />
+                        <Edit className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -465,12 +465,12 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         disabled={toggleMutation.isPending}
                         title="Toggle active"
                         data-testid={`toggle-action-${exclusion.id}`}
-                        className="hover:bg-gray-100 !opacity-100"
+                        className="hover:bg-gray-100"
                       >
                         {exclusion.active ? (
-                          <EyeOff className="h-5 w-5 !text-gray-600" />
+                          <EyeOff className="h-4 w-4" />
                         ) : (
-                          <Eye className="h-5 w-5 !text-gray-600" />
+                          <Eye className="h-4 w-4" />
                         )}
                       </Button>
                       <Button
@@ -480,9 +480,9 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         disabled={deleteMutation.isPending}
                         title="Delete"
                         data-testid={`delete-exclusion-${exclusion.id}`}
-                        className="hover:bg-gray-100 !opacity-100"
+                        className="hover:bg-gray-100"
                       >
-                        <Trash2 className="h-5 w-5 !text-gray-600" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

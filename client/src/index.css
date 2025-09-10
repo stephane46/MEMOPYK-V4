@@ -71,6 +71,15 @@ html, body {
   mix-blend-mode: normal !important;
 }
 
+/* IP Exclusions Icon Reset - Force visible icons in table actions */
+.ipx-icon-reset svg, .ipx-icon-reset svg * {
+  all: revert;
+  color: #4b5563 !important;
+  stroke: #4b5563 !important;
+  fill: none !important;
+  opacity: 1 !important;
+}
+
 /* Card Back Gradient Background Fix - Following Modal Transparency Solution Pattern */
 .card-back-gradient {
   background: linear-gradient(to bottom right, rgba(42, 71, 89, 0.85), rgba(1, 21, 38, 0.9), rgba(42, 71, 89, 0.85)) !important;
