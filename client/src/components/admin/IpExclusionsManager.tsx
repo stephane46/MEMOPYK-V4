@@ -454,7 +454,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         data-testid={`edit-exclusion-${exclusion.id}`}
                         className="hover:bg-gray-100"
                       >
-                        <Edit className="h-4 w-4" style={{color: '#4b5563', stroke: '#4b5563'}} />
+Edit
                       </Button>
                       <Button
                         variant="ghost"
@@ -467,11 +467,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         data-testid={`toggle-action-${exclusion.id}`}
                         className="hover:bg-gray-100"
                       >
-                        {exclusion.active ? (
-                          <EyeOff className="h-4 w-4" style={{color: '#4b5563', stroke: '#4b5563'}} />
-                        ) : (
-                          <Eye className="h-4 w-4" style={{color: '#4b5563', stroke: '#4b5563'}} />
-                        )}
+{exclusion.active ? "Hide" : "Show"}
                       </Button>
                       <Button
                         variant="ghost"
@@ -482,7 +478,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         data-testid={`delete-exclusion-${exclusion.id}`}
                         className="hover:bg-gray-100"
                       >
-                        <Trash2 className="h-4 w-4" style={{color: '#4b5563', stroke: '#4b5563'}} />
+Delete
                       </Button>
                     </div>
                   </TableCell>
