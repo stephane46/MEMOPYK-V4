@@ -23,12 +23,14 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
   const [isUniqueVisitorsModalOpen, setIsUniqueVisitorsModalOpen] = useState(false);
   const [isReturnVisitorsModalOpen, setIsReturnVisitorsModalOpen] = useState(false);
   
-  // Modal data states
-  const [recentVisitors, setRecentVisitors] = useState<any[]>([]);
+  // Modal data states - SEPARATE for each modal
+  const [totalViewsData, setTotalViewsData] = useState<any[]>([]);
+  const [uniqueVisitorsData, setUniqueVisitorsData] = useState<any[]>([]);
   const [returningVisitors, setReturningVisitors] = useState<any[]>([]);
   
   // Loading states for modals
-  const [isLoadingRecentVisitors, setIsLoadingRecentVisitors] = useState(false);
+  const [isLoadingTotalViews, setIsLoadingTotalViews] = useState(false);
+  const [isLoadingUniqueVisitors, setIsLoadingUniqueVisitors] = useState(false);
   const [isLoadingReturningVisitors, setIsLoadingReturningVisitors] = useState(false);
 
   // ESC key functionality to close modals
@@ -134,19 +136,19 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
   // Modal handlers
   const handleTotalViewsModalOpen = async () => {
     setIsTotalViewsModalOpen(true);
-    setIsLoadingRecentVisitors(true);
-    // Fetch recent visitors data using explicit date range (prioritize props over preset)
+    setIsLoadingTotalViews(true);
+    // Fetch ALL sessions/views (can show same IP multiple times for different sessions)
     try {
       let calcStartDate, calcEndDate;
       if (startDate && endDate) {
         calcStartDate = startDate;
         calcEndDate = endDate;
-        console.log('✅ Using props dates:', calcStartDate, 'to', calcEndDate);
+        console.log('📊 TOTAL VIEWS: Using props dates:', calcStartDate, 'to', calcEndDate);
       } else {
         const dateRange = getDateRangeFromPreset(preset);
         calcStartDate = dateRange.startDate;
         calcEndDate = dateRange.endDate;
-        console.log('🔄 Using preset dates:', calcStartDate, 'to', calcEndDate);
+        console.log('📊 TOTAL VIEWS: Using preset dates:', calcStartDate, 'to', calcEndDate);
       }
       
       // Trigger location enrichment in background (don't wait for it)
@@ -161,28 +163,30 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       const response = await fetch(`/api/analytics/recent-visitors?dateFrom=${calcStartDate}&dateTo=${calcEndDate}&skipEnrichment=true`);
       const allVisitors = await response.json();
       
-      // Show all unique visitors (server already handles deduplication)
-      setRecentVisitors(allVisitors);
+      // Show ALL visitors/sessions (can include multiple sessions from same IP)
+      setTotalViewsData(allVisitors);
     } catch (error) {
-      console.error('Failed to fetch recent visitors:', error);
+      console.error('Failed to fetch total views data:', error);
     } finally {
-      setIsLoadingRecentVisitors(false);
+      setIsLoadingTotalViews(false);
     }
   };
 
   const handleUniqueVisitorsModalOpen = async () => {
     setIsUniqueVisitorsModalOpen(true);
-    setIsLoadingRecentVisitors(true);
+    setIsLoadingUniqueVisitors(true);
     // Fetch UNIQUE visitors data (different from total views which shows all sessions)
     try {
       let calcStartDate, calcEndDate;
       if (startDate && endDate) {
         calcStartDate = startDate;
         calcEndDate = endDate;
+        console.log('👥 UNIQUE VISITORS: Using props dates:', calcStartDate, 'to', calcEndDate);
       } else {
         const dateRange = getDateRangeFromPreset(preset);
         calcStartDate = dateRange.startDate;
         calcEndDate = dateRange.endDate;
+        console.log('👥 UNIQUE VISITORS: Using preset dates:', calcStartDate, 'to', calcEndDate);
       }
       
       // Trigger location enrichment in background (don't wait for it)
@@ -212,11 +216,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         return acc;
       }, []);
       
-      setRecentVisitors(uniqueByIP);
+      setUniqueVisitorsData(uniqueByIP);
     } catch (error) {
       console.error('Failed to fetch unique visitors:', error);
     } finally {
-      setIsLoadingRecentVisitors(false);
+      setIsLoadingUniqueVisitors(false);
     }
   };
 
@@ -361,10 +365,10 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="space-y-2 text-sm">
                   <div className="font-semibold text-blue-900">
-                    📊 Showing {recentVisitors?.length || 0} detailed records from MEMOPYK logs
+                    📊 Showing {totalViewsData?.length || 0} detailed records from MEMOPYK logs
                   </div>
                   <div className="font-medium text-orange-700">
-                    ⚠️ GA4 reports {uniqueVisitors?.value || 0} total (includes cross-device returns)
+                    ⚠️ GA4 reports {totalViews?.value || 0} total (includes cross-device returns)
                   </div>
                   <div className="text-blue-800">
                     <div className="font-medium mb-1">ℹ️ Numbers differ because:</div>
@@ -377,7 +381,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                 </div>
               </div>
 
-              {isLoadingRecentVisitors ? (
+              {isLoadingTotalViews ? (
                 <div className="text-center py-8">
                   <div className="flex flex-col items-center gap-3">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -385,9 +389,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                     <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>This may take up to 30 seconds</p>
                   </div>
                 </div>
-              ) : recentVisitors && recentVisitors.length > 0 ? (
+              ) : totalViewsData && totalViewsData.length > 0 ? (
                 <div className="space-y-4">
-                  {recentVisitors.slice(0, 50).map((visitor, index) => (
+                  {totalViewsData.slice(0, 50).map((visitor, index) => (
                     <div 
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
@@ -484,7 +488,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="space-y-2 text-sm">
                   <div className="font-semibold text-green-900">
-                    📊 Showing {recentVisitors?.length || 0} detailed records from MEMOPYK logs
+                    📊 Showing {uniqueVisitorsData?.length || 0} detailed records from MEMOPYK logs
                   </div>
                   <div className="font-medium text-orange-700">
                     ⚠️ GA4 reports {uniqueVisitors?.value || 0} total (includes cross-device returns)
@@ -500,7 +504,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                 </div>
               </div>
 
-              {isLoadingRecentVisitors ? (
+              {isLoadingUniqueVisitors ? (
                 <div className="text-center py-8">
                   <div className="flex flex-col items-center gap-3">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
@@ -508,9 +512,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                     <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>This may take up to 30 seconds</p>
                   </div>
                 </div>
-              ) : recentVisitors && recentVisitors.length > 0 ? (
+              ) : uniqueVisitorsData && uniqueVisitorsData.length > 0 ? (
                 <div className="space-y-4">
-                  {recentVisitors.slice(0, 50).map((visitor, index) => (
+                  {uniqueVisitorsData.slice(0, 50).map((visitor, index) => (
                     <div 
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
