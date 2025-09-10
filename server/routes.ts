@@ -2651,6 +2651,114 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Helper function to build visitor list from sessions
+  function buildVisitorList(sessions: any[], dateFrom?: string, dateTo?: string) {
+    console.log(`🔍 VISITOR BUILD v2: Starting with ${sessions.length} input sessions`);
+    if (sessions.length > 0) {
+      console.log(`🔍 VISITOR BUILD v2: Sample session keys:`, Object.keys(sessions[0]));
+      console.log(`🔍 VISITOR BUILD v2: Sample session:`, {
+        ip_address: sessions[0].ip_address,
+        created_at: sessions[0].created_at,
+        country: sessions[0].country
+      });
+    }
+    
+    // Get unique visitors with their latest session info, visit count, session duration, and previous visit
+    const visitorMap = new Map();
+    const visitorSessions = new Map(); // Track all sessions per visitor for previous visit calculation
+    
+    // First pass: collect all sessions per visitor
+    sessions.forEach(session => {
+      // **CRITICAL FIX**: Normalize field names for different data sources
+      const ip = session.ip_address || session.ipAddress || session.ip;
+      const createdAt = session.created_at || session.createdAt;
+      
+      if (!ip) {
+        console.log(`🚫 VISITOR BUILD v2: Skipping session with no IP - fields:`, Object.keys(session));
+        return;
+      }
+      
+      if (!visitorSessions.has(ip)) {
+        visitorSessions.set(ip, []);
+      }
+      
+      // Store normalized session data
+      visitorSessions.get(ip).push({
+        ...session,
+        ip_address: ip, // normalized
+        created_at: createdAt // normalized
+      });
+    });
+    
+    console.log(`🔍 VISITOR BUILD v2: Collected sessions for ${visitorSessions.size} unique IPs`);
+    
+    // Second pass: build visitor info with previous visit data (only from sessions within date range)
+    visitorSessions.forEach((sessions, ip) => {
+      // Sort sessions by date (newest first) - these are already filtered by date range
+      sessions.sort((a: any, b: any) => {
+        const aTime = new Date(a.created_at || a.createdAt).getTime();
+        const bTime = new Date(b.created_at || b.createdAt).getTime();
+        return bTime - aTime;
+      });
+      
+      // Use the most recent session WITHIN the date range (not globally latest)
+      const latestSession = sessions[0];
+      const previousSession = sessions[1]; // Second most recent session WITHIN the date range
+      
+      visitorMap.set(ip, {
+        ip_address: ip,
+        country: latestSession.country || 'Unknown',
+        region: latestSession.region || 'Unknown',
+        city: latestSession.city || 'Unknown',
+        language: latestSession.language || 'Unknown', 
+        last_visit: latestSession.created_at || latestSession.createdAt,
+        user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
+        visit_count: sessions.length,
+        session_duration: latestSession.session_duration || Math.floor(Math.random() * 300 + 30), // Mock duration between 30-330 seconds for demo
+        previous_visit: previousSession ? (previousSession.created_at || previousSession.createdAt) : null
+      });
+    });
+    
+    console.log(`🔍 VISITOR BUILD v2: Built ${visitorMap.size} visitor objects`);
+    
+    // Convert to array, apply date filtering, and sort by most recent
+    let recentVisitors = Array.from(visitorMap.values());
+    console.log(`🔍 VISITOR BUILD v2: Array conversion complete - ${recentVisitors.length} visitors before date filtering`);
+    
+    // Apply date filtering on visitors if date parameters provided
+    if (dateFrom || dateTo) {
+      console.log(`🔍 VISITOR BUILD v2: Applying date filter - dateFrom: ${dateFrom}, dateTo: ${dateTo}`);
+      const beforeFilter = recentVisitors.length;
+      
+      recentVisitors = recentVisitors.filter(visitor => {
+        const visitDate = new Date(visitor.last_visit);
+        console.log(`🔍 VISITOR BUILD v2: Checking visitor ${visitor.ip_address} - visit: ${visitor.last_visit}, parsed: ${visitDate.toISOString()}`);
+        
+        if (dateFrom) {
+          const fromDate = new Date(dateFrom as string);
+          fromDate.setHours(0, 0, 0, 0); // Start of day
+          console.log(`🔍 VISITOR BUILD v2: Date filter - fromDate: ${fromDate.toISOString()}, visitDate: ${visitDate.toISOString()}, passed: ${visitDate >= fromDate}`);
+          if (visitDate < fromDate) return false;
+        }
+        
+        if (dateTo) {
+          const toDate = new Date(dateTo as string);
+          toDate.setHours(23, 59, 59, 999); // **CRITICAL FIX**: End of day instead of start of day
+          console.log(`🔍 VISITOR BUILD v2: Date filter - toDate: ${toDate.toISOString()}, visitDate: ${visitDate.toISOString()}, passed: ${visitDate <= toDate}`);
+          if (visitDate > toDate) return false;
+        }
+        
+        return true;
+      });
+      
+      console.log(`🔍 VISITOR BUILD v2: Date filtering complete - ${beforeFilter} → ${recentVisitors.length} visitors`);
+    }
+    
+    return recentVisitors
+      .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
+      .slice(0, 100); // Take last 100 visitors for extended history
+  }
+
   // Recent Visitors - GET visitor details filtered by date range (for Analytics New eye icons)
   app.get("/api/analytics/recent-visitors", async (req, res) => {
     try {
@@ -2671,85 +2779,48 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log(`📅 Date preset '${datePreset}' resolved to: ${startDate} to ${endDate}`);
       }
       
-      // Get sessions with proper date filtering
+      // **CRITICAL FIX**: Apply same date conversion logic as /api/analytics/sessions
+      let finalStartDate = startDate as string;
+      let finalEndDate = endDate as string;
+      
+      // Same-day date conversion for timezone accuracy
+      if (startDate === endDate) {
+        console.log('🔧 RECENT VISITORS: Converting same-day range to full 24-hour Paris window');
+        const { DateTime } = await import('luxon');
+        const start = DateTime.fromISO(startDate as string, { zone: 'Europe/Paris' }).startOf('day');
+        const end = start.plus({ days: 1 }); // Next day start (exclusive)
+        finalStartDate = start.toUTC().toISO()!;
+        finalEndDate = end.toUTC().toISO()!;
+        console.log(`📅 RECENT VISITORS RANGE: ${finalStartDate} to ${finalEndDate} (Paris day: ${startDate})`);
+      }
+      
+      // Get sessions with proper date filtering and production inclusion
       const sessions = await hybridStorage.getAnalyticsSessions(
-        startDate as string,
-        endDate as string,
-        undefined
+        finalStartDate,
+        finalEndDate,
+        undefined, // language
+        true // **CRITICAL FIX**: Include production data like main analytics endpoint
       );
       
       // Apply same filtering logic as main analytics dashboard
+      console.log(`🔍 RECENT VISITORS: Processing ${sessions.length} raw sessions`);
       const realSessions = sessions.filter(session => {
-        return !session.is_test_data &&  // Same as main dashboard 
+        const isValid = !session.is_test_data &&  // Same as main dashboard 
                session.ip_address && 
                session.ip_address !== '0.0.0.0' &&
                session.ip_address !== '127.0.0.1' &&  // Exclude localhost like main dashboard
                session.ip_address !== null &&
                !session.session_id?.includes('anonymous');
-      });
-      
-      // Get unique visitors with their latest session info, visit count, session duration, and previous visit
-      const visitorMap = new Map();
-      const visitorSessions = new Map(); // Track all sessions per visitor for previous visit calculation
-      
-      // First pass: collect all sessions per visitor
-      realSessions.forEach(session => {
-        const ip = session.ip_address;
-        if (!visitorSessions.has(ip)) {
-          visitorSessions.set(ip, []);
+        if (!isValid) {
+          console.log(`🚫 FILTERED OUT: ${session.ip_address} - test:${session.is_test_data}, sessionId:${session.session_id}`);
         }
-        visitorSessions.get(ip).push(session);
+        return isValid;
       });
+      console.log(`✅ RECENT VISITORS: After filtering: ${realSessions.length} valid sessions`);
       
-      // Second pass: build visitor info with previous visit data (only from sessions within date range)
-      visitorSessions.forEach((sessions, ip) => {
-        // Sort sessions by date (newest first) - these are already filtered by date range
-        sessions.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-        
-        // Use the most recent session WITHIN the date range (not globally latest)
-        const latestSession = sessions[0];
-        const previousSession = sessions[1]; // Second most recent session WITHIN the date range
-        
-        visitorMap.set(ip, {
-          ip_address: ip,
-          country: latestSession.country || 'Unknown',
-          region: latestSession.region || 'Unknown',
-          city: latestSession.city || 'Unknown',
-          language: latestSession.language || 'Unknown', 
-          last_visit: latestSession.created_at,
-          user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
-          visit_count: sessions.length,
-          session_duration: latestSession.session_duration || Math.floor(Math.random() * 300 + 30), // Mock duration between 30-330 seconds for demo
-          previous_visit: previousSession ? previousSession.created_at : null
-        });
-      });
-      
-      // Convert to array, apply date filtering, and sort by most recent
-      let recentVisitors = Array.from(visitorMap.values());
-      
-      // Apply date filtering on visitors if date parameters provided
-      if (dateFrom || dateTo) {
-        recentVisitors = recentVisitors.filter(visitor => {
-          const visitDate = new Date(visitor.last_visit);
-          
-          if (dateFrom) {
-            const fromDate = new Date(dateFrom as string);
-            fromDate.setHours(0, 0, 0, 0); // Start of day
-            if (visitDate < fromDate) return false;
-          }
-          
-          if (dateTo) {
-            const toDate = new Date(dateTo as string);
-            if (visitDate > toDate) return false;
-          }
-          
-          return true;
-        });
-      }
-      
-      recentVisitors = recentVisitors
-        .sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime())
-        .slice(0, 100); // Take last 100 visitors for extended history
+      // **CRITICAL FIX**: Build visitor list BEFORE fast mode - core session processing should always happen
+      const recentVisitors = buildVisitorList(realSessions, dateFrom, dateTo);
+      console.log(`🔍 RECENT VISITORS: Built ${recentVisitors.length} visitors from ${realSessions.length} sessions`);
 
       // FAST MODE: Always return immediately with best available data - never wait for external APIs
       console.log(`⚡ Recent Visitors: Using fast response mode - no blocking external API calls`);
