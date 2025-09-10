@@ -141,10 +141,13 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
       };
     }
     
-    // 🔧 FIX: Apply Start Date Filter when enabled
+    // 🔧 FIX: Apply Date Filter when enabled - exclude data BEFORE the specified date
     if (state.sinceDateEnabled && state.sinceDate) {
-      // Override start date with Since Date Filter, keep calculated end date
-      dateRange.start = state.sinceDate;
+      // Only override start date if the exclusion date is AFTER the calculated start
+      // This excludes data before the specified date
+      if (state.sinceDate > dateRange.start) {
+        dateRange.start = state.sinceDate;
+      }
     }
     
     return dateRange;
