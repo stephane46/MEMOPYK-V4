@@ -233,7 +233,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
 
   return (
     <div className={cn('space-y-6', className)}>
-      {/* Start Date Filter Section */}
+      {/* Date Filter Section */}
       <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
         <div className="mb-3">
           <h3 className="text-sm font-semibold text-orange-800 flex items-center">
