@@ -112,8 +112,28 @@ function App() {
         console.log('🔍 Test mode active - all GA4 events will include debug_mode=true');
       }
     } else {
-      // Do not initialize GA4 on admin pages - completely disabled
-      console.log('🚫 Admin page detected - GA4 completely disabled');
+      // Check if this is the analytics dashboard which needs GA4 for data fetching
+      const isAnalyticsDashboard = window.location.pathname.includes('/analytics');
+      console.log('🔍 PATH DEBUG:', { 
+        pathname: window.location.pathname, 
+        isAnalyticsDashboard, 
+        isAdminPage: window.location.pathname.includes('/admin') 
+      });
+      
+      if (isAnalyticsDashboard) {
+        console.log('📊 Analytics dashboard detected - enabling GA4 for data access');
+        // Initialize GA4 for analytics dashboard data access
+        initGA();
+        initDirectGA(import.meta.env.VITE_GA_MEASUREMENT_ID || "G-JLRWHE1HV4", { debug: true });
+        
+        const isTestMode = initTestMode();
+        if (isTestMode) {
+          console.log('🔍 Test mode active - all GA4 events will include debug_mode=true');
+        }
+      } else {
+        // Do not initialize GA4 on other admin pages - completely disabled
+        console.log('🚫 Admin page detected - GA4 completely disabled');
+      }
     }
     
     // Cleanup function
