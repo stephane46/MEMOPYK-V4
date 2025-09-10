@@ -186,7 +186,7 @@ export const formatParisDateWindow = (start: string, end: string): string => {
     // Handle empty or undefined inputs
     if (!start || !end) {
       console.warn('formatParisDateWindow: Missing dates', { start, end });
-      return 'Date manquante';
+      return 'Missing date';
     }
     
     // Handle various input formats: YYYY-MM-DD, ISO strings, etc.
@@ -213,22 +213,22 @@ export const formatParisDateWindow = (start: string, end: string): string => {
         startError: startDate.invalidExplanation,
         endError: endDate.invalidExplanation 
       });
-      return `Dates invalides: ${start} - ${end}`;
+      return `Invalid dates: ${start} - ${end}`;
     }
     
-    // French formatting: DD MMMM YYYY
-    const formatFrench = (date: DateTime) => date.setLocale('fr').toFormat('dd LLLL yyyy');
+    // English formatting: DD MMMM YYYY
+    const formatEnglish = (date: DateTime) => date.setLocale('en').toFormat('dd LLLL yyyy');
     
     if (start === end) {
       // Single day
-      return formatFrench(startDate);
+      return formatEnglish(startDate);
     } else {
       // Date range
-      return `${formatFrench(startDate)} – ${formatFrench(endDate)}`;
+      return `${formatEnglish(startDate)} – ${formatEnglish(endDate)}`;
     }
   } catch (error) {
     console.error('formatParisDateWindow: Exception:', error, { start, end });
-    return 'Erreur de formatage';
+    return 'Formatting error';
   }
 };
 

@@ -20,12 +20,27 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAnalyticsNewFilters, DATE_PRESETS, formatParisDateWindow } from './analyticsNewFilters.store';
-import { formatFrenchDate } from '@/utils/date-format';
 import './analyticsNew.tokens.css';
 
 interface AnalyticsNewGlobalFiltersProps {
   className?: string;
 }
+
+// Simple English date formatter for Start Override badge
+const formatEnglishDate = (dateStr: string): string => {
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long', 
+      day: 'numeric'
+    });
+  } catch {
+    return dateStr;
+  }
+};
 
 export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps> = ({ 
   className = '' 
@@ -80,7 +95,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   className="bg-orange-50 border-orange-300 text-orange-800 text-xs font-medium"
                   data-testid="since-date-override-badge"
                 >
-                  ⚠️ Start Override: {sinceDate}
+                  ⚠️ Start Override: {formatEnglishDate(sinceDate)}
                 </Badge>
               )}
             </div>

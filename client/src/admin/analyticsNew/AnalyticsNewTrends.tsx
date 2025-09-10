@@ -322,13 +322,13 @@ export const AnalyticsNewTrends: React.FC = () => {
       case 'completion':
         return {
           color: '#8B5CF6',
-          label: 'Taux de complétion (%)',
+          label: 'Completion Rate (%)',
           format: (value: number) => `${Math.round(value)}%`
         };
       default:
         return {
           color: '#D67C4A',
-          label: 'Vues totales',
+          label: 'Total Views',
           format: (value: number) => value.toLocaleString('fr-FR')
         };
     }
@@ -338,8 +338,8 @@ export const AnalyticsNewTrends: React.FC = () => {
     return (
       <AnalyticsNewLoadingStates 
         mode="loading" 
-        title="Chargement des tendances"
-        description="Analyse des données de performance..."
+        title="Loading trends"
+        description="Analyzing performance data..."
       />
     );
   }
@@ -348,8 +348,8 @@ export const AnalyticsNewTrends: React.FC = () => {
     return (
       <AnalyticsNewLoadingStates 
         mode="error" 
-        title="Erreur de chargement"
-        description="Impossible de charger les données de tendances"
+        title="Loading error"
+        description="Unable to load trends data"
       />
     );
   }
