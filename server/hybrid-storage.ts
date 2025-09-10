@@ -3596,10 +3596,25 @@ Allow: /contact`;
     let finalDateTo = dateTo;
     if (dateFrom && dateTo && dateFrom === dateTo) {
       console.log('🔧 FIXING ZERO-WIDTH WINDOW: Converting same-day range to proper bounds');
-      const date = new Date(dateFrom + 'T00:00:00.000Z');
-      const nextDay = new Date(date);
-      nextDay.setUTCDate(nextDay.getUTCDate() + 1);
-      finalDateTo = nextDay.toISOString().split('T')[0]; // Next day for exclusive end
+      // Handle both ISO timestamp format and date-only format
+      let baseDate;
+      if (dateFrom.includes('T')) {
+        // Already an ISO timestamp - use as is
+        baseDate = new Date(dateFrom);
+      } else {
+        // Date-only format - add timezone info
+        baseDate = new Date(dateFrom + 'T00:00:00.000Z');
+      }
+      
+      // Add one day for proper exclusive end
+      const nextDay = new Date(baseDate.getTime() + 24 * 60 * 60 * 1000);
+      
+      // Return in same format as input
+      if (dateFrom.includes('T')) {
+        finalDateTo = nextDay.toISOString();
+      } else {
+        finalDateTo = nextDay.toISOString().split('T')[0];
+      }
       console.log(`📅 FIXED RANGE: ${finalDateFrom} to ${finalDateTo} (was: ${dateFrom} to ${dateTo})`);
     }
     
