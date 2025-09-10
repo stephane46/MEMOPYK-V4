@@ -56,8 +56,22 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
   const activeFilters = getActiveFilters();
   const activeFilterCount = Object.keys(activeFilters).length;
-  const dateRange = getDateRange();
-  const windowDisplay = formatParisDateWindow(dateRange.start, dateRange.end);
+  
+  // Display logic: Show what the user selected, not the calculated range
+  const getDisplayText = () => {
+    const preset = DATE_PRESETS.find(p => p.key === datePreset);
+    if (preset && datePreset !== 'custom') {
+      // Show the preset label for standard presets
+      return preset.label;
+    } else if (datePreset === 'custom') {
+      // For custom, show the actual date range
+      const dateRange = getDateRange();
+      return formatParisDateWindow(dateRange.start, dateRange.end);
+    }
+    return 'Unknown preset';
+  };
+  
+  const windowDisplay = getDisplayText();
 
   return (
     <div className={`analytics-new-container ${className}`}>
