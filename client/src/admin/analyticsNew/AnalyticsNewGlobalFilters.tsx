@@ -81,23 +81,19 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
           {/* Date Presets */}
           <div className="flex flex-wrap gap-4 items-center">
             {/* Active Window Display */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center">
               <Badge 
                 variant="outline" 
                 className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
                 data-testid="active-window-badge"
               >
-                Window: {windowDisplay}
+                {windowDisplay}
+                {sinceDateEnabled && sinceDate && (
+                  <span className="text-orange-700 ml-2">
+                    (⚠️ Start Override: {formatEnglishDate(sinceDate)})
+                  </span>
+                )}
               </Badge>
-              {sinceDateEnabled && sinceDate && (
-                <Badge 
-                  variant="outline" 
-                  className="bg-orange-50 border-orange-300 text-orange-800 text-xs font-medium"
-                  data-testid="since-date-override-badge"
-                >
-                  ⚠️ Start Override: {formatEnglishDate(sinceDate)}
-                </Badge>
-              )}
             </div>
             
             {/* Date Preset Buttons */}
