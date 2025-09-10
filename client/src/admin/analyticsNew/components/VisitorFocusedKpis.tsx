@@ -173,7 +173,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
   const handleUniqueVisitorsModalOpen = async () => {
     setIsUniqueVisitorsModalOpen(true);
     setIsLoadingRecentVisitors(true);
-    // Fetch recent visitors data using explicit date range (prioritize props over preset)
+    // Fetch UNIQUE visitors data (different from total views which shows all sessions)
     try {
       let calcStartDate, calcEndDate;
       if (startDate && endDate) {
@@ -194,13 +194,27 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         console.warn('Location enrichment failed:', enrichError);
       });
       
-      const response = await fetch(`/api/analytics/recent-visitors?dateFrom=${calcStartDate}&dateTo=${calcEndDate}&skipEnrichment=true`);
-      const allVisitors = await response.json();
+      // Call UNIQUE visitors endpoint (different from total sessions)
+      const response = await fetch(`/api/analytics/recent-visitors?dateFrom=${calcStartDate}&dateTo=${calcEndDate}&skipEnrichment=true&uniqueOnly=true`);
+      const uniqueVisitors = await response.json();
       
-      // Show all unique visitors (server already handles deduplication)
-      setRecentVisitors(allVisitors);
+      // For unique visitors, ensure we only show the latest visit per IP
+      const uniqueByIP = uniqueVisitors.reduce((acc: any[], visitor: any) => {
+        const existingIndex = acc.findIndex(v => v.ip_address === visitor.ip_address);
+        if (existingIndex === -1) {
+          acc.push(visitor);
+        } else {
+          // Keep the most recent visit
+          if (new Date(visitor.created_at) > new Date(acc[existingIndex].created_at)) {
+            acc[existingIndex] = visitor;
+          }
+        }
+        return acc;
+      }, []);
+      
+      setRecentVisitors(uniqueByIP);
     } catch (error) {
-      console.error('Failed to fetch recent visitors:', error);
+      console.error('Failed to fetch unique visitors:', error);
     } finally {
       setIsLoadingRecentVisitors(false);
     }
