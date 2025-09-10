@@ -7211,16 +7211,23 @@ export async function registerRoutes(app: Express): Promise<void> {
       let finalDateFrom = dateFrom as string;
       let finalDateTo = dateTo as string;
       
-      // If we detect preset-style parameters or potential zero-width windows, use computeParisWindow
-      if (req.query.preset || (dateFrom === dateTo)) {
-        console.log('🔧 FIXING DATE RANGE: Using computeParisWindow for proper exclusive bounds');
+      // If we detect preset-style parameters or same-day requests, use proper Paris timezone conversion
+      if (req.query.preset) {
+        console.log('🔧 PRESET DATE RANGE: Using computeParisWindow for preset filtering');
         const window = computeParisWindow(req.query);
         finalDateFrom = window.effStartIso!;
         finalDateTo = window.effEndIso!;
-        console.log(`📅 FIXED RANGE: ${finalDateFrom} to ${finalDateTo} (was: ${dateFrom} to ${dateTo})`);
-        
-        // Set headers for debugging
+        console.log(`📅 PRESET RANGE: ${finalDateFrom} to ${finalDateTo} (preset: ${req.query.preset})`);
         setParisTimezoneHeaders(res, req.query);
+      } else if (dateFrom === dateTo) {
+        console.log('🔧 SAME-DAY DATE RANGE: Converting to full 24-hour Paris day window');
+        // Convert same-day request to full 24-hour window in Paris timezone
+        const { DateTime } = await import('luxon');
+        const start = DateTime.fromISO(dateFrom as string, { zone: 'Europe/Paris' }).startOf('day');
+        const end = start.plus({ days: 1 }); // Next day start (exclusive)
+        finalDateFrom = start.toUTC().toISO()!;
+        finalDateTo = end.toUTC().toISO()!;
+        console.log(`📅 SAME-DAY RANGE: ${finalDateFrom} to ${finalDateTo} (Paris day: ${dateFrom})`);
       }
       
       // **CRITICAL FIX**: Default includeProduction to true to show real visitor traffic

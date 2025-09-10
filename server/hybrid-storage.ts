@@ -3627,32 +3627,9 @@ Allow: /contact`;
   async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string, includeProduction?: boolean): Promise<any[]> {
     console.log(`📊 Analytics Sessions: ${dateFrom} to ${dateTo}, language: ${language}, includeProduction: ${includeProduction}`);
     
-    // **CRITICAL FIX**: Detect and fix zero-width date windows (YESTERDAY bug)
+    // Use date ranges as provided by computeParisWindow - they are already correct
     let finalDateFrom = dateFrom;
     let finalDateTo = dateTo;
-    if (dateFrom && dateTo && dateFrom === dateTo) {
-      console.log('🔧 FIXING ZERO-WIDTH WINDOW: Converting same-day range to proper bounds');
-      // Handle both ISO timestamp format and date-only format
-      let baseDate;
-      if (dateFrom.includes('T')) {
-        // Already an ISO timestamp - use as is
-        baseDate = new Date(dateFrom);
-      } else {
-        // Date-only format - add timezone info
-        baseDate = new Date(dateFrom + 'T00:00:00.000Z');
-      }
-      
-      // Add one day for proper exclusive end
-      const nextDay = new Date(baseDate.getTime() + 24 * 60 * 60 * 1000);
-      
-      // Return in same format as input
-      if (dateFrom.includes('T')) {
-        finalDateTo = nextDay.toISOString();
-      } else {
-        finalDateTo = nextDay.toISOString().split('T')[0];
-      }
-      console.log(`📅 FIXED RANGE: ${finalDateFrom} to ${finalDateTo} (was: ${dateFrom} to ${dateTo})`);
-    }
     
     // Load excluded IP ranges for filtering (modern system only)
     let excludedIpRanges: string[] = [];
