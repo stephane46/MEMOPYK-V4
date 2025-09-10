@@ -72,7 +72,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
                 data-testid="active-window-badge"
               >
-                Fenêtre: {windowDisplay}
+                Window: {windowDisplay}
               </Badge>
               {sinceDateEnabled && sinceDate && (
                 <Badge 
@@ -80,7 +80,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   className="bg-orange-50 border-orange-300 text-orange-800 text-xs font-medium"
                   data-testid="since-date-override-badge"
                 >
-                  ⚠️ Début forcé: {formatFrenchDate(sinceDate)}
+                  ⚠️ Start Override: {sinceDate}
                 </Badge>
               )}
             </div>
