@@ -1,5 +1,4 @@
 {
-  "excludedIps": [],
   "completionThreshold": 75,
   "trackingEnabled": true,
   "dataRetentionDays": 90,

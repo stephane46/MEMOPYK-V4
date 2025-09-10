@@ -2466,9 +2466,8 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (error) {
       console.error('❌ Analytics settings error:', error);
       
-      // Provide fallback response with empty settings structure
+      // Provide fallback response with settings structure (IP exclusions handled separately)
       res.json({
-        excludedIps: [],
         trackingEnabled: true,
         retentionDays: 30,
         anonymizeIPs: true,
@@ -2946,7 +2945,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // MISSING ANALYTICS ENDPOINTS - CRITICAL FOR DASHBOARD
 
-  // IP Exclusion Management - POST exclude IP address  
+  // IP Exclusion Management - POST exclude IP address (modern system)
   app.post("/api/analytics/exclude-ip", async (req, res) => {
     try {
       const { ipAddress, comment } = req.body;
@@ -2957,11 +2956,19 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`🚫 Excluding IP address: ${ipAddress} with comment: ${comment || 'No comment'}`);
       
-      const settings = await hybridStorage.addExcludedIp(ipAddress, comment);
+      const exclusionData = {
+        ip_cidr: ipAddress,
+        label: comment || 'Manual exclusion',
+        active: true
+      };
+      
+      const newExclusion = await hybridStorage.createIpExclusion(exclusionData);
+      const allExclusions = await hybridStorage.getIpExclusions();
+      
       res.json({ 
         success: true, 
         message: `IP ${ipAddress} excluded successfully`,
-        excludedIps: settings.excludedIps 
+        excludedIps: allExclusions
       });
     } catch (error) {
       console.error('❌ IP exclusion error:', error);
@@ -2969,7 +2976,7 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // IP Exclusion Management - PATCH update comment for excluded IP
+  // IP Exclusion Management - PATCH update comment for excluded IP (modern system)
   app.patch("/api/analytics/exclude-ip/:ipAddress/comment", async (req, res) => {
     try {
       const { ipAddress } = req.params;
@@ -2981,14 +2988,24 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`📝 Updating comment for IP: ${ipAddress} to: ${comment || 'No comment'}`);
       
-      // First remove the IP, then re-add with new comment
-      await hybridStorage.removeExcludedIp(ipAddress);
-      const settings = await hybridStorage.addExcludedIp(ipAddress, comment);
+      // Find the exclusion by IP and update it
+      const exclusions = await hybridStorage.getIpExclusions();
+      const exclusion = exclusions.find(e => e.ip_cidr === ipAddress);
+      
+      if (!exclusion) {
+        return res.status(404).json({ error: "IP exclusion not found" });
+      }
+      
+      const updatedExclusion = await hybridStorage.updateIpExclusion(exclusion.id, {
+        label: comment || 'Updated comment'
+      });
+      
+      const allExclusions = await hybridStorage.getIpExclusions();
       
       res.json({ 
         success: true, 
         message: `Comment updated for IP ${ipAddress}`,
-        excludedIps: settings.excludedIps 
+        excludedIps: allExclusions
       });
     } catch (error) {
       console.error('❌ IP comment update error:', error);
@@ -2996,7 +3013,7 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // IP Exclusion Management - DELETE remove excluded IP
+  // IP Exclusion Management - DELETE remove excluded IP (modern system)
   app.delete("/api/analytics/exclude-ip/:ipAddress", async (req, res) => {
     try {
       const { ipAddress } = req.params;
@@ -3007,11 +3024,21 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`✅ Removing excluded IP: ${ipAddress}`);
       
-      const settings = await hybridStorage.removeExcludedIp(ipAddress);
+      // Find the exclusion by IP and delete it
+      const exclusions = await hybridStorage.getIpExclusions();
+      const exclusion = exclusions.find(e => e.ip_cidr === ipAddress);
+      
+      if (!exclusion) {
+        return res.status(404).json({ error: "IP exclusion not found" });
+      }
+      
+      await hybridStorage.deleteIpExclusion(exclusion.id);
+      const allExclusions = await hybridStorage.getIpExclusions();
+      
       res.json({ 
         success: true, 
         message: `IP ${ipAddress} removed from exclusion list`,
-        excludedIps: settings.excludedIps 
+        excludedIps: allExclusions
       });
     } catch (error) {
       console.error('❌ IP removal error:', error);
@@ -3019,12 +3046,12 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // IP Exclusion Management - GET list of excluded IPs
+  // IP Exclusion Management - GET list of excluded IPs (modern system)
   app.get("/api/analytics/exclude-ip", async (req, res) => {
     try {
-      const settings = await hybridStorage.getAnalyticsSettings();
+      const exclusions = await hybridStorage.getIpExclusions();
       res.json({ 
-        excludedIps: settings.excludedIps || [] 
+        excludedIps: exclusions || [] 
       });
     } catch (error) {
       console.error('❌ Get excluded IPs error:', error);
@@ -6885,16 +6912,16 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       console.log(`📊 GA4 Trend request: ${startDate} to ${endDate}, locale: ${locale}${nocache ? ' (cache bypassed)' : ''}`);
 
-      // GET EXCLUDED IPS for filtering  
-      let excludedIps: string[] = [];
+      // GET EXCLUDED IP RANGES for filtering (modern system)
+      let excludedIpRanges: string[] = [];
       try {
-        const settings = await hybridStorage.getAnalyticsSettings();
-        excludedIps = (settings.excludedIps || []).map((item: any) => 
-          typeof item === 'string' ? item : item.ip
-        );
-        console.log(`🚫 IP EXCLUSION: Loaded ${excludedIps.length} excluded IPs for trends filtering`);
+        const exclusions = await hybridStorage.getIpExclusions();
+        excludedIpRanges = exclusions
+          .filter((exclusion: any) => exclusion.active)
+          .map((exclusion: any) => exclusion.ip_cidr);
+        console.log(`🚫 IP EXCLUSION: Loaded ${excludedIpRanges.length} excluded IP ranges for trends filtering`);
       } catch (error) {
-        console.warn('⚠️ IP EXCLUSION: Failed to load excluded IPs for trends:', error);
+        console.warn('⚠️ IP EXCLUSION: Failed to load excluded IP ranges for trends:', error);
       }
 
       // FIXED: Use website sessions trend instead of video plays trend
