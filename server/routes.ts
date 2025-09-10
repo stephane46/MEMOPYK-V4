@@ -5390,7 +5390,7 @@ export async function registerRoutes(app: Express): Promise<void> {
   // GA4 KPIs endpoint - using consistent date handling like Geo API
   app.get("/api/ga4/kpis", async (req, res, next) => {
     try {
-      let startDate, endDate, locale, nocache;
+      let startDate, endDate, locale, nocache, sinceDate;
       
       // Handle both preset and direct date parameters for consistency with Geo API
       if (req.query.preset) {
@@ -5408,10 +5408,22 @@ export async function registerRoutes(app: Express): Promise<void> {
         }
         locale = req.query.locale ? String(req.query.locale) : "all";
         nocache = req.query.nocache === "1" || req.query.nocache === "true";
+        // Handle since date from both 'since' and 'sinceDate' parameters for frontend compatibility
+        sinceDate = req.query.since ? String(req.query.since) : req.query.sinceDate ? String(req.query.sinceDate) : undefined;
       } else {
         // Direct date parameters - use getParams for consistency with Geo API
-        ({ startDate, endDate, locale, nocache } = getParams(req));
+        ({ startDate, endDate, locale, nocache, sinceDate } = getParams(req));
         console.log(`📅 DIRECT DATES: Using direct dates: ${startDate} to ${endDate}`);
+        // Also check for 'since' parameter as fallback for frontend compatibility
+        if (!sinceDate && req.query.since) {
+          sinceDate = String(req.query.since);
+        }
+      }
+
+      // 🚨 CRITICAL FIX: Apply "Date to include from" filter from Exclusions tab
+      if (sinceDate && sinceDate > startDate) {
+        console.log(`📅 EXCLUSIONS FILTER: Adjusting startDate from ${startDate} to ${sinceDate} (Date to include from)`);
+        startDate = sinceDate;
       }
       const key = k(`kpis:${startDate}:${endDate}:${locale}`);
 
