@@ -3591,16 +3591,14 @@ Allow: /contact`;
 
   // Analytics methods implementation
   async getAnalyticsSessions(dateFrom?: string, dateTo?: string, language?: string, includeProduction?: boolean): Promise<any[]> {
-    // Load excluded IPs for filtering
-    let excludedIpsList: string[] = [];
+    // Load excluded IP ranges for filtering (modern system only)
+    let excludedIpRanges: string[] = [];
     try {
-      const settings = await this.getAnalyticsSettings();
-      if (settings.excludedIps && Array.isArray(settings.excludedIps)) {
-        excludedIpsList = settings.excludedIps.map((item: any) => 
-          typeof item === 'string' ? item : item.ip
-        );
-        console.log(`🚫 IP FILTER: Loaded ${excludedIpsList.length} excluded IPs for filtering`);
-      }
+      const exclusions = await this.getIpExclusions();
+      excludedIpRanges = exclusions
+        .filter((exclusion: any) => exclusion.active)
+        .map((exclusion: any) => exclusion.ip_cidr);
+      console.log(`🚫 IP FILTER: Loaded ${excludedIpRanges.length} excluded IP ranges for filtering`);
     } catch (error) {
       console.warn('⚠️ IP FILTER: Failed to load excluded IPs, continuing without filtering:', error);
     }
@@ -3658,10 +3656,13 @@ Allow: /contact`;
             }));
 
           // **IP EXCLUSION FILTER - RETROACTIVE HISTORICAL DATA FILTERING**
-          if (excludedIpsList.length > 0) {
+          if (excludedIpRanges.length > 0) {
             const beforeFiltering = filtered.length;
-            filtered = filtered.filter((session: any) => !excludedIpsList.includes(session.ip_address));
-            console.log(`🚫 IP FILTER: Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpsList.length} IPs`);
+            filtered = filtered.filter((session: any) => {
+              const sessionIp = session.ip_address;
+              return !excludedIpRanges.some(cidr => this.isIPInCIDR(sessionIp, cidr));
+            });
+            console.log(`🚫 IP FILTER: Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpRanges.length} IP ranges`);
           }
 
           if (language) {
@@ -3683,10 +3684,13 @@ Allow: /contact`;
         let filtered = sessions.filter((session: any) => includeProduction ? true : !session.is_test_data);
 
         // **IP EXCLUSION FILTER - RETROACTIVE HISTORICAL DATA FILTERING**
-        if (excludedIpsList.length > 0) {
+        if (excludedIpRanges.length > 0) {
           const beforeFiltering = filtered.length;
-          filtered = filtered.filter((session: any) => !excludedIpsList.includes(session.ip_address));
-          console.log(`🚫 IP FILTER (JSON): Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpsList.length} IPs`);
+          filtered = filtered.filter((session: any) => {
+            const sessionIp = session.ip_address;
+            return !excludedIpRanges.some(cidr => this.isIPInCIDR(sessionIp, cidr));
+          });
+          console.log(`🚫 IP FILTER (JSON): Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpRanges.length} IP ranges`);
         }
 
         if (dateFrom) {
@@ -3740,10 +3744,13 @@ Allow: /contact`;
       if (data && data.length > 0) {
         // **IP EXCLUSION FILTER - RETROACTIVE HISTORICAL DATA FILTERING**
         let filtered = data;
-        if (excludedIpsList.length > 0) {
+        if (excludedIpRanges.length > 0) {
           const beforeFiltering = filtered.length;
-          filtered = data.filter((session: any) => !excludedIpsList.includes(session.ip_address));
-          console.log(`🚫 IP FILTER (SUPABASE): Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpsList.length} IPs`);
+          filtered = data.filter((session: any) => {
+            const sessionIp = session.ip_address;
+            return !excludedIpRanges.some(cidr => this.isIPInCIDR(sessionIp, cidr));
+          });
+          console.log(`🚫 IP FILTER (SUPABASE): Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpRanges.length} IP ranges`);
         }
         
         console.log(`✅ SUPABASE: Found ${filtered.length} historical sessions`);
@@ -6353,9 +6360,8 @@ Allow: /contact`;
         .eq('active', true);
 
       if (error) {
-        console.warn('⚠️ IP Exclusions: Database query failed, checking JSON fallback:', error);
-        // Fallback to legacy analytics settings
-        return this.checkLegacyIPExclusion(ipAddress);
+        console.warn('⚠️ IP Exclusions: Database query failed:', error);
+        return false;
       }
 
       if (exclusions && exclusions.length > 0) {
@@ -6376,31 +6382,11 @@ Allow: /contact`;
 
       return false;
     } catch (error) {
-      console.warn('⚠️ IP Exclusions: Database check failed, using legacy fallback:', error);
-      return this.checkLegacyIPExclusion(ipAddress);
+      console.warn('⚠️ IP Exclusions: Database check failed:', error);
+      return false;
     }
   }
 
-  // Fallback to legacy IP exclusions from analytics settings
-  private async checkLegacyIPExclusion(ipAddress: string): Promise<boolean> {
-    try {
-      const settings = await this.getAnalyticsSettings();
-      const excludedIps = settings.excludedIps || [];
-      
-      for (const excludedIp of excludedIps) {
-        const ip = typeof excludedIp === 'string' ? excludedIp : excludedIp.ip;
-        if (ip === ipAddress) {
-          console.log(`🚫 IP EXCLUDED (legacy): ${ipAddress}`);
-          return true;
-        }
-      }
-      
-      return false;
-    } catch (error) {
-      console.warn('⚠️ Legacy IP exclusion check failed:', error);
-      return false;
-    }
-  }
 
   // Helper function to check if an IP is within a CIDR range
   private isIPInCIDR(ip: string, cidr: string): boolean {
