@@ -452,9 +452,9 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         onClick={() => handleEdit(exclusion)}
                         title="Edit label"
                         data-testid={`edit-exclusion-${exclusion.id}`}
-                        className="hover:bg-gray-100"
+                        className="hover:bg-gray-100 !opacity-100"
                       >
-                        <Edit className="h-5 w-5" style={{ color: '#4B5563 !important' }} />
+                        <Edit color="#4B5563" size={20} strokeWidth={2.25} />
                       </Button>
                       <Button
                         variant="ghost"
@@ -465,12 +465,12 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         disabled={toggleMutation.isPending}
                         title="Toggle active"
                         data-testid={`toggle-action-${exclusion.id}`}
-                        className="hover:bg-gray-100"
+                        className="hover:bg-gray-100 !opacity-100"
                       >
                         {exclusion.active ? (
-                          <EyeOff className="h-5 w-5" style={{ color: '#4B5563 !important' }} />
+                          <EyeOff color="#4B5563" size={20} strokeWidth={2.25} />
                         ) : (
-                          <Eye className="h-5 w-5" style={{ color: '#4B5563 !important' }} />
+                          <Eye color="#4B5563" size={20} strokeWidth={2.25} />
                         )}
                       </Button>
                       <Button
@@ -480,9 +480,9 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         disabled={deleteMutation.isPending}
                         title="Delete"
                         data-testid={`delete-exclusion-${exclusion.id}`}
-                        className="hover:bg-gray-100"
+                        className="hover:bg-gray-100 !opacity-100"
                       >
-                        <Trash2 className="h-5 w-5" style={{ color: '#4B5563 !important' }} />
+                        <Trash2 color="#4B5563" size={20} strokeWidth={2.25} />
                       </Button>
                     </div>
                   </TableCell>
