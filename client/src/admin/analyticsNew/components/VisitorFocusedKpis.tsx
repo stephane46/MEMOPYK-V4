@@ -466,19 +466,23 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             </div>
 
             <div className="p-6 overflow-y-auto max-h-[70vh]">
-              {/* Details Card Title */}
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Unique Visitor Details from Private Log</h2>
-              </div>
-
-              {/* Data Source Explanation */}
+              {/* Data Source Explanation Header */}
               <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                <h4 className="text-sm font-medium text-green-900 mb-2">Why do the numbers differ?</h4>
-                <div className="text-xs text-green-800 space-y-1">
-                  <div>• <strong>GA4</strong> tracks visitors across longer periods with advanced identification</div>
-                  <div>• <strong>Private Log</strong> only captures visitors who hit our tracking system</div>
-                  <div>• Missing visitors may have: blocked cookies, visited before logging started, are filtered bots, or use excluded IPs</div>
-                  <div>• GA4 provides the complete picture, Private Log provides detailed drill-down for available data</div>
+                <div className="space-y-2 text-sm">
+                  <div className="font-semibold text-green-900">
+                    📊 Showing {recentVisitors?.length || 0} detailed records from MEMOPYK logs
+                  </div>
+                  <div className="font-medium text-orange-700">
+                    ⚠️ GA4 reports {uniqueVisitors?.value || 0} total (includes cross-device returns)
+                  </div>
+                  <div className="text-green-800">
+                    <div className="font-medium mb-1">ℹ️ Numbers differ because:</div>
+                    <div className="text-xs space-y-1 ml-4">
+                      <div>- GA4: Advanced ML identifies cross-device visitors</div>
+                      <div>- MEMOPYK logs: Precise same-IP tracking only</div>
+                      <div>- Both perspectives provide valuable insights</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
