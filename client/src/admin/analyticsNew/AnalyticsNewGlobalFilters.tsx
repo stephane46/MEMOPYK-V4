@@ -87,12 +87,14 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
                 data-testid="active-window-badge"
               >
-                {windowDisplay}
-                {sinceDateEnabled && sinceDate && (
-                  <span className="text-orange-700 ml-2">
-                    (⚠️ Start Override: {formatEnglishDate(sinceDate)})
-                  </span>
-                )}
+                <div className="flex flex-col">
+                  <span>{windowDisplay}</span>
+                  {sinceDateEnabled && sinceDate && (
+                    <span className="text-orange-700 text-xs mt-1">
+                      ⚠️ Excluding data before: {formatEnglishDate(sinceDate)}
+                    </span>
+                  )}
+                </div>
               </Badge>
             </div>
             
