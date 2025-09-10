@@ -133,6 +133,8 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
 
   // Modal handlers
   const handleTotalViewsModalOpen = async () => {
+    console.log('👁️ EYE ICON CLICKED: Total Views Modal');
+    console.log('📅 Props - startDate:', startDate, 'endDate:', endDate, 'preset:', preset);
     setIsTotalViewsModalOpen(true);
     setIsLoadingRecentVisitors(true);
     // Fetch recent visitors data using explicit date range (prioritize props over preset)
@@ -141,10 +143,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       if (startDate && endDate) {
         calcStartDate = startDate;
         calcEndDate = endDate;
+        console.log('✅ Using props dates:', calcStartDate, 'to', calcEndDate);
       } else {
         const dateRange = getDateRangeFromPreset(preset);
         calcStartDate = dateRange.startDate;
         calcEndDate = dateRange.endDate;
+        console.log('🔄 Using preset dates:', calcStartDate, 'to', calcEndDate);
       }
       
       // Trigger location enrichment in background (don't wait for it)
