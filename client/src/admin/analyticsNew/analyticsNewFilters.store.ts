@@ -102,45 +102,52 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
     const ZONE = 'Europe/Paris';
     const todayParis = DateTime.now().setZone(ZONE).startOf('day');
     
+    let dateRange: { start: string; end: string };
+    
     if (state.datePreset === 'custom') {
       // If custom dates are empty, fallback to today
       if (!state.customDateStart || !state.customDateEnd) {
         const todayStr = todayParis.toFormat('yyyy-LL-dd');
-        return {
+        dateRange = {
           start: todayStr,
           end: todayStr
         };
+      } else {
+        dateRange = {
+          start: state.customDateStart,
+          end: state.customDateEnd
+        };
       }
-      return {
-        start: state.customDateStart,
-        end: state.customDateEnd
-      };
-    }
-    
-    if (state.datePreset === 'today') {
+    } else if (state.datePreset === 'today') {
       const todayStr = todayParis.toFormat('yyyy-LL-dd');
-      return {
+      dateRange = {
         start: todayStr,
         end: todayStr
       };
-    }
-    
-    if (state.datePreset === 'yesterday') {
+    } else if (state.datePreset === 'yesterday') {
       const yesterdayStr = todayParis.minus({ days: 1 }).toFormat('yyyy-LL-dd');
-      return {
+      dateRange = {
         start: yesterdayStr,
         end: yesterdayStr
       };
+    } else {
+      // Handle existing day-based presets
+      const days = state.datePreset === '7d' ? 7 : state.datePreset === '30d' ? 30 : 90;
+      const startDate = todayParis.minus({ days });
+      
+      dateRange = {
+        start: startDate.toFormat('yyyy-LL-dd'),
+        end: todayParis.toFormat('yyyy-LL-dd')
+      };
     }
     
-    // Handle existing day-based presets
-    const days = state.datePreset === '7d' ? 7 : state.datePreset === '30d' ? 30 : 90;
-    const startDate = todayParis.minus({ days });
+    // 🔧 FIX: Apply Start Date Filter when enabled
+    if (state.sinceDateEnabled && state.sinceDate) {
+      // Override start date with Since Date Filter, keep calculated end date
+      dateRange.start = state.sinceDate;
+    }
     
-    return {
-      start: startDate.toFormat('yyyy-LL-dd'),
-      end: todayParis.toFormat('yyyy-LL-dd')
-    };
+    return dateRange;
   },
 
   getActiveFilters: () => {
