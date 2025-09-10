@@ -238,10 +238,10 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
         <div className="mb-3">
           <h3 className="text-sm font-semibold text-orange-800 flex items-center">
             <Clock className="h-4 w-4 mr-2" />
-            Start Date Filter
+            Date Filter
           </h3>
           <p className="text-xs text-orange-600 mt-1">
-            Standard reports only; Live View shows last ~30 min.
+            Exclude all data before the specified date. Standard reports only; Live View shows last ~30 min.
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -254,14 +254,14 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
               className="switch-orange"
             />
             <Label htmlFor="since-date-toggle" className="text-sm font-medium text-orange-700">
-              Enable Start Date Filter
+              Enable Date Filter
             </Label>
           </div>
           
           {/* Date Picker - Show when enabled */}
           {sinceDateEnabled && (
             <div className="flex items-center space-x-2">
-              <Label className="text-sm text-orange-700">Since:</Label>
+              <Label className="text-sm text-orange-700">Before:</Label>
               <div className="relative">
                 <Input
                   type="text"
