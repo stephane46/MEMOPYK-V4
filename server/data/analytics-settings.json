@@ -1,13 +1,7 @@
 {
-  "excludedIps": [
-    {
-      "ip": "109.17.150.48",
-      "comment": "Notre IP à Capdenac",
-      "added_at": "2025-08-25T12:37:57.753Z"
-    }
-  ],
+  "excludedIps": [],
   "completionThreshold": 75,
   "trackingEnabled": true,
   "dataRetentionDays": 90,
-  "updated_at": "2025-09-09T14:38:31.736Z"
+  "updated_at": "2025-09-10T15:15:00.000Z"
 }
