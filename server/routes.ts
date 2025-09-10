@@ -5489,11 +5489,53 @@ export async function registerRoutes(app: Express): Promise<void> {
         throw new Error(`qTopLanguages failed: ${(e as Error).message}`);
       }
 
+      // ==========================================================================
+      // 🚨 CRITICAL GA4 DIAGNOSTIC LOGGING - INVESTIGATING DATA INFLATION ISSUE
+      // Expected values for Sept 7-10: 40 sessions, 16 users
+      // Dashboard showing: 133 sessions, 77 users (232-381% inflation)
+      // ==========================================================================
+      
+      console.log("\n" + "=".repeat(80));
+      console.log("🚨 GA4 INFLATION DIAGNOSTICS - RAW API RESPONSE ANALYSIS");
+      console.log("=".repeat(80));
+      console.log(`📊 Query Parameters:`);
+      console.log(`   Date Range: ${startDate} to ${endDate}`);
+      console.log(`   Locale Filter: ${locale}`);
+      console.log(`   Expected Sessions: 40 (from direct GA4 API)`);
+      console.log(`   Expected Users: 16 (from direct GA4 API)`);
+      console.log(`   Cache Bypassed: ${nocache}`);
+      console.log(`   Current User IP: ${req.ip || req.connection?.remoteAddress || 'Unknown'}`);
+      console.log(`   Request Headers X-Forwarded-For: ${req.headers['x-forwarded-for'] || 'None'}`);
+      console.log(`   Request Headers X-Real-IP: ${req.headers['x-real-ip'] || 'None'}`);
+      
+      // Check if IP exclusions are being applied
+      console.log(`🚫 IP EXCLUSION CHECK:`);
+      console.log(`   Known Excluded IP: 109.17.150.48 (Capdenac home network)`);
+      console.log(`   ⚠️  NOTE: GA4 API queries should exclude this IP if implemented properly`);
+      
+      // Check date filtering implementation
+      console.log(`📅 DATE FILTERING CHECK:`);
+      console.log(`   Raw Query Params:`, {
+        startDate: req.query.startDate,
+        endDate: req.query.endDate,
+        preset: req.query.preset,
+        dateFrom: req.query.dateFrom,
+        dateTo: req.query.dateTo,
+        sinceDate: req.query.sinceDate
+      });
+      console.log("");
+
       // Fetch visitor metrics for Analytics New
       try {
-        console.log('Testing qSessions...');
+        console.log('🔍 Testing qSessions() - CAPTURING RAW RESPONSE...');
         sessions = await Promise.race([qSessions(startDate, endDate, locale), timeoutPromise('qSessions')]);
-        console.log(`✅ qSessions: ${sessions}`);
+        
+        console.log("📋 qSessions RAW RESULT ANALYSIS:");
+        console.log(`   ✅ Sessions Returned: ${sessions}`);
+        console.log(`   🎯 Expected: 40 sessions`);
+        console.log(`   📊 Inflation Factor: ${sessions > 0 ? (sessions / 40).toFixed(2) + 'x' : 'N/A'}`);
+        console.log(`   🚨 Status: ${sessions === 40 ? 'CORRECT' : 'INFLATED BY ' + Math.round(((sessions - 40) / 40) * 100) + '%'}`);
+        
       } catch (e) {
         console.error('❌ qSessions failed:', (e as Error).message);
         sessions = plays; // Fallback to plays count
@@ -5501,9 +5543,15 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
 
       try {
-        console.log('Testing qTotalUsers...');
+        console.log('\n🔍 Testing qTotalUsers() - CAPTURING RAW RESPONSE...');
         totalUsers = await Promise.race([qTotalUsers(startDate, endDate, locale), timeoutPromise('qTotalUsers')]);
-        console.log(`✅ qTotalUsers: ${totalUsers}`);
+        
+        console.log("📋 qTotalUsers RAW RESULT ANALYSIS:");
+        console.log(`   ✅ Users Returned: ${totalUsers}`);
+        console.log(`   🎯 Expected: 16 users`);
+        console.log(`   📊 Inflation Factor: ${totalUsers > 0 ? (totalUsers / 16).toFixed(2) + 'x' : 'N/A'}`);
+        console.log(`   🚨 Status: ${totalUsers === 16 ? 'CORRECT' : 'INFLATED BY ' + Math.round(((totalUsers - 16) / 16) * 100) + '%'}`);
+        
       } catch (e) {
         console.error('❌ qTotalUsers failed:', (e as Error).message);
         totalUsers = 0; // No fallback - use authentic GA4 data only
@@ -5595,7 +5643,30 @@ export async function registerRoutes(app: Express): Promise<void> {
         cached: false
       };
 
-      console.log(`📊 FINAL GA4 KPIs DATA for ${key}:`, JSON.stringify(data, null, 2));
+      // ==========================================================================
+      // 🚨 COMPREHENSIVE DATA INFLATION ANALYSIS SUMMARY
+      // ==========================================================================
+      console.log("\n" + "=".repeat(80));
+      console.log("🚨 FINAL DATA INFLATION ANALYSIS SUMMARY");
+      console.log("=".repeat(80));
+      console.log("📊 RAW GA4 API RESULTS vs EXPECTED:");
+      console.log(`   Sessions: ${sessions} (Expected: 40) - ${sessions === 40 ? '✅ CORRECT' : '🚨 INFLATED BY ' + Math.round(((sessions - 40) / 40) * 100) + '%'}`);
+      console.log(`   Users: ${totalUsers} (Expected: 16) - ${totalUsers === 16 ? '✅ CORRECT' : '🚨 INFLATED BY ' + Math.round(((totalUsers - 16) / 16) * 100) + '%'}`);
+      console.log(`   Returning Users: ${returningUsers}`);
+      console.log("");
+      console.log("📊 PROCESSED DASHBOARD VALUES:");
+      console.log(`   Total Views: ${data.kpis.totalViews.value} (Change: ${data.kpis.totalViews.change}%)`);
+      console.log(`   Unique Visitors: ${data.kpis.uniqueVisitors.value} (Change: ${data.kpis.uniqueVisitors.change}%)`);
+      console.log(`   Return Visitors: ${data.kpis.returnVisitors.value} (Change: ${data.kpis.returnVisitors.change}%)`);
+      console.log("");
+      console.log("🎯 ROOT CAUSE INVESTIGATION:");
+      console.log(`   ❓ Is qSessions() returning inflated data from GA4 API?`);
+      console.log(`   ❓ Is date filtering working (should be Sept 7-10 only)?`);
+      console.log(`   ❓ Are IP exclusions properly applied to GA4 queries?`);
+      console.log(`   ❓ Is there post-processing inflation happening?`);
+      console.log("=".repeat(80));
+      
+      console.log(`📊 FULL KPIs DATA STRUCTURE for ${key}:`, JSON.stringify(data, null, 2));
 
       // Store in both persistent and memory cache
       console.log(`💾 Storing in cache with key: ${key}`);
