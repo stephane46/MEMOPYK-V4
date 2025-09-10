@@ -71,10 +71,7 @@ html, body {
   mix-blend-mode: normal !important;
 }
 
-/* IP Exclusions Icon Reset - Simple force visible */
-.ipx-icon-reset button svg {
-  stroke: #4b5563 !important;
-}
+/* REMOVED - Previous IP icon override was causing issues */
 
 /* Card Back Gradient Background Fix - Following Modal Transparency Solution Pattern */
 .card-back-gradient {

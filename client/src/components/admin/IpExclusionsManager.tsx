@@ -445,7 +445,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                     {formatDate(exclusion.created_at)}
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1 ipx-icon-reset">
+                    <div className="flex items-center gap-2 text-gray-600">
                       <Button
                         variant="ghost"
                         size="default"
@@ -454,7 +454,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         data-testid={`edit-exclusion-${exclusion.id}`}
                         className="hover:bg-gray-100"
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-4 w-4" color="#4b5563" strokeWidth={1.8} />
                       </Button>
                       <Button
                         variant="ghost"
@@ -468,9 +468,9 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         className="hover:bg-gray-100"
                       >
                         {exclusion.active ? (
-                          <EyeOff className="h-4 w-4" />
+                          <EyeOff className="h-4 w-4" color="#4b5563" strokeWidth={1.8} />
                         ) : (
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-4 w-4" color="#4b5563" strokeWidth={1.8} />
                         )}
                       </Button>
                       <Button
@@ -482,7 +482,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         data-testid={`delete-exclusion-${exclusion.id}`}
                         className="hover:bg-gray-100"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" color="#4b5563" strokeWidth={1.8} />
                       </Button>
                     </div>
                   </TableCell>
