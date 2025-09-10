@@ -50,6 +50,9 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
     refetchOnWindowFocus: false,
   });
 
+  // ✅ FIXED: Read Start Date Filter from the same store that Exclusions tab uses
+  // (This was the root cause - Exclusions tab uses localStorage store, not backend settings)
+
   // Get GA4 KPIs data based on current filters (using same pattern as working 7d/30d/90d filters)
   const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
     queryKey: ['/api/ga4/kpis', start, end, sinceDateEnabled ? sinceDate : null],
@@ -62,8 +65,10 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       url.searchParams.set('locale', 'all');
       url.searchParams.set('nocache', '1'); // Always get fresh data for overview
       
+      // ✅ FIXED: Use Start Date Filter from analytics store (same as Exclusions tab)
       if (sinceDateEnabled && sinceDate) {
         url.searchParams.set('since', sinceDate);
+        console.log('📅 OVERVIEW: Using Start Date Filter from analytics store:', sinceDate);
       }
 
       console.log('📊 OVERVIEW: Calling /api/ga4/kpis with:', {
