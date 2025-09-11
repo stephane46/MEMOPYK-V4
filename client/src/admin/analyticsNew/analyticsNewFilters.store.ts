@@ -178,19 +178,28 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
         const ZONE = 'Europe/Paris';
         const sinceDateTime = DateTime.fromFormat(state.sinceDate, 'yyyy-LL-dd', { zone: ZONE });
         const startDateTime = DateTime.fromFormat(dateRange.start, 'yyyy-LL-dd', { zone: ZONE });
+        const endDateTime = DateTime.fromFormat(dateRange.end, 'yyyy-LL-dd', { zone: ZONE });
         
-        if (sinceDateTime.isValid && startDateTime.isValid) {
+        if (sinceDateTime.isValid && startDateTime.isValid && endDateTime.isValid) {
           // Only override start date if the exclusion date is AFTER the calculated start
           // This excludes data before the specified date
           if (sinceDateTime > startDateTime) {
             dateRange.start = state.sinceDate;
+            
+            // 🔧 CRITICAL FIX: If exclusion date is after the end date, extend end date to exclusion date
+            // This prevents backwards date ranges (start > end) that return 0 results
+            if (sinceDateTime > endDateTime) {
+              dateRange.end = state.sinceDate;
+            }
           }
         } else {
           console.warn('getDateRange: Invalid date format in sinceDate comparison', {
             sinceDate: state.sinceDate,
             rangeStart: dateRange.start,
+            rangeEnd: dateRange.end,
             sinceValid: sinceDateTime.isValid,
-            startValid: startDateTime.isValid
+            startValid: startDateTime.isValid,
+            endValid: endDateTime.isValid
           });
         }
       } catch (error) {
