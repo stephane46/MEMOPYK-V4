@@ -135,8 +135,8 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                 </p>
                 <p>
                   {language === 'fr-FR' 
-                    ? 'Nous utilisons uniquement les cookies essentiels pour faire fonctionner le site, et -si vous le permettez- des cookies analytiques optionnels pour savoir si les visiteurs regardent nos exemples de films. Nous n\'utilisons jamais de cookies à des fins publicitaires, de reciblage, ni pour partager vos données avec des tiers. Tout le suivi reste limité à MEMOPYK : <strong>vos activités sur le site ne sont ni reliées ni partagées avec d\'autres sites</strong>.'
-                    : 'We use only essential cookies to run the site, and -if you allow- optional analytics to see if people visit or watch our sample films. We never use cookies for advertising, remarketing, or sharing your data with third parties. All tracking stays on MEMOPYK—<strong>your activity here isn\'t connected to or shared with other websites</strong>.'
+                    ? <>Nous utilisons uniquement les cookies essentiels pour faire fonctionner le site, et -si vous le permettez- des cookies analytiques optionnels pour savoir si les visiteurs regardent nos exemples de films. Nous n'utilisons jamais de cookies à des fins publicitaires, de reciblage, ni pour partager vos données avec des tiers. Tout le suivi reste limité à MEMOPYK : <strong>vos activités sur le site ne sont ni reliées ni partagées avec d'autres sites</strong>.</>
+                    : <>We use only essential cookies to run the site, and -if you allow- optional analytics to see if people visit or watch our sample films. We never use cookies for advertising, remarketing, or sharing your data with third parties. All tracking stays on MEMOPYK—<strong>your activity here isn't connected to or shared with other websites</strong>.</>
                   }
                 </p>
               </div>
