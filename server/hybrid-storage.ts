@@ -3602,6 +3602,10 @@ Allow: /contact`;
       const beforeFiltering = filtered.length;
       filtered = filtered.filter((session: any) => {
         const sessionIp = session.ip_address;
+        // Skip filtering if IP is null/undefined/empty - keep the session
+        if (!sessionIp || typeof sessionIp !== 'string' || sessionIp.trim() === '') {
+          return true;
+        }
         return !excludedIpRanges.some(cidr => this.isIPInCIDR(sessionIp, cidr));
       });
       console.log(`🚫 IP FILTER (JSON): Excluded ${beforeFiltering - filtered.length} sessions from ${excludedIpRanges.length} IP ranges`);
@@ -6355,6 +6359,9 @@ Allow: /contact`;
 
   // Convert IP address to 32-bit number
   private ipToNumber(ip: string): number {
+    if (!ip || typeof ip !== 'string') {
+      throw new Error(`Invalid IP address: ${ip}`);
+    }
     return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0) >>> 0;
   }
 
