@@ -22,7 +22,6 @@ import { useEffect } from 'react';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { initTestMode, initGA } from '@/lib/analytics';
 import { initGA as initDirectGA } from '@/analytics/ga';
-import { initOpenReplay } from '@/lib/openReplay';
 import { readGa4Ids } from '@/lib/readGa4';
 
 // Routes configured for gallery
@@ -83,7 +82,7 @@ function AnalyticsRouter() {
 }
 
 function App() {
-  // Initialize GA4, OpenReplay and test mode on app load (EXCLUDE admin pages)
+  // Initialize GA4 and test mode on app load (EXCLUDE admin pages)
   useEffect(() => {
     const isAdminPage = window.location.pathname.includes('/admin');
     
@@ -103,9 +102,7 @@ function App() {
       // Initialize direct GA4 for video events (bypasses GTM)
       initDirectGA(import.meta.env.VITE_GA_MEASUREMENT_ID || "G-JLRWHE1HV4", { debug: true });
       
-      // OpenReplay temporarily disabled for mobile deployment compatibility
-      // Will be automatically enabled in production where it works without connection issues
-      console.log('🎬 OpenReplay disabled in development - will work in production deployment');
+      // Analytics initialization complete
       
       // Then initialize test mode  
       const isTestMode = initTestMode();

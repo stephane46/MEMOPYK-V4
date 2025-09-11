@@ -98,7 +98,7 @@ export function CookieSettings({ isOpen, onSave, onCancel, currentConsent }: Coo
                   Analytics
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  GA4, Clarity, OpenReplay, and our own tools for engagement metrics. 
+                  Google Analytics, Microsoft Clarity, and our own tools for engagement metrics. 
                   No ads, no remarketing, no cross-site tracking.
                 </p>
               </div>
@@ -113,19 +113,13 @@ export function CookieSettings({ isOpen, onSave, onCancel, currentConsent }: Coo
             </div>
           </div>
 
-          {/* Demo Notice */}
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-            <p className="text-xs text-orange-800">
-              <strong>Demo mode:</strong> This is a UI prototype. All tracking continues running regardless of your choice here.
-            </p>
-          </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
           <Button
             onClick={handleSave}
-            className="bg-orange-500 hover:bg-orange-600 text-white flex-1"
+            className="cookie-settings-save-btn bg-orange-500 hover:bg-orange-600 text-white flex-1"
             data-testid="cookie-settings-save"
           >
             Save preferences

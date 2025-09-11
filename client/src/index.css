@@ -183,6 +183,17 @@ img, video, iframe, canvas, svg {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
 }
 
+/* Cookie Settings Button Styles - Force MEMOPYK orange color */
+.cookie-settings-save-btn {
+  background-color: #D67C4A !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.cookie-settings-save-btn:hover {
+  background-color: #bf6d42 !important;
+}
+
 .seo-tab[data-state="inactive"] {
   background-color: transparent !important;
   color: #374151 !important;
