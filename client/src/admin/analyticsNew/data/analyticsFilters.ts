@@ -39,7 +39,7 @@ export interface FilteredAnalyticsParams {
  * so it can be called from within React hooks safely.
  */
 export function buildAnalyticsParams(
-  reportType: 'kpis' | 'topVideos' | 'videoFunnel' | 'geo' | 'trends',
+  reportType: 'kpis' | 'topVideos' | 'videoFunnel' | 'geo' | 'trends' | 'realtimeVideoProgress',
   filterState: {
     datePreset: string;
     start: string;
@@ -84,14 +84,15 @@ export function buildAnalyticsParams(
   if (country !== 'all') params.country = country;
   if (videoId !== 'all') params.videoId = videoId;
   
-  // Build cache key that includes ALL filter parameters
+  // ✅ CRITICAL FIX: Build cache key that includes ALL filter parameters to prevent cache collision
   const queryKey = [
-    `/api/ga4/${reportType}`,
-    datePreset !== 'custom' ? datePreset : [start, end],
-    language === 'all' ? null : language,
-    country === 'all' ? null : country,
-    videoId === 'all' ? null : videoId,
-    sinceDateEnabled && sinceDate ? sinceDate : null
+    reportType, // Include report type
+    datePreset !== 'custom' ? datePreset : null, // Include preset
+    datePreset !== 'custom' ? null : [start, end], // Include explicit dates
+    sinceDateEnabled && sinceDate ? sinceDate : 'none', // Include since date (use 'none' instead of null to differentiate)
+    language === 'all' ? 'all' : language,
+    country === 'all' ? 'all' : country,
+    videoId === 'all' ? 'all' : videoId
   ];
   
   return {

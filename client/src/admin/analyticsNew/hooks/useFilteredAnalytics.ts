@@ -80,7 +80,7 @@ export function useFilteredAnalytics<T>(config: UseFilteredAnalyticsConfig) {
     },
     enabled: config.enabled ?? true,
     refetchInterval: config.refetchInterval,
-    staleTime: config.staleTime ?? 5 * 60 * 1000, // 5 minutes default
+    staleTime: 0, // ✅ TEMPORARY: Set to 0 for immediate testing
   });
 }
 

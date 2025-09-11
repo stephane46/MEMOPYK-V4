@@ -5508,6 +5508,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log(`📅 PRESET: ${preset} calculated as ${startDate} to ${endDate}${sinceDate ? ` (filtered since ${sinceDate})` : ''}`);
         locale = req.query.locale ? String(req.query.locale) : "all";
         nocache = req.query.nocache === "1" || req.query.nocache === "true";
+        // ✅ CRITICAL FIX: Accept both 'since' and 'sinceDate' for robust parameter handling
         sinceDate = req.query.since ? String(req.query.since) : req.query.sinceDate ? String(req.query.sinceDate) : undefined;
       } else {
         // Direct date parameters - use getParams for consistency with Geo API
