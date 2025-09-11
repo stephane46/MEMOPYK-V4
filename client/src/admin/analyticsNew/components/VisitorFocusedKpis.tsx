@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, Users, UserCheck, RotateCcw, X, MapPin, Clock, Languages } from 'lucide-react';
 import { useFilteredKpis } from "../hooks/useFilteredAnalytics";
+import { useAnalyticsNewFilters } from '../analyticsNewFilters.store';
 import type { KpisResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,9 @@ interface VisitorFocusedKpisProps {
 // Cache bust v3.0 - FORCE COMPLETE REFRESH FOR BADGE FIXES  
 export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, endDate }: VisitorFocusedKpisProps) {
   const { data, isLoading: loading, error } = useFilteredKpis<KpisResponse>();
+  
+  // Get dates from global filter store instead of local calculations
+  const { getDateRange } = useAnalyticsNewFilters();
   
   // Modal states
   const [isTotalViewsModalOpen, setIsTotalViewsModalOpen] = useState(false);
@@ -89,48 +93,13 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
 
   const { totalViews, uniqueVisitors, returnVisitors } = data.kpis;
 
-  // Helper function to calculate date range from preset
-  const getDateRangeFromPreset = (preset: string) => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    switch (preset) {
-      case 'today':
-        return {
-          startDate: today.toISOString().slice(0, 10),
-          endDate: today.toISOString().slice(0, 10)
-        };
-      case 'yesterday':
-        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
-        return {
-          startDate: yesterday.toISOString().slice(0, 10),
-          endDate: yesterday.toISOString().slice(0, 10)
-        };
-      case '7d':
-        const sevenDaysAgo = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000);
-        return {
-          startDate: sevenDaysAgo.toISOString().slice(0, 10),
-          endDate: today.toISOString().slice(0, 10)
-        };
-      case '30d':
-        const thirtyDaysAgo = new Date(today.getTime() - 29 * 24 * 60 * 60 * 1000);
-        return {
-          startDate: thirtyDaysAgo.toISOString().slice(0, 10),
-          endDate: today.toISOString().slice(0, 10)
-        };
-      case '90d':
-        const ninetyDaysAgo = new Date(today.getTime() - 89 * 24 * 60 * 60 * 1000);
-        return {
-          startDate: ninetyDaysAgo.toISOString().slice(0, 10),
-          endDate: today.toISOString().slice(0, 10)
-        };
-      default:
-        const defaultSevenDaysAgo = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000);
-        return {
-          startDate: defaultSevenDaysAgo.toISOString().slice(0, 10),
-          endDate: today.toISOString().slice(0, 10)
-        };
-    }
+  // Get dates from global store - this ensures consistency with exclusion filters
+  const getGlobalDateRange = () => {
+    const { start, end } = getDateRange();
+    return {
+      startDate: start,
+      endDate: end
+    };
   };
 
   // Modal handlers
@@ -139,17 +108,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
     setIsLoadingTotalViews(true);
     // Fetch ALL sessions/views (can show same IP multiple times for different sessions)
     try {
-      let calcStartDate, calcEndDate;
-      if (startDate && endDate) {
-        calcStartDate = startDate;
-        calcEndDate = endDate;
-        console.log('📊 TOTAL VIEWS: Using props dates:', calcStartDate, 'to', calcEndDate);
-      } else {
-        const dateRange = getDateRangeFromPreset(preset);
-        calcStartDate = dateRange.startDate;
-        calcEndDate = dateRange.endDate;
-        console.log('📊 TOTAL VIEWS: Using preset dates:', calcStartDate, 'to', calcEndDate);
-      }
+      // Always use global store dates to ensure consistency with main dashboard
+      const dateRange = getGlobalDateRange();
+      const calcStartDate = dateRange.startDate;
+      const calcEndDate = dateRange.endDate;
+      console.log('📊 TOTAL VIEWS: Using global store dates (with exclusion filter):', calcStartDate, 'to', calcEndDate);
       
       // Trigger location enrichment in background (don't wait for it)
       fetch(`/api/analytics/enrich-locations?startDate=${calcStartDate}&endDate=${calcEndDate}`, {
@@ -177,17 +140,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
     setIsLoadingUniqueVisitors(true);
     // Fetch UNIQUE visitors data (different from total views which shows all sessions)
     try {
-      let calcStartDate, calcEndDate;
-      if (startDate && endDate) {
-        calcStartDate = startDate;
-        calcEndDate = endDate;
-        console.log('👥 UNIQUE VISITORS: Using props dates:', calcStartDate, 'to', calcEndDate);
-      } else {
-        const dateRange = getDateRangeFromPreset(preset);
-        calcStartDate = dateRange.startDate;
-        calcEndDate = dateRange.endDate;
-        console.log('👥 UNIQUE VISITORS: Using preset dates:', calcStartDate, 'to', calcEndDate);
-      }
+      // Always use global store dates to ensure consistency with main dashboard
+      const dateRange = getGlobalDateRange();
+      const calcStartDate = dateRange.startDate;
+      const calcEndDate = dateRange.endDate;
+      console.log('👥 UNIQUE VISITORS: Using global store dates (with exclusion filter):', calcStartDate, 'to', calcEndDate);
       
       // Trigger location enrichment in background (don't wait for it)
       fetch(`/api/analytics/enrich-locations?startDate=${calcStartDate}&endDate=${calcEndDate}`, {
@@ -229,15 +186,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
     setIsLoadingReturningVisitors(true);
     // Fetch returning visitors data using explicit date range (prioritize props over preset)
     try {
-      let calcStartDate, calcEndDate;
-      if (startDate && endDate) {
-        calcStartDate = startDate;
-        calcEndDate = endDate;
-      } else {
-        const dateRange = getDateRangeFromPreset(preset);
-        calcStartDate = dateRange.startDate;
-        calcEndDate = dateRange.endDate;
-      }
+      // Always use global store dates to ensure consistency with main dashboard
+      const dateRange = getGlobalDateRange();
+      const calcStartDate = dateRange.startDate;
+      const calcEndDate = dateRange.endDate;
+      console.log('🔄 RETURN VISITORS: Using global store dates (with exclusion filter):', calcStartDate, 'to', calcEndDate);
       
       // Trigger location enrichment in background (don't wait for it)
       fetch(`/api/analytics/enrich-locations?startDate=${calcStartDate}&endDate=${calcEndDate}`, {
