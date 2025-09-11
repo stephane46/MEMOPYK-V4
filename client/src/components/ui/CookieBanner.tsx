@@ -129,8 +129,8 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
           <div className="max-w-7xl mx-auto p-4 sm:p-6">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               {/* Banner Content */}
-              <div className="flex-1 text-sm text-gray-700 leading-relaxed">
-                <p className="mb-3 font-medium text-gray-900">
+              <div className="flex-1 text-xs text-gray-700 leading-relaxed">
+                <p className="mb-2 font-medium text-gray-900 text-sm">
                   {language === 'fr-FR' ? 'Votre vie privée est importante chez MEMOPYK.' : 'Your privacy matters at MEMOPYK.'}
                 </p>
                 <p>
@@ -170,13 +170,13 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                 </div>
                 
                 {/* Policy Links */}
-                <div className="flex justify-end sm:justify-start lg:justify-end gap-4 text-xs text-gray-500 mt-2 sm:mt-0 lg:ml-4">
+                <div className="flex justify-end sm:justify-start lg:justify-end gap-4 text-[10px] text-gray-500 mt-2 sm:mt-0 lg:ml-4">
                   <a 
                     href={getLocalizedPath('/legal/cookie-policy')}
                     className="hover:text-gray-700 underline"
                     data-testid="cookie-policy-link"
                   >
-                    {language === 'fr-FR' ? 'Politique des cookies' : 'Cookie Policy'}
+                    {language === 'fr-FR' ? 'Politique de cookies' : 'Cookie Policy'}
                   </a>
                   <a 
                     href={getLocalizedPath('/legal/privacy-policy')} 

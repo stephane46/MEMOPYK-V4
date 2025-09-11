@@ -50,7 +50,7 @@ export function CookieSettings({ isOpen, onSave, onCancel, currentConsent }: Coo
         data-testid="cookie-settings-modal"
       >
         <DialogHeader>
-          <DialogTitle id="cookie-settings-title" className="text-xl font-semibold text-gray-900">
+          <DialogTitle id="cookie-settings-title" className="text-lg font-semibold text-gray-900">
             Cookie Settings
           </DialogTitle>
         </DialogHeader>
@@ -60,10 +60,10 @@ export function CookieSettings({ isOpen, onSave, onCancel, currentConsent }: Coo
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h3 className="text-base font-medium text-gray-900">
+                <h3 className="text-sm font-medium text-gray-900">
                   Essential
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-xs text-gray-600 mt-1">
                   Needed for core features (language, navigation, security)
                 </p>
               </div>
@@ -74,7 +74,7 @@ export function CookieSettings({ isOpen, onSave, onCancel, currentConsent }: Coo
                   aria-label="Essential cookies (always enabled)"
                   data-testid="essential-switch"
                 />
-                <span className="ml-2 text-xs text-gray-500">Always on</span>
+                <span className="ml-2 text-[10px] text-gray-500">Always on</span>
               </div>
             </div>
           </div>
@@ -83,10 +83,10 @@ export function CookieSettings({ isOpen, onSave, onCancel, currentConsent }: Coo
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h3 className="text-base font-medium text-gray-900">
+                <h3 className="text-sm font-medium text-gray-900">
                   Analytics
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-xs text-gray-600 mt-1">
                   Google Analytics, Microsoft Clarity, and our own tools for engagement metrics.{' '}
                   <strong>No ads, no remarketing, no cross-site tracking.</strong>
                 </p>
