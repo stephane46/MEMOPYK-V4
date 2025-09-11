@@ -5505,7 +5505,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         const window = computeParisWindow({ preset, since: req.query.since || req.query.sinceDate });
         startDate = window.effStartStr;
         endDate = window.effEndStr;
-        console.log(`📅 PRESET: ${preset} calculated as ${startDate} to ${endDate}`);
+        console.log(`📅 PRESET: ${preset} calculated as ${startDate} to ${endDate}${sinceDate ? ` (filtered since ${sinceDate})` : ''}`);
         locale = req.query.locale ? String(req.query.locale) : "all";
         nocache = req.query.nocache === "1" || req.query.nocache === "true";
         sinceDate = req.query.since ? String(req.query.since) : req.query.sinceDate ? String(req.query.sinceDate) : undefined;
@@ -5515,12 +5515,9 @@ export async function registerRoutes(app: Express): Promise<void> {
         console.log(`📅 DIRECT DATES: Using direct dates: ${startDate} to ${endDate}`);
       }
 
-      // 🚨 CRITICAL FIX: Apply "Date to include from" filter from Exclusions tab
-      if (sinceDate && sinceDate > startDate) {
-        console.log(`📅 EXCLUSIONS FILTER: Adjusting startDate from ${startDate} to ${sinceDate} (Date to include from)`);
-        startDate = sinceDate;
-      }
-      const key = k(`kpis:${startDate}:${endDate}:${locale}`);
+      // ✅ FIXED: Exclusion filter already applied in computeParisWindow, no need to reapply
+      // Include since parameter in cache key to prevent cache collision
+      const key = k(`kpis:${startDate}:${endDate}:${locale}:${sinceDate || 'none'}`);
 
       console.log(`🔍 GA4 KPIs REQUEST: ${startDate} to ${endDate}, locale: ${locale}, cache key: ${key}`);
 

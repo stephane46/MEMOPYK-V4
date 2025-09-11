@@ -1,5 +1,5 @@
 import React from "react";
-import { useGa4Report } from "../hooks/useGa4Report";
+import { useFilteredAnalytics } from "../hooks/useFilteredAnalytics";
 import type { VideoFunnelResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 import { HelpCircle } from 'lucide-react';
@@ -22,10 +22,9 @@ export function VideoFunnel({
   onClose,
   className = "" 
 }: VideoFunnelProps) {
-  const { data, loading, error } = useGa4Report<VideoFunnelResponse>({
-    report: liveView ? "realtimeVideoProgress" : "videoFunnel",
-    videoId,
-    preset
+  const { data, isLoading: loading, error } = useFilteredAnalytics<VideoFunnelResponse>({
+    reportType: liveView ? "realtimeVideoProgress" : "videoFunnel",
+    videoId
   });
 
   if (loading) {
@@ -105,7 +104,7 @@ export function VideoFunnel({
   }
 
   const USE_MOCK = import.meta.env?.VITE_USE_MOCK === "true";
-  const maxCount = Math.max(...funnelData.map(step => step.count));
+  const maxCount = Math.max(...funnelData.map((step: any) => step.count));
 
   return (
     <div className={`analytics-new-card border-l-4 border-[var(--analytics-new-accent)] ${className}`} data-testid="video-funnel">

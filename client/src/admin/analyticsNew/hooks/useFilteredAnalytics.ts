@@ -10,7 +10,7 @@ import { useAnalyticsNewFilters } from '../analyticsNewFilters.store';
  */
 
 interface UseFilteredAnalyticsConfig {
-  reportType: 'kpis' | 'topVideos' | 'videoFunnel' | 'geo' | 'trends';
+  reportType: 'kpis' | 'topVideos' | 'videoFunnel' | 'geo' | 'trends' | 'realtimeVideoProgress';
   endpoint?: string; // Override default endpoint
   enabled?: boolean;
   refetchInterval?: number;
