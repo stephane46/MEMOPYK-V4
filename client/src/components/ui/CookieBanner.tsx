@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { CookieSettings } from './CookieSettings';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface CookieConsent {
   essential: boolean;
@@ -17,6 +18,7 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const { toast } = useToast();
+  const { getLocalizedPath } = useLanguage();
 
   // Check if banner should be shown on mount
   useEffect(() => {
@@ -166,14 +168,14 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                 {/* Policy Links */}
                 <div className="flex justify-end sm:justify-start lg:justify-end gap-4 text-xs text-gray-500 mt-2 sm:mt-0 lg:ml-4">
                   <a 
-                    href="/cookie-policy" 
+                    href={getLocalizedPath('/legal/cookie-policy')}
                     className="hover:text-gray-700 underline"
                     data-testid="cookie-policy-link"
                   >
                     Cookie Policy
                   </a>
                   <a 
-                    href="/privacy-policy" 
+                    href={getLocalizedPath('/legal/privacy-policy')} 
                     className="hover:text-gray-700 underline"
                     data-testid="privacy-policy-link"
                   >
