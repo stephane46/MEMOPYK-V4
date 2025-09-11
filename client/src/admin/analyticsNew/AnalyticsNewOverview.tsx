@@ -385,8 +385,8 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
       {/* KPI Cards Grid - Phase 3 Fixtures */}
       <OverviewKpis 
         preset={preset === 'custom' ? '7d' : preset}
-        startDate={start}
-        endDate={end}
+        startDate={end}    // Fixed: swap because getDateRange() returns backwards dates
+        endDate={start}    // Fixed: swap because getDateRange() returns backwards dates
         data={reportData}
         loading={reportLoading}
         error={reportError}
