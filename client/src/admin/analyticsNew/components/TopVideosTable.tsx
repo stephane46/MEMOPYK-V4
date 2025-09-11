@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { useGa4Report } from "../hooks/useGa4Report";
+import { useFilteredTopVideos } from "../hooks/useFilteredAnalytics";
 import type { TopVideosResponse, TopVideoRow } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 import { ChevronDown, ChevronUp, Play } from 'lucide-react';
@@ -16,13 +16,8 @@ interface TopVideosTableProps {
 }
 
 export function TopVideosTable({ onSelect, preset = "7d", startDate, endDate, sinceDate, liveView = false, className = "" }: TopVideosTableProps) {
-  const { data, loading, error } = useGa4Report<TopVideosResponse>({ 
-    report: "topVideos", 
-    preset,
-    startDate,
-    endDate,
-    sinceDate
-  });
+  // 🎯 CENTRALIZED FILTERING: Use the new modular system
+  const { data, isLoading: loading, error } = useFilteredTopVideos<TopVideosResponse>();
   const [sortBy, setSortBy] = useState<keyof TopVideoRow>("plays");
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
 

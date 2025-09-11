@@ -1,0 +1,139 @@
+import { useAnalyticsNewFilters } from '../analyticsNewFilters.store';
+
+/**
+ * CENTRALIZED ANALYTICS FILTERING MODULE
+ * 
+ * This module ensures ALL analytics data goes through the same filtering logic:
+ * - Date range calculation
+ * - Exclusion filters (IP, date)
+ * - Query parameter building
+ * - Cache key generation
+ * 
+ * NO component should build its own query parameters or bypass this system.
+ */
+
+export interface FilteredAnalyticsParams {
+  // Backend API parameters
+  preset?: string;
+  startDate?: string;
+  endDate?: string;
+  since?: string;
+  locale?: string;
+  country?: string;
+  videoId?: string;
+  
+  // Cache key for react-query
+  queryKey: (string | null)[];
+  
+  // Debug info
+  appliedFilters: {
+    dateRange: { start: string; end: string };
+    exclusions: { dateEnabled: boolean; sinceDate?: string };
+    segmentation: { language: string; country: string; videoId: string };
+  };
+}
+
+/**
+ * Builds standardized, filtered parameters for ALL analytics requests.
+ * This ensures every tab sees the same filtered data.
+ */
+export function buildAnalyticsParams(reportType: 'kpis' | 'topVideos' | 'videoFunnel' | 'geo' | 'trends'): FilteredAnalyticsParams {
+  // Get filter state from centralized store
+  const {
+    datePreset,
+    getDateRange,
+    sinceDate,
+    sinceDateEnabled,
+    language,
+    country,
+    videoId
+  } = useAnalyticsNewFilters();
+  
+  const { start, end } = getDateRange();
+  
+  // Build base parameters
+  const params: Partial<FilteredAnalyticsParams> = {
+    locale: language === 'all' ? 'all' : language,
+  };
+  
+  // Add date parameters (preset vs explicit dates)
+  if (datePreset !== 'custom') {
+    params.preset = datePreset;
+  } else {
+    params.startDate = start;
+    params.endDate = end;
+  }
+  
+  // CRITICAL: Apply exclusion filters
+  if (sinceDateEnabled && sinceDate) {
+    params.since = sinceDate;
+  }
+  
+  // Add segmentation filters
+  if (country !== 'all') params.country = country;
+  if (videoId !== 'all') params.videoId = videoId;
+  
+  // Build cache key that includes ALL filter parameters
+  const queryKey = [
+    `/api/ga4/${reportType}`,
+    datePreset !== 'custom' ? datePreset : [start, end],
+    language === 'all' ? null : language,
+    country === 'all' ? null : country,
+    videoId === 'all' ? null : videoId,
+    sinceDateEnabled && sinceDate ? sinceDate : null
+  ];
+  
+  return {
+    ...params,
+    queryKey,
+    appliedFilters: {
+      dateRange: { start, end },
+      exclusions: {
+        dateEnabled: sinceDateEnabled,
+        sinceDate: sinceDateEnabled ? sinceDate : undefined
+      },
+      segmentation: { language, country, videoId }
+    }
+  } as FilteredAnalyticsParams;
+}
+
+/**
+ * Builds URL with query parameters for analytics API calls.
+ * Ensures consistent parameter formatting across all endpoints.
+ */
+export function buildAnalyticsUrl(baseUrl: string, params: FilteredAnalyticsParams): string {
+  const url = new URL(baseUrl, window.location.origin);
+  
+  // Add parameters to URL
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && key !== 'queryKey' && key !== 'appliedFilters') {
+      url.searchParams.set(key, String(value));
+    }
+  });
+  
+  return url.toString();
+}
+
+/**
+ * Debug logging for filter application.
+ * Helps troubleshoot exclusion filter issues.
+ */
+export function logFilterApplication(reportType: string, params: FilteredAnalyticsParams) {
+  console.log(`🔍 ANALYTICS FILTER [${reportType.toUpperCase()}]:`, {
+    queryKey: params.queryKey,
+    appliedFilters: params.appliedFilters,
+    apiParams: {
+      preset: params.preset,
+      startDate: params.startDate,
+      endDate: params.endDate,
+      since: params.since,
+      locale: params.locale
+    }
+  });
+  
+  if (params.appliedFilters.exclusions.dateEnabled) {
+    console.log(`✅ EXCLUSION FILTER ACTIVE: Excluding data before ${params.appliedFilters.exclusions.sinceDate}`);
+  } else {
+    console.log(`❌ EXCLUSION FILTER DISABLED: Showing all data`);
+  }
+}

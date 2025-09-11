@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
+import { useFilteredKpis } from './hooks/useFilteredAnalytics';
 import './analyticsNew.tokens.css';
 
 type MockState = 'normal' | 'loading' | 'empty' | 'error';
@@ -61,77 +62,8 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   // ✅ FIXED: Read Start Date Filter from the same store that Exclusions tab uses  
   // (This was the root cause - Exclusions tab uses localStorage store, not backend settings)
 
-  // Get GA4 KPIs data based on current filters - use preset for standard presets, direct dates for custom
-  const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
-    queryKey: ['/api/ga4/kpis', datePreset, datePreset === 'custom' ? [start, end] : null, sinceDateEnabled ? sinceDate : null],
-    enabled: datePreset === 'custom' ? !!(start && end) : true, // Always enabled for presets, check dates for custom
-    queryFn: async () => {
-      const url = new URL('/api/ga4/kpis', window.location.origin);
-      
-      if (datePreset !== 'custom') {
-        // Use preset - let server calculate dates
-        url.searchParams.set('preset', datePreset);
-      } else {
-        // Use explicit dates for custom range
-        url.searchParams.set('startDate', start);
-        url.searchParams.set('endDate', end);
-      }
-      
-      url.searchParams.set('locale', 'all');
-      url.searchParams.set('nocache', '1'); // Always get fresh data for overview
-      
-      // 🔍 DETAILED DEBUG: Complete exclusion filter state analysis
-      console.log('🔍 OVERVIEW DEBUG - Complete store state:', {
-        localStorage_raw: localStorage.getItem('analytics-new-filters'),
-        hook_sinceDateEnabled: sinceDateEnabled,
-        hook_sinceDate: sinceDate,
-        hook_getDateRange: getDateRange(),
-        start_from_hook: start,
-        end_from_hook: end,
-        current_timestamp: new Date().toISOString(),
-        zustand_persisted_data: (() => {
-          try {
-            const raw = localStorage.getItem('analytics-new-filters');
-            return raw ? JSON.parse(raw) : null;
-          } catch (e) {
-            const raw = localStorage.getItem('analytics-new-filters');
-            return { error: 'Failed to parse localStorage', raw };
-          }
-        })()
-      });
-
-      // 🚨 CRITICAL FIX: Check if Start Date Filter should be applied
-      if (sinceDateEnabled && sinceDate) {
-        url.searchParams.set('since', sinceDate);
-        console.log('✅ OVERVIEW: Applied Start Date Filter:', sinceDate);
-      } else {
-        console.log('❌ OVERVIEW: Start Date Filter NOT applied', {
-          sinceDateEnabled,
-          sinceDate,
-          reason: !sinceDateEnabled ? 'Filter disabled' : 'No since date set',
-          debugNote: 'This is why you see non-zero values instead of 0 values'
-        });
-      }
-
-      console.log('📊 OVERVIEW: Calling /api/ga4/kpis with:', {
-        startDate: start,
-        endDate: end,
-        url: url.toString()
-      });
-
-      const response = await fetch(url.toString());
-
-      if (!response.ok) {
-        throw new Error(`GA4 KPIs failed: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('📊 OVERVIEW: /api/ga4/kpis response:', data);
-      return data;
-    },
-    refetchOnWindowFocus: false,
-    staleTime: 30000, // 30 seconds
-  });
+  // 🎯 CENTRALIZED FILTERING: Use the new modular system  
+  const { data: reportData, isLoading: reportLoading, error: reportError } = useFilteredKpis<any>();
 
   const generateMockSparkline = () => {
     return Array.from({ length: 7 }, () => Math.floor(Math.random() * 100) + 20);
