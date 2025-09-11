@@ -140,7 +140,7 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     onClick={handleAcceptAll}
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2"
+                    className="cookie-accept-btn px-6 py-2"
                     data-testid="cookie-accept-all"
                   >
                     Accept all

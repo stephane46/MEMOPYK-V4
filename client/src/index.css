@@ -71,6 +71,23 @@ html, body {
   mix-blend-mode: normal !important;
 }
 
+/* Cookie Banner Button Fix - MEMOPYK Orange with !important */
+.cookie-accept-btn {
+  background-color: #D67C4A !important;
+  background: #D67C4A !important;
+  background-image: none !important;
+  border-color: #D67C4A !important;
+  color: white !important;
+}
+
+.cookie-accept-btn:hover {
+  background-color: #B8663F !important;
+  background: #B8663F !important;
+  background-image: none !important;
+  border-color: #B8663F !important;
+  color: white !important;
+}
+
 /* REMOVED - Previous IP icon override was causing issues */
 
 /* Card Back Gradient Background Fix - Following Modal Transparency Solution Pattern */
