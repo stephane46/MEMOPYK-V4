@@ -47,4 +47,5 @@ export type ReportParams = {
   endDate?: string;   // ISO
   lang?: string;      // locale
   country?: string;   // ISO2
+  sinceDate?: string; // ISO - for exclusion filters
 };

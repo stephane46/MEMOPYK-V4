@@ -122,18 +122,23 @@ const formatTooltipDate = (dateStr: string): string => {
 export const AnalyticsNewTrends: React.FC = () => {
   const [selectedMetric, setSelectedMetric] = useState<'views' | 'visitors' | 'watchTime' | 'completion'>('views');
   
-  // Get current filter state
-  const { datePreset, getDateRange } = useAnalyticsNewFilters();
+  // Get current filter state AND exclusion filters
+  const { datePreset, getDateRange, sinceDate, sinceDateEnabled } = useAnalyticsNewFilters();
   const { start, end } = getDateRange();
 
   // Fetch trend data from GA4 API (using existing endpoint)
   const { data: trendData, isLoading, error } = useQuery<TrendData[]>({
-    queryKey: ['/api/ga4/trend', start, end, selectedMetric],
+    queryKey: ['/api/ga4/trend', start, end, selectedMetric, sinceDateEnabled ? sinceDate : null],
     queryFn: async () => {
       const url = new URL('/api/ga4/trend', window.location.origin);
       url.searchParams.set('startDate', start);
       url.searchParams.set('endDate', end);
       url.searchParams.set('locale', 'all');
+      
+      // 🚨 CRITICAL FIX: Add exclusion filter support
+      if (sinceDateEnabled && sinceDate) {
+        url.searchParams.set('since', sinceDate);
+      }
 
       console.log('📈 TRENDS: Fetching trend data:', {
         startDate: start,

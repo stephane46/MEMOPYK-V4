@@ -62,6 +62,8 @@ export async function fetchReport<T>(params: ReportParams): Promise<T> {
     if (params.endDate) qs.set("endDate", params.endDate);
     if (params.lang) qs.set("locale", params.lang === "all" ? "all" : params.lang);
     else qs.set("locale", "all");
+    // 🚨 CRITICAL FIX: Add sinceDate parameter for exclusion filters
+    if (params.sinceDate) qs.set("since", params.sinceDate);
   } else {
     // Standard endpoints
     qs.set("report", params.report);
@@ -71,6 +73,8 @@ export async function fetchReport<T>(params: ReportParams): Promise<T> {
     if (params.endDate) qs.set("endDate", params.endDate);
     if (params.lang) qs.set("lang", params.lang);
     if (params.country) qs.set("country", params.country);
+    // 🚨 CRITICAL FIX: Add sinceDate parameter for exclusion filters
+    if (params.sinceDate) qs.set("since", params.sinceDate);
   }
 
   const resp = await fetch(`${url}?${qs.toString()}`);

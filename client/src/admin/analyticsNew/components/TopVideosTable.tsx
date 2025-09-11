@@ -20,7 +20,8 @@ export function TopVideosTable({ onSelect, preset = "7d", startDate, endDate, si
     report: "topVideos", 
     preset,
     startDate,
-    endDate
+    endDate,
+    sinceDate
   });
   const [sortBy, setSortBy] = useState<keyof TopVideoRow>("plays");
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
