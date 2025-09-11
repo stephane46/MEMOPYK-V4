@@ -1,5 +1,4 @@
 import React from 'react';
-import { useGa4Report } from "../hooks/useGa4Report";
 import type { KpisResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 import { VisitorFocusedKpis } from './VisitorFocusedKpis';
@@ -9,12 +8,27 @@ interface OverviewKpisProps {
   className?: string;
   startDate?: string;
   endDate?: string;
+  // Props passed from parent to avoid duplicate API calls
+  data?: KpisResponse | null;
+  loading?: boolean;
+  error?: unknown;
 }
 
-export function OverviewKpis({ preset = "7d", className = "", startDate, endDate }: OverviewKpisProps) {
-  const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset, startDate, endDate });
+export function OverviewKpis({ 
+  preset = "7d", 
+  className = "", 
+  startDate, 
+  endDate,
+  data,
+  loading,
+  error
+}: OverviewKpisProps) {
+  // Use loading/error/data from parent component (single source of truth)
+  const isLoading = !!loading;
+  const err = error;
+  const kpiData = data?.kpis;
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className={className}>
         <AnalyticsNewLoadingStates mode="loading" />
@@ -22,7 +36,7 @@ export function OverviewKpis({ preset = "7d", className = "", startDate, endDate
     );
   }
 
-  if (error) {
+  if (err) {
     return (
       <div className={className}>
         <AnalyticsNewLoadingStates 
@@ -35,7 +49,7 @@ export function OverviewKpis({ preset = "7d", className = "", startDate, endDate
     );
   }
 
-  if (!data || !data.kpis) {
+  if (!kpiData) {
     return (
       <div className={className}>
         <AnalyticsNewLoadingStates 
@@ -47,7 +61,7 @@ export function OverviewKpis({ preset = "7d", className = "", startDate, endDate
     );
   }
 
-  const { sessions, plays, completions, avgWatch } = data.kpis;
+  const { sessions, plays, completions, avgWatch } = kpiData;
 
   return (
     <div className={`space-y-6 ${className}`}>

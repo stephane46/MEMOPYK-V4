@@ -380,6 +380,9 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
         preset={preset === 'custom' ? '7d' : preset}
         startDate={start}
         endDate={end}
+        data={reportData}
+        loading={reportLoading}
+        error={reportError}
         className="mb-6"
       />
 
