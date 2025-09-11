@@ -17,7 +17,7 @@ interface TopVideosTableProps {
 
 export function TopVideosTable({ onSelect, preset = "7d", startDate, endDate, sinceDate, liveView = false, className = "" }: TopVideosTableProps) {
   const { data, loading, error } = useGa4Report<TopVideosResponse>({ 
-    report: liveView ? "realtimeTopVideos" : "topVideos", 
+    report: "topVideos", 
     preset,
     startDate,
     endDate
@@ -26,33 +26,13 @@ export function TopVideosTable({ onSelect, preset = "7d", startDate, endDate, si
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
 
   const sortedRows = useMemo(() => {
-    // Handle both regular topVideos and realtime topVideosRt structures
-    const videos = data?.topVideos || data?.topVideosRt || [];
+    // Handle topVideos structure
+    const videos = data?.topVideos || [];
     if (!videos.length) return [];
     
     const sorted = [...videos].sort((a, b) => {
-      // Map realtime field names to standard field names for sorting
-      let aVal, bVal;
-      
-      if (liveView) {
-        // Realtime data structure mapping
-        if (sortBy === 'plays') {
-          aVal = a.playsRt;
-          bVal = b.playsRt;
-        } else if (sortBy === 'videoId') {
-          aVal = a.videoId;
-          bVal = b.videoId;
-        } else if (sortBy === 'title') {
-          aVal = a.title;
-          bVal = b.title;
-        } else {
-          aVal = a[sortBy];
-          bVal = b[sortBy];
-        }
-      } else {
-        aVal = a[sortBy];
-        bVal = b[sortBy];
-      }
+      const aVal = a[sortBy];
+      const bVal = b[sortBy];
       
       if (typeof aVal === 'number' && typeof bVal === 'number') {
         return direction === "asc" ? aVal - bVal : bVal - aVal;
@@ -60,8 +40,8 @@ export function TopVideosTable({ onSelect, preset = "7d", startDate, endDate, si
       
       // For string fields
       return direction === "asc" 
-        ? String(aVal).localeCompare(String(bVal))
-        : String(bVal).localeCompare(String(aVal));
+        ? String(aVal || '').localeCompare(String(bVal || ''))
+        : String(bVal || '').localeCompare(String(aVal || ''));
     });
     
     return sorted;
@@ -102,13 +82,14 @@ export function TopVideosTable({ onSelect, preset = "7d", startDate, endDate, si
 
   if (error) {
     // Check if this is a GA4 custom dimension error
-    const isGA4CustomDimensionError = error?.message?.includes?.('GA4 Invalid Argument') || 
-                                     error?.message?.includes?.('custom dimension');
+    const errorMessage = (error as any)?.message || String(error);
+    const isGA4CustomDimensionError = errorMessage?.includes?.('GA4 Invalid Argument') || 
+                                     errorMessage?.includes?.('custom dimension');
     
     const errorTitle = isGA4CustomDimensionError ? "GA4 Setup Required" : "Error loading videos";
     const errorDescription = isGA4CustomDimensionError 
       ? "Missing custom dimensions in GA4. Create video_id, video_title, and progress_bucket in GA4 Admin → Custom definitions (Event scope)"
-      : `Unable to fetch video analytics data: ${error?.message || 'Unknown error'}`;
+      : `Unable to fetch video analytics data: ${errorMessage || 'Unknown error'}`;
 
     return (
       <div className={className}>
@@ -243,7 +224,7 @@ export function TopVideosTable({ onSelect, preset = "7d", startDate, endDate, si
                   </div>
                 </td>
                 <td className="py-4 px-4 text-right text-sm text-[var(--analytics-new-text)]" data-testid={`plays-${row.videoId}`}>
-                  {liveView ? (row.playsRt || 0).toLocaleString() : (row.plays || 0).toLocaleString()}
+                  {(row.plays || 0).toLocaleString()}
                 </td>
                 {!liveView && (
                   <>

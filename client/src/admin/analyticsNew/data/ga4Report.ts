@@ -54,13 +54,7 @@ export async function fetchReport<T>(params: ReportParams): Promise<T> {
   let url = "/api/ga4/report";
   const qs = new URLSearchParams();
   
-  // Handle realtime endpoints
-  if (params.report === "realtimeTopVideos") {
-    url = "/api/ga4/realtime/topVideos";
-  } else if (params.report === "realtimeVideoProgress") {
-    url = "/api/ga4/realtime/videoProgress";
-    if (params.videoId) qs.set("videoId", params.videoId);
-  } else if (params.report === "kpis") {
+  if (params.report === "kpis") {
     // KPIs should use the dedicated /api/ga4/kpis endpoint that supports today/yesterday presets
     url = "/api/ga4/kpis";
     if (params.preset) qs.set("preset", params.preset);
