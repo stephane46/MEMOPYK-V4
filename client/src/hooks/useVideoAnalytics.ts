@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { apiRequest } from '../lib/queryClient';
 
-// Feature flag for video analytics - DISABLED per requirement to switch to GA4-only
-const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || false;
+// Feature flag for video analytics - ENABLED to track visitor sessions for detailed analytics
+const VIDEO_ANALYTICS_ENABLED = import.meta.env.VITE_VIDEO_ANALYTICS_ENABLED === 'true' || true;
 
 interface VideoViewData {
   video_id: string;
