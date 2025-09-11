@@ -87,7 +87,7 @@ export function CookieSettings({ isOpen, onSave, onCancel, currentConsent }: Coo
                   Analytics
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  Google Analytics, Microsoft Clarity, and our own tools for engagement metrics. 
+                  Google Analytics, Microsoft Clarity, and our own tools for engagement metrics.{' '}
                   <strong>No ads, no remarketing, no cross-site tracking.</strong>
                 </p>
               </div>
