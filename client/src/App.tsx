@@ -153,11 +153,11 @@ function App() {
           <Router>
             <ClarityRouteListener />
             <AnalyticsRouter />
+            <CookieBanner />
           </Router>
         </LanguageProvider>
       </AuthProvider>
       <Toaster />
-      <CookieBanner />
     </QueryClientProvider>
   );
 }
