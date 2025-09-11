@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, Users, UserCheck, RotateCcw, X, MapPin, Clock, Languages } from 'lucide-react';
-import { useGa4Report } from "../hooks/useGa4Report";
+import { useFilteredKpis } from "../hooks/useFilteredAnalytics";
 import type { KpisResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 import { Badge } from '@/components/ui/badge';
@@ -14,9 +14,9 @@ interface VisitorFocusedKpisProps {
   endDate?: string;
 }
 
-// Cache bust v3.0 - FORCE COMPLETE REFRESH FOR BADGE FIXES
+// Cache bust v3.0 - FORCE COMPLETE REFRESH FOR BADGE FIXES  
 export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, endDate }: VisitorFocusedKpisProps) {
-  const { data, loading, error } = useGa4Report<KpisResponse>({ report: "kpis", preset, startDate, endDate });
+  const { data, isLoading: loading, error } = useFilteredKpis<KpisResponse>();
   
   // Modal states
   const [isTotalViewsModalOpen, setIsTotalViewsModalOpen] = useState(false);
