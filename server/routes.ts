@@ -5339,16 +5339,32 @@ export async function registerRoutes(app: Express): Promise<void> {
   
   // Function to parse parameters (from your spec) - handles both startDate/endDate and start/end formats
   function getParams(req: any) {
-    const startDate = String(req.query.startDate || req.query.start || '');
-    const endDate = String(req.query.endDate || req.query.end || '');
+    let startDate = String(req.query.startDate || req.query.start || '');
+    let endDate = String(req.query.endDate || req.query.end || '');
     const locale = req.query.locale ? String(req.query.locale) : "all";
     const nocache = req.query.nocache === "1" || req.query.nocache === "true";
+    const sinceDate = req.query.since ? String(req.query.since) : req.query.sinceDate ? String(req.query.sinceDate) : undefined;
     
     if (!startDate || startDate === 'undefined' || !endDate || endDate === 'undefined') {
       throw new Error("startDate/start and endDate/end are required (YYYY-MM-DD)");
     }
     
-    return { startDate, endDate, locale, nocache };
+    // Validate and normalize dates
+    const ZONE = 'Europe/Paris';
+    const startDateTime = DateTime.fromISO(startDate, { zone: ZONE }).startOf('day');
+    const endDateTime = DateTime.fromISO(endDate, { zone: ZONE }).startOf('day');
+    
+    if (!startDateTime.isValid || !endDateTime.isValid) {
+      throw new Error(`Invalid date format. Expected YYYY-MM-DD, got startDate: ${startDate}, endDate: ${endDate}`);
+    }
+    
+    // Fix date order if swapped (safety measure)
+    if (startDateTime > endDateTime) {
+      console.warn(`⚠️ getParams: Dates were swapped! startDate ${startDate} > endDate ${endDate}, fixing...`);
+      [startDate, endDate] = [endDate, startDate];
+    }
+    
+    return { startDate, endDate, locale, nocache, sinceDate };
   }
 
   // Debug endpoint to list all available events in GA4
@@ -5525,10 +5541,36 @@ export async function registerRoutes(app: Express): Promise<void> {
         }
       }
 
-      // 🚨 CRITICAL FIX: Apply "Date to include from" filter from Exclusions tab
-      if (sinceDate && sinceDate > startDate) {
-        console.log(`📅 EXCLUSIONS FILTER: Adjusting startDate from ${startDate} to ${sinceDate} (Date to include from)`);
-        startDate = sinceDate;
+      // 🚨 CRITICAL FIX: Apply "Date to include from" filter from Exclusions tab with proper date validation
+      if (sinceDate) {
+        const ZONE = 'Europe/Paris';
+        const sinceDateTime = DateTime.fromISO(sinceDate, { zone: ZONE }).startOf('day');
+        const startDateTime = DateTime.fromISO(startDate, { zone: ZONE }).startOf('day');
+        const endDateTime = DateTime.fromISO(endDate, { zone: ZONE }).startOf('day');
+        
+        if (sinceDateTime.isValid && startDateTime.isValid && endDateTime.isValid) {
+          // Only adjust if sinceDate is after the current startDate
+          if (sinceDateTime > startDateTime) {
+            console.log(`📅 EXCLUSIONS FILTER: Adjusting startDate from ${startDate} to ${sinceDate} (Date to include from)`);
+            startDate = sinceDate;
+            
+            // Safety check: ensure startDate never exceeds endDate
+            if (sinceDateTime > endDateTime) {
+              console.warn(`⚠️ EXCLUSIONS FILTER: sinceDate ${sinceDate} is after endDate ${endDate}, adjusting endDate to match`);
+              endDate = sinceDate;
+            }
+          }
+        } else {
+          console.warn('Invalid date format in exclusions filter:', { sinceDate, startDate, endDate });
+        }
+      }
+      
+      // Final safety check: ensure startDate <= endDate before calling GA4
+      const finalStartCheck = DateTime.fromISO(startDate, { zone: 'Europe/Paris' });
+      const finalEndCheck = DateTime.fromISO(endDate, { zone: 'Europe/Paris' });
+      if (finalStartCheck.isValid && finalEndCheck.isValid && finalStartCheck > finalEndCheck) {
+        console.error(`🚨 DATE VALIDATION ERROR: startDate ${startDate} > endDate ${endDate}, swapping them`);
+        [startDate, endDate] = [endDate, startDate];
       }
       const key = k(`kpis:${startDate}:${endDate}:${locale}`);
 
