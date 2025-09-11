@@ -44,7 +44,7 @@ export function CookieSettings({ isOpen, onSave, onCancel, currentConsent }: Coo
   return (
     <Dialog open={isOpen} onOpenChange={onCancel}>
       <DialogContent 
-        className="sm:max-w-lg w-full mx-4 bg-white"
+        className="sm:max-w-4xl w-full mx-4 bg-white"
         onKeyDown={handleKeyDown}
         aria-labelledby="cookie-settings-title"
         data-testid="cookie-settings-modal"
