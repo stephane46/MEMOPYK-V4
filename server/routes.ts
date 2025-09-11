@@ -16,6 +16,7 @@ import { setCacheAndOriginHeaders } from './cache-origin-headers';
 import { createCacheHitHeaders, createCacheMissHeaders, getUpstreamSource, getCacheAge } from './cache-delivery-headers';
 import { analyticsCleanupRoutes } from './routes-analytics-cache-cleanup';
 import { LocationService } from './location-service';
+import { EnrichmentManager } from './services/location-enrichment';
 import {
   qSessions,
   qPlays,
@@ -250,6 +251,9 @@ const uploadImage = multer({
 
 // Initialize location service
 const locationService = new LocationService(hybridStorage);
+
+// Initialize enrichment manager
+const enrichmentManager = EnrichmentManager.getInstance(hybridStorage, locationService);
 
 export async function registerRoutes(app: Express): Promise<void> {
   // GA4 Measurement Protocol Relay (ad-blocker bypass)
@@ -3211,60 +3215,89 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Location Enrichment Status - GET enrichment job status
+  app.get("/api/analytics/enrich-locations/status", async (req, res) => {
+    try {
+      const { dateFrom, dateTo, language, includeProduction } = req.query;
+      
+      const params = {
+        dateFrom: dateFrom as string,
+        dateTo: dateTo as string,
+        language: language as string,
+        includeProduction: includeProduction === 'true'
+      };
+
+      const status = enrichmentManager.getJobStatus(params);
+      const stats = enrichmentManager.getStats();
+
+      if (status) {
+        res.json({ ...status, stats });
+      } else {
+        res.json({ 
+          state: 'idle', 
+          progress: 0, 
+          startedAt: 0, 
+          ttl: 0, 
+          jobId: null,
+          stats
+        });
+      }
+    } catch (error) {
+      console.error('❌ Enrichment status error:', error);
+      res.status(500).json({ error: 'Failed to get enrichment status' });
+    }
+  });
+
   // Location Enrichment - POST manually enrich visitor locations
   app.post("/api/analytics/enrich-locations", async (req, res) => {
     try {
-      console.log('🌍 Location Enrichment: Starting manual enrichment...');
+      console.log('🌍 Location Enrichment: Starting managed enrichment...');
+      
+      // Extract parameters from request body or query
+      const { dateFrom, dateTo, language } = req.body || req.query;
       
       // **REPLIT PREVIEW PRODUCTION ANALYTICS**
       const shouldIncludeProduction = process.env.NODE_ENV === 'production' || req.headers.host?.includes('replit');
       
-      const sessions = await hybridStorage.getAnalyticsSessions(
-        undefined,
-        undefined,
-        undefined, 
-        shouldIncludeProduction
-      );
-      const uniqueIPs = Array.from(new Set(sessions.map(s => s.ip_address).filter(ip => ip && ip !== '0.0.0.0')));
+      const params = {
+        dateFrom,
+        dateTo,
+        language,
+        includeProduction: shouldIncludeProduction
+      };
+
+      // Start enrichment job (or return existing job status)
+      const jobStatus = await enrichmentManager.startEnrichment(params);
       
-      console.log(`🌍 Location Enrichment: Found ${uniqueIPs.length} unique IPs to enrich`);
-      
-      let enrichedCount = 0;
-      for (const ip of uniqueIPs) {
-        const locationData = await locationService.getLocationData(ip);
-        if (locationData) {
-          // Count how many sessions this IP has
-          const sessionsWithIP = sessions.filter(s => s.ip_address === ip);
-          
-          // Update all sessions with this IP to have the location data
-          try {
-            const updateResult = await hybridStorage.updateSessionLocation(ip, {
-              country: locationData.country,
-              region: locationData.region,
-              city: locationData.city
-            });
-            enrichedCount++;
-            console.log(`✅ Enriched ${ip}: ${locationData.city}, ${locationData.region}, ${locationData.country} (updated ${sessionsWithIP.length} sessions)`);
-          } catch (updateError: any) {
-            console.log(`⚠️ Failed to update sessions for IP ${ip}:`, updateError.message);
-          }
-        }
-        // Small delay to respect rate limits
-        await new Promise(resolve => setTimeout(resolve, 300));
+      // Return status based on job state
+      if (jobStatus.state === 'degraded') {
+        res.status(503).json({
+          success: false,
+          ...jobStatus,
+          message: 'Service temporarily unavailable due to repeated failures'
+        });
+      } else if (jobStatus.state === 'running' || jobStatus.state === 'queued') {
+        res.status(202).json({
+          success: true,
+          ...jobStatus,
+          message: 'Enrichment job started or already in progress'
+        });
+      } else if (jobStatus.state === 'success') {
+        res.json({
+          success: true,
+          ...jobStatus,
+          message: 'Enrichment completed successfully'
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          ...jobStatus,
+          message: 'Enrichment job failed'
+        });
       }
-      
-      const cacheStats = locationService.getStats();
-      
-      res.json({
-        success: true,
-        total_ips: uniqueIPs.length,
-        enriched_count: enrichedCount,
-        cache_stats: cacheStats,
-        message: `Successfully enriched ${enrichedCount}/${uniqueIPs.length} IP addresses`
-      });
     } catch (error) {
       console.error('❌ Location Enrichment error:', error);
-      res.status(500).json({ error: 'Failed to enrich locations' });
+      res.status(500).json({ error: 'Failed to start enrichment' });
     }
   });
 
