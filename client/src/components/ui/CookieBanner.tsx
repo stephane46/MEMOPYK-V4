@@ -18,7 +18,7 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const { toast } = useToast();
-  const { getLocalizedPath } = useLanguage();
+  const { getLocalizedPath, language } = useLanguage();
 
   // Check if banner should be shown on mount
   useEffect(() => {
@@ -128,12 +128,13 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
               {/* Banner Content */}
               <div className="flex-1 text-sm text-gray-700 leading-relaxed">
                 <p className="mb-3 font-medium text-gray-900">
-                  At MEMOPYK, your memories are private.
+                  {language === 'fr-FR' ? 'Votre vie privée est importante chez MEMOPYK.' : 'Your privacy matters at MEMOPYK.'}
                 </p>
                 <p>
-                  We only use essential cookies to run the site, and optional analytics to learn things like 
-                  "Do people watch our sample films?" so we can keep making them better. 
-                  We never use cookies for advertising, remarketing, or tracking you beyond MEMOPYK.
+                  {language === 'fr-FR' 
+                    ? 'Nous utilisons uniquement les cookies essentiels pour faire fonctionner le site, et -si vous le permettez- des cookies analytiques optionnels pour savoir si les visiteurs regardent nos exemples de films. Nous n\'utilisons jamais de cookies à des fins publicitaires, de reciblage, ni pour partager vos données avec des tiers. Tout le suivi reste limité à MEMOPYK : vos activités sur le site ne sont ni reliées ni partagées avec d\'autres sites.'
+                    : 'We use only essential cookies to run the site, and -if you allow- optional analytics to see if people visit or watch our sample films. We never use cookies for advertising, remarketing, or sharing your data with third parties. All tracking stays on MEMOPYK—your activity here isn\'t connected to or shared with other websites.'
+                  }
                 </p>
               </div>
 
@@ -145,7 +146,7 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                     className="cookie-accept-btn px-6 py-2"
                     data-testid="cookie-accept-all"
                   >
-                    Accept all
+                    {language === 'fr-FR' ? 'Tout accepter' : 'Accept all'}
                   </Button>
                   <Button
                     onClick={handleReject}
@@ -153,7 +154,7 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                     className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2"
                     data-testid="cookie-reject"
                   >
-                    Reject
+                    {language === 'fr-FR' ? 'Refuser' : 'Reject'}
                   </Button>
                   <Button
                     onClick={handleSettings}
@@ -161,7 +162,7 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                     className="text-gray-600 hover:bg-gray-100 px-6 py-2"
                     data-testid="cookie-settings"
                   >
-                    Settings
+                    {language === 'fr-FR' ? 'Paramètres' : 'Settings'}
                   </Button>
                 </div>
                 
@@ -172,14 +173,14 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                     className="hover:text-gray-700 underline"
                     data-testid="cookie-policy-link"
                   >
-                    Cookie Policy
+                    {language === 'fr-FR' ? 'Politique des cookies' : 'Cookie Policy'}
                   </a>
                   <a 
                     href={getLocalizedPath('/legal/privacy-policy')} 
                     className="hover:text-gray-700 underline"
                     data-testid="privacy-policy-link"
                   >
-                    Privacy Policy
+                    {language === 'fr-FR' ? 'Politique de confidentialité' : 'Privacy Policy'}
                   </a>
                 </div>
               </div>
