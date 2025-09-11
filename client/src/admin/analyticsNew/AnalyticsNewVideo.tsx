@@ -18,8 +18,9 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
   const [selectedVideo, setSelectedVideo] = useState<TopVideoRow | null>(null);
   const [liveView, setLiveView] = useState(false);
 
-  // Get current filter state
-  const { datePreset, customDateStart, customDateEnd, sinceDate, sinceDateEnabled } = useAnalyticsNewFilters();
+  // Get current filter state AND actual calculated date range
+  const { datePreset, getDateRange, sinceDate, sinceDateEnabled } = useAnalyticsNewFilters();
+  const { start, end } = getDateRange();
   
   // Convert preset to the expected format
   const preset = (datePreset === '7d' || datePreset === '30d' || datePreset === '90d') 
@@ -73,6 +74,9 @@ export const AnalyticsNewVideo: React.FC<AnalyticsNewVideoProps> = ({
       <TopVideosTable 
         onSelect={handleVideoSelect}
         preset={preset}
+        startDate={start}
+        endDate={end}
+        sinceDate={sinceDateEnabled ? sinceDate : undefined}
         liveView={liveView}
         className="mb-6"
       />
