@@ -51,18 +51,9 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
     refetchOnWindowFocus: false,
   });
 
-  // 🔍 CRITICAL DEBUG: Let's see what's in localStorage and hook states immediately  
-  console.log('🔍 STEP 1 - IMMEDIATE DEBUG (component load):', {
-    localStorage_raw: localStorage.getItem('analytics-new-filters'),
-    hook_sinceDateEnabled: sinceDateEnabled,
-    hook_sinceDate: sinceDate,
-    date_range_from_hook: getDateRange()
-  });
+  // Use centralized filtering system for consistent data across all analytics tabs
 
-  // ✅ FIXED: Read Start Date Filter from the same store that Exclusions tab uses  
-  // (This was the root cause - Exclusions tab uses localStorage store, not backend settings)
-
-  // 🎯 CENTRALIZED FILTERING: Use the new modular system  
+  // Get analytics data through centralized filtering system
   const { data: reportData, isLoading: reportLoading, error: reportError } = useFilteredKpis<any>();
 
   const generateMockSparkline = () => {

@@ -1,5 +1,3 @@
-import { useAnalyticsNewFilters } from '../analyticsNewFilters.store';
-
 /**
  * CENTRALIZED ANALYTICS FILTERING MODULE
  * 
@@ -36,20 +34,33 @@ export interface FilteredAnalyticsParams {
 /**
  * Builds standardized, filtered parameters for ALL analytics requests.
  * This ensures every tab sees the same filtered data.
+ * 
+ * NOTE: This function takes filter state as parameters (not hooks)
+ * so it can be called from within React hooks safely.
  */
-export function buildAnalyticsParams(reportType: 'kpis' | 'topVideos' | 'videoFunnel' | 'geo' | 'trends'): FilteredAnalyticsParams {
-  // Get filter state from centralized store
+export function buildAnalyticsParams(
+  reportType: 'kpis' | 'topVideos' | 'videoFunnel' | 'geo' | 'trends',
+  filterState: {
+    datePreset: string;
+    start: string;
+    end: string;
+    sinceDate: string | undefined;
+    sinceDateEnabled: boolean;
+    language: string;
+    country: string;
+    videoId: string;
+  }
+): FilteredAnalyticsParams {
   const {
     datePreset,
-    getDateRange,
+    start,
+    end,
     sinceDate,
     sinceDateEnabled,
     language,
     country,
     videoId
-  } = useAnalyticsNewFilters();
-  
-  const { start, end } = getDateRange();
+  } = filterState;
   
   // Build base parameters
   const params: Partial<FilteredAnalyticsParams> = {

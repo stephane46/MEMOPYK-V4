@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { buildAnalyticsParams, buildAnalyticsUrl, logFilterApplication, FilteredAnalyticsParams } from '../data/analyticsFilters';
+import { useAnalyticsNewFilters } from '../analyticsNewFilters.store';
 
 /**
  * UNIFIED ANALYTICS DATA HOOK
@@ -17,8 +18,31 @@ interface UseFilteredAnalyticsConfig {
 }
 
 export function useFilteredAnalytics<T>(config: UseFilteredAnalyticsConfig) {
-  // Build standardized filter parameters
-  const filterParams = buildAnalyticsParams(config.reportType);
+  // Get filter state from store (this is a React hook call)
+  const {
+    datePreset,
+    getDateRange,
+    sinceDate,
+    sinceDateEnabled,
+    language,
+    country,
+    videoId
+  } = useAnalyticsNewFilters();
+  
+  // Get date range
+  const { start, end } = getDateRange();
+  
+  // Build standardized filter parameters (pass state as parameters)
+  const filterParams = buildAnalyticsParams(config.reportType, {
+    datePreset,
+    start,
+    end,
+    sinceDate,
+    sinceDateEnabled,
+    language,
+    country,
+    videoId
+  });
   
   // Determine API endpoint
   const defaultEndpoint = `/api/ga4/${config.reportType === 'kpis' ? 'kpis' : 'report'}`;
