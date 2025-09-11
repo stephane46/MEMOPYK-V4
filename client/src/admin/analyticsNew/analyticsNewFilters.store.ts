@@ -86,7 +86,37 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
         });
       },
 
-      setSinceDate: (date) => set({ sinceDate: date }),
+      setSinceDate: (date) => {
+        // Normalize date to ISO format (YYYY-MM-DD) regardless of input format
+        const normalizedDate = (() => {
+          if (!date) return '';
+          
+          const ZONE = 'Europe/Paris';
+          
+          // Try parsing DD/MM/YYYY format first (common from date pickers)
+          const ddMMYYYY = DateTime.fromFormat(date, 'dd/MM/yyyy', { zone: ZONE });
+          if (ddMMYYYY.isValid) {
+            return ddMMYYYY.toFormat('yyyy-LL-dd');
+          }
+          
+          // Try ISO format (YYYY-MM-DD)
+          const isoDate = DateTime.fromFormat(date, 'yyyy-LL-dd', { zone: ZONE });
+          if (isoDate.isValid) {
+            return date; // Already in correct format
+          }
+          
+          // Try parsing as Date object or other formats
+          const parsed = DateTime.fromJSDate(new Date(date), { zone: ZONE });
+          if (parsed.isValid) {
+            return parsed.toFormat('yyyy-LL-dd');
+          }
+          
+          console.warn('setSinceDate: Could not parse date, storing as-is:', date);
+          return date;
+        })();
+        
+        set({ sinceDate: normalizedDate });
+      },
       setSinceDateEnabled: (enabled) => set({ sinceDateEnabled: enabled }),
 
       setLanguage: (language) => set({ language }),
@@ -143,10 +173,28 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
     
     // 🔧 FIX: Apply Date Filter when enabled - exclude data BEFORE the specified date
     if (state.sinceDateEnabled && state.sinceDate) {
-      // Only override start date if the exclusion date is AFTER the calculated start
-      // This excludes data before the specified date
-      if (state.sinceDate > dateRange.start) {
-        dateRange.start = state.sinceDate;
+      try {
+        // Use proper DateTime comparison instead of string comparison
+        const ZONE = 'Europe/Paris';
+        const sinceDateTime = DateTime.fromFormat(state.sinceDate, 'yyyy-LL-dd', { zone: ZONE });
+        const startDateTime = DateTime.fromFormat(dateRange.start, 'yyyy-LL-dd', { zone: ZONE });
+        
+        if (sinceDateTime.isValid && startDateTime.isValid) {
+          // Only override start date if the exclusion date is AFTER the calculated start
+          // This excludes data before the specified date
+          if (sinceDateTime > startDateTime) {
+            dateRange.start = state.sinceDate;
+          }
+        } else {
+          console.warn('getDateRange: Invalid date format in sinceDate comparison', {
+            sinceDate: state.sinceDate,
+            rangeStart: dateRange.start,
+            sinceValid: sinceDateTime.isValid,
+            startValid: startDateTime.isValid
+          });
+        }
+      } catch (error) {
+        console.error('getDateRange: Error in date comparison:', error);
       }
     }
     
