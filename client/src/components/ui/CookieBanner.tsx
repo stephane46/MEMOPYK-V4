@@ -23,7 +23,10 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
   // Check if banner should be shown on mount
   useEffect(() => {
     const consent = getStoredConsent();
-    if (!consent) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceShow = urlParams.get('show-cookies') === 'true';
+    
+    if (!consent || forceShow) {
       setIsVisible(true);
     }
   }, []);
