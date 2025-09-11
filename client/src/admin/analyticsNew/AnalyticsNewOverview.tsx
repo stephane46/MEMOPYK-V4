@@ -61,15 +61,22 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   // ✅ FIXED: Read Start Date Filter from the same store that Exclusions tab uses  
   // (This was the root cause - Exclusions tab uses localStorage store, not backend settings)
 
-  // Get GA4 KPIs data based on current filters (using same pattern as working 7d/30d/90d filters)
+  // Get GA4 KPIs data based on current filters - use preset for standard presets, direct dates for custom
   const { data: reportData, isLoading: reportLoading, error: reportError } = useQuery<any>({
-    queryKey: ['/api/ga4/kpis', start, end, sinceDateEnabled ? sinceDate : null],
-    enabled: !!(start && end && start.length > 0 && end.length > 0), // Only run query when dates are available and non-empty
+    queryKey: ['/api/ga4/kpis', datePreset, datePreset === 'custom' ? [start, end] : null, sinceDateEnabled ? sinceDate : null],
+    enabled: datePreset === 'custom' ? !!(start && end) : true, // Always enabled for presets, check dates for custom
     queryFn: async () => {
-      // Use same pattern as existing working filters: startDate/endDate parameters
       const url = new URL('/api/ga4/kpis', window.location.origin);
-      url.searchParams.set('startDate', start);
-      url.searchParams.set('endDate', end);
+      
+      if (datePreset !== 'custom') {
+        // Use preset - let server calculate dates
+        url.searchParams.set('preset', datePreset);
+      } else {
+        // Use explicit dates for custom range
+        url.searchParams.set('startDate', start);
+        url.searchParams.set('endDate', end);
+      }
+      
       url.searchParams.set('locale', 'all');
       url.searchParams.set('nocache', '1'); // Always get fresh data for overview
       
