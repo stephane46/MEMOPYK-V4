@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { X } from 'lucide-react';
 
 export interface CookieConsent {
   essential: boolean;
@@ -50,20 +49,10 @@ export function CookieSettings({ isOpen, onSave, onCancel, currentConsent }: Coo
         aria-labelledby="cookie-settings-title"
         data-testid="cookie-settings-modal"
       >
-        <DialogHeader className="flex flex-row items-center justify-between">
+        <DialogHeader>
           <DialogTitle id="cookie-settings-title" className="text-xl font-semibold text-gray-900">
             Cookie Settings
           </DialogTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onCancel}
-            className="h-8 w-8 p-0 hover:bg-gray-100"
-            aria-label="Close cookie settings"
-            data-testid="cookie-settings-close"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
