@@ -159,8 +159,11 @@ export default function VideoOverlay({
       const video = videoRef.current;
       
       if (!video || (!forceImmediate && (!isFinite(video.duration) || video.duration <= 0))) {
+        console.log('💓 Heartbeat skipped:', { hasVideo: !!video, forceImmediate, duration: video?.duration });
         return;
       }
+      
+      console.log('💓 Sending heartbeat...', { videoId, sessionId: sessionId.slice(-8) });
       
       const videoDuration = isFinite(video.duration) && video.duration > 0 ? video.duration : video.currentTime || 1;
       const progressPct = Math.max(0, Math.min(100, Math.round((video.currentTime / videoDuration) * 100)));
@@ -183,6 +186,9 @@ export default function VideoOverlay({
       });
       
       if (response.ok) {
+        console.log('✅ Heartbeat sent successfully');
+      } else {
+        console.warn('⚠ Heartbeat failed:', response.status, response.statusText);
       }
     } catch (error) {
       console.warn('⚠ Heartbeat error:', error);
