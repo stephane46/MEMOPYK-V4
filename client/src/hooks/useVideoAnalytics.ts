@@ -64,23 +64,30 @@ export const useVideoAnalytics = () => {
   const trackSession = useMutation({
     mutationFn: async (data: SessionData) => {
       console.log('📊 PRODUCTION ANALYTICS: Making session tracking request to /api/analytics/session');
-      const response = await fetch('/api/analytics/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+      console.log('📊 PRODUCTION ANALYTICS: Request payload:', JSON.stringify(data, null, 2));
       
-      console.log('📊 PRODUCTION ANALYTICS: Session request response status:', response.status);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('📊 PRODUCTION ANALYTICS: Session tracking failed:', response.status, errorText);
-        throw new Error(`Failed to track session: ${response.status} - ${errorText}`);
+      try {
+        const response = await fetch('/api/analytics/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        console.log('📊 PRODUCTION ANALYTICS: Session request response status:', response.status);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('📊 PRODUCTION ANALYTICS: Session tracking failed:', response.status, errorText);
+          throw new Error(`Failed to track session: ${response.status} - ${errorText}`);
+        }
+        
+        const result = await response.json();
+        console.log('📊 PRODUCTION ANALYTICS: Session tracked successfully:', result);
+        return result;
+      } catch (error) {
+        console.error('📊 PRODUCTION ANALYTICS: Fetch error during session tracking:', error);
+        throw error;
       }
-      
-      const result = await response.json();
-      console.log('📊 PRODUCTION ANALYTICS: Session tracked successfully:', result);
-      return result;
     },
     onSuccess: (data) => {
       console.log('📊 PRODUCTION ANALYTICS: Session mutation success:', data);

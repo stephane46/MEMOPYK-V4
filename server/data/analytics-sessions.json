@@ -1934,9 +1934,9 @@
   {
     "id": "session_1755263689487_s8tcmaaup",
     "session_id": "ip_session_127_0_0_1",
-    "duration": 626,
+    "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-08-17T15:56:59.196Z",
+    "updated_at": "2025-09-12T17:30:36.167Z",
     "is_test_data": false
   },
   {
@@ -72036,7 +72036,23 @@
     "city": "Sao Paulo",
     "country_code": null,
     "created_at": "2025-09-12T16:16:07.000Z",
-    "updated_at": "2025-09-12T16:16:07.000Z",
+    "updated_at": "2025-09-12T17:30:06.603Z",
     "is_location_cache": true
+  },
+  {
+    "id": "a28f29ce-b9ad-499c-9b42-78ce376b5234",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Arns%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T17:29:36.339Z"
+  },
+  {
+    "id": "01f330e3-07be-47cc-a57e-0b59e9564dbb",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T17:30:34.499Z"
   }
 ]
