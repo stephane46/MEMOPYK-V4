@@ -232,6 +232,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
           )}
         </div>
         <div className="text-sm text-[var(--analytics-new-text-muted)]">
+          Users remain "active" for 30 minutes after their last activity (same as Google Analytics)
+        </div>
+        <div className="text-xs text-[var(--analytics-new-text-muted)] mt-1">
           Last updated: {lastUpdate || 'Loading...'}
         </div>
       </div>
