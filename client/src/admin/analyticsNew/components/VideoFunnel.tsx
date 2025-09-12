@@ -6,25 +6,20 @@ import { HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface VideoFunnelProps {
-  videoId: string;
   videoTitle?: string;
-  preset?: "7d" | "30d" | "90d";
   liveView?: boolean;
   onClose?: () => void;
   className?: string;
 }
 
 export function VideoFunnel({ 
-  videoId, 
   videoTitle, 
-  preset = "7d", 
   liveView = false,
   onClose,
   className = "" 
 }: VideoFunnelProps) {
   const { data, isLoading: loading, error } = useFilteredAnalytics<VideoFunnelResponse>({
-    reportType: liveView ? "realtimeVideoProgress" : "videoFunnel",
-    videoId
+    reportType: liveView ? "realtimeVideoProgress" : "videoFunnel"
   });
 
   if (loading) {
@@ -32,7 +27,7 @@ export function VideoFunnel({
       <div className={`analytics-new-card border-l-4 border-[var(--analytics-new-accent)] ${className}`}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
-            Video Engagement Funnel - {videoTitle || videoId}
+            Video Engagement Funnel - {videoTitle || 'Selected Video'}
           </h3>
           {onClose && (
             <button
@@ -54,7 +49,7 @@ export function VideoFunnel({
       <div className={`analytics-new-card border-l-4 border-red-500 ${className}`}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
-            Video Engagement Funnel - {videoTitle || videoId}
+            Video Engagement Funnel - {videoTitle || 'Selected Video'}
           </h3>
           {onClose && (
             <button
@@ -76,13 +71,13 @@ export function VideoFunnel({
   }
 
   // Handle both regular and realtime data structures
-  const funnelData = data?.funnel || data?.funnelRt || [];
+  const funnelData = data?.funnel || [];
   if (!data || funnelData.length === 0) {
     return (
       <div className={`analytics-new-card border-l-4 border-gray-300 ${className}`}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
-            Video Engagement Funnel - {videoTitle || videoId}
+            Video Engagement Funnel - {videoTitle || 'Selected Video'}
           </h3>
           {onClose && (
             <button
@@ -112,7 +107,7 @@ export function VideoFunnel({
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
-              {liveView ? 'Live View — last ~30 min' : 'Video Engagement Funnel'} - {videoTitle || videoId}
+              {liveView ? 'Live View — last ~30 min' : 'Video Engagement Funnel'} - {videoTitle || 'Selected Video'}
               {liveView && <span className="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">Live</span>}
             </h3>
             <TooltipProvider>
@@ -145,7 +140,7 @@ export function VideoFunnel({
       </div>
 
       <div className="grid grid-cols-5 gap-4 mb-6">
-        {funnelData.map(step => (
+        {funnelData.map((step: any) => (
           <div 
             key={step.bucket} 
             className="p-4 rounded-xl border border-gray-200 text-center"

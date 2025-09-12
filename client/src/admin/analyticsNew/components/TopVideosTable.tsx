@@ -7,15 +7,11 @@ import { cn } from '@/lib/utils';
 
 interface TopVideosTableProps {
   onSelect: (video: TopVideoRow) => void;
-  preset?: "7d" | "30d" | "90d";
-  startDate?: string;
-  endDate?: string;
-  sinceDate?: string;
   liveView?: boolean;
   className?: string;
 }
 
-export function TopVideosTable({ onSelect, preset = "7d", startDate, endDate, sinceDate, liveView = false, className = "" }: TopVideosTableProps) {
+export function TopVideosTable({ onSelect, liveView = false, className = "" }: TopVideosTableProps) {
   // 🎯 CENTRALIZED FILTERING: Use the new modular system
   const { data, isLoading: loading, error } = useFilteredTopVideos<TopVideosResponse>();
   const [sortBy, setSortBy] = useState<keyof TopVideoRow>("plays");
