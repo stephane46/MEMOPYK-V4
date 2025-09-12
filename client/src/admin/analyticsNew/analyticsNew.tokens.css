@@ -61,6 +61,7 @@
   font-family: var(--analytics-new-font-family);
   color: var(--analytics-new-text);
   background-color: var(--analytics-new-background);
+  padding: var(--analytics-new-space-6);
 }
 
 .analytics-new-card {
