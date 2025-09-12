@@ -5439,6 +5439,7 @@ export async function registerRoutes(app: Express): Promise<void> {
     const startDate = String(req.query.startDate || req.query.start || '');
     const endDate = String(req.query.endDate || req.query.end || '');
     const locale = req.query.locale ? String(req.query.locale) : "all";
+    const country = req.query.country ? String(req.query.country) : "all";
     const nocache = req.query.nocache === "1" || req.query.nocache === "true";
     const sinceDate = req.query.since ? String(req.query.since) : req.query.sinceDate ? String(req.query.sinceDate) : undefined;
     
@@ -5446,7 +5447,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       throw new Error("startDate/start and endDate/end are required (YYYY-MM-DD)");
     }
     
-    return { startDate, endDate, locale, nocache, sinceDate };
+    return { startDate, endDate, locale, country, nocache, sinceDate };
   }
 
   // Debug endpoint to list all available events in GA4
@@ -7103,6 +7104,166 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (e) {
       console.error('❌ GA4 Trend error:', e);
       res.status(500).json({ error: String(e) });
+    }
+  });
+
+  // CTA Analytics Endpoint
+  app.get("/api/ga4/cta", async (req, res) => {
+    try {
+      const { startDate, endDate, locale, country, nocache, sinceDate } = getParams(req);
+      
+      console.log(`🎯 CTA ANALYTICS REQUEST: ${startDate} to ${endDate}, locale: ${locale}, country: ${country}`);
+      
+      // ✅ FIX: Include country in cache key for proper cache isolation
+      const cacheKey = `ga4-cta-${startDate}-${endDate}-${locale}-${country}-${sinceDate || 'none'}`;
+      if (!nocache) {
+        const cached = await getCache(cacheKey);
+        if (cached) {
+          console.log(`✅ CTA Analytics served from cache`);
+          return res.json({ ...cached, cached: true });
+        }
+      }
+
+      // ✅ FIX: Use EXACT pattern from working qPlaysByVideo query - no country filter for now
+      const localeExpr = locale && locale !== "all" 
+        ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }] 
+        : [];
+      
+      // Apply since date filter if provided
+      if (sinceDate) {
+        console.log(`🔍 CTA Analytics: Applying exclusion filter - data since ${sinceDate}`);
+      }
+      
+      // ✅ FIX: Use super minimal approach - just test if cta_click events exist
+      console.log(`🔍 CTA Analytics: Testing ultra-minimal GA4 query for cta_click events...`);
+      
+      const [ctaResponse] = await ga4Client.runReport({
+        property: GA4_PROPERTY,
+        dateRanges: [{ startDate, endDate }],
+        dimensions: [{ name: "date" }],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: {
+          filter: { fieldName: "eventName", stringFilter: { value: "cta_click" } }
+        },
+        orderBys: [{ dimension: { dimensionName: "date" } }]
+      });
+      
+      console.log(`🔍 CTA Analytics: Testing basic cta_click event query (locale: ${locale}, country: ${country}, sinceDate: ${sinceDate || 'none'})`);
+
+      // Process raw GA4 data into structured CTA analytics
+      const processedData = {
+        totalClicks: 0,
+        timeRange: { start: startDate, end: endDate },
+        ctas: {
+          book_call: {
+            ctaId: "book_call",
+            ctaName: "Free Consultation",
+            totalClicks: 0,
+            languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
+            sectionBreakdown: {},
+            dailyTrend: []
+          },
+          quick_quote: {
+            ctaId: "quick_quote", 
+            ctaName: "Free Quote",
+            totalClicks: 0,
+            languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
+            sectionBreakdown: {},
+            dailyTrend: []
+          }
+        },
+        languageTotals: { 'fr-FR': 0, 'en-US': 0 },
+        dailyTotals: [],
+        topSections: []
+      };
+
+      // Process GA4 rows
+      const dailyData = new Map();
+      const sectionData = new Map();
+
+      ctaResponse.rows?.forEach(row => {
+        const date = row.dimensionValues?.[0]?.value || '';
+        const ctaId = row.dimensionValues?.[1]?.value || '';
+        const language = row.dimensionValues?.[2]?.value || 'en-US';
+        const pageLocation = row.dimensionValues?.[3]?.value || '';
+        const clicks = Number(row.metricValues?.[0]?.value || 0);
+        
+        // ✅ FIX: Apply sinceDate exclusion filter during processing if provided
+        if (sinceDate && date < sinceDate) {
+          return; // Skip data before exclusion date
+        }
+
+        if (!ctaId || (ctaId !== 'book_call' && ctaId !== 'quick_quote')) return;
+
+        processedData.totalClicks += clicks;
+        
+        // Update CTA totals
+        if (processedData.ctas[ctaId as keyof typeof processedData.ctas]) {
+          processedData.ctas[ctaId as keyof typeof processedData.ctas].totalClicks += clicks;
+          
+          // Language breakdown
+          const lang = language.includes('fr') ? 'fr-FR' : 'en-US';
+          processedData.ctas[ctaId as keyof typeof processedData.ctas].languageBreakdown[lang] += clicks;
+          processedData.languageTotals[lang] += clicks;
+          
+          // ✅ FIX: Section breakdown using pageLocation (captures hash fragments)
+          const pageLocation = row.dimensionValues?.[3]?.value || '';
+          const section = pageLocation.includes('#') ? pageLocation.split('#')[1] : 'main';
+          if (!processedData.ctas[ctaId as keyof typeof processedData.ctas].sectionBreakdown[section]) {
+            processedData.ctas[ctaId as keyof typeof processedData.ctas].sectionBreakdown[section] = 0;
+          }
+          processedData.ctas[ctaId as keyof typeof processedData.ctas].sectionBreakdown[section] += clicks;
+          
+          // Track section totals
+          if (!sectionData.has(section)) sectionData.set(section, 0);
+          sectionData.set(section, sectionData.get(section) + clicks);
+        }
+
+        // Daily aggregation
+        if (!dailyData.has(date)) {
+          dailyData.set(date, { book_call: 0, quick_quote: 0, total: 0 });
+        }
+        const day = dailyData.get(date);
+        day[ctaId as 'book_call' | 'quick_quote'] += clicks;
+        day.total += clicks;
+      });
+
+      // Convert daily data to arrays
+      processedData.dailyTotals = Array.from(dailyData.entries()).map(([date, data]) => ({
+        date,
+        formattedDate: new Date(date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+        ...data
+      })).sort((a, b) => a.date.localeCompare(b.date));
+
+      // Top sections
+      processedData.topSections = Array.from(sectionData.entries())
+        .map(([sectionName, clicks]) => ({
+          sectionName,
+          clicks,
+          percentage: processedData.totalClicks > 0 ? Math.round((clicks / processedData.totalClicks) * 100) : 0
+        }))
+        .sort((a, b) => b.clicks - a.clicks)
+        .slice(0, 5);
+
+      // Cache the result
+      await setCache(cacheKey, { ctaData: processedData }, 300); // 5 min cache
+      
+      console.log(`✅ CTA Analytics processed: ${processedData.totalClicks} total clicks`);
+      res.json({ ctaData: processedData, timestamp: new Date().toISOString() });
+      
+    } catch (error) {
+      console.error('❌ CTA Analytics error:', error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : 'CTA analytics failed',
+        ctaData: {
+          totalClicks: 0,
+          timeRange: { start: '', end: '' },
+          ctas: { book_call: null, quick_quote: null },
+          languageTotals: { 'fr-FR': 0, 'en-US': 0 },
+          dailyTotals: [],
+          topSections: []
+        }
+      });
     }
   });
 

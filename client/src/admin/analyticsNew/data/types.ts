@@ -67,7 +67,7 @@ export type VideoFunnelResponse = {
 };
 
 export type ReportParams = {
-  report: "kpis" | "topVideos" | "videoFunnel";
+  report: "kpis" | "topVideos" | "videoFunnel" | "cta";
   videoId?: string;
   preset?: "today" | "yesterday" | "7d" | "30d" | "90d";
   startDate?: string; // ISO
@@ -75,4 +75,56 @@ export type ReportParams = {
   lang?: string;      // locale
   country?: string;   // ISO2
   sinceDate?: string; // ISO - for exclusion filters
+};
+
+// CTA Analytics types
+export interface CtaBreakdown {
+  ctaId: string;
+  ctaName: string;
+  totalClicks: number;
+  languageBreakdown: {
+    'fr-FR': number;
+    'en-US': number;
+  };
+  sectionBreakdown: {
+    [sectionName: string]: number;
+  };
+  dailyTrend: Array<{
+    date: string;
+    clicks: number;
+  }>;
+}
+
+export interface CtaAnalyticsData {
+  totalClicks: number;
+  timeRange: {
+    start: string;
+    end: string;
+  };
+  ctas: {
+    book_call: CtaBreakdown;
+    quick_quote: CtaBreakdown;
+  };
+  languageTotals: {
+    'fr-FR': number;
+    'en-US': number;
+  };
+  dailyTotals: Array<{
+    date: string;
+    formattedDate: string;
+    book_call: number;
+    quick_quote: number;
+    total: number;
+  }>;
+  topSections: Array<{
+    sectionName: string;
+    clicks: number;
+    percentage: number;
+  }>;
+}
+
+export type CtaAnalyticsResponse = {
+  ctaData: CtaAnalyticsData;
+  timestamp?: string;
+  cached?: boolean;
 };

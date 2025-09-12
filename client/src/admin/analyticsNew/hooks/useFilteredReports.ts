@@ -446,3 +446,92 @@ export function useFilteredTrendsAdvanced(options?: {
     refetch
   };
 }
+
+/**
+ * Hook for CTA (Call-to-Action) Analytics data
+ * Fetches CTA click data for both "Free Consultation" (book_call) and "Free Quote" (quick_quote)
+ */
+export function useFilteredCta(): FilteredAnalyticsResult<import('../data/types').CtaAnalyticsData> {
+  // Get filter state from store
+  const {
+    datePreset,
+    getDateRange,
+    sinceDate,
+    sinceDateEnabled,
+    language,
+    country,
+    videoId
+  } = useAnalyticsNewFilters();
+  
+  // Get date range
+  const { start, end } = getDateRange();
+  
+  // Build standardized filter parameters
+  const filterParams = buildAnalyticsParams('cta', {
+    datePreset,
+    start,
+    end,
+    sinceDate,
+    sinceDateEnabled,
+    language,
+    country,
+    videoId
+  });
+  
+  // Use TanStack Query with proper queryKey
+  const { data, isLoading, error, refetch } = useQuery<import('../data/types').CtaAnalyticsData>({
+    queryKey: filterParams.queryKey,
+    queryFn: async () => {
+      // Debug logging
+      logFilterApplication('cta', filterParams);
+      
+      // Build filtered URL
+      const url = buildAnalyticsUrl('/api/ga4/cta', filterParams);
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`CTA Analytics request failed: ${response.status}`);
+      }
+      
+      const rawData = await response.json();
+      
+      // Return the ctaData from the API response
+      return rawData.ctaData || {
+        totalClicks: 0,
+        timeRange: { start, end },
+        ctas: {
+          book_call: {
+            ctaId: 'book_call',
+            ctaName: 'Free Consultation',
+            totalClicks: 0,
+            languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
+            sectionBreakdown: {},
+            dailyTrend: []
+          },
+          quick_quote: {
+            ctaId: 'quick_quote',
+            ctaName: 'Free Quote', 
+            totalClicks: 0,
+            languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
+            sectionBreakdown: {},
+            dailyTrend: []
+          }
+        },
+        languageTotals: { 'fr-FR': 0, 'en-US': 0 },
+        dailyTotals: [],
+        topSections: []
+      };
+    },
+    enabled: true,
+    refetchOnWindowFocus: false,
+    staleTime: 2 * 60 * 1000, // 2 minutes for CTA data
+  });
+
+  return {
+    data,
+    isLoading,
+    error: error as Error | null,
+    appliedFilters: filterParams.appliedFilters,
+    refetch
+  };
+}

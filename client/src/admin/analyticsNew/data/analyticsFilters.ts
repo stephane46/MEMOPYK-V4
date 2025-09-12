@@ -52,7 +52,7 @@ export interface FilteredAnalyticsParams {
  * so it can be called from within React hooks safely.
  */
 export function buildAnalyticsParams(
-  reportType: 'kpis' | 'topVideos' | 'videoFunnel' | 'geo' | 'trends' | 'realtimeVideoProgress',
+  reportType: 'kpis' | 'topVideos' | 'videoFunnel' | 'geo' | 'trends' | 'realtimeVideoProgress' | 'cta',
   filterState: {
     datePreset: string;
     start: string;
