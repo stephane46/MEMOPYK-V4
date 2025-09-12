@@ -76,6 +76,9 @@ export function RecentActivityPanel() {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             Recent Activity
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs ml-2">
+              🟠 IP Filtered
+            </Badge>
             <Activity className="h-5 w-5 text-red-500" />
           </CardTitle>
         </CardHeader>
@@ -92,6 +95,9 @@ export function RecentActivityPanel() {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             Recent Activity
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs ml-2">
+              🟠 IP Filtered
+            </Badge>
             <Activity className="h-5 w-5 text-blue-500" />
           </CardTitle>
         </CardHeader>
@@ -107,6 +113,9 @@ export function RecentActivityPanel() {
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           Video Viewers
+          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs ml-2">
+            🟠 IP Filtered
+          </Badge>
           <Activity className="h-5 w-5 text-green-500" />
         </CardTitle>
         <div className="text-xs text-gray-500">

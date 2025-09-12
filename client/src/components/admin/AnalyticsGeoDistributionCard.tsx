@@ -3,6 +3,7 @@ import * as React from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { RefreshCcw } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -103,7 +104,12 @@ export default function AnalyticsGeoDistributionCard() {
     <Card className="w-full">
       <CardHeader className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <CardTitle>Geo Distribution</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Geo Distribution
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+              🟠 IP Filtered
+            </Badge>
+          </CardTitle>
           <Button size="sm" variant="secondary" onClick={load} disabled={loading} className="gap-2">
             <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
