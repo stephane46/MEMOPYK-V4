@@ -72404,7 +72404,7 @@
     "city": "Perth",
     "country_code": null,
     "created_at": "2025-09-12T20:10:15.889Z",
-    "updated_at": "2025-09-12T20:36:58.926Z",
+    "updated_at": "2025-09-12T20:46:52.332Z",
     "is_location_cache": true
   },
   {
@@ -72454,5 +72454,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-12T20:36:28.661Z"
+  },
+  {
+    "id": "8ec428ef-bc0b-4ee4-9070-6cf90b0bf7eb",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T20:46:22.033Z"
   }
 ]

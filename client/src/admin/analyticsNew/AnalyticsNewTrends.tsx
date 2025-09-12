@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { TrendingUp, TrendingDown, Minus, Video, Clock, Users, Eye } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,22 +6,10 @@ import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart, ComposedChart } from 'recharts';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
+import { useFilteredTrends, TrendDataPoint, TrendsData } from './hooks/useFilteredReports';
 import './analyticsNew.tokens.css';
 
-interface TrendData {
-  date: string;
-  formattedDate: string;
-  totalViews: number;
-  uniqueVisitors: number;
-  averageWatchTime: number;
-  completionRate: number;
-  videoViews: number;
-  // Previous period data for comparison
-  previousTotalViews: number;
-  previousUniqueVisitors: number;
-  previousAverageWatchTime: number;
-  previousCompletionRate: number;
-}
+// Using centralized TrendDataPoint and TrendsData types from useFilteredReports
 
 interface TrendCardProps {
   title: string;
@@ -122,93 +109,15 @@ const formatTooltipDate = (dateStr: string): string => {
 export const AnalyticsNewTrends: React.FC = () => {
   const [selectedMetric, setSelectedMetric] = useState<'views' | 'visitors' | 'watchTime' | 'completion'>('views');
   
-  // Get current filter state AND exclusion filters
-  const { datePreset, getDateRange, sinceDate, sinceDateEnabled } = useAnalyticsNewFilters();
-  const { start, end } = getDateRange();
+  // Get current filter state from store (used for display only)
+  const { datePreset } = useAnalyticsNewFilters();
 
-  // Fetch trend data from GA4 API (using existing endpoint)
-  const { data: trendData, isLoading, error } = useQuery<TrendData[]>({
-    queryKey: ['/api/ga4/trend', start, end, selectedMetric, sinceDateEnabled ? sinceDate : null],
-    queryFn: async () => {
-      const url = new URL('/api/ga4/trend', window.location.origin);
-      url.searchParams.set('startDate', start);
-      url.searchParams.set('endDate', end);
-      url.searchParams.set('locale', 'all');
-      
-      // 🚨 CRITICAL FIX: Add exclusion filter support
-      if (sinceDateEnabled && sinceDate) {
-        url.searchParams.set('since', sinceDate);
-      }
+  // Fetch trend data using centralized filtering hook
+  const { data: trendData, isLoading, error, appliedFilters } = useFilteredTrends();
 
-      console.log('📈 TRENDS: Fetching trend data:', {
-        startDate: start,
-        endDate: end,
-        metric: selectedMetric,
-        url: url.toString()
-      });
-
-      const response = await fetch(url.toString());
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      
-      // Transform data for charting (adjust based on actual GA4 trend data format)
-      console.log('📈 TRENDS: Raw website sessions data received:', data);
-      
-      if (!Array.isArray(data)) {
-        console.warn('📈 TRENDS: Data is not array, checking for trends property');
-        const trends = data.trends || data.daily || data;
-        if (Array.isArray(trends)) {
-          const mappedTrends = trends.map((item: any) => {
-            const rawDate = item.date || item.day;
-            return {
-              date: rawDate,
-              formattedDate: formatDate(rawDate),
-              totalViews: item.sessions || item.views || item.totalViews || 0, // FIXED: Use sessions instead of plays
-              uniqueVisitors: item.users || item.visitors || item.uniqueVisitors || 0, // FIXED: Use users from sessions data
-              averageWatchTime: item.avgSessionDuration || item.avg_watch_time || item.averageWatchTime || 0, // FIXED: Use session duration
-              completionRate: item.bounceRate || item.completion_rate || 0, // FIXED: Use bounce rate instead
-              videoViews: item.sessions || item.videoViews || 0 // FIXED: Use sessions
-            };
-          });
-
-          // CRITICAL FIX: Sort data chronologically by date to prevent artifacts
-          return mappedTrends.sort((a, b) => {
-            // GA4 dates are in YYYYMMDD format, so string comparison works
-            return a.date.localeCompare(b.date);
-          });
-        }
-      }
-      
-      // If data is already an array
-      const mappedData = (Array.isArray(data) ? data : []).map((item: any) => {
-        const rawDate = item.date || item.day;
-        return {
-          date: rawDate,
-          formattedDate: formatDate(rawDate),
-          // Current period data (solid lines)
-          totalViews: item.sessions || item.views || item.totalViews || 0,
-          uniqueVisitors: item.users || item.visitors || item.uniqueVisitors || 0,
-          averageWatchTime: item.avgSessionDuration || item.avg_watch_time || item.averageWatchTime || 0,
-          completionRate: item.bounceRate || item.completion_rate || 0,
-          videoViews: item.sessions || item.videoViews || 0,
-          // Previous period data (dotted comparison lines)
-          previousTotalViews: item.previousSessions || 0,
-          previousUniqueVisitors: item.previousUsers || 0,
-          previousAverageWatchTime: item.previousAvgDuration || 0,
-          previousCompletionRate: item.previousBounceRate || 0
-        };
-      });
-
-      // CRITICAL FIX: Sort data chronologically by date to prevent artifacts
-      return mappedData.sort((a, b) => {
-        // GA4 dates are in YYYYMMDD format, so string comparison works
-        return a.date.localeCompare(b.date);
-      });
-    },
-    refetchOnWindowFocus: false,
+  console.log('📈 TRENDS: Using centralized filtering:', {
+    appliedFilters,
+    dataPoints: trendData?.length || 0
   });
 
   // Calculate trend metrics with actual percentage changes
@@ -222,7 +131,7 @@ export const AnalyticsNewTrends: React.FC = () => {
       };
     }
 
-    const calculatePeriodSum = (period: TrendData[], metric: keyof TrendData) => {
+    const calculatePeriodSum = (period: TrendsData, metric: keyof TrendDataPoint) => {
       return period.reduce((sum, item) => sum + (item[metric] as number), 0);
     };
 
@@ -484,7 +393,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                   }}
                   formatter={(value: number, name: string) => {
                     const label = name === 'previousValue' ? 'Previous Period' : 'Current Period';
-                    return [chartConfig.format(value), label];
+                    return [chartConfig.format(value), label] as [string, string];
                   }}
                   contentStyle={{
                     backgroundColor: 'white',
