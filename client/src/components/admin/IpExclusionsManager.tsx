@@ -416,7 +416,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                 onClick={() => setCurrentIpVisible(!currentIpVisible)}
                 data-testid="toggle-ip-visibility"
               >
-                {currentIpVisible ? "Hide" : "Show"}
+                {currentIpVisible ? "Hide IP" : "Show IP"}
               </Button>
               <Button
                 variant="outline"
@@ -519,11 +519,11 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                           toggleMutation.mutate({ id: exclusion.id, active: !exclusion.active })
                         }
                         disabled={toggleMutation.isPending}
-                        title={exclusion.active ? "Hide from analytics" : "Show in analytics"}
+                        title={exclusion.active ? "Show in analytics" : "Hide from analytics"}
                         data-testid={`toggle-action-${exclusion.id}`}
                         className="hover:bg-orange-50 text-orange-600 hover:text-orange-700"
                       >
-                        {exclusion.active ? "Hide" : "Show"}
+                        {exclusion.active ? "Show" : "Hide"}
                       </Button>
                       <Button
                         variant="ghost"
