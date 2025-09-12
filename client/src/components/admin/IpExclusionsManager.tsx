@@ -416,7 +416,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                 onClick={() => setCurrentIpVisible(!currentIpVisible)}
                 data-testid="toggle-ip-visibility"
               >
-                {currentIpVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {currentIpVisible ? "Hide" : "Show"}
               </Button>
               <Button
                 variant="outline"
@@ -424,13 +424,11 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                 onClick={handleQuickAddCurrentIp}
                 data-testid="quick-add-current-ip"
               >
-                <Shield className="h-4 w-4 mr-1" />
                 Exclude My IP
               </Button>
             </div>
           )}
           <Button onClick={handleAdd} data-testid="add-exclusion">
-            <Plus className="h-4 w-4 mr-1" />
             Add Exclusion
           </Button>
         </div>
@@ -512,7 +510,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         data-testid={`edit-exclusion-${exclusion.id}`}
                         className="hover:bg-blue-50 text-blue-600 hover:text-blue-700"
                       >
-                        <Edit className="h-4 w-4" />
+                        Edit
                       </Button>
                       <Button
                         variant="ghost"
@@ -523,9 +521,9 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         disabled={toggleMutation.isPending}
                         title={exclusion.active ? "Hide from analytics" : "Show in analytics"}
                         data-testid={`toggle-action-${exclusion.id}`}
-                        className={`hover:bg-${exclusion.active ? 'orange' : 'green'}-50 text-${exclusion.active ? 'orange' : 'green'}-600 hover:text-${exclusion.active ? 'orange' : 'green'}-700`}
+                        className="hover:bg-orange-50 text-orange-600 hover:text-orange-700"
                       >
-                        {exclusion.active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {exclusion.active ? "Hide" : "Show"}
                       </Button>
                       <Button
                         variant="ghost"
@@ -536,7 +534,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         data-testid={`delete-exclusion-${exclusion.id}`}
                         className="hover:bg-red-50 text-red-600 hover:text-red-700"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        Delete
                       </Button>
                     </div>
                   </TableCell>

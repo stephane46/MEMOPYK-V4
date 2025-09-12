@@ -1104,3 +1104,18 @@ html, body {
   background-image: none !important;
 }
 
+/* MEMOPYK Switch – global orange override for all admin areas */
+button[role="switch"][data-state="checked"] { 
+  background-color: #D67C4A !important; 
+  border-color: #D67C4A !important; 
+}
+button[role="switch"][data-state="unchecked"] { 
+  background-color: #e5e7eb !important; 
+}
+button[role="switch"] > span { 
+  background-color: #ffffff !important; 
+}
+button[role="switch"]:focus-visible { 
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #D67C4A !important; 
+}
+
