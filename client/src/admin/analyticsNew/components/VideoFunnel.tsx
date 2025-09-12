@@ -1,5 +1,6 @@
 import React from "react";
 import { useFilteredAnalytics } from "../hooks/useFilteredAnalytics";
+import { useAnalyticsNewFilters } from "../analyticsNewFilters.store";
 import type { VideoFunnelResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 import { HelpCircle } from 'lucide-react';
@@ -18,9 +19,43 @@ export function VideoFunnel({
   onClose,
   className = "" 
 }: VideoFunnelProps) {
+  // Get current videoId to ensure we only load funnel for specific videos
+  const { videoId } = useAnalyticsNewFilters();
+  
+  // Only fetch data when a specific video is selected (not 'all')
+  const shouldFetch = videoId && videoId !== 'all';
+  
   const { data, isLoading: loading, error } = useFilteredAnalytics<VideoFunnelResponse>({
-    reportType: liveView ? "realtimeVideoProgress" : "videoFunnel"
+    reportType: liveView ? "realtimeVideoProgress" : "videoFunnel",
+    enabled: shouldFetch
   });
+
+  // Show message when no video is selected
+  if (!shouldFetch) {
+    return (
+      <div className={`analytics-new-card border-l-4 border-gray-300 ${className}`}>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
+            Video Engagement Funnel
+          </h3>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="text-[var(--analytics-new-text-muted)] hover:text-[var(--analytics-new-text)] text-xl font-bold"
+              data-testid="close-funnel"
+            >
+              ×
+            </button>
+          )}
+        </div>
+        <AnalyticsNewLoadingStates 
+          mode="empty" 
+          title="Select a video"
+          description="Click on a video in the table above to view its engagement funnel"
+        />
+      </div>
+    );
+  }
 
   if (loading) {
     return (

@@ -1936,7 +1936,7 @@
     "session_id": "ip_session_127_0_0_1",
     "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-09-12T20:00:17.063Z",
+    "updated_at": "2025-09-12T21:03:54.147Z",
     "is_test_data": false
   },
   {
@@ -72404,7 +72404,7 @@
     "city": "Perth",
     "country_code": null,
     "created_at": "2025-09-12T20:10:15.889Z",
-    "updated_at": "2025-09-12T20:54:29.210Z",
+    "updated_at": "2025-09-12T21:01:07.979Z",
     "is_location_cache": true
   },
   {
@@ -72486,5 +72486,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-12T20:53:58.970Z"
+  },
+  {
+    "id": "7177bb3f-482d-4436-bfba-56ce7fcf6366",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T21:00:37.754Z"
+  },
+  {
+    "id": "238ca122-2a16-4f63-aa70-6a80afd0a0cd",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T21:03:52.485Z"
   }
 ]
