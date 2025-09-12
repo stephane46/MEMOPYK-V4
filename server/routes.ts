@@ -2598,7 +2598,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       ga4ReportCache.flushAll();
       console.log('✅ NodeCache (ga4ReportCache) cleared');
       
-      const { clearMemoryCache, clearDbCacheByPrefix } = await import('./cache.js');
+      const { clearMemoryCache, clearDbCacheByPrefix } = await import('./cache');
       clearMemoryCache(); // Clear entire cache
       console.log('✅ Memory cache (Map store) cleared completely');
       
@@ -2634,7 +2634,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.log('✅ NodeCache (ga4ReportCache) cleared');
       
       // 2. Clear ALL memory cache (Map store) - handles /api/ga4/kpis
-      const { clearMemoryCache, clearMemoryCacheByPrefix, clearDbCacheByPrefix } = await import('./cache.js');
+      const { clearMemoryCache, clearMemoryCacheByPrefix, clearDbCacheByPrefix } = await import('./cache');
       clearMemoryCache(); // Clear entire cache to be thorough
       console.log('✅ Memory cache (Map store) cleared completely');
       
@@ -2668,7 +2668,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       ga4ReportCache.flushAll();
       console.log('✅ NodeCache (ga4ReportCache) cleared');
       
-      const { clearMemoryCache, clearDbCacheByPrefix } = await import('./cache.js');
+      const { clearMemoryCache, clearDbCacheByPrefix } = await import('./cache');
       clearMemoryCache(); // Clear entire cache
       console.log('✅ Memory cache (Map store) cleared completely');
       
