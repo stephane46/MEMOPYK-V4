@@ -8,6 +8,7 @@ import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { AnalyticsNewVideo } from './AnalyticsNewVideo';
 import { AnalyticsNewTrends } from './AnalyticsNewTrends';
 import { AnalyticsNewGeo } from './AnalyticsNewGeo';
+import { AnalyticsNewCta } from './AnalyticsNewCta';
 import DataSourceBadge from './components/DataSourceBadge';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { Badge } from '@/components/ui/badge';
@@ -17,19 +18,6 @@ import { DateTime } from 'luxon';
 import './analyticsNew.tokens.css';
 
 // Placeholder components for other tabs
-
-
-const AnalyticsNewCta: React.FC = () => (
-  <div className="analytics-new-container space-y-6">
-    <h2 className="text-xl font-bold text-gray-900">CTA Performance</h2>
-    <AnalyticsNewLoadingStates 
-      mode="empty" 
-      title="CTA analytics coming soon"
-      description="Call-to-action performance metrics will be displayed here"
-    />
-  </div>
-);
-
 
 const AnalyticsNewClarity: React.FC = () => (
   <div className="analytics-new-container space-y-6">
