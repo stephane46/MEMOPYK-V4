@@ -72120,7 +72120,7 @@
     "city": "Tokyo",
     "country_code": null,
     "created_at": "2025-09-12T17:53:08.302Z",
-    "updated_at": "2025-09-12T19:51:01.637Z",
+    "updated_at": "2025-09-12T19:57:00.020Z",
     "is_location_cache": true
   },
   {
@@ -72322,5 +72322,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-12T19:50:31.380Z"
+  },
+  {
+    "id": "257a1983-619c-445d-abe3-25078e3ef9f2",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T19:56:29.791Z"
   }
 ]
