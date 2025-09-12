@@ -17,11 +17,32 @@ interface CookieBannerProps {
 export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [languageInitialized, setLanguageInitialized] = useState(false);
   const { toast } = useToast();
   const { getLocalizedPath, language } = useLanguage();
 
-  // Check if banner should be shown on mount
+  // Wait for language initialization based on URL
   useEffect(() => {
+    // Check if URL has language prefix
+    const path = window.location.pathname;
+    const hasLanguageInUrl = path.startsWith('/fr-FR') || path.startsWith('/en-US');
+    
+    if (hasLanguageInUrl) {
+      // URL has language, wait a moment for context to sync
+      const timer = setTimeout(() => {
+        setLanguageInitialized(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      // No language in URL, assume initialization will happen quickly
+      setLanguageInitialized(true);
+    }
+  }, []);
+
+  // Check if banner should be shown on mount (only after language is initialized)
+  useEffect(() => {
+    if (!languageInitialized) return;
+    
     const consent = getStoredConsent();
     const urlParams = new URLSearchParams(window.location.search);
     const forceShow = urlParams.get('show-cookies') === 'true';
@@ -29,7 +50,7 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
     if (!consent || forceShow) {
       setIsVisible(true);
     }
-  }, []);
+  }, [languageInitialized]);
 
   // Handle footer settings click
   useEffect(() => {
