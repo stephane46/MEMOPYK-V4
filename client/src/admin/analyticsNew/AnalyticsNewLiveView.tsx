@@ -258,6 +258,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
             <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 font-medium">
               MEMOPYK
             </Badge>
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+              🟠 IP Filtered
+            </Badge>
           </div>
           
           {privateLoading ? (
@@ -303,6 +306,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
             </h3>
             <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 font-medium">
               MEMOPYK
+            </Badge>
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+              🟠 IP Filtered
             </Badge>
           </div>
           
@@ -354,6 +360,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
             </h3>
             <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 font-medium">
               MEMOPYK
+            </Badge>
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+              🟠 IP Filtered
             </Badge>
           </div>
           
@@ -466,6 +475,9 @@ export const AnalyticsNewLiveView: React.FC = () => {
             </h3>
             <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 font-medium">
               MEMOPYK
+            </Badge>
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+              🟠 IP Filtered
             </Badge>
             {watchingData && (
               <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm">
