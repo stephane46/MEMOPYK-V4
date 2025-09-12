@@ -107,22 +107,8 @@ export const AnalyticsNewLiveView: React.FC = () => {
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const [lastWatchingUpdate, setLastWatchingUpdate] = useState<string>('');
   const [isVisible, setIsVisible] = useState<boolean>(!document.hidden);
-  const [isLiveTabActive, setIsLiveTabActive] = useState<boolean>(false);
   
-  // Check if the Live View tab is currently active
-  useEffect(() => {
-    const checkActiveTab = () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const activeTab = urlParams.get('an_tab') || 'overview';
-      setIsLiveTabActive(activeTab === 'live');
-    };
-    
-    checkActiveTab();
-    window.addEventListener('popstate', checkActiveTab);
-    return () => window.removeEventListener('popstate', checkActiveTab);
-  }, []);
-
-  // Page Visibility API to pause polling when tab is hidden
+  // Since this component is rendered, Live View tab is active - just check visibility
   useEffect(() => {
     const handleVisibilityChange = () => {
       setIsVisible(!document.hidden);
@@ -132,8 +118,8 @@ export const AnalyticsNewLiveView: React.FC = () => {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
-  // Calculate whether polling should be enabled
-  const shouldPoll = isVisible && isLiveTabActive;
+  // Calculate whether polling should be enabled - if component is rendered, tab is active
+  const shouldPoll = isVisible;
   
   // Private tracking data - refetch every 10 seconds when active
   const { data: privateData, isLoading: privateLoading, error: privateError } = useQuery<PrivateTrackingData>({
