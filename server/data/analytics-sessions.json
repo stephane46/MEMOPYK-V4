@@ -72120,7 +72120,7 @@
     "city": "Tokyo",
     "country_code": null,
     "created_at": "2025-09-12T17:53:08.302Z",
-    "updated_at": "2025-09-12T19:57:00.020Z",
+    "updated_at": "2025-09-12T20:06:40.555Z",
     "is_location_cache": true
   },
   {
@@ -72346,5 +72346,29 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-12T20:01:28.637Z"
+  },
+  {
+    "id": "fb85477d-de28-48a7-a850-dfb87642e7a1",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T20:01:54.341Z"
+  },
+  {
+    "id": "f8859ee3-0c60-4471-8d46-456d131a1242",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T20:06:10.146Z"
+  },
+  {
+    "id": "dbd351f9-7eab-4ff5-95fd-f9bcb86af61c",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T20:07:22.791Z"
   }
 ]

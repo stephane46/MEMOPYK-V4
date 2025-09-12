@@ -9,7 +9,7 @@
     <!-- GA4 - Only load on non-admin pages (GTM KILLSWITCH ENABLED) -->
     <script>
       // Check if current path is admin page
-      var isAdmin = location.pathname.startsWith('/fr-FR/admin') || location.pathname.startsWith('/admin');
+      var isAdmin = location.pathname.startsWith('/fr-FR/admin') || location.pathname.startsWith('/en-US/admin') || location.pathname.startsWith('/admin');
       
       // GTM KILLSWITCH: Skip GA4 loading if disabled via query parameter (env var handled in build)
       var gtmDisabled = location.search.includes('nogtm=1');
@@ -61,7 +61,7 @@
     <!-- Microsoft Clarity - Only load on non-admin pages -->
     <script type="text/javascript">
         // Check if current path is admin page  
-        var isAdmin = location.pathname.startsWith('/fr-FR/admin') || location.pathname.startsWith('/admin');
+        var isAdmin = location.pathname.startsWith('/fr-FR/admin') || location.pathname.startsWith('/en-US/admin') || location.pathname.startsWith('/admin');
         
         if (!isAdmin) {
             (function(c,l,a,r,i,t,y){

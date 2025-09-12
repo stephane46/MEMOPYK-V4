@@ -131,7 +131,8 @@ export const AnalyticsNewLiveView: React.FC = () => {
 
   // Recent visitors data - refetch every 15 seconds when active 
   const { data: recentVisitors, isLoading: visitorsLoading, error: visitorsError } = useQuery<RecentVisitor[]>({
-    queryKey: ['/api/analytics/recent-visitors', { datePreset: 'today', skipEnrichment: true }],
+    queryKey: ['/api/analytics/recent-visitors', 'today'],
+    queryFn: () => fetch('/api/analytics/recent-visitors?datePreset=today&skipEnrichment=true').then(res => res.json()),
     select: (raw: any) => Array.isArray(raw) ? raw : raw?.visitors ?? raw?.data ?? [], // Normalize response to array
     refetchInterval: shouldPoll ? 15000 : false, // 15 seconds when active
     refetchOnWindowFocus: true,
@@ -151,14 +152,6 @@ export const AnalyticsNewLiveView: React.FC = () => {
     enabled: shouldPoll, // Only query when tab is active and visible
   });
 
-  // Debug: Log Recent Visitors query state specifically
-  console.log('🔍 RECENT VISITORS DEBUG:', {
-    enabled: shouldPoll,
-    loading: visitorsLoading,
-    error: visitorsError?.message,
-    dataLength: recentVisitors?.length,
-    data: recentVisitors
-  });
 
   // Update last refresh time
   useEffect(() => {
