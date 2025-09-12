@@ -239,13 +239,15 @@ export default function AdminPage() {
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
     { id: 'why-memopyk', label: 'Pourquoi MEMOPYK', icon: Users },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
-    { id: 'analytics', label: 'Analytics (old)', icon: BarChart3 },
-    { id: 'analytics-ga', label: '(Analytics GA)', icon: TrendingUp },
-    { id: 'analytics-ga-clean', label: 'Analytics', icon: Sparkles },
-    { id: 'analytics-new', label: 'Analytics New', icon: Layers },
+    { id: 'analytics-new', label: 'Analytics', icon: Layers },
     { id: 'cache-management', label: 'Cache GA4', icon: Database },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },
+    // Old analytics sections - moved to bottom
+    { id: 'separator', label: '—————————————————', icon: null, disabled: true },
+    { id: 'analytics', label: 'Analytics (Previous)', icon: BarChart3 },
+    { id: 'analytics-ga', label: '(Analytics GA)', icon: TrendingUp },
+    { id: 'analytics-ga-clean', label: 'Analytics', icon: Sparkles },
   ];
 
   // Fetch hero videos
@@ -516,8 +518,21 @@ export default function AdminPage() {
           
           <div className="space-y-1">
             {sidebarItems.map((item) => {
+              // Handle separator
+              if (item.id === 'separator') {
+                return (
+                  <div key={item.id} className="py-2 px-4">
+                    <div className="border-t border-gray-600"></div>
+                  </div>
+                );
+              }
+
               const Icon = item.icon;
               const isActive = activeSection === item.id;
+              
+              // Skip items without icons (like separator)
+              if (!Icon) return null;
+              
               return (
                 <button
                   key={item.id}
