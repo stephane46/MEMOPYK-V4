@@ -3,9 +3,9 @@
     "id": "exclusion_test_figeac",
     "ip_cidr": "109.17.150.48",
     "label": "Capdenac home network",
-    "active": true,
+    "active": false,
     "created_at": "2025-09-10T20:02:00.000Z",
-    "updated_at": "2025-09-12T10:33:47.626Z",
+    "updated_at": "2025-09-12T15:33:28.133Z",
     "user_agent": ""
   }
 ]
