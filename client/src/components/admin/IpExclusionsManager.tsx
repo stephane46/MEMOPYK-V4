@@ -92,7 +92,19 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate IP exclusions list
       queryClient.invalidateQueries({ queryKey: ['/api/admin/analytics/exclusions'] });
+      
+      // Invalidate analytics data since new exclusion affects numbers
+      queryClient.invalidateQueries({ predicate: (query) => 
+        query.queryKey.some(key => 
+          typeof key === 'string' && (
+            key.includes('/api/ga4/') || 
+            key.includes('/api/analytics/')
+          )
+        )
+      });
+      
       setIsAddDialogOpen(false);
       resetForm();
       toast({ title: 'Success', description: 'IP exclusion created successfully' });
@@ -114,7 +126,19 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate IP exclusions list
       queryClient.invalidateQueries({ queryKey: ['/api/admin/analytics/exclusions'] });
+      
+      // Invalidate analytics data since updated exclusion affects numbers
+      queryClient.invalidateQueries({ predicate: (query) => 
+        query.queryKey.some(key => 
+          typeof key === 'string' && (
+            key.includes('/api/ga4/') || 
+            key.includes('/api/analytics/')
+          )
+        )
+      });
+      
       setIsEditDialogOpen(false);
       setSelectedExclusion(null);
       resetForm();
@@ -135,7 +159,19 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate IP exclusions list
       queryClient.invalidateQueries({ queryKey: ['/api/admin/analytics/exclusions'] });
+      
+      // Invalidate analytics data since deleted exclusion affects numbers
+      queryClient.invalidateQueries({ predicate: (query) => 
+        query.queryKey.some(key => 
+          typeof key === 'string' && (
+            key.includes('/api/ga4/') || 
+            key.includes('/api/analytics/')
+          )
+        )
+      });
+      
       toast({ title: 'Success', description: 'IP exclusion deleted successfully' });
     },
     onError: (error) => {
@@ -155,7 +191,28 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate IP exclusions list
       queryClient.invalidateQueries({ queryKey: ['/api/admin/analytics/exclusions'] });
+      
+      // 🔧 CRITICAL FIX: Invalidate ALL analytics data when IP exclusions change
+      // This ensures analytics numbers update immediately when Hide/Show is toggled
+      queryClient.invalidateQueries({ queryKey: ['/api/ga4/kpis'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/ga4/geo'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/ga4/trends'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/ga4/top-videos'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/ga4/video-funnel'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/visitors'] });
+      
+      // Also invalidate any cached analytics data with prefix patterns
+      queryClient.invalidateQueries({ predicate: (query) => 
+        query.queryKey.some(key => 
+          typeof key === 'string' && (
+            key.includes('/api/ga4/') || 
+            key.includes('/api/analytics/')
+          )
+        )
+      });
     },
   });
 
