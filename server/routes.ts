@@ -2591,14 +2591,25 @@ export async function registerRoutes(app: Express): Promise<void> {
         active
       });
       
-      // Clear GA4 cache since new exclusion affects analytics - both memory and database
+      // 🔧 CRITICAL FIX: Clear ALL cache systems when IP exclusions change
+      console.log('🗑️ STARTING COMPREHENSIVE CACHE CLEAR...');
+      
+      // Clear all cache systems for immediate analytics refresh
       ga4ReportCache.flushAll();
+      console.log('✅ NodeCache (ga4ReportCache) cleared');
       
-      const { clearMemoryCacheByPrefix, clearDbCacheByPrefix } = await import('./cache.js');
-      clearMemoryCacheByPrefix("ga4:");
-      await clearDbCacheByPrefix("ga4:");
+      const { clearMemoryCache, clearDbCacheByPrefix } = await import('./cache.js');
+      clearMemoryCache(); // Clear entire cache
+      console.log('✅ Memory cache (Map store) cleared completely');
       
-      console.log('🗑️ GA4 cache cleared (memory + database) due to new IP exclusion - analytics will refresh');
+      try {
+        await clearDbCacheByPrefix("ga4:");
+        console.log('✅ Database cache cleared');
+      } catch (error) {
+        console.log('⚠️ Database cache clear failed (expected if table missing)');
+      }
+      
+      console.log('🗑️ COMPREHENSIVE CACHE CLEAR COMPLETED - analytics will refresh immediately');
       
       res.json(exclusion);
     } catch (error) {
@@ -2615,16 +2626,27 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       const exclusion = await hybridStorage.updateIpExclusion(id, updates);
       
-      // 🔧 CRITICAL FIX: Clear GA4 cache when IP exclusions change
-      // This ensures analytics numbers update immediately when Hide/Show is toggled
+      // 🔧 CRITICAL FIX: Clear ALL cache systems when IP exclusions change
+      console.log('🗑️ STARTING COMPREHENSIVE CACHE CLEAR...');
+      
+      // 1. Clear NodeCache (ga4ReportCache) - handles /api/ga4/report
       ga4ReportCache.flushAll();
+      console.log('✅ NodeCache (ga4ReportCache) cleared');
       
-      // Clear both memory and database GA4 cache entries by prefix
-      const { clearMemoryCacheByPrefix, clearDbCacheByPrefix } = await import('./cache.js');
-      clearMemoryCacheByPrefix("ga4:");
-      await clearDbCacheByPrefix("ga4:");
+      // 2. Clear ALL memory cache (Map store) - handles /api/ga4/kpis
+      const { clearMemoryCache, clearMemoryCacheByPrefix, clearDbCacheByPrefix } = await import('./cache.js');
+      clearMemoryCache(); // Clear entire cache to be thorough
+      console.log('✅ Memory cache (Map store) cleared completely');
       
-      console.log('🗑️ GA4 cache cleared (memory + database) due to IP exclusion toggle - analytics will refresh');
+      // 3. Clear database cache (backup)
+      try {
+        await clearDbCacheByPrefix("ga4:");
+        console.log('✅ Database cache cleared');
+      } catch (error) {
+        console.log('⚠️ Database cache clear failed (expected if table missing)');
+      }
+      
+      console.log('🗑️ COMPREHENSIVE CACHE CLEAR COMPLETED - analytics will refresh immediately');
       
       res.json(exclusion);
     } catch (error) {
@@ -2639,14 +2661,25 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { id } = req.params;
       await hybridStorage.deleteIpExclusion(id);
       
-      // Clear GA4 cache since deleted exclusion affects analytics - both memory and database
+      // 🔧 CRITICAL FIX: Clear ALL cache systems when IP exclusions change
+      console.log('🗑️ STARTING COMPREHENSIVE CACHE CLEAR...');
+      
+      // Clear all cache systems for immediate analytics refresh
       ga4ReportCache.flushAll();
+      console.log('✅ NodeCache (ga4ReportCache) cleared');
       
-      const { clearMemoryCacheByPrefix, clearDbCacheByPrefix } = await import('./cache.js');
-      clearMemoryCacheByPrefix("ga4:");
-      await clearDbCacheByPrefix("ga4:");
+      const { clearMemoryCache, clearDbCacheByPrefix } = await import('./cache.js');
+      clearMemoryCache(); // Clear entire cache
+      console.log('✅ Memory cache (Map store) cleared completely');
       
-      console.log('🗑️ GA4 cache cleared (memory + database) due to IP exclusion deletion - analytics will refresh');
+      try {
+        await clearDbCacheByPrefix("ga4:");
+        console.log('✅ Database cache cleared');
+      } catch (error) {
+        console.log('⚠️ Database cache clear failed (expected if table missing)');
+      }
+      
+      console.log('🗑️ COMPREHENSIVE CACHE CLEAR COMPLETED - analytics will refresh immediately');
       
       res.json({ success: true });
     } catch (error) {
