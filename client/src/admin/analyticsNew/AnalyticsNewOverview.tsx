@@ -297,7 +297,6 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
               Source: GA4 (agrégats)
             </Badge>
           </div>
-          <p className="text-gray-600 mt-1">Key performance metrics for your MEMOPYK platform</p>
         </div>
         
         <div className="flex items-center space-x-3">

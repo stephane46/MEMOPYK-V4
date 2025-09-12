@@ -363,7 +363,7 @@ export const AnalyticsNewTrends: React.FC = () => {
   const chartData = getChartData();
 
   return (
-    <div className="space-y-6">
+    <div className="analytics-new-container space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
