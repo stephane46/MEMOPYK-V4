@@ -492,10 +492,10 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         }
                         disabled={toggleMutation.isPending}
                         data-testid={`toggle-exclusion-${exclusion.id}`}
-                        className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300"
+                        className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-gray-300"
                       />
-                      <Badge variant={exclusion.active ? "default" : "secondary"}>
-                        {exclusion.active ? 'Active' : 'Inactive'}
+                      <Badge variant={exclusion.active ? "default" : "secondary"} className={exclusion.active ? "bg-orange-500 hover:bg-orange-600" : "bg-gray-500"}>
+                        {exclusion.active ? 'Hidden' : 'Visible'}
                       </Badge>
                     </div>
                   </TableCell>
@@ -506,37 +506,37 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                     <div className="flex items-center gap-2 text-gray-600">
                       <Button
                         variant="ghost"
-                        size="default"
+                        size="sm"
                         onClick={() => handleEdit(exclusion)}
                         title="Edit label"
                         data-testid={`edit-exclusion-${exclusion.id}`}
-                        className="hover:bg-gray-100"
+                        className="hover:bg-blue-50 text-blue-600 hover:text-blue-700"
                       >
-Edit
+                        <Edit className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
-                        size="default"
+                        size="sm"
                         onClick={() => 
                           toggleMutation.mutate({ id: exclusion.id, active: !exclusion.active })
                         }
                         disabled={toggleMutation.isPending}
-                        title="Toggle active"
+                        title={exclusion.active ? "Hide from analytics" : "Show in analytics"}
                         data-testid={`toggle-action-${exclusion.id}`}
-                        className="hover:bg-gray-100"
+                        className={`hover:bg-${exclusion.active ? 'orange' : 'green'}-50 text-${exclusion.active ? 'orange' : 'green'}-600 hover:text-${exclusion.active ? 'orange' : 'green'}-700`}
                       >
-{exclusion.active ? "Hide" : "Show"}
+                        {exclusion.active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                       <Button
                         variant="ghost"
-                        size="default"
+                        size="sm"
                         onClick={() => deleteMutation.mutate(exclusion.id)}
                         disabled={deleteMutation.isPending}
-                        title="Delete"
+                        title="Delete exclusion"
                         data-testid={`delete-exclusion-${exclusion.id}`}
-                        className="hover:bg-gray-100"
+                        className="hover:bg-red-50 text-red-600 hover:text-red-700"
                       >
-Delete
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
