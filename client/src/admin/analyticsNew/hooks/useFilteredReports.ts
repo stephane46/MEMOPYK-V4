@@ -3,7 +3,7 @@ import { buildAnalyticsParams, buildAnalyticsUrl, logFilterApplication } from '.
 import { useAnalyticsNewFilters } from '../analyticsNewFilters.store';
 
 /**
- * UNIFIED ANALYTICS REPORT HOOKS
+ * 🚨 CRITICAL: UNIFIED ANALYTICS REPORT HOOKS - ENFORCE CENTRALIZATION 🚨
  * 
  * This module provides specialized hooks for each analytics report type that
  * enforce the centralized filtering system. All hooks use:
@@ -12,29 +12,22 @@ import { useAnalyticsNewFilters } from '../analyticsNewFilters.store';
  * - buildAnalyticsUrl() for consistent URL construction
  * - logFilterApplication() for debugging filter application
  * 
- * NO component should use useQuery directly for analytics data.
+ * ⛔ STRICT RULE: NO component should use useQuery directly for analytics data.
+ * ⛔ STRICT RULE: NO manual URL construction or parameter building allowed.
+ * ⛔ STRICT RULE: ALL analytics data MUST go through these centralized hooks.
+ * 
+ * If you need to add a new analytics endpoint:
+ * 1. Add it to buildAnalyticsParams() in analyticsFilters.ts
+ * 2. Create a new hook here following the existing pattern
+ * 3. Components import and use your new hook - never useQuery directly
+ * 
+ * Violating these rules will cause filter inconsistencies and cache pollution.
  */
 
 // ==================== TYPE DEFINITIONS ====================
 
-export interface TopVideoRow {
-  videoId: string;
-  title: string;
-  views: number;
-  uniqueViewers: number;
-  averageWatchTime: number;
-  completionRate: number;
-  engagement: number;
-  thumbnail?: string;
-  duration?: number;
-}
-
-export interface TopVideosData {
-  videos: TopVideoRow[];
-  totalViews: number;
-  totalUniqueViewers: number;
-  averageCompletionRate: number;
-}
+// Import centralized types instead of duplicating
+import type { TopVideoRow, TopVideosData } from '../data/types';
 
 export interface CountryData {
   country: string;

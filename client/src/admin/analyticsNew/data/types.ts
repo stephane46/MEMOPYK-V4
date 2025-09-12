@@ -1,3 +1,16 @@
+/**
+ * 🚨 CENTRALIZED ANALYTICS TYPES - NO DUPLICATES ALLOWED 🚨
+ * 
+ * ⛔ RULE: These are the ONLY type definitions for analytics data.
+ * ⛔ RULE: DO NOT create duplicate interfaces in other files.
+ * ⛔ RULE: If you need a new type, add it here and import it everywhere.
+ * 
+ * Duplicate types cause:
+ * - Version mismatches between components
+ * - Breaking changes when APIs evolve
+ * - Inconsistent data transformations
+ */
+
 export type TrendPoint = { date: string; value: number };
 
 export type KpisResponse = {
@@ -16,14 +29,28 @@ export type KpisResponse = {
   cached?: boolean;
 };
 
-export type TopVideoRow = {
+export interface TopVideoRow {
   videoId: string;
   title: string;
-  plays: number;
-  completions: number;
-  completionRate: number; // 0-100 as integer percentage
-  avgEngagement?: number;
-};
+  views: number;
+  uniqueViewers: number;
+  averageWatchTime: number;
+  completionRate: number;
+  engagement: number;
+  thumbnail?: string;
+  duration?: number;
+  // Legacy aliases for backward compatibility
+  plays?: number;  // alias for views
+  completions?: number;  // alias for uniqueViewers at completion rate
+  avgEngagement?: number; // alias for averageWatchTime
+}
+
+export interface TopVideosData {
+  videos: TopVideoRow[];
+  totalViews: number;
+  totalUniqueViewers: number;
+  averageCompletionRate: number;
+}
 
 export type TopVideosResponse = { 
   topVideos: TopVideoRow[];

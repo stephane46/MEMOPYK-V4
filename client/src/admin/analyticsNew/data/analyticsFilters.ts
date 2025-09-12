@@ -1,5 +1,5 @@
 /**
- * CENTRALIZED ANALYTICS FILTERING MODULE
+ * 🚨 CRITICAL: CENTRALIZED ANALYTICS FILTERING MODULE - SINGLE SOURCE OF TRUTH 🚨
  * 
  * This module ensures ALL analytics data goes through the same filtering logic:
  * - Date range calculation
@@ -7,7 +7,20 @@
  * - Query parameter building
  * - Cache key generation
  * 
- * NO component should build its own query parameters or bypass this system.
+ * ⛔ ABSOLUTE RULE: NO component should build its own query parameters or bypass this system.
+ * ⛔ ABSOLUTE RULE: NO manual URLSearchParams, fetch() with custom URLs, or date calculations.
+ * ⛔ ABSOLUTE RULE: ALL analytics requests MUST use buildAnalyticsParams() and buildAnalyticsUrl().
+ * 
+ * 🔒 ENFORCEMENT: If you see analytics code that doesn't use these functions:
+ * 1. It's a bug that will cause filter inconsistencies
+ * 2. Refactor it to use this centralized system immediately
+ * 3. Do not add exceptions - extend this system instead
+ * 
+ * This prevents:
+ * - Duplicate date/query logic
+ * - Filter inconsistencies between tabs
+ * - Cache collisions and stale data
+ * - URL parameter mismatches
  */
 
 export interface FilteredAnalyticsParams {
