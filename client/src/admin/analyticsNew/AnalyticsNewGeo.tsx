@@ -16,34 +16,14 @@ import {
   Download,
   RefreshCw
 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps';
 import { scaleSequential } from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
-import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
+import { useFilteredGeo, CountryData, CityData, GeoAnalyticsData } from './hooks/useFilteredReports';
 import './analyticsNew.tokens.css';
 
 // World atlas data for map visualization
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
-
-interface CountryData {
-  country: string;
-  sessions: number;
-  visitors: number;
-  iso3?: string;
-}
-
-interface CityData {
-  country: string;
-  city: string;
-  sessions: number;
-  visitors: number;
-}
-
-interface GeoAnalyticsData {
-  countries: CountryData[];
-  cities: CityData[];
-}
 
 interface GeoKpiCardProps {
   title: string;
@@ -109,9 +89,8 @@ const CountryRow: React.FC<CountryRowProps> = ({ country, sessions, visitors, ra
 };
 
 export const AnalyticsNewGeo: React.FC = () => {
-  // Get current filter state
-  const { datePreset, customDateStart, customDateEnd, sinceDate, sinceDateEnabled, getDateRange } = useAnalyticsNewFilters();
-  const { start, end } = getDateRange();
+  // Use centralized filtering system with the useFilteredGeo hook
+  const { data: geoData, isLoading: geoLoading, error: geoError, refetch, appliedFilters } = useFilteredGeo();
   
   // Tooltip state for map
   const [tooltip, setTooltip] = useState<{
@@ -121,40 +100,13 @@ export const AnalyticsNewGeo: React.FC = () => {
     y: number;
   }>({ show: false, content: '', x: 0, y: 0 });
 
-  // Legend highlight state
-
-  // Fetch geographic analytics data from GA4 (consistent with Analytics New GA4-only approach)
-  const { data: geoData, isLoading: geoLoading, error: geoError, refetch } = useQuery<GeoAnalyticsData>({
-    queryKey: ['/api/ga4/geo', start, end, sinceDateEnabled ? sinceDate : null],
-    queryFn: async () => {
-      const url = new URL('/api/ga4/geo', window.location.origin);
-      url.searchParams.set('startDate', start);
-      url.searchParams.set('endDate', end);
-      url.searchParams.set('locale', 'all');
-      
-      if (sinceDateEnabled && sinceDate) {
-        url.searchParams.set('since', sinceDate);
-      }
-
-      const response = await fetch(url.toString());
-      if (!response.ok) {
-        throw new Error(`GA4 geographic data failed: ${response.status}`);
-      }
-
-      return response.json();
-    },
-    refetchOnWindowFocus: false,
-    staleTime: 60000, // 1 minute
-  });
-
-  // Process data for visualizations
+  // Process data for visualizations - now using centralized hook data with totals included
   const processedData = React.useMemo(() => {
     if (!geoData?.countries) return null;
     
-    // Include all countries (including Unknown) until geolocation is fully operational
+    // Data already processed by centralized hook, just organize for display
     const countries = geoData.countries;
-    const totalSessions = countries.reduce((sum, c) => sum + c.sessions, 0);
-    const totalVisitors = countries.reduce((sum, c) => sum + c.visitors, 0);
+    const { totalSessions, totalVisitors, coverageCount } = geoData;
     
     // Sort countries by sessions for ranking
     const sortedCountries = [...countries].sort((a, b) => b.sessions - a.sessions);
@@ -162,8 +114,8 @@ export const AnalyticsNewGeo: React.FC = () => {
     // Find insights
     const topMarket = sortedCountries[0];
     const bestEngagement = sortedCountries.reduce((best, country) => {
-      const rate = country.sessions / country.visitors;
-      const bestRate = best.sessions / best.visitors;
+      const rate = country.sessions / (country.visitors || 1);
+      const bestRate = best.sessions / (best.visitors || 1);
       return rate > bestRate ? country : best;
     }, sortedCountries[0] || { country: '', sessions: 0, visitors: 1 });
 
@@ -173,7 +125,7 @@ export const AnalyticsNewGeo: React.FC = () => {
       totalVisitors,
       topMarket,
       bestEngagement,
-      coverageCount: countries.length
+      coverageCount
     };
   }, [geoData]);
 
@@ -261,7 +213,10 @@ export const AnalyticsNewGeo: React.FC = () => {
         <div className="flex items-center space-x-3">
           <h2 className="text-xl font-bold text-gray-900">Geographic Market Analysis</h2>
           <Badge variant="outline" className="bg-blue-50 text-blue-700 text-xs">
-            Source: GA4 (agrégats)
+            Centralized Filters
+          </Badge>
+          <Badge variant="outline" className="bg-green-50 text-green-700 text-xs">
+            Source: GA4
           </Badge>
         </div>
         <div className="flex items-center space-x-2">
