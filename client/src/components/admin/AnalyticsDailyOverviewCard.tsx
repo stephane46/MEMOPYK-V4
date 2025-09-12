@@ -3,6 +3,7 @@ import * as React from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { RefreshCcw } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -129,7 +130,12 @@ export default function AnalyticsDailyOverviewCard() {
     <Card className="w-full">
       <CardHeader className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <CardTitle>Daily Overview</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Daily Overview
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+              🟠 IP Filtered
+            </Badge>
+          </CardTitle>
           <div className="flex items-center gap-2">
             <select
               value={String(days)}
