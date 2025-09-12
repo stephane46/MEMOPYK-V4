@@ -151,20 +151,13 @@ export const AnalyticsNewLiveView: React.FC = () => {
     enabled: shouldPoll, // Only query when tab is active and visible
   });
 
-  // Debug logging after all variables are declared
-  console.log('🔍 LIVE VIEW QUERY STATUS:', {
-    shouldPoll,
-    isVisible,
-    documentHidden: document.hidden,
-    privateDataExists: !!privateData,
-    recentVisitorsExists: !!recentVisitors,
-    watchingDataExists: !!watchingData,
-    visitorsLoading,
-    watchingLoading,
-    privateLoading,
-    visitorsError: visitorsError?.message,
-    watchingError: watchingError?.message,
-    privateError: privateError?.message
+  // Debug: Log Recent Visitors query state specifically
+  console.log('🔍 RECENT VISITORS DEBUG:', {
+    enabled: shouldPoll,
+    loading: visitorsLoading,
+    error: visitorsError?.message,
+    dataLength: recentVisitors?.length,
+    data: recentVisitors
   });
 
   // Update last refresh time
