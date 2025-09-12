@@ -132,6 +132,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
   // Recent visitors data - refetch every 15 seconds when active 
   const { data: recentVisitors, isLoading: visitorsLoading, error: visitorsError } = useQuery<RecentVisitor[]>({
     queryKey: ['/api/analytics/recent-visitors', { datePreset: 'today', skipEnrichment: true }],
+    select: (raw: any) => Array.isArray(raw) ? raw : raw?.visitors ?? raw?.data ?? [], // Normalize response to array
     refetchInterval: shouldPoll ? 15000 : false, // 15 seconds when active
     refetchOnWindowFocus: true,
     staleTime: 0,
@@ -142,6 +143,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
   // Currently watching data - refetch every 15 seconds when active
   const { data: watchingData, isLoading: watchingLoading, error: watchingError } = useQuery<CurrentlyWatchingData>({
     queryKey: ['/api/tracker/currently-watching'],
+    select: (raw: any) => raw?.sessions ? raw : { totalActive: raw?.totalActive ?? 0, sessions: raw?.sessions ?? [] }, // Normalize response shape
     refetchInterval: shouldPoll ? 15000 : false, // 15 seconds when active
     refetchOnWindowFocus: true, // Refresh when user returns to tab
     staleTime: 0, // Always fetch fresh data
