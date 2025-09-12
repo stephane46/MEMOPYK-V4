@@ -121,6 +121,13 @@ export const AnalyticsNewLiveView: React.FC = () => {
   // Calculate whether polling should be enabled - if component is rendered, tab is active
   const shouldPoll = isVisible;
   
+  // Debug: Log shouldPoll state to see if queries should be enabled
+  console.log('🔍 LIVE VIEW DEBUG:', {
+    isVisible,
+    shouldPoll,
+    component: 'AnalyticsNewLiveView'
+  });
+  
   // Private tracking data - refetch every 10 seconds when active
   const { data: privateData, isLoading: privateLoading, error: privateError } = useQuery<PrivateTrackingData>({
     queryKey: ['/api/analytics/live-tracking'],
