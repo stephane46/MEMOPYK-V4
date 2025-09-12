@@ -72036,7 +72036,7 @@
     "city": "Sao Paulo",
     "country_code": null,
     "created_at": "2025-09-12T16:16:07.000Z",
-    "updated_at": "2025-09-12T17:30:06.603Z",
+    "updated_at": "2025-09-12T17:46:37.688Z",
     "is_location_cache": true
   },
   {
@@ -72062,5 +72062,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-12T17:45:42.771Z"
+  },
+  {
+    "id": "445823e1-18b4-49b5-8ed7-ec7cf735bf9b",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2Fen-US&id=%3Ar279%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T17:46:07.368Z"
+  },
+  {
+    "id": "cd96f81c-31cb-47a2-b3f2-d4f4752a3875",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US/admin?an_tab=trends",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-12T17:47:04.461Z"
   }
 ]
