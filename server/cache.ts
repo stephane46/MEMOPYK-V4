@@ -59,8 +59,27 @@ export function setCache<T>(key: string, value: T, ttlSec = 300) {
 
 export function clearMemoryCache() {
   const size = store.size;
+  console.log(`🔍 Cache keys before clearing:`, Array.from(store.keys()));
   store.clear();
   console.log(`🗑️ Memory cache cleared: ${size} entries removed`);
+}
+
+// Clear memory cache entries by prefix
+export function clearMemoryCacheByPrefix(prefix: string) {
+  const keysToDelete: string[] = [];
+  
+  for (const key of store.keys()) {
+    if (key.startsWith(prefix)) {
+      keysToDelete.push(key);
+    }
+  }
+  
+  keysToDelete.forEach(key => store.delete(key));
+  
+  console.log(`🗑️ Memory cache cleared by prefix "${prefix}": ${keysToDelete.length} entries removed`);
+  if (keysToDelete.length > 0) {
+    console.log(`   Removed keys:`, keysToDelete);
+  }
 }
 
 // Persistent cache functions (new)
@@ -115,5 +134,30 @@ export async function setDbCache<T>(key: string, value: T, ttlSec = 300) {
     }
   } catch (error) {
     console.error('💥 setDbCache error:', error);
+  }
+}
+
+// Clear database cache entries by prefix
+export async function clearDbCacheByPrefix(prefix: string): Promise<{ deleted: number; error?: string }> {
+  try {
+    console.log(`🗑️ Clearing database cache by prefix: "${prefix}"`);
+    
+    if (!supabase) return { deleted: 0, error: 'Supabase client not available' };
+    
+    // Delete all cache entries where key starts with the prefix
+    const { data, error } = await supabase
+      .from("ga4_cache")
+      .delete()
+      .like('key', `${prefix}%`);
+    
+    if (error) throw error;
+    
+    const deletedCount = Array.isArray(data) ? data.length : 0;
+    console.log(`✅ Database cache cleared by prefix "${prefix}": ${deletedCount} entries removed`);
+    
+    return { deleted: deletedCount };
+  } catch (error) {
+    console.error('💥 clearDbCacheByPrefix error:', error);
+    return { deleted: 0, error: String(error) };
   }
 }
