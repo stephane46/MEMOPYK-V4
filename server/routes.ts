@@ -2613,6 +2613,13 @@ export async function registerRoutes(app: Express): Promise<void> {
       // 🔧 CRITICAL FIX: Clear GA4 cache when IP exclusions change
       // This ensures analytics numbers update immediately when Hide/Show is toggled
       ga4ReportCache.flushAll();
+      
+      // Also clear the memory cache (getCache/setCache system)
+      const { clearMemoryCache } = await import('./cache.js');
+      if (clearMemoryCache) {
+        clearMemoryCache();
+      }
+      
       console.log('🗑️ GA4 cache cleared due to IP exclusion toggle - analytics will refresh');
       
       res.json(exclusion);

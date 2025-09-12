@@ -492,10 +492,7 @@ export const IpExclusionsManager: React.FC<IpExclusionsManagerProps> = ({
                         }
                         disabled={toggleMutation.isPending}
                         data-testid={`toggle-exclusion-${exclusion.id}`}
-                        className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-orange-500 !important"
-                        style={{
-                          backgroundColor: '#f97316 !important'
-                        }}
+                        className="data-[state=checked]:!bg-orange-500 data-[state=unchecked]:!bg-orange-500"
                       />
                       <Badge variant={exclusion.active ? "default" : "secondary"}>
                         {exclusion.active ? 'Active' : 'Inactive'}

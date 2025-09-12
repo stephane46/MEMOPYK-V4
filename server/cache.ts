@@ -31,7 +31,7 @@ export async function manualCacheCleanup(): Promise<{ deleted: number; error?: s
       .lt('expires_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
     
     if (error) throw error;
-    return { deleted: data?.length || 0 };
+    return { deleted: Array.isArray(data) ? data.length : 0 };
   } catch (error) {
     console.error('Manual cache cleanup error:', error);
     return { deleted: 0, error: String(error) };
@@ -55,6 +55,12 @@ export function getCache<T>(key: string): T | null {
 
 export function setCache<T>(key: string, value: T, ttlSec = 300) {
   store.set(key, { value, expires: Date.now() + ttlSec * 1000 });
+}
+
+export function clearMemoryCache() {
+  const size = store.size;
+  store.clear();
+  console.log(`🗑️ Memory cache cleared: ${size} entries removed`);
 }
 
 // Persistent cache functions (new)
