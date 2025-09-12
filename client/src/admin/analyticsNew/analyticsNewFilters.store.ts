@@ -150,15 +150,17 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
       }
     } else if (state.datePreset === 'today') {
       const todayStr = todayParis.toFormat('yyyy-LL-dd');
+      const tomorrowStr = todayParis.plus({ days: 1 }).toFormat('yyyy-LL-dd');
       dateRange = {
         start: todayStr,
-        end: todayStr
+        end: tomorrowStr // Exclusive end date (matches server logic)
       };
     } else if (state.datePreset === 'yesterday') {
       const yesterdayStr = todayParis.minus({ days: 1 }).toFormat('yyyy-LL-dd');
+      const todayStr = todayParis.toFormat('yyyy-LL-dd');
       dateRange = {
         start: yesterdayStr,
-        end: yesterdayStr
+        end: todayStr // Exclusive end date (matches server logic)
       };
     } else {
       // Handle existing day-based presets
