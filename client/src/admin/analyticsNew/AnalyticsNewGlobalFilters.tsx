@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, ChevronDown, Filter, X, Clock, CalendarIcon } from 'lucide-react';
+import { Calendar, ChevronDown, Filter, X, Clock, CalendarIcon, Info } from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAnalyticsNewFilters, DATE_PRESETS, formatParisDateWindow } from './analyticsNewFilters.store';
 import { DateTime } from 'luxon';
 import './analyticsNew.tokens.css';
@@ -116,7 +117,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
           {/* Date Presets */}
           <div className="flex flex-wrap gap-4 items-center">
             {/* Active Window Display */}
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <Badge 
                 variant="outline" 
                 className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
@@ -131,6 +132,22 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   )}
                 </div>
               </Badge>
+              
+              {/* Badge System Info */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <div className="text-sm space-y-1">
+                      <div className="font-medium">Data Source Legend:</div>
+                      <div>🟠 IP Filtered = Data that respects your IP exclusions (Supabase analytics)</div>
+                      <div>No badge = Raw GA4 data that cannot be filtered by IP</div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             
             {/* Date Preset Buttons */}
