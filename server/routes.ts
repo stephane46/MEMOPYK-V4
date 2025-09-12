@@ -2591,6 +2591,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         active
       });
       
+      // Clear GA4 cache since new exclusion affects analytics
+      ga4ReportCache.flushAll();
+      console.log('🗑️ GA4 cache cleared due to new IP exclusion - analytics will refresh');
+      
       res.json(exclusion);
     } catch (error) {
       console.error('❌ Create IP exclusion error:', error);
@@ -2605,6 +2609,12 @@ export async function registerRoutes(app: Express): Promise<void> {
       const updates = req.body;
       
       const exclusion = await hybridStorage.updateIpExclusion(id, updates);
+      
+      // 🔧 CRITICAL FIX: Clear GA4 cache when IP exclusions change
+      // This ensures analytics numbers update immediately when Hide/Show is toggled
+      ga4ReportCache.flushAll();
+      console.log('🗑️ GA4 cache cleared due to IP exclusion toggle - analytics will refresh');
+      
       res.json(exclusion);
     } catch (error) {
       console.error('❌ Update IP exclusion error:', error);
@@ -2617,6 +2627,11 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const { id } = req.params;
       await hybridStorage.deleteIpExclusion(id);
+      
+      // Clear GA4 cache since deleted exclusion affects analytics
+      ga4ReportCache.flushAll();
+      console.log('🗑️ GA4 cache cleared due to IP exclusion deletion - analytics will refresh');
+      
       res.json({ success: true });
     } catch (error) {
       console.error('❌ Delete IP exclusion error:', error);
