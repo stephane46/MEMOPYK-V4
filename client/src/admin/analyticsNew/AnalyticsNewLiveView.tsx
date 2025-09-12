@@ -366,7 +366,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
               ))}
             </div>
           ) : recentVisitors && recentVisitors.length > 0 ? (
-            <div className="space-y-4 max-h-48 overflow-y-auto">
+            <div className="space-y-4 max-h-80 overflow-y-auto">
               {recentVisitors.slice(0, 5).map((visitor, index) => {
                 const formatLanguage = (lang: string) => {
                   const languageMap: { [key: string]: { flag: string; display: string } } = {
