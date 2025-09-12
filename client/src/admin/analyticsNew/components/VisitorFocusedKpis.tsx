@@ -317,8 +317,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               {/* Data Source Explanation Header */}
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="space-y-2 text-sm">
-                  <div className="font-semibold text-blue-900">
+                  <div className="font-semibold text-blue-900 flex items-center gap-2">
                     📊 Showing {totalViewsData?.length || 0} detailed records from MEMOPYK logs
+                    <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                      🟠 IP Filtered
+                    </Badge>
                   </div>
                   <div className="font-medium text-orange-700">
                     ⚠️ GA4 reports {totalViews?.value || 0} total (includes cross-device returns)
@@ -440,8 +443,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               {/* Data Source Explanation Header */}
               <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="space-y-2 text-sm">
-                  <div className="font-semibold text-green-900">
+                  <div className="font-semibold text-green-900 flex items-center gap-2">
                     📊 Showing {uniqueVisitorsData?.length || 0} detailed records from MEMOPYK logs
+                    <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                      🟠 IP Filtered
+                    </Badge>
                   </div>
                   <div className="font-medium text-orange-700">
                     ⚠️ GA4 reports {uniqueVisitors?.value || 0} total (includes cross-device returns)
@@ -563,8 +569,11 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               {/* Data Source Explanation Header */}
               <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
                 <div className="space-y-2 text-sm">
-                  <div className="font-semibold text-purple-900">
+                  <div className="font-semibold text-purple-900 flex items-center gap-2">
                     📊 Showing {returningVisitors?.length || 0} detailed records from MEMOPYK logs
+                    <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                      🟠 IP Filtered
+                    </Badge>
                   </div>
                   <div className="font-medium text-orange-700">
                     ⚠️ GA4 reports {returnVisitors?.value || 0} total (includes cross-device returns)
