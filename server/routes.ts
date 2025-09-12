@@ -7279,20 +7279,28 @@ export async function registerRoutes(app: Express): Promise<void> {
                !session.session_id?.includes('anonymous');
       });
       
-      // Get unique active users (by IP)
+      // Get unique active users (by IP) with real-time location enrichment
       const activeUserMap = new Map();
-      realSessions.forEach(session => {
+      for (const session of realSessions) {
         const ip = session.ip_address;
         if (!activeUserMap.has(ip)) {
+          // Get enriched location data for accurate country display
+          let geoData = null;
+          try {
+            geoData = await geoResolver.get(ip);
+          } catch (error) {
+            // Fallback to session data if geo lookup fails
+          }
+          
           activeUserMap.set(ip, {
             ip_address: ip,
-            country: session.country || 'Unknown',
+            country: geoData?.country || session.country || 'Unknown',
             user_agent: session.user_agent || '',
-            language: session.language || 'Unknown',
+            language: session.language || 'Unknown', 
             created_at: session.created_at
           });
         }
-      });
+      }
       
       const activeUsers = Array.from(activeUserMap.values());
       
