@@ -80,12 +80,14 @@ export function buildAnalyticsParams(
     locale: language === 'all' ? 'all' : language,
   };
   
-  // Add date parameters (preset vs explicit dates)
+  // ✅ CRITICAL FIX: ALWAYS include explicit dates for endpoints that require them (like /api/ga4/geo)
+  // Also include preset for endpoints that support it (backward compatibility)
+  params.startDate = start;
+  params.endDate = end;
+  
+  // Keep preset parameter for endpoints that support it (like /api/ga4/report)
   if (datePreset !== 'custom') {
     params.preset = datePreset;
-  } else {
-    params.startDate = start;
-    params.endDate = end;
   }
   
   // CRITICAL: Apply exclusion filters
