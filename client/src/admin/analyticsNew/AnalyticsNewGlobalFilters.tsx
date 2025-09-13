@@ -325,80 +325,57 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
           )}
 
 
-          {/* Additional Filters - Professional Styling */}
-          <div className="bg-gradient-to-r from-orange-50 to-blue-50 border border-orange-200 rounded-lg px-4 py-3 shadow-sm">
-            <div className="flex flex-wrap gap-4 items-center">
-              <div className="flex items-center gap-2">
-                <div className="bg-orange-100 rounded-full p-1.5">
-                  <Filter className="h-4 w-4 text-orange-600" />
-                </div>
-                <span className="text-sm font-semibold text-gray-800">
-                  Segment Data
-                </span>
-              </div>
-              
-              {/* Language Filter */}
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-2">
-                <div className="flex items-center gap-2">
-                  <Languages className="h-4 w-4 text-orange-500" />
-                  <div className="flex flex-col">
-                    <label className="text-xs font-medium text-gray-600 mb-1">Language</label>
-                    <Select value={language} onValueChange={setLanguage}>
-                      <SelectTrigger className="w-36 h-8 border-0 bg-transparent text-sm font-medium" data-testid="filter-language">
-                        <SelectValue placeholder="Select language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All languages</SelectItem>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="fr">French</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
+          {/* Compact Filters - Single Line */}
+          <div className="flex items-center gap-2 overflow-x-auto shrink-0">
+            <span className="text-xs font-medium text-gray-600 shrink-0">Filters:</span>
+            
+            {/* Language Filter - Compact */}
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="h-7 px-2 text-xs w-[70px] border-gray-200 shrink-0" data-testid="filter-language">
+                <Languages className="h-3.5 w-3.5 mr-1 text-gray-500" />
+                <SelectValue placeholder="Lang" />
+              </SelectTrigger>
+              <SelectContent className="max-h-48">
+                <SelectItem value="all">ALL</SelectItem>
+                <SelectItem value="en">EN</SelectItem>
+                <SelectItem value="fr">FR</SelectItem>
+              </SelectContent>
+            </Select>
 
-              {/* Country Filter */}
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-2">
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-blue-500" />
-                  <div className="flex flex-col">
-                    <label className="text-xs font-medium text-gray-600 mb-1">Market</label>
-                    <Select value={country} onValueChange={setCountry}>
-                      <SelectTrigger className="w-36 h-8 border-0 bg-transparent text-sm font-medium" data-testid="filter-country">
-                        <SelectValue placeholder="Select market" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All countries</SelectItem>
-                        <SelectItem value="France">France</SelectItem>
-                        <SelectItem value="United States">United States</SelectItem>
-                        <SelectItem value="Canada">Canada</SelectItem>
-                        <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                        <SelectItem value="Germany">Germany</SelectItem>
-                        <SelectItem value="Australia">Australia</SelectItem>
-                        <SelectItem value="Spain">Spain</SelectItem>
-                        <SelectItem value="Italy">Italy</SelectItem>
-                        <SelectItem value="Brazil">Brazil</SelectItem>
-                        <SelectItem value="Japan">Japan</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
+            {/* Country Filter - Compact */}
+            <Select value={country} onValueChange={setCountry}>
+              <SelectTrigger className="h-7 px-2 text-xs w-[80px] border-gray-200 shrink-0" data-testid="filter-country">
+                <Globe className="h-3.5 w-3.5 mr-1 text-gray-500" />
+                <SelectValue placeholder="Market" />
+              </SelectTrigger>
+              <SelectContent className="max-h-48 text-xs">
+                <SelectItem value="all">ALL</SelectItem>
+                <SelectItem value="France">FR</SelectItem>
+                <SelectItem value="United States">US</SelectItem>
+                <SelectItem value="Canada">CA</SelectItem>
+                <SelectItem value="United Kingdom">UK</SelectItem>
+                <SelectItem value="Germany">DE</SelectItem>
+                <SelectItem value="Australia">AU</SelectItem>
+                <SelectItem value="Spain">ES</SelectItem>
+                <SelectItem value="Italy">IT</SelectItem>
+                <SelectItem value="Brazil">BR</SelectItem>
+                <SelectItem value="Japan">JP</SelectItem>
+              </SelectContent>
+            </Select>
 
-              {/* Reset Button - Only show if filters are active */}
-              {activeFilterCount > 0 && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={reset}
-                  className="ml-auto bg-white border-orange-300 text-orange-600 hover:bg-orange-50 hover:border-orange-400 h-9 px-3 font-medium shadow-sm"
-                  data-testid="filter-reset"
-                >
-                  <X className="h-4 w-4 mr-1.5" />
-                  Reset Filters
-                </Button>
-              )}
-            </div>
+            {/* Reset Button - Icon Only */}
+            {activeFilterCount > 0 && (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={reset}
+                className="h-7 w-7 p-0 text-gray-500 hover:text-gray-700 shrink-0"
+                data-testid="filter-reset"
+                aria-label="Reset filters"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
 
