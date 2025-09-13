@@ -446,30 +446,27 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Analytics Videos - Gallery videos only for analytics filtering dropdown
-  app.get("/api/analytics/videos", async (req, res) => {
+  // DIAGNOSTIC ENDPOINT: Investigate locale values in GA4 data
+  app.get("/api/ga4/locales-debug", async (req, res) => {
     try {
-      const allItems = await hybridStorage.getGalleryItems();
-      // Filter only gallery items that have video files and are active
-      const videoItems = allItems
-        .filter(item => 
-          (item.isActive || item.is_active) && 
-          (item.videoFilename || item.video_filename || item.videoUrlEn || item.video_url_en || item.videoUrlFr || item.video_url_fr)
-        )
-        .map(item => ({
-          id: item.videoFilename || item.video_filename || item.id, // Use videoFilename as ID, fallback to item.id
-          title: item.titleEn || item.title_en || item.titleFr || item.title_fr || 'Untitled Video',
-          titleEn: item.titleEn || item.title_en,
-          titleFr: item.titleFr || item.title_fr,
-          videoFilename: item.videoFilename || item.video_filename
-        }))
-        .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      const { startDate = '2025-09-07', endDate = '2025-09-13' } = req.query;
+      console.log(`🔍 LOCALE DEBUG REQUEST: ${startDate} to ${endDate}`);
       
-      console.log(`📹 Analytics videos fetched: ${videoItems.length} videos`);
-      res.json(videoItems);
+      const { qAllLocales } = await import('./ga4-service.js');
+      const locales = await qAllLocales(String(startDate), String(endDate));
+      
+      console.log(`🌍 LOCALE DEBUG RESULT: Found ${locales.length} unique locale values`);
+      res.json({ 
+        dateRange: { startDate, endDate },
+        locales,
+        summary: {
+          totalLocales: locales.length,
+          totalSessions: locales.reduce((sum, l) => sum + l.sessions, 0)
+        }
+      });
     } catch (error) {
-      console.error('Analytics videos fetch error:', error);
-      res.status(500).json({ error: "Failed to get analytics videos" });
+      console.error('❌ Locale debug error:', error);
+      res.status(500).json({ error: "Failed to debug locales" });
     }
   });
 

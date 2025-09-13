@@ -30,8 +30,20 @@ const mapLanguageToGA4Locale = (locale: string): string => {
 const localeFilter = (
   locale?: string
 ): protos.google.analytics.data.v1beta.IFilterExpression | undefined => {
-  if (!locale || locale === "all") {
+  if (!locale) {
     return undefined;
+  }
+  
+  // ✅ CRITICAL FIX: "all" should mean "all site languages" (en-US + fr-FR), not unfiltered
+  if (locale === "all") {
+    return {
+      orGroup: {
+        expressions: [
+          { filter: { fieldName: "customEvent:locale", stringFilter: { value: "en-US" } } },
+          { filter: { fieldName: "customEvent:locale", stringFilter: { value: "fr-FR" } } }
+        ]
+      }
+    };
   }
   
   // Map the frontend locale to the actual GA4 tracking value
@@ -40,6 +52,32 @@ const localeFilter = (
 };
 
 /* =============  KPI QUERIES  ============= */
+
+// NEW DIAGNOSTIC FUNCTION: Get all unique locale values in GA4 data
+export async function qAllLocales(start: string, end: string) {
+  console.log(`🔍 LOCALE INVESTIGATION: Finding all unique locale values in GA4 data (${start} to ${end})`);
+  
+  try {
+    const [res] = await client.runReport({
+      property: PROPERTY,
+      dateRanges: [range(start, end)],
+      dimensions: [{ name: "customEvent:locale" }],
+      metrics: [{ name: "sessions" }],
+      orderBys: [{ metric: { metricName: "sessions" }, desc: true }]
+    });
+    
+    const locales = res.rows?.map(row => ({
+      locale: row.dimensionValues?.[0]?.value || '(not set)',
+      sessions: Number(row.metricValues?.[0]?.value || 0)
+    })) || [];
+    
+    console.log(`🌍 ALL LOCALE VALUES FOUND:`, locales);
+    return locales;
+  } catch (error) {
+    console.error(`❌ qAllLocales failed:`, error);
+    return [];
+  }
+}
 
 export async function qSessions(start: string, end: string, locale?: string) {
   // UNFILTERED SESSIONS - No eventName filter (baseline sessions)

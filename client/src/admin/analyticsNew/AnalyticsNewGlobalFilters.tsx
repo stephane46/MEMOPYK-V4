@@ -65,7 +65,6 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
     setSinceDateEnabled,
     setLanguage,
     setCountry,
-    setVideoId,
     getActiveFilters,
     getDateRange,
     reset,
