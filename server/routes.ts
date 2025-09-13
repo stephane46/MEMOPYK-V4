@@ -5491,6 +5491,14 @@ export async function registerRoutes(app: Express): Promise<void> {
     const endDate = String(req.query.endDate || req.query.end || '');
     const locale = req.query.locale ? String(req.query.locale) : "all";
     const country = req.query.country ? String(req.query.country) : "all";
+    
+    // 🔍 CRITICAL DEBUG: Track server-side locale parameter reception
+    console.log('🟡 SERVER GETPARAMS DEBUG:', {
+      'req.query.locale': req.query.locale,
+      'processed_locale': locale,
+      'full_query': req.query,
+      'url': req.url
+    });
     const nocache = req.query.nocache === "1" || req.query.nocache === "true";
     const sinceDate = req.query.since ? String(req.query.since) : req.query.sinceDate ? String(req.query.sinceDate) : undefined;
     

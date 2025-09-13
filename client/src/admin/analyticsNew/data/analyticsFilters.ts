@@ -82,6 +82,12 @@ export function buildAnalyticsParams(
 
   // 🔍 CRITICAL DEBUG: Verify locale parameter handling
   console.log('🔍 LOCALE PARAM:', language, '→', params.locale);
+  console.log('🟢 FRONTEND DEBUG:', {
+    'input_language': language,
+    'output_locale': params.locale,
+    'filterState': filterState,
+    'reportType': reportType
+  });
   
   // ✅ CRITICAL FIX: ALWAYS include explicit dates for endpoints that require them (like /api/ga4/geo)
   // Also include preset for endpoints that support it (backward compatibility)
