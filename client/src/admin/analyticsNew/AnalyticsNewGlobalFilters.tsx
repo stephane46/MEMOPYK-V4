@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, ChevronDown, Filter, X, Clock, CalendarIcon, Info } from 'lucide-react';
+import { Calendar, ChevronDown, Filter, X, Clock, CalendarIcon, Info, Video, Globe, Languages } from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAnalyticsNewFilters, DATE_PRESETS, formatParisDateWindow } from './analyticsNewFilters.store';
+import { useQuery } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 import './analyticsNew.tokens.css';
 
@@ -73,6 +74,12 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
   const activeFilters = getActiveFilters();
   const activeFilterCount = Object.keys(activeFilters).length;
+
+  // Fetch real gallery videos for the dropdown
+  const { data: analyticsVideos = [], isLoading: videosLoading } = useQuery({
+    queryKey: ['/api/analytics/videos'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
   
   // Display logic: Show what the user actually selected (ignoring exclusions)
   const getDisplayDateRange = () => {
@@ -111,7 +118,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
   const windowDisplay = formatParisDateWindow(displayRange.start, displayRange.end);
 
   return (
-    <div className={`analytics-new-container ${className}`}>
+    <div className={`analytics-new-container ${className} sticky top-0 z-10 bg-white border-b border-gray-200 pb-2 mb-1`}>
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           {/* Date Presets */}
@@ -325,104 +332,79 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
           )}
 
 
-          {/* Additional Filters */}
-          <div className="flex gap-2 items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="seo-language-btn-inactive"
-                  data-testid="filter-more-trigger"
-                >
-                  <Filter className="h-4 w-4 mr-1" />
-                  More Filters
-                  {activeFilterCount > 0 && (
-                    <Badge variant="secondary" className="ml-2">
-                      {activeFilterCount}
-                    </Badge>
-                  )}
-                  <ChevronDown className="h-4 w-4 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-80" align="end">
-                <div className="space-y-4">
-                  <div className="font-medium text-sm">Additional Filters</div>
-                  
-                  {/* Language Filter */}
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
-                      Language
-                    </label>
-                    <Select value={language} onValueChange={setLanguage}>
-                      <SelectTrigger data-testid="filter-language">
-                        <SelectValue placeholder="All languages" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All languages</SelectItem>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="fr">French</SelectItem>
-                        <SelectItem value="es">Spanish</SelectItem>
-                        <SelectItem value="de">German</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+          {/* Additional Filters - Inline with Date Filters */}
+          <div className="flex flex-wrap gap-3 items-center ml-6 pl-6 border-l border-gray-200">
+            <span className="text-sm font-medium text-gray-700 flex items-center mr-2">
+              <Filter className="h-4 w-4 mr-1" />
+              Filters:
+            </span>
+            
+            {/* Language Filter */}
+            <div className="flex items-center gap-2">
+              <Languages className="h-4 w-4 text-gray-500" />
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="w-32" data-testid="filter-language">
+                  <SelectValue placeholder="Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All languages</SelectItem>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="fr">French</SelectItem>
+                  <SelectItem value="es">Spanish</SelectItem>
+                  <SelectItem value="de">German</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-                  {/* Country Filter */}
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
-                      Country
-                    </label>
-                    <Select value={country} onValueChange={setCountry}>
-                      <SelectTrigger data-testid="filter-country">
-                        <SelectValue placeholder="All countries" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All countries</SelectItem>
-                        <SelectItem value="US">United States</SelectItem>
-                        <SelectItem value="FR">France</SelectItem>
-                        <SelectItem value="GB">United Kingdom</SelectItem>
-                        <SelectItem value="DE">Germany</SelectItem>
-                        <SelectItem value="CA">Canada</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+            {/* Country Filter */}
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-gray-500" />
+              <Select value={country} onValueChange={setCountry}>
+                <SelectTrigger className="w-32" data-testid="filter-country">
+                  <SelectValue placeholder="Country" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All countries</SelectItem>
+                  <SelectItem value="US">United States</SelectItem>
+                  <SelectItem value="FR">France</SelectItem>
+                  <SelectItem value="GB">United Kingdom</SelectItem>
+                  <SelectItem value="DE">Germany</SelectItem>
+                  <SelectItem value="CA">Canada</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-                  {/* Video Filter */}
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
-                      Video
-                    </label>
-                    <Select value={videoId} onValueChange={setVideoId}>
-                      <SelectTrigger data-testid="filter-video">
-                        <SelectValue placeholder="All videos" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All videos</SelectItem>
-                        <SelectItem value="hero1">Hero Video 1</SelectItem>
-                        <SelectItem value="hero2">Hero Video 2</SelectItem>
-                        <SelectItem value="hero3">Hero Video 3</SelectItem>
-                        <SelectItem value="gallery1">Gallery Video 1</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+            {/* Video Filter with Real Data */}
+            <div className="flex items-center gap-2">
+              <Video className="h-4 w-4 text-gray-500" />
+              <Select value={videoId} onValueChange={setVideoId}>
+                <SelectTrigger className="w-40" data-testid="filter-video">
+                  <SelectValue placeholder={videosLoading ? "Loading..." : "Video"} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All videos</SelectItem>
+                  {analyticsVideos.map((video: any) => (
+                    <SelectItem key={video.id} value={video.id}>
+                      {video.title && video.title.length > 25 ? `${video.title.substring(0, 25)}...` : (video.title || 'Untitled')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-                  {/* Reset Button */}
-                  {activeFilterCount > 0 && (
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={reset}
-                      className="w-full analytics-new-button-secondary"
-                      data-testid="filter-reset"
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      Reset All Filters
-                    </Button>
-                  )}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Reset Button - Only show if filters are active */}
+            {activeFilterCount > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={reset}
+                className="ml-2 h-8 px-2"
+                data-testid="filter-reset"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Reset
+              </Button>
+            )}
           </div>
         </div>
 

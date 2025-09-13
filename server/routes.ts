@@ -446,6 +446,33 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Analytics Videos - Gallery videos only for analytics filtering dropdown
+  app.get("/api/analytics/videos", async (req, res) => {
+    try {
+      const allItems = await hybridStorage.getGalleryItems();
+      // Filter only gallery items that have video files and are active
+      const videoItems = allItems
+        .filter(item => 
+          item.isActive && 
+          (item.videoFilename || item.videoUrlEn || item.videoUrlFr)
+        )
+        .map(item => ({
+          id: item.videoFilename || item.id, // Use videoFilename as ID, fallback to item.id
+          title: item.titleEn || item.titleFr || 'Untitled Video',
+          titleEn: item.titleEn,
+          titleFr: item.titleFr,
+          videoFilename: item.videoFilename
+        }))
+        .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      
+      console.log(`📹 Analytics videos fetched: ${videoItems.length} videos`);
+      res.json(videoItems);
+    } catch (error) {
+      console.error('Analytics videos fetch error:', error);
+      res.status(500).json({ error: "Failed to get analytics videos" });
+    }
+  });
+
   app.patch("/api/gallery/:id", async (req, res) => {
     try {
       const itemId = req.params.id;
