@@ -33,9 +33,10 @@ interface GeoKpiCardProps {
   subtitle: string;
   icon: React.ComponentType<any>;
   color: string;
+  explanation?: string;
 }
 
-const GeoKpiCard: React.FC<GeoKpiCardProps> = ({ title, value, subtitle, icon: Icon, color }) => {
+const GeoKpiCard: React.FC<GeoKpiCardProps> = ({ title, value, subtitle, icon: Icon, color, explanation }) => {
   return (
     <Card className="bg-white border border-gray-200 hover:shadow-md transition-shadow">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -45,6 +46,9 @@ const GeoKpiCard: React.FC<GeoKpiCardProps> = ({ title, value, subtitle, icon: I
       <CardContent>
         <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
         <p className="text-xs text-gray-500">{subtitle}</p>
+        {explanation && (
+          <p className="text-xs text-gray-400 mt-2 leading-relaxed">{explanation}</p>
+        )}
       </CardContent>
     </Card>
   );
@@ -264,6 +268,7 @@ export const AnalyticsNewGeo: React.FC = () => {
           subtitle={`${Math.round((bestEngagement?.sessions / bestEngagement?.visitors) * 100) || 0}% rate`}
           icon={Activity}
           color="text-orange-600"
+          explanation="Country with the highest sessions-per-visitor ratio, showing where users return most frequently."
         />
         <GeoKpiCard
           title="Global Reach"
@@ -271,25 +276,8 @@ export const AnalyticsNewGeo: React.FC = () => {
           subtitle="unique visitors"
           icon={Users}
           color="text-purple-600"
+          explanation="Total count of unique visitors across all countries who have discovered MEMOPYK."
         />
-      </div>
-
-      {/* Metric Explanations */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 text-sm text-gray-600">
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-          <div className="flex items-center space-x-2 mb-1">
-            <Activity className="h-4 w-4 text-orange-600" />
-            <span className="font-medium text-orange-800">Best Engagement</span>
-          </div>
-          <p>Shows the country with the highest sessions-per-visitor ratio, indicating where users return most frequently to watch videos.</p>
-        </div>
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
-          <div className="flex items-center space-x-2 mb-1">
-            <Users className="h-4 w-4 text-purple-600" />
-            <span className="font-medium text-purple-800">Global Reach</span>
-          </div>
-          <p>Total count of unique visitors across all countries who have discovered and interacted with MEMOPYK content.</p>
-        </div>
       </div>
 
       {/* Geographic Distribution */}
