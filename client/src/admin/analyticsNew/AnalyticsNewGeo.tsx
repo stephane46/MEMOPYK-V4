@@ -104,7 +104,7 @@ export const AnalyticsNewGeo: React.FC = () => {
     y: number;
   }>({ show: false, content: '', x: 0, y: 0 });
   
-  // Function to recenter map to original position
+  // Function to recenter map to original position  
   const recenterMap = () => {
     setPosition({ coordinates: [0, 10], zoom: 1 });
   };
