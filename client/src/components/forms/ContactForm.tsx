@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { apiRequest } from '@/lib/queryClient';
+import { trackCtaClick } from '@/lib/analytics';
 import { Mail, Phone, User, MessageSquare } from 'lucide-react';
 
 const contactFormSchema = z.object({
@@ -46,8 +47,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onSuccess, className =
 
   const createContactMutation = useMutation({
     mutationFn: (data: ContactFormData) => apiRequest('/api/contacts', 'POST', data),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['/api/contacts'] });
+      
+      // Track CTA click for quote request - this will show in analytics dashboard
+      trackCtaClick(`quote_request_${variables.package}`, window.location.pathname, language);
+      
       toast({
         title: language === 'fr-FR' ? 'Message envoyé' : 'Message sent',
         description: language === 'fr-FR' 
