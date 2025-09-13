@@ -7440,22 +7440,37 @@ export async function registerRoutes(app: Express): Promise<void> {
                !session.session_id?.includes('anonymous');
       });
       
-      // Get unique active users (by IP) with real-time location enrichment
+      // Get unique active users (by IP) with cached location enrichment (same as Recent Visitors)
       const activeUserMap = new Map();
       for (const session of realSessions) {
         const ip = session.ip_address;
         if (!activeUserMap.has(ip)) {
-          // Get enriched location data for accurate country display
-          let geoData = null;
+          // Use cached JSON location data first (same strategy as Recent Visitors)
+          let enrichedCountry = session.country || 'Unknown';
+          let enrichedCity = session.city || 'Unknown';
+          
+          // Try to get location from JSON cache (same approach as Recent Visitors)
           try {
-            geoData = await geoResolver.get(ip);
+            const fs = require('fs');
+            const path = require('path');
+            const jsonPath = path.join(process.cwd(), 'server/data/analytics-sessions.json');
+            if (fs.existsSync(jsonPath)) {
+              const jsonData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+              const matchingSession = jsonData.find((s: any) => s.ip_address === ip || s.server_detected_ip === ip);
+              if (matchingSession && matchingSession.country && matchingSession.country !== 'Unknown') {
+                console.log(`📄 LIVE TRACKING: Using JSON cache location for IP ${ip}: ${matchingSession.city}, ${matchingSession.country}`);
+                enrichedCountry = matchingSession.country;
+                enrichedCity = matchingSession.city;
+              }
+            }
           } catch (error) {
-            // Fallback to session data if geo lookup fails
+            console.log(`⚠️ LIVE TRACKING: Could not read JSON cache for IP ${ip}:`, error.message);
           }
           
           activeUserMap.set(ip, {
             ip_address: ip,
-            country: geoData?.country || session.country || 'Unknown',
+            country: enrichedCountry,
+            city: enrichedCity,
             user_agent: session.user_agent || '',
             language: session.language || 'Unknown', 
             created_at: session.created_at
