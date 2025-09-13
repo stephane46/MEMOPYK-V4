@@ -157,14 +157,20 @@ export const AnalyticsNewLiveView: React.FC = () => {
   // Update last refresh time
   useEffect(() => {
     if (privateData?.timestamp) {
-      setLastUpdate(new Date(privateData.timestamp).toLocaleTimeString());
+      // Convert to 24h format (HH:mm:ss) for Paris timezone
+      setLastUpdate(DateTime.fromISO(privateData.timestamp, { zone: 'UTC' })
+        .setZone('Europe/Paris')
+        .toFormat('HH:mm:ss'));
     }
   }, [privateData?.timestamp]);
 
   // Update last watching refresh time
   useEffect(() => {
     if (watchingData?.timestamp) {
-      setLastWatchingUpdate(new Date(watchingData.timestamp).toLocaleTimeString());
+      // Convert to 24h format (HH:mm:ss) for Paris timezone
+      setLastWatchingUpdate(DateTime.fromISO(watchingData.timestamp, { zone: 'UTC' })
+        .setZone('Europe/Paris')
+        .toFormat('HH:mm:ss'));
     }
   }, [watchingData?.timestamp]);
 
@@ -231,9 +237,6 @@ export const AnalyticsNewLiveView: React.FC = () => {
               loading={privateLoading}
             />
           )}
-        </div>
-        <div className="text-sm text-[var(--analytics-new-text-muted)]">
-          Live visitor activity
         </div>
         <div className="text-xs text-[var(--analytics-new-text-muted)] mt-1">
           Last updated: {lastUpdate || 'Loading...'}
@@ -489,13 +492,6 @@ export const AnalyticsNewLiveView: React.FC = () => {
             <div className="text-sm text-[var(--analytics-new-text-muted)]">
               Updated: {lastWatchingUpdate || 'Loading...'}
             </div>
-            <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/tracker/currently-watching'] })}
-              className="text-[var(--analytics-new-orange)] hover:text-orange-600 text-sm font-medium"
-              data-testid="refresh-currently-watching"
-            >
-              Refresh
-            </button>
           </div>
         </div>
 

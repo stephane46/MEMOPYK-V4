@@ -31,7 +31,7 @@ export const ANALYTICS_NEW_TABS: AnalyticsNewTab[] = [
     id: 'live',
     label: 'Live View',
     icon: Eye,
-    description: 'Real-time visitor activity',
+    description: 'Live visitor tracking',
   },
   {
     id: 'video',
