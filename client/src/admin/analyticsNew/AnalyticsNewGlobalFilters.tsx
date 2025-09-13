@@ -334,10 +334,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               <Languages className="h-3.5 w-3.5 text-gray-500 ml-1" />
               <button
                 type="button"
-                onClick={() => {
-                  console.log('🔧 Button clicked: ALL, current:', language);
-                  setLanguage('all');
-                }}
+                onClick={() => setLanguage('all')}
                 className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                   language === 'all' 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
@@ -349,10 +346,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  console.log('🔧 Button clicked: EN, current:', language);
-                  setLanguage('en');
-                }}
+                onClick={() => setLanguage('en')}
                 className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                   language === 'en' 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
@@ -364,10 +358,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  console.log('🔧 Button clicked: FR, current:', language);
-                  setLanguage('fr');
-                }}
+                onClick={() => setLanguage('fr')}
                 className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                   language === 'fr' 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
