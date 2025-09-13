@@ -14,7 +14,8 @@ import {
   Activity,
   BarChart3,
   Download,
-  RefreshCw
+  RefreshCw,
+  RotateCcw
 } from 'lucide-react';
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps';
 import { scaleSequential } from 'd3-scale';
@@ -92,6 +93,9 @@ export const AnalyticsNewGeo: React.FC = () => {
   // Use centralized filtering system with the useFilteredGeo hook
   const { data: geoData, isLoading: geoLoading, error: geoError, refetch, appliedFilters } = useFilteredGeo();
   
+  // Map position state for recenter functionality
+  const [mapPosition, setMapPosition] = useState({ zoom: 1, center: [0, 10] as [number, number] });
+  
   // Tooltip state for map
   const [tooltip, setTooltip] = useState<{
     show: boolean;
@@ -99,6 +103,11 @@ export const AnalyticsNewGeo: React.FC = () => {
     x: number;
     y: number;
   }>({ show: false, content: '', x: 0, y: 0 });
+  
+  // Function to recenter map to original position
+  const recenterMap = () => {
+    setMapPosition({ zoom: 1, center: [0, 10] });
+  };
 
   // Process data for visualizations - now using centralized hook data with totals included
   const processedData = React.useMemo(() => {
@@ -271,7 +280,18 @@ export const AnalyticsNewGeo: React.FC = () => {
               <Globe className="h-5 w-5 mr-2 text-blue-600" />
               Visitor Distribution
             </CardTitle>
-            <Badge variant="outline">Interactive Map</Badge>
+            <div className="flex items-center space-x-2">
+              <Badge variant="outline">Interactive Map</Badge>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={recenterMap}
+                className="text-gray-500 hover:text-gray-700"
+                data-testid="recenter-map"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="h-80 relative">
@@ -285,7 +305,7 @@ export const AnalyticsNewGeo: React.FC = () => {
                 height={320}
                 className="w-full h-full"
               >
-                <ZoomableGroup zoom={1}>
+                <ZoomableGroup zoom={mapPosition.zoom} center={mapPosition.center}>
                   <Geographies geography={geoUrl}>
                     {({ geographies }) =>
                       geographies.map(geo => {
@@ -509,7 +529,7 @@ export const AnalyticsNewGeo: React.FC = () => {
           
           <div className="mt-4 p-3 bg-gray-50 rounded-lg">
             <div className="text-sm text-gray-700">
-              <strong>Geographic Strategy:</strong> Your memory film services are reaching {coverageCount} markets globally. 
+              <strong>Geographic Strategy:</strong> MEMOPYK's cinematic storytelling reaches {coverageCount} international markets. 
               {topMarket && ` ${topMarket.country} represents your strongest market with ${topMarket.sessions} sessions.`}
               {bestEngagement && topMarket?.country !== bestEngagement.country && 
                 ` Consider expanding focus on ${bestEngagement.country} which shows ${Math.round((bestEngagement.sessions / bestEngagement.visitors) * 100)}% engagement.`
