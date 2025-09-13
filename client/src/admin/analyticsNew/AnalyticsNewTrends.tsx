@@ -321,11 +321,11 @@ export const AnalyticsNewTrends: React.FC = () => {
           description="vs previous period"
         />
         <TrendCard
-          title="Session Duration"
+          title="Average Session Duration"
           value={formatWatchTime(metrics.averageWatchTime.current)}
           trend={metrics.averageWatchTime.trend}
           icon={<Clock className="h-4 w-4" />}
-          description="vs previous period"
+          description="Weighted across selected period (total engaged seconds ÷ sessions)"
         />
         <TrendCard
           title="Video Engagement"
