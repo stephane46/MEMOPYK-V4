@@ -347,11 +347,13 @@ export function useFilteredTrends(): FilteredAnalyticsResult<TrendsData> {
           averageWatchTime: item.avgSessionDuration || item.avg_watch_time || item.averageWatchTime || 0,
           completionRate: item.bounceRate || item.completion_rate || 0,
           videoViews: item.sessions || item.videoViews || 0,
+          totalEngagementSeconds: item.totalEngagementSeconds || 0, // NEW: For weighted averages
           // Previous period data for comparison
           previousTotalViews: item.previousSessions || 0,
           previousUniqueVisitors: item.previousUsers || 0,
           previousAverageWatchTime: item.previousAvgDuration || 0,
-          previousCompletionRate: item.previousBounceRate || 0
+          previousCompletionRate: item.previousBounceRate || 0,
+          previousTotalEngagementSeconds: item.previousTotalEngagementSeconds || 0 // NEW: For weighted averages
         };
       });
       
