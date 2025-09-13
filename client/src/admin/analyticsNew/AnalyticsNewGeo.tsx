@@ -278,7 +278,7 @@ export const AnalyticsNewGeo: React.FC = () => {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
               <Globe className="h-5 w-5 mr-2 text-blue-600" />
-              Visitor Distribution
+              🗺️ TEST - Visitor Distribution - TEST 🗺️
             </CardTitle>
             <div className="flex items-center space-x-2">
               <Badge variant="outline">Interactive Map</Badge>
