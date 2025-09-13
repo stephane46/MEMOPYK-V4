@@ -5618,7 +5618,7 @@ export async function registerRoutes(app: Express): Promise<void> {
   // GA4 KPIs endpoint - using consistent date handling like Geo API
   app.get("/api/ga4/kpis", async (req, res, next) => {
     try {
-      let startDate, endDate, locale, nocache, sinceDate;
+      let startDate, endDate, locale, nocache, sinceDate, country;
       
       // Handle both preset and direct date parameters
       if (req.query.preset) {
@@ -5629,14 +5629,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         endDate = window.effEndStr;
         console.log(`📅 PRESET: ${preset} calculated as ${startDate} to ${endDate}${sinceDate ? ` (filtered since ${sinceDate})` : ''}`);
         locale = req.query.locale ? String(req.query.locale) : "all";
-        const country = req.query.country ? String(req.query.country) : "all";
+        country = req.query.country ? String(req.query.country) : "all";
         nocache = req.query.nocache === "1" || req.query.nocache === "true";
         // ✅ CRITICAL FIX: Accept both 'since' and 'sinceDate' for robust parameter handling
         sinceDate = req.query.since ? String(req.query.since) : req.query.sinceDate ? String(req.query.sinceDate) : undefined;
       } else {
         // Direct date parameters - use getParams for consistency with Geo API
         ({ startDate, endDate, locale, nocache, sinceDate } = getParams(req));
-        const country = req.query.country ? String(req.query.country) : "all";
+        country = req.query.country ? String(req.query.country) : "all";
         console.log(`📅 DIRECT DATES: Using direct dates: ${startDate} to ${endDate}`);
       }
 
