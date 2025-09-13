@@ -1936,7 +1936,7 @@
     "session_id": "ip_session_127_0_0_1",
     "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-09-13T07:38:52.008Z",
+    "updated_at": "2025-09-13T08:27:43.492Z",
     "is_test_data": false
   },
   {
@@ -72974,5 +72974,29 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-13T08:22:08.522Z"
+  },
+  {
+    "id": "ce778ed9-ae8c-40cb-aaf9-1e69bddb0703",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T08:27:12.774Z"
+  },
+  {
+    "id": "4a73ad2a-e0de-4622-b411-f1640a49f9c4",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T08:27:41.826Z"
+  },
+  {
+    "id": "ad0edcdb-5aa0-4387-a32e-669aeeed2e9a",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2uh%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T08:27:48.320Z"
   }
 ]

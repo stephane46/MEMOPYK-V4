@@ -268,7 +268,7 @@ export const AnalyticsNewGeo: React.FC = () => {
           subtitle=""
           icon={Activity}
           color="text-orange-600"
-          explanation="Visitors here return more often than anywhere else."
+          explanation="Rates above 100% show repeat visits."
         />
         <GeoKpiCard
           title="Global Reach"
