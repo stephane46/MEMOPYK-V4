@@ -2,12 +2,48 @@
 let gaReadyPromise: Promise<void> | null = null;
 let MEASUREMENT_ID = "";
 
-// ✅ LOCALE DETECTION: Extract language from URL for GA4 custom dimension
+// ✅ ENHANCED LOCALE & GEO DETECTION: Extract comprehensive tracking data
 function getLocaleFromURL(): string {
   const path = window.location.pathname;
   if (path.includes('/fr-FR')) return 'fr-FR';
   if (path.includes('/en-US')) return 'en-US';
   return 'unknown';
+}
+
+// ✅ NEW: Enhanced tracking data for geographic market analysis
+function getTrackingData() {
+  const path = window.location.pathname;
+  const userLocale = (navigator.language || (navigator as any).userLanguage || 'en-US') as string;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
+  const pageLanguage = getLocaleFromURL(); // Keep existing logic intact
+  
+  return {
+    pageLanguage,
+    userLanguage: userLocale,
+    languageMatch: (path.includes('/fr-FR') && userLocale.startsWith('fr')) || 
+                   (path.includes('/en-US') && userLocale.startsWith('en')),
+    timezoneRegion: timezone.split('/')[0], // e.g., "Europe", "America"
+    marketSegment: getMarketSegment(userLocale),
+    isExpansionOpportunity: !((path.includes('/fr-FR') && userLocale.startsWith('fr')) || 
+                              (path.includes('/en-US') && userLocale.startsWith('en')))
+  };
+}
+
+function getMarketSegment(userLanguage: string): string {
+  if (userLanguage.startsWith('fr')) return 'french_speaking_market';
+  if (userLanguage.startsWith('en')) return 'english_speaking_market';
+  return 'other_language_market';
+}
+
+function getMismatchType(pageLanguage: string, userLanguage: string): string {
+  if (pageLanguage === 'fr-FR' && userLanguage.startsWith('en')) {
+    return 'english_user_viewing_french';
+  }
+  if (pageLanguage === 'en-US' && userLanguage.startsWith('fr')) {
+    return 'french_user_viewing_english';
+  }
+  return 'other_mismatch';
 }
 
 function hasGtagScript(id: string) {
@@ -117,9 +153,18 @@ type EventParams = Record<string, any>;
 
 function sendEvent(name: string, params: EventParams) {
   if (!(window as any).gtag) return;
+  
+  // ✅ SURGICAL ENHANCEMENT: Add geographic context while preserving existing locale logic
+  const trackingData = getTrackingData();
+  
   (window as any).gtag("event", name, {
     ...params,
-    locale: getLocaleFromURL(), // ✅ ALWAYS include locale in events
+    locale: getLocaleFromURL(), // ✅ PRESERVE existing locale logic for KPIs
+    // ✅ NEW: Enhanced geographic & language context (additive only)
+    user_language: trackingData.userLanguage,
+    language_match: trackingData.languageMatch ? 'match' : 'mismatch',
+    market_segment: trackingData.marketSegment,
+    expansion_opportunity: trackingData.isExpansionOpportunity ? 'yes' : 'no',
     transport_type: "beacon",
     send_to: MEASUREMENT_ID, // IMPORTANT when multiple configs/GTM exist
   });
@@ -127,18 +172,30 @@ function sendEvent(name: string, params: EventParams) {
 
 // Public API
 
-// ✅ SEND PAGE VIEW with locale - called on route changes  
+// ✅ SEND PAGE VIEW with enhanced geographic context - called on route changes  
 export async function sendPageView(additionalParams?: EventParams) {
   await gaReady();
-  const locale = getLocaleFromURL();
+  const locale = getLocaleFromURL(); // ✅ PRESERVE existing locale logic for KPIs
+  const trackingData = getTrackingData();
+  
   (window as any).gtag("event", "page_view", {
     page_path: window.location.pathname + window.location.search,
     page_title: document.title,
-    locale: locale, // ✅ Include locale in page views
+    locale: locale, // ✅ PRESERVE existing locale parameter for KPIs
+    // ✅ NEW: Enhanced geographic context (additive only)
+    user_language: trackingData.userLanguage,
+    language_match: trackingData.languageMatch ? 'match' : 'mismatch',
+    market_segment: trackingData.marketSegment,
+    expansion_opportunity: trackingData.isExpansionOpportunity ? 'yes' : 'no',
     transport_type: "beacon",
     send_to: MEASUREMENT_ID,
     ...additionalParams,
   });
+  
+  // ✅ NEW: Automatically track language mismatches for expansion analysis
+  if (!trackingData.languageMatch) {
+    setTimeout(() => trackLanguageMismatch(), 1000); // Delayed to avoid event collision
+  }
 }
 
 export async function sendVideoProgress(params: EventParams & {
@@ -164,4 +221,77 @@ export async function sendVideoComplete(params: EventParams & {
 }) {
   await gaReady();
   sendEvent("video_complete", params);
+}
+
+// ✅ NEW: Enhanced tracking functions for geographic market analysis
+
+// Track language mismatches for expansion opportunity analysis
+export async function trackLanguageMismatch() {
+  await gaReady();
+  const trackingData = getTrackingData();
+  
+  if (!trackingData.languageMatch) {
+    (window as any).gtag("event", "language_mismatch", {
+      page_language: trackingData.pageLanguage,
+      user_language: trackingData.userLanguage,
+      user_timezone_region: trackingData.timezoneRegion,
+      mismatch_type: getMismatchType(trackingData.pageLanguage, trackingData.userLanguage),
+      market_segment: trackingData.marketSegment,
+      transport_type: "beacon",
+      send_to: MEASUREMENT_ID,
+    });
+  }
+}
+
+// Enhanced conversion tracking with geographic context
+export async function trackConversion(eventName: string, conversionData: EventParams = {}) {
+  await gaReady();
+  const trackingData = getTrackingData();
+  
+  (window as any).gtag("event", eventName, {
+    locale: trackingData.pageLanguage, // ✅ Keep existing locale logic
+    user_language: trackingData.userLanguage,
+    language_alignment: trackingData.languageMatch ? 'aligned' : 'misaligned',
+    market_segment: trackingData.marketSegment,
+    expansion_opportunity: trackingData.isExpansionOpportunity ? 'yes' : 'no',
+    transport_type: "beacon",
+    send_to: MEASUREMENT_ID,
+    ...conversionData,
+  });
+}
+
+// Track market-specific behaviors for geographic analysis
+export async function trackGeographicBehavior() {
+  await gaReady();
+  const trackingData = getTrackingData();
+  
+  (window as any).gtag("event", "market_analysis", {
+    locale: trackingData.pageLanguage, // ✅ Keep existing locale logic
+    user_language: trackingData.userLanguage,
+    market_segment: trackingData.marketSegment,
+    expansion_opportunity: trackingData.isExpansionOpportunity ? 'yes' : 'no',
+    language_match: trackingData.languageMatch ? 'match' : 'mismatch',
+    timezone_region: trackingData.timezoneRegion,
+    transport_type: "beacon",
+    send_to: MEASUREMENT_ID,
+  });
+}
+
+// ✅ TESTING FUNCTION: Remove after validation
+export async function testGeoLanguageTracking() {
+  console.log('=== GEO + LANGUAGE TRACKING TEST ===');
+  
+  const trackingData = getTrackingData();
+  console.log('Current tracking data:', trackingData);
+  
+  // Test mismatch detection
+  await trackLanguageMismatch();
+  
+  // Test conversion tracking
+  await trackConversion('test_conversion', { test: true });
+  
+  // Test geographic behavior
+  await trackGeographicBehavior();
+  
+  console.log('Test events sent to GA4');
 }
