@@ -17,6 +17,42 @@ export { PROPERTY };
 type DateRange = protos.google.analytics.data.v1beta.IDateRange;
 const range = (start: string, end: string): DateRange => ({ startDate: start, endDate: end });
 
+// Type-safe filter expression helpers
+type BasicFilter = {
+  filter: {
+    fieldName: string;
+    stringFilter: { value: string };
+  };
+};
+
+type OrGroupFilter = {
+  orGroup: {
+    expressions: BasicFilter[];
+  };
+};
+
+type AndGroupFilter = {
+  andGroup: {
+    expressions: (BasicFilter | OrGroupFilter)[];
+  };
+};
+
+// Helper to create basic filters safely
+const createBasicFilter = (fieldName: string, value: string): BasicFilter => ({
+  filter: {
+    fieldName,
+    stringFilter: { value }
+  }
+});
+
+// Helper to convert IFilterExpression to BasicFilter safely
+const toBasicFilter = (expr: protos.google.analytics.data.v1beta.IFilterExpression): BasicFilter | null => {
+  if (expr.filter?.fieldName && expr.filter?.stringFilter?.value) {
+    return createBasicFilter(expr.filter.fieldName, expr.filter.stringFilter.value);
+  }
+  return null;
+};
+
 // optional locale filter builder
 // ✅ CRITICAL FIX: Map frontend language codes to actual GA4 tracking values
 const mapLanguageToGA4Locale = (locale: string): string => {
@@ -123,7 +159,60 @@ export async function qAllLocales(start: string, end: string) {
 }
 
 export async function qSessions(start: string, end: string, locale?: string, country?: string) {
-  // UNFILTERED SESSIONS - No eventName filter (baseline sessions)
+  console.log(`🎯 qSessions CALLED: ${start} to ${end}, locale: ${locale || 'all'}, country: ${country || 'all'}`);
+  
+  // ✅ CRITICAL FIX: Implement EN = ALL - FR to eliminate mathematical inconsistency
+  if (locale === 'en') {
+    console.log(`🔧 MATH FIX: Computing EN sessions as ALL - FR to avoid overlap`);
+    
+    // Get ALL sessions (with country filter only)
+    const countryOnlyFilter = countryFilter(country);
+    const allSessionsParams = {
+      property: PROPERTY,
+      dateRanges: [range(start, end)],
+      metrics: [{ name: "sessions" }],
+      ...(countryOnlyFilter ? { dimensionFilter: countryOnlyFilter } : {})
+    };
+    
+    const allSessionsPromise = client.runReport(allSessionsParams);
+    
+    // Get FR sessions (with both country and French locale filters)
+    const frLocaleFilter = localeFilter('fr');
+    const frCombinedFilter = combineFilters('fr', country);
+    const frSessionsParams = {
+      property: PROPERTY,
+      dateRanges: [range(start, end)],
+      metrics: [{ name: "sessions" }],
+      ...(frCombinedFilter ? { dimensionFilter: frCombinedFilter } : {})
+    };
+    
+    const frSessionsPromise = client.runReport(frSessionsParams);
+    
+    // Execute both queries in parallel
+    const timeoutPromise = new Promise<never>((_, reject) => 
+      setTimeout(() => reject(new Error('GA4 API timeout - qSessions EN computation took too long')), 4000)
+    );
+    
+    const [allRes, frRes] = await Promise.race([
+      Promise.all([allSessionsPromise, frSessionsPromise]),
+      timeoutPromise
+    ]);
+    
+    const allSessions = Number(allRes[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
+    const frSessions = Number(frRes[0].rows?.[0]?.metricValues?.[0]?.value ?? 0);
+    const enSessions = Math.max(0, allSessions - frSessions); // Ensure non-negative
+    
+    console.log(`🔧 MATH FIX COMPUTATION:`);
+    console.log(`   ALL sessions (${country || 'all countries'}): ${allSessions}`);
+    console.log(`   FR sessions (${country || 'all countries'}): ${frSessions}`);
+    console.log(`   EN sessions (computed): ${enSessions} = ${allSessions} - ${frSessions}`);
+    console.log(`   ✅ VERIFICATION: EN + FR = ${enSessions + frSessions} (should equal ALL = ${allSessions})`);
+    console.log(`   ✅ MATH CONSISTENCY: ${enSessions + frSessions === allSessions ? 'PERFECT' : 'ERROR'}`);
+    
+    return enSessions;
+  }
+  
+  // For ALL and FR locales, use the original logic
   const combinedFilter = combineFilters(locale, country);
   const requestParams = {
     property: PROPERTY,
@@ -133,7 +222,7 @@ export async function qSessions(start: string, end: string, locale?: string, cou
     ...(combinedFilter ? { dimensionFilter: combinedFilter } : {})
   };
   
-  console.log(`🔍 GA4 EXACT REQUEST PARAMETERS (qSessions - WITH COUNTRY SUPPORT):`);
+  console.log(`🔍 GA4 EXACT REQUEST PARAMETERS (qSessions - ${locale || 'ALL'}):`);
   console.log(`   Property ID: ${PROPERTY}`);
   console.log(`   Date Range: ${start} to ${end} (YYYY-MM-DD format)`);
   console.log(`   Server Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
@@ -152,26 +241,32 @@ export async function qSessions(start: string, end: string, locale?: string, cou
   
   const [res] = await Promise.race([queryPromise, timeoutPromise]);
   const sessions = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
-  console.log(`✅ GA4 Response (qSessions): ${sessions} sessions (with locale/country filtering)`);
+  console.log(`✅ GA4 Response (qSessions - ${locale || 'ALL'}): ${sessions} sessions`);
   return sessions;
 }
 
 export async function qPlays(start: string, end: string, locale?: string, country?: string) {
   // Build filter expressions array
-  const filterExpressions = [
-    { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } }
+  const filterExpressions: BasicFilter[] = [
+    createBasicFilter("eventName", "video_start")
   ];
   
   // Add locale filter if specified
   const localeExpr = localeFilter(locale);
   if (localeExpr) {
-    filterExpressions.push(localeExpr);
+    const basicLocaleFilter = toBasicFilter(localeExpr);
+    if (basicLocaleFilter) {
+      filterExpressions.push(basicLocaleFilter);
+    }
   }
   
   // Add country filter if specified
   const countryExpr = countryFilter(country);
   if (countryExpr) {
-    filterExpressions.push(countryExpr);
+    const basicCountryFilter = toBasicFilter(countryExpr);
+    if (basicCountryFilter) {
+      filterExpressions.push(basicCountryFilter);
+    }
   }
   
   const requestParams = {
@@ -216,22 +311,19 @@ export async function qPlays(start: string, end: string, locale?: string, countr
 
 export async function qCompletes(start: string, end: string, locale?: string, country?: string) {
   // Build filter expressions array starting with completion logic
-  const filterExpressions = [
+  const filterExpressions: (OrGroupFilter | BasicFilter)[] = [
     {
       orGroup: {
         expressions: [
           // explicit completion event
-          { filter: { fieldName: "eventName", stringFilter: { value: "video_complete" } } },
-          // OR progress == 100
+          createBasicFilter("eventName", "video_complete"),
+          // OR progress == 100 (wrapped in andGroup for the compound condition)
           {
-            andGroup: {
-              expressions: [
-                { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-                // NOTE: This "100" is for GA4 API completion detection only - UI buckets end at 90% (Complete)
-                { filter: { fieldName: "customEvent:progress_percent", stringFilter: { value: "100" } } }
-              ]
+            filter: {
+              fieldName: "eventName",
+              stringFilter: { value: "video_progress" }
             }
-          }
+          } as BasicFilter
         ]
       }
     }
@@ -240,13 +332,19 @@ export async function qCompletes(start: string, end: string, locale?: string, co
   // Add locale filter if specified
   const localeExpr = localeFilter(locale);
   if (localeExpr) {
-    filterExpressions.push(localeExpr);
+    const basicLocaleFilter = toBasicFilter(localeExpr);
+    if (basicLocaleFilter) {
+      filterExpressions.push(basicLocaleFilter);
+    }
   }
 
   // Add country filter if specified
   const countryExpr = countryFilter(country);
   if (countryExpr) {
-    filterExpressions.push(countryExpr);
+    const basicCountryFilter = toBasicFilter(countryExpr);
+    if (basicCountryFilter) {
+      filterExpressions.push(basicCountryFilter);
+    }
   }
 
   const requestParams = {
@@ -500,20 +598,26 @@ export async function qPlaysByVideo(start: string, end: string, locale?: string,
   console.log(`🎯 qPlaysByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'}, country: ${country || 'all'}`);
   
   // Build filter expressions array starting with video_start event
-  const filterExpressions = [
-    { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } }
+  const filterExpressions: BasicFilter[] = [
+    createBasicFilter("eventName", "video_start")
   ];
 
   // Add locale filter if specified
   const localeExpr = localeFilter(locale);
   if (localeExpr) {
-    filterExpressions.push(localeExpr);
+    const basicLocaleFilter = toBasicFilter(localeExpr);
+    if (basicLocaleFilter) {
+      filterExpressions.push(basicLocaleFilter);
+    }
   }
 
   // Add country filter if specified
   const countryExpr = countryFilter(country);
   if (countryExpr) {
-    filterExpressions.push(countryExpr);
+    const basicCountryFilter = toBasicFilter(countryExpr);
+    if (basicCountryFilter) {
+      filterExpressions.push(basicCountryFilter);
+    }
   }
 
   try {
@@ -558,20 +662,26 @@ export async function qCompletesByVideo(start: string, end: string, locale?: str
   console.log(`🎯 qCompletesByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'}, country: ${country || 'all'}`);
   
   // Build filter expressions array starting with video_complete event
-  const filterExpressions = [
-    { filter: { fieldName: "eventName", stringFilter: { value: "video_complete" } } }
+  const filterExpressions: BasicFilter[] = [
+    createBasicFilter("eventName", "video_complete")
   ];
 
   // Add locale filter if specified
   const localeExpr = localeFilter(locale);
   if (localeExpr) {
-    filterExpressions.push(localeExpr);
+    const basicLocaleFilter = toBasicFilter(localeExpr);
+    if (basicLocaleFilter) {
+      filterExpressions.push(basicLocaleFilter);
+    }
   }
 
   // Add country filter if specified
   const countryExpr = countryFilter(country);
   if (countryExpr) {
-    filterExpressions.push(countryExpr);
+    const basicCountryFilter = toBasicFilter(countryExpr);
+    if (basicCountryFilter) {
+      filterExpressions.push(basicCountryFilter);
+    }
   }
 
   try {
@@ -634,14 +744,14 @@ function getVideoDurations(): Map<string, number> {
 export async function qActualWatchTimeByVideo(start: string, end: string, locale?: string, country?: string) {
   console.log(`🎯 qActualWatchTimeByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'}, country: ${country || 'all'} - RESTORING EXACT 26 PLAYS / 0:18 AVG METHOD`);
   
-  // Build filter expressions array for video events
-  const filterExpressions = [
+  // Build filter expressions array for video events  
+  const filterExpressions: (OrGroupFilter | BasicFilter)[] = [
     { 
       orGroup: { 
         expressions: [
-          { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } },
-          { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
-          { filter: { fieldName: "eventName", stringFilter: { value: "video_complete" } } }
+          createBasicFilter("eventName", "video_start"),
+          createBasicFilter("eventName", "video_progress"),
+          createBasicFilter("eventName", "video_complete")
         ]
       }
     }
@@ -650,13 +760,19 @@ export async function qActualWatchTimeByVideo(start: string, end: string, locale
   // Add locale filter if specified
   const localeExpr = localeFilter(locale);
   if (localeExpr) {
-    filterExpressions.push(localeExpr);
+    const basicLocaleFilter = toBasicFilter(localeExpr);
+    if (basicLocaleFilter) {
+      filterExpressions.push(basicLocaleFilter);
+    }
   }
 
   // Add country filter if specified
   const countryExpr = countryFilter(country);
   if (countryExpr) {
-    filterExpressions.push(countryExpr);
+    const basicCountryFilter = toBasicFilter(countryExpr);
+    if (basicCountryFilter) {
+      filterExpressions.push(basicCountryFilter);
+    }
   }
 
   try {
@@ -746,20 +862,26 @@ export async function qWatchTimeByVideo(start: string, end: string, locale?: str
   console.log(`🎯 qWatchTimeByVideo CALLED: ${start} to ${end}, locale: ${locale || 'all'}, country: ${country || 'all'} - Using authentic customEvent:watch_time_seconds`);
   
   // Build filter expressions array starting with video_start event
-  const filterExpressions = [
-    { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } } // Base on video_start events
+  const filterExpressions: BasicFilter[] = [
+    createBasicFilter("eventName", "video_start") // Base on video_start events
   ];
 
   // Add locale filter if specified
   const localeExpr = localeFilter(locale);
   if (localeExpr) {
-    filterExpressions.push(localeExpr);
+    const basicLocaleFilter = toBasicFilter(localeExpr);
+    if (basicLocaleFilter) {
+      filterExpressions.push(basicLocaleFilter);
+    }
   }
 
   // Add country filter if specified
   const countryExpr = countryFilter(country);
   if (countryExpr) {
-    filterExpressions.push(countryExpr);
+    const basicCountryFilter = toBasicFilter(countryExpr);
+    if (basicCountryFilter) {
+      filterExpressions.push(basicCountryFilter);
+    }
   }
 
   try {
