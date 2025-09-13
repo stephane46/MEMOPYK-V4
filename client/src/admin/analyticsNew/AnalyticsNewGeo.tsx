@@ -93,8 +93,9 @@ export const AnalyticsNewGeo: React.FC = () => {
   // Use centralized filtering system with the useFilteredGeo hook
   const { data: geoData, isLoading: geoLoading, error: geoError, refetch, appliedFilters } = useFilteredGeo();
   
-  // Map position state for recenter functionality (using react-simple-maps pattern)
+  // Map position state for recenter functionality
   const [position, setPosition] = useState({ coordinates: [0, 10] as [number, number], zoom: 1 });
+  const [mapKey, setMapKey] = useState(0); // Force re-render key
   
   // Tooltip state for map
   const [tooltip, setTooltip] = useState<{
@@ -104,9 +105,10 @@ export const AnalyticsNewGeo: React.FC = () => {
     y: number;
   }>({ show: false, content: '', x: 0, y: 0 });
   
-  // Function to recenter map to original position  
+  // Function to recenter map to original position
   const recenterMap = () => {
     setPosition({ coordinates: [0, 10], zoom: 1 });
+    setMapKey(prev => prev + 1); // Force map re-render
   };
 
   // Process data for visualizations - now using centralized hook data with totals included
@@ -298,6 +300,7 @@ export const AnalyticsNewGeo: React.FC = () => {
           <CardContent>
             <div className="h-80 relative">
               <ComposableMap
+                key={mapKey}
                 projection="geoMercator"
                 projectionConfig={{
                   rotate: [0, 0, 0],
@@ -307,7 +310,11 @@ export const AnalyticsNewGeo: React.FC = () => {
                 height={320}
                 className="w-full h-full"
               >
-                <ZoomableGroup zoom={position.zoom} center={position.coordinates}>
+                <ZoomableGroup 
+                  zoom={position.zoom} 
+                  center={position.coordinates}
+                  onMoveEnd={(position) => setPosition(position)}
+                >
                   <Geographies geography={geoUrl}>
                     {({ geographies }) =>
                       geographies.map(geo => {
