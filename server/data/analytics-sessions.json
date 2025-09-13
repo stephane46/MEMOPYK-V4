@@ -72668,7 +72668,7 @@
     "city": "Mexico City",
     "country_code": null,
     "created_at": "2025-09-13T05:30:01.555Z",
-    "updated_at": "2025-09-13T08:22:38.766Z",
+    "updated_at": "2025-09-13T08:29:01.376Z",
     "is_location_cache": true
   },
   {
@@ -72998,5 +72998,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-13T08:27:48.320Z"
+  },
+  {
+    "id": "3f71f8d6-c4f2-427c-a499-26568e629447",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T08:28:31.106Z"
   }
 ]
