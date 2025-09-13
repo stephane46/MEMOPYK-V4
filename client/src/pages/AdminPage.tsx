@@ -55,7 +55,7 @@ interface CacheStats {
 }
 
 export default function AdminPage() {
-  const [activeSection, setActiveSection] = useState('hero-management');
+  const [activeSection, setActiveSection] = useState('analytics-new');
   const [heroTab, setHeroTab] = useState('videos');
   const [previewVideo, setPreviewVideo] = useState<{ url: string; title: string } | null>(null);
   const [editingVideo, setEditingVideo] = useState<any | null>(null);
