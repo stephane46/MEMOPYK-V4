@@ -453,15 +453,15 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Filter only gallery items that have video files and are active
       const videoItems = allItems
         .filter(item => 
-          item.isActive && 
-          (item.videoFilename || item.videoUrlEn || item.videoUrlFr)
+          (item.isActive || item.is_active) && 
+          (item.videoFilename || item.video_filename || item.videoUrlEn || item.video_url_en || item.videoUrlFr || item.video_url_fr)
         )
         .map(item => ({
-          id: item.videoFilename || item.id, // Use videoFilename as ID, fallback to item.id
-          title: item.titleEn || item.titleFr || 'Untitled Video',
-          titleEn: item.titleEn,
-          titleFr: item.titleFr,
-          videoFilename: item.videoFilename
+          id: item.videoFilename || item.video_filename || item.id, // Use videoFilename as ID, fallback to item.id
+          title: item.titleEn || item.title_en || item.titleFr || item.title_fr || 'Untitled Video',
+          titleEn: item.titleEn || item.title_en,
+          titleFr: item.titleFr || item.title_fr,
+          videoFilename: item.videoFilename || item.video_filename
         }))
         .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
       

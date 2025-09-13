@@ -76,7 +76,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
   const activeFilterCount = Object.keys(activeFilters).length;
 
   // Fetch real gallery videos for the dropdown
-  const { data: analyticsVideos = [], isLoading: videosLoading } = useQuery({
+  const { data: analyticsVideos = [], isLoading: videosLoading } = useQuery<any[]>({
     queryKey: ['/api/analytics/videos'],
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -383,7 +383,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All videos</SelectItem>
-                  {analyticsVideos.map((video: any) => (
+                  {(analyticsVideos || []).map((video: any) => (
                     <SelectItem key={video.id} value={video.id}>
                       {video.title && video.title.length > 25 ? `${video.title.substring(0, 25)}...` : (video.title || 'Untitled')}
                     </SelectItem>
