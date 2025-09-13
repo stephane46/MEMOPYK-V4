@@ -325,65 +325,80 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
           )}
 
 
-          {/* Additional Filters - Inline with Date Filters */}
-          <div className="flex flex-wrap gap-3 items-center ml-6 pl-6 border-l border-gray-200">
-            <span className="text-sm font-medium text-gray-700 flex items-center mr-2">
-              <Filter className="h-4 w-4 mr-1" />
-              Filters:
-            </span>
-            
-            {/* Language Filter */}
-            <div className="flex items-center gap-2">
-              <Languages className="h-4 w-4 text-gray-500" />
-              <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-32" data-testid="filter-language">
-                  <SelectValue placeholder="Language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All languages</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="fr">French</SelectItem>
-                </SelectContent>
-              </Select>
+          {/* Additional Filters - Professional Styling */}
+          <div className="bg-gradient-to-r from-orange-50 to-blue-50 border border-orange-200 rounded-lg px-4 py-3 shadow-sm">
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex items-center gap-2">
+                <div className="bg-orange-100 rounded-full p-1.5">
+                  <Filter className="h-4 w-4 text-orange-600" />
+                </div>
+                <span className="text-sm font-semibold text-gray-800">
+                  Segment Data
+                </span>
+              </div>
+              
+              {/* Language Filter */}
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-2">
+                <div className="flex items-center gap-2">
+                  <Languages className="h-4 w-4 text-orange-500" />
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium text-gray-600 mb-1">Language</label>
+                    <Select value={language} onValueChange={setLanguage}>
+                      <SelectTrigger className="w-36 h-8 border-0 bg-transparent text-sm font-medium" data-testid="filter-language">
+                        <SelectValue placeholder="Select language" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All languages</SelectItem>
+                        <SelectItem value="en">English</SelectItem>
+                        <SelectItem value="fr">French</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Country Filter */}
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-2">
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-blue-500" />
+                  <div className="flex flex-col">
+                    <label className="text-xs font-medium text-gray-600 mb-1">Market</label>
+                    <Select value={country} onValueChange={setCountry}>
+                      <SelectTrigger className="w-36 h-8 border-0 bg-transparent text-sm font-medium" data-testid="filter-country">
+                        <SelectValue placeholder="Select market" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All countries</SelectItem>
+                        <SelectItem value="France">France</SelectItem>
+                        <SelectItem value="United States">United States</SelectItem>
+                        <SelectItem value="Canada">Canada</SelectItem>
+                        <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                        <SelectItem value="Germany">Germany</SelectItem>
+                        <SelectItem value="Australia">Australia</SelectItem>
+                        <SelectItem value="Spain">Spain</SelectItem>
+                        <SelectItem value="Italy">Italy</SelectItem>
+                        <SelectItem value="Brazil">Brazil</SelectItem>
+                        <SelectItem value="Japan">Japan</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Reset Button - Only show if filters are active */}
+              {activeFilterCount > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={reset}
+                  className="ml-auto bg-white border-orange-300 text-orange-600 hover:bg-orange-50 hover:border-orange-400 h-9 px-3 font-medium shadow-sm"
+                  data-testid="filter-reset"
+                >
+                  <X className="h-4 w-4 mr-1.5" />
+                  Reset Filters
+                </Button>
+              )}
             </div>
-
-            {/* Country Filter */}
-            <div className="flex items-center gap-2">
-              <Globe className="h-4 w-4 text-gray-500" />
-              <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger className="w-32" data-testid="filter-country">
-                  <SelectValue placeholder="Country" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All countries</SelectItem>
-                  <SelectItem value="France">France</SelectItem>
-                  <SelectItem value="United States">United States</SelectItem>
-                  <SelectItem value="Canada">Canada</SelectItem>
-                  <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                  <SelectItem value="Germany">Germany</SelectItem>
-                  <SelectItem value="Australia">Australia</SelectItem>
-                  <SelectItem value="Spain">Spain</SelectItem>
-                  <SelectItem value="Italy">Italy</SelectItem>
-                  <SelectItem value="Brazil">Brazil</SelectItem>
-                  <SelectItem value="Japan">Japan</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-
-            {/* Reset Button - Only show if filters are active */}
-            {activeFilterCount > 0 && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={reset}
-                className="ml-2 h-8 px-2"
-                data-testid="filter-reset"
-              >
-                <X className="h-4 w-4 mr-1" />
-                Reset
-              </Button>
-            )}
           </div>
         </div>
 
