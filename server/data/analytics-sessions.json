@@ -72668,7 +72668,7 @@
     "city": "Mexico City",
     "country_code": null,
     "created_at": "2025-09-13T05:30:01.555Z",
-    "updated_at": "2025-09-13T05:31:13.142Z",
+    "updated_at": "2025-09-13T05:35:09.743Z",
     "is_location_cache": true
   },
   {
@@ -72678,5 +72678,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-13T05:30:42.896Z"
+  },
+  {
+    "id": "fd9b6b65-ac8e-4947-aade-025f9dcb0053",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T05:33:39.827Z"
+  },
+  {
+    "id": "0e36c6c9-2165-44fa-9c8e-8da55e8a5e03",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar9q%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T05:34:39.475Z"
   }
 ]

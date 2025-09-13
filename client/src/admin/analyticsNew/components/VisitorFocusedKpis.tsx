@@ -6,6 +6,7 @@ import type { KpisResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 import { Badge } from '@/components/ui/badge';
 import { CountryFlag } from '@/components/admin/CountryFlag';
+import { DateTime } from 'luxon';
 
 interface VisitorFocusedKpisProps {
   preset?: "today" | "yesterday" | "7d" | "30d" | "90d";
@@ -231,14 +232,16 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
   };
 
   const getRelativeTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
+    const date = DateTime.fromISO(dateString, { zone: 'Europe/Paris' });
+    const now = DateTime.now().setZone('Europe/Paris');
+    const diffInMs = now.toMillis() - date.toMillis();
     const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
     const diffInHours = Math.floor(diffInMinutes / 60);
     const diffInDays = Math.floor(diffInHours / 24);
 
-    if (diffInMinutes < 60) {
+    if (diffInMinutes < 1) {
+      return 'now';
+    } else if (diffInMinutes < 60) {
       return `${diffInMinutes}m ago`;
     } else if (diffInHours < 24) {
       return `${diffInHours}h ago`;
