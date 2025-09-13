@@ -360,28 +360,28 @@ export const AnalyticsNewTrends: React.FC = () => {
           value={metrics.totalViews.current.toLocaleString('en-US')}
           trend={metrics.totalViews.trend}
           icon={<Eye className="h-4 w-4" />}
-          description="vs previous period"
+          description="Total visits to the website"
         />
         <TrendCard
           title="Unique Visitors"
           value={metrics.uniqueVisitors.current.toLocaleString('en-US')}
           trend={metrics.uniqueVisitors.trend}
           icon={<Users className="h-4 w-4" />}
-          description="vs previous period"
+          description="Distinct visitors (IP-based)"
         />
         <TrendCard
           title="Average Session Duration"
           value={formatWatchTime(metrics.averageWatchTime.current)}
           trend={metrics.averageWatchTime.trend}
           icon={<Clock className="h-4 w-4" />}
-          description="Weighted across selected period (total engaged seconds ÷ sessions)"
+          description="Time spent on site per visit"
         />
         <TrendCard
           title="Video Engagement"
           value={`${Math.round(metrics.completionRate.current)}%`}
           trend={metrics.completionRate.trend}
           icon={<Video className="h-4 w-4" />}
-          description="visitors who interacted with videos"
+          description="Visitors who watched videos"
         />
       </div>
 
