@@ -534,14 +534,16 @@ export const AnalyticsNewGeo: React.FC = () => {
                     content={({ active, payload }) => {
                       if (active && payload && payload[0]) {
                         const data = payload[0].payload;
+                        const sessionsPercent = totalSessions > 0 ? ((data.sessions / totalSessions) * 100).toFixed(1) : '0.0';
+                        const visitorsPercent = totalVisitors > 0 ? ((data.visitors / totalVisitors) * 100).toFixed(1) : '0.0';
                         return (
                           <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
                             <p className="font-medium text-gray-900 underline">{data.name}</p>
                             <p className="text-sm">
-                              <span className="font-bold text-blue-600">Sessions: {data.sessions.toLocaleString()}</span>
+                              <span className="font-bold text-gray-900">Sessions: {data.sessions.toLocaleString()} ({sessionsPercent}%)</span>
                             </p>
                             <p className="text-sm text-gray-600">
-                              Visitors: {data.visitors.toLocaleString()}
+                              Visitors: {data.visitors.toLocaleString()} ({visitorsPercent}%)
                             </p>
                           </div>
                         );
@@ -595,14 +597,16 @@ export const AnalyticsNewGeo: React.FC = () => {
                     content={({ active, payload }) => {
                       if (active && payload && payload[0]) {
                         const data = payload[0].payload;
+                        const sessionsPercent = totalSessions > 0 ? ((data.sessions / totalSessions) * 100).toFixed(1) : '0.0';
+                        const visitorsPercent = totalVisitors > 0 ? ((data.visitors / totalVisitors) * 100).toFixed(1) : '0.0';
                         return (
                           <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
                             <p className="font-medium text-gray-900 underline">{data.name}</p>
                             <p className="text-sm">
-                              <span className="font-bold text-green-600">Visitors: {data.visitors.toLocaleString()}</span>
+                              <span className="font-bold text-gray-900">Visitors: {data.visitors.toLocaleString()} ({visitorsPercent}%)</span>
                             </p>
                             <p className="text-sm text-gray-600">
-                              Sessions: {data.sessions.toLocaleString()}
+                              Sessions: {data.sessions.toLocaleString()} ({sessionsPercent}%)
                             </p>
                           </div>
                         );
