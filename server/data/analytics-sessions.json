@@ -73276,7 +73276,7 @@
     "city": "Vancouver",
     "country_code": null,
     "created_at": "2025-09-13T10:33:25.249Z",
-    "updated_at": "2025-09-13T11:28:40.894Z",
+    "updated_at": "2025-09-13T11:38:41.713Z",
     "is_location_cache": true
   },
   {
@@ -73398,5 +73398,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-13T11:33:11.303Z"
+  },
+  {
+    "id": "422b1ba2-6c2b-42a6-bfea-1d7dc8d29120",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T11:38:11.369Z"
+  },
+  {
+    "id": "8f119ded-5644-49f2-84f2-d8dae24618e8",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T15:59:01.300Z"
   }
 ]
