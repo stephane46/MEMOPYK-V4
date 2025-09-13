@@ -854,7 +854,8 @@ export async function qSessionsTrend(start: string, end: string, locale?: string
       { name: "sessions" },
       { name: "totalUsers" },
       { name: "bounceRate" },
-      { name: "averageSessionDuration" }
+      { name: "averageSessionDuration" },
+      { name: "userEngagementDuration" } // Total engagement seconds for weighted averages
     ],
     // ONLY locale filter, NO eventName filter (get all website sessions)
     ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
@@ -872,13 +873,15 @@ export async function qSessionsTrend(start: string, end: string, locale?: string
     const users = Number(r.metricValues?.[1]?.value ?? 0);
     const bounceRate = Number(r.metricValues?.[2]?.value ?? 0) * 100; // Convert to percentage
     const avgDuration = Number(r.metricValues?.[3]?.value ?? 0);
+    const totalEngagementDuration = Number(r.metricValues?.[4]?.value ?? 0);
     
     return { 
       date, 
       sessions, // Website sessions (matches Overview data)
       users,    // Unique visitors
       bounceRate, // Percentage
-      avgSessionDuration: Math.round(avgDuration) // Seconds
+      avgSessionDuration: Math.round(avgDuration), // Seconds (daily average)
+      totalEngagementSeconds: Math.round(totalEngagementDuration) // Total seconds for weighted calculations
     };
   });
 }
@@ -924,7 +927,8 @@ export async function qSessionsTrendWithComparison(start: string, end: string, l
     previousSessions: prevDataByDay.get(index)?.sessions || 0,
     previousUsers: prevDataByDay.get(index)?.users || 0,
     previousBounceRate: prevDataByDay.get(index)?.bounceRate || 0,
-    previousAvgDuration: prevDataByDay.get(index)?.avgSessionDuration || 0
+    previousAvgDuration: prevDataByDay.get(index)?.avgSessionDuration || 0,
+    previousTotalEngagementSeconds: prevDataByDay.get(index)?.totalEngagementSeconds || 0
   }));
 }
 
