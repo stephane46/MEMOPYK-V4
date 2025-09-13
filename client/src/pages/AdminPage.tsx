@@ -231,6 +231,7 @@ export default function AdminPage() {
   };
 
   const sidebarItems = [
+    { id: 'analytics-new', label: 'Analytics', icon: BarChart3 },
     { id: 'hero-management', label: 'Vidéos Hero', icon: Video },
     { id: 'gallery', label: 'Galerie Vidéos', icon: Play },
     { id: 'cache', label: 'Cache', icon: HardDrive },
@@ -239,7 +240,6 @@ export default function AdminPage() {
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
     { id: 'why-memopyk', label: 'Pourquoi MEMOPYK', icon: Users },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
-    { id: 'analytics-new', label: 'Analytics', icon: BarChart3 },
     { id: 'cache-management', label: 'Cache GA4', icon: Database },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },

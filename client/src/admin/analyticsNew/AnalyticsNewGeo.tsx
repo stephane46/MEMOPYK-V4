@@ -93,8 +93,8 @@ export const AnalyticsNewGeo: React.FC = () => {
   // Use centralized filtering system with the useFilteredGeo hook
   const { data: geoData, isLoading: geoLoading, error: geoError, refetch, appliedFilters } = useFilteredGeo();
   
-  // Map position state for recenter functionality
-  const [mapPosition, setMapPosition] = useState({ zoom: 1, center: [0, 10] as [number, number] });
+  // Map position state for recenter functionality (using react-simple-maps pattern)
+  const [position, setPosition] = useState({ coordinates: [0, 10] as [number, number], zoom: 1 });
   
   // Tooltip state for map
   const [tooltip, setTooltip] = useState<{
@@ -106,7 +106,7 @@ export const AnalyticsNewGeo: React.FC = () => {
   
   // Function to recenter map to original position
   const recenterMap = () => {
-    setMapPosition({ zoom: 1, center: [0, 10] });
+    setPosition({ coordinates: [0, 10], zoom: 1 });
   };
 
   // Process data for visualizations - now using centralized hook data with totals included
@@ -305,7 +305,7 @@ export const AnalyticsNewGeo: React.FC = () => {
                 height={320}
                 className="w-full h-full"
               >
-                <ZoomableGroup zoom={mapPosition.zoom} center={mapPosition.center}>
+                <ZoomableGroup zoom={position.zoom} center={position.coordinates}>
                   <Geographies geography={geoUrl}>
                     {({ geographies }) =>
                       geographies.map(geo => {
@@ -529,11 +529,8 @@ export const AnalyticsNewGeo: React.FC = () => {
           
           <div className="mt-4 p-3 bg-gray-50 rounded-lg">
             <div className="text-sm text-gray-700">
-              <strong>Geographic Strategy:</strong> MEMOPYK's cinematic storytelling reaches {coverageCount} international markets. 
+              <strong>Geographic Reach:</strong> MEMOPYK's cinematic storytelling reaches {coverageCount} international markets. 
               {topMarket && ` ${topMarket.country} represents your strongest market with ${topMarket.sessions} sessions.`}
-              {bestEngagement && topMarket?.country !== bestEngagement.country && 
-                ` Consider expanding focus on ${bestEngagement.country} which shows ${Math.round((bestEngagement.sessions / bestEngagement.visitors) * 100)}% engagement.`
-              }
             </div>
           </div>
         </CardContent>
