@@ -5779,7 +5779,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       let prevSessions = 0, prevTotalUsers = 0, prevReturningUsers = 0, prevPlays = 0, prevCompletes = 0, prevTotalWatch = 0;
       
       try {
-        // Calculate comparison period without overriding current dates from frontend
+        // ✅ CRITICAL FIX: Use Paris timezone for comparison period (matching calculateDateRange logic)
+        const { formatInTimeZone } = require('date-fns-tz');
+        const TZ = 'Europe/Paris';
+        
         const startDateObj = new Date(startDate + 'T00:00:00.000Z');
         const endDateObj = new Date(endDate + 'T00:00:00.000Z');
         const rangeDays = Math.ceil((endDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24)) + 1;
@@ -5787,8 +5790,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         const compareEndDate = new Date(startDateObj.getTime() - (1000 * 60 * 60 * 24));
         const compareStartDate = new Date(compareEndDate.getTime() - ((rangeDays - 1) * 1000 * 60 * 60 * 24));
         
-        const compareStartDateStr = compareStartDate.toISOString().split('T')[0];
-        const compareEndDateStr = compareEndDate.toISOString().split('T')[0];
+        const compareStartDateStr = formatInTimeZone(compareStartDate, TZ, 'yyyy-MM-dd');
+        const compareEndDateStr = formatInTimeZone(compareEndDate, TZ, 'yyyy-MM-dd');
         
         console.log(`📊 Fetching previous period data: ${compareStartDateStr} to ${compareEndDateStr}`);
         
