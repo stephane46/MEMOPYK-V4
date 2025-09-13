@@ -140,12 +140,19 @@ export const AnalyticsNewTrends: React.FC = () => {
       return ((current - previous) / previous) * 100;
     };
 
+    // Helper function for safe division (avoid NaN)
+    const safeDiv = (numerator: number, denominator: number): number => {
+      return denominator > 0 ? numerator / denominator : 0;
+    };
+
     // Current period totals
     const currentViews = calculatePeriodSum(trendData, 'totalViews');
     const currentVisitors = calculatePeriodSum(trendData, 'uniqueVisitors');
-    const currentWatchTime = trendData.length > 0 
-      ? calculatePeriodSum(trendData, 'averageWatchTime') / trendData.length
-      : 0;
+    
+    // FIXED: Calculate weighted average (total_engagement_seconds / total_sessions)
+    const currentTotalEngagement = calculatePeriodSum(trendData, 'totalEngagementSeconds');
+    const currentWatchTime = safeDiv(currentTotalEngagement, currentViews);
+    
     const currentCompletion = trendData.length > 0
       ? calculatePeriodSum(trendData, 'completionRate') / trendData.length
       : 0;
@@ -153,9 +160,11 @@ export const AnalyticsNewTrends: React.FC = () => {
     // Previous period totals  
     const previousViews = calculatePeriodSum(trendData, 'previousTotalViews');
     const previousVisitors = calculatePeriodSum(trendData, 'previousUniqueVisitors');
-    const previousWatchTime = trendData.length > 0 
-      ? calculatePeriodSum(trendData, 'previousAverageWatchTime') / trendData.length
-      : 0;
+    
+    // FIXED: Calculate weighted average for previous period
+    const previousTotalEngagement = calculatePeriodSum(trendData, 'previousTotalEngagementSeconds');
+    const previousWatchTime = safeDiv(previousTotalEngagement, previousViews);
+    
     const previousCompletion = trendData.length > 0
       ? calculatePeriodSum(trendData, 'previousCompletionRate') / trendData.length
       : 0;
