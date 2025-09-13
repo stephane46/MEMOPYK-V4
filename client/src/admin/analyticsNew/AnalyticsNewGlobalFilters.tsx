@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Calendar, ChevronDown, Filter, X, Clock, CalendarIcon, Info, Globe, Languages } from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
@@ -329,48 +329,54 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
           <div className="flex items-center gap-2 overflow-x-auto shrink-0">
             <span className="text-xs font-medium text-gray-600 shrink-0">Filters:</span>
             
-            {/* Language Filter - Button Toggle Solution */}
+            {/* Language Filter - Working Implementation */}
             <div className="flex items-center gap-1 border border-gray-200 rounded-md p-1 bg-white">
               <Languages className="h-3.5 w-3.5 text-gray-500 ml-1" />
-              <Button
-                variant={language === 'all' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setLanguage('all')}
-                className={`h-6 px-2 text-xs font-medium transition-colors ${
+              <button
+                type="button"
+                onClick={() => {
+                  console.log('🔧 Button clicked: ALL, current:', language);
+                  setLanguage('all');
+                }}
+                className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none ${
                   language === 'all' 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    : 'bg-transparent text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                 }`}
                 data-testid="filter-language-all"
               >
                 ALL
-              </Button>
-              <Button
-                variant={language === 'en' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setLanguage('en')}
-                className={`h-6 px-2 text-xs font-medium transition-colors ${
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  console.log('🔧 Button clicked: EN, current:', language);
+                  setLanguage('en');
+                }}
+                className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none ${
                   language === 'en' 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    : 'bg-transparent text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                 }`}
                 data-testid="filter-language-en"
               >
                 EN
-              </Button>
-              <Button
-                variant={language === 'fr' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setLanguage('fr')}
-                className={`h-6 px-2 text-xs font-medium transition-colors ${
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  console.log('🔧 Button clicked: FR, current:', language);
+                  setLanguage('fr');
+                }}
+                className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none ${
                   language === 'fr' 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    : 'bg-transparent text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                 }`}
                 data-testid="filter-language-fr"
               >
                 FR
-              </Button>
+              </button>
             </div>
 
             {/* Country Filter - Compact */}
