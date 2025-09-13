@@ -63,7 +63,7 @@ const AnalyticsNewActiveUsersBadge: React.FC<{ count: number; loading?: boolean 
         count
       )}
     </span>
-    <span className="text-sm">active now</span>
+    <span className="text-sm">active (30m)</span>
   </div>
 );
 
@@ -233,7 +233,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
           )}
         </div>
         <div className="text-sm text-[var(--analytics-new-text-muted)]">
-          Showing users active in the last 30 minutes (same as Google Analytics)
+          Live visitor activity
         </div>
         <div className="text-xs text-[var(--analytics-new-text-muted)] mt-1">
           Last updated: {lastUpdate || 'Loading...'}
@@ -350,7 +350,7 @@ export const AnalyticsNewLiveView: React.FC = () => {
           <div className="flex items-center space-x-2 mb-4">
             <Users className="w-5 h-5 text-[var(--analytics-new-orange)]" />
             <h3 className="text-lg font-semibold text-[var(--analytics-new-text)]">
-              Recent Visitors
+              Recent Visitors (Today)
             </h3>
             <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 font-medium">
               MEMOPYK
