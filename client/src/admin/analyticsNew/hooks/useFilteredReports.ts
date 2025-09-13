@@ -59,10 +59,12 @@ export interface TrendDataPoint {
   averageWatchTime: number;
   completionRate: number;
   videoViews: number;
+  totalEngagementSeconds: number; // Total engagement seconds for weighted averages
   // Previous period data for comparison
   previousTotalViews: number;
   previousUniqueVisitors: number;
   previousAverageWatchTime: number;
+  previousTotalEngagementSeconds: number; // Previous period engagement seconds
   previousCompletionRate: number;
 }
 
