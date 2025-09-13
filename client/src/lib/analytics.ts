@@ -37,27 +37,36 @@ export function initTestMode() {
   return false;
 }
 
-// Track page views on route changes (SPA navigation)
+// DISABLED: Track page views on route changes (SPA navigation) 
+// ✅ DUPLICATE PAGE VIEW FIX: This function is disabled to prevent duplicate page_view events
+// Page views are now handled exclusively by client/src/analytics/ga.ts sendPageView()
 export function sendPageView() {
+  console.warn('🚫 DEPRECATED: sendPageView() from lib/analytics.ts is disabled to prevent duplicate page_view events');
+  console.warn('🔄 Page views are now handled by client/src/analytics/ga.ts sendPageView() function');
+  // OLD CODE DISABLED TO PREVENT DUPLICATE PAGE VIEWS:
+  // The gtag('config') call below was creating duplicate page_view events alongside
+  // the new gtag('event', 'page_view') calls in client/src/analytics/ga.ts
+  
   // Don't track on admin pages
   const isAdmin = window.location.pathname.startsWith('/fr-FR/admin') || 
                   window.location.pathname.startsWith('/en-US/admin') || 
                   window.location.pathname.startsWith('/admin');
   if (isAdmin) return;
   
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  const params: any = {
-    page_path: window.location.pathname + window.location.search,
-    page_title: document.title,
-  };
-  
-  // Mark as developer traffic if dev mode is enabled
-  if (isGaDev()) {
-    params.debug_mode = true;
-  }
-  
-  window.gtag('config', MEASUREMENT_ID, params);
+  // DISABLED: Preventing duplicate page_view events
+  // if (typeof window === 'undefined' || !window.gtag) return;
+  // 
+  // const params: any = {
+  //   page_path: window.location.pathname + window.location.search,
+  //   page_title: document.title,
+  // };
+  // 
+  // // Mark as developer traffic if dev mode is enabled
+  // if (isGaDev()) {
+  //   params.debug_mode = true;
+  // }
+  // 
+  // window.gtag('config', MEASUREMENT_ID, params);
 }
 
 // Track events (legacy)

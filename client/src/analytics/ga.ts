@@ -2,6 +2,14 @@
 let gaReadyPromise: Promise<void> | null = null;
 let MEASUREMENT_ID = "";
 
+// ✅ LOCALE DETECTION: Extract language from URL for GA4 custom dimension
+function getLocaleFromURL(): string {
+  const path = window.location.pathname;
+  if (path.includes('/fr-FR')) return 'fr-FR';
+  if (path.includes('/en-US')) return 'en-US';
+  return 'unknown';
+}
+
 function hasGtagScript(id: string) {
   return !!document.querySelector(`script[src*="gtag/js?id=${id}"]`);
 }
@@ -111,12 +119,28 @@ function sendEvent(name: string, params: EventParams) {
   if (!(window as any).gtag) return;
   (window as any).gtag("event", name, {
     ...params,
+    locale: getLocaleFromURL(), // ✅ ALWAYS include locale in events
     transport_type: "beacon",
     send_to: MEASUREMENT_ID, // IMPORTANT when multiple configs/GTM exist
   });
 }
 
 // Public API
+
+// ✅ SEND PAGE VIEW with locale - called on route changes  
+export async function sendPageView(additionalParams?: EventParams) {
+  await gaReady();
+  const locale = getLocaleFromURL();
+  (window as any).gtag("event", "page_view", {
+    page_path: window.location.pathname + window.location.search,
+    page_title: document.title,
+    locale: locale, // ✅ Include locale in page views
+    transport_type: "beacon",
+    send_to: MEASUREMENT_ID,
+    ...additionalParams,
+  });
+}
+
 export async function sendVideoProgress(params: EventParams & {
   progress_percent: 10 | 25 | 50 | 75 | 90;
   video_id: string;

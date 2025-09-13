@@ -40,7 +40,7 @@ const localeFilter = (
     // Chinese, Vietnamese, unknown sessions should all default to English
     return {
       notExpression: {
-        filter: { fieldName: "customEvent:locale", stringFilter: { value: "fr" } }
+        filter: { fieldName: "customEvent:locale", stringFilter: { value: "fr-FR" } }
       }
     };
   }
