@@ -36,23 +36,11 @@ const localeFilter = (
   }
   
   if (locale === "en") {
-    // ✅ DEFAULT LANGUAGE LOGIC: English includes explicit en-US + sessions without locale (default)
-    // This means: sessions with en-US locale OR sessions without any locale data
+    // ✅ SIMPLIFIED DEFAULT LANGUAGE LOGIC: English = everything EXCEPT French
+    // This means: exclude only fr-FR sessions, include everything else (en-US + unknown/default)
     return {
-      orGroup: {
-        expressions: [
-          { filter: { fieldName: "customEvent:locale", stringFilter: { value: "en-US" } } },
-          { 
-            notExpression: {
-              orGroup: {
-                expressions: [
-                  { filter: { fieldName: "customEvent:locale", stringFilter: { value: "en-US" } } },
-                  { filter: { fieldName: "customEvent:locale", stringFilter: { value: "fr-FR" } } }
-                ]
-              }
-            }
-          }
-        ]
+      notExpression: {
+        filter: { fieldName: "customEvent:locale", stringFilter: { value: "fr-FR" } }
       }
     };
   }
