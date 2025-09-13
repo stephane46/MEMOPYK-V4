@@ -318,19 +318,19 @@ export const AnalyticsNewTrends: React.FC = () => {
       case 'visitors':
         return {
           color: '#3B82F6',
-          label: 'Daily unique visitors (non-additive)',
+          label: 'Visiteurs uniques',
           format: (value: number) => value.toLocaleString('fr-FR')
         };
       case 'watchTime':
         return {
           color: '#10B981',
-          label: 'Daily session duration (non-additive)',
+          label: 'Temps de visionnage',
           format: (value: number) => formatDurationTooltip(value)
         };
       case 'completion':
         return {
           color: '#8B5CF6',
-          label: 'Daily engagement rate (non-additive)',
+          label: 'Completion Rate (%)',
           format: (value: number) => `${Math.round(value)}%`
         };
       default:
@@ -477,12 +477,6 @@ export const AnalyticsNewTrends: React.FC = () => {
                   fontSize={12}
                   tick={{ fill: '#6b7280' }}
                   tickFormatter={chartConfig.format}
-                  label={(selectedMetric === 'visitors' || selectedMetric === 'watchTime' || selectedMetric === 'completion') ? {
-                    value: chartConfig.label,
-                    angle: -90,
-                    position: 'insideLeft',
-                    style: { textAnchor: 'middle', fontSize: '12px', fill: '#6b7280' }
-                  } : undefined}
                 />
                 <Tooltip 
                   labelFormatter={(value, payload) => {
@@ -509,21 +503,6 @@ export const AnalyticsNewTrends: React.FC = () => {
                               </p>
                             );
                           })}
-                          {selectedMetric === 'visitors' && (
-                            <p className="text-xs text-gray-500 mt-2 border-t pt-2">
-                              These are daily unique visitors. Adding across days will overcount. The card shows deduplicated uniques over the full period.
-                            </p>
-                          )}
-                          {selectedMetric === 'watchTime' && (
-                            <p className="text-xs text-gray-500 mt-2 border-t pt-2">
-                              These are daily session durations. Adding across days will overcount. The card shows the period average duration.
-                            </p>
-                          )}
-                          {selectedMetric === 'completion' && (
-                            <p className="text-xs text-gray-500 mt-2 border-t pt-2">
-                              These are daily engagement rates. Adding across days will overcount. The card shows the period average rate.
-                            </p>
-                          )}
                         </div>
                       );
                     }
@@ -582,13 +561,14 @@ const getMetricExplanation = (metric: string) => {
   
   switch (metric) {
     case 'sessions':
+    case 'views':
       return (
         <>
           <p className="mb-2">
             Website Sessions represent individual visits to the site. Each session includes all page views and interactions during a single visit, helping you understand reach and visitor engagement patterns.
           </p>
           <p className="text-xs text-gray-600">
-            A session begins when someone arrives on the site and ends after 30 minutes of inactivity or when they close the browser. Multiple page views within this timeframe count as one session. If someone returns after the timeout, it starts a new session.
+            Sessions are additive - the chart shows daily totals that can be summed to match the card value. A session begins when someone arrives and ends after 30 minutes of inactivity or browser closure.
           </p>
         </>
       );
@@ -596,10 +576,10 @@ const getMetricExplanation = (metric: string) => {
       return (
         <>
           <p className="mb-2">
-            Unique Visitors shows the number of different people who visited the site during the selected period. This metric helps you understand actual audience size, as each person is counted only once regardless of how many times they visit.
+            Unique Visitors shows how many different people visited during the selected period. The card displays period-level unique visitors (deduplicated), while the chart shows daily unique visitors.
           </p>
           <p className="text-xs text-gray-600">
-            Identification is based on browser cookies and device fingerprinting. The same person using different devices or browsers may be counted separately. Visitors who clear cookies will appear as new visitors on their next visit.
+            <strong>Important:</strong> Daily chart values should not be summed as the same person visiting multiple days would be counted multiple times. The card shows the true unique count across the entire period.
           </p>
         </>
       );
@@ -608,10 +588,10 @@ const getMetricExplanation = (metric: string) => {
       return (
         <>
           <p className="mb-2">
-            Session Duration measures the average time visitors spend on the site during each visit. Longer durations typically indicate higher engagement with the video portfolio and content, suggesting genuine interest in the film creation services.
+            Session Duration measures average time visitors spend per visit. The card shows the overall period average, while the chart displays daily averages for each day.
           </p>
           <p className="text-xs text-gray-600">
-            Duration is calculated from page load to the last recorded interaction (clicks, scrolls, video plays). Passive time like forgotten tabs doesn't count - sessions automatically timeout after 30 minutes of inactivity, preventing inflated numbers from zombie tabs.
+            <strong>Important:</strong> Daily duration values represent averages and should not be summed. The card shows the weighted average duration across all sessions in the period.
           </p>
         </>
       );
@@ -620,10 +600,10 @@ const getMetricExplanation = (metric: string) => {
       return (
         <>
           <p className="mb-2">
-            Video Engagement tracks the percentage of visitors who actively interact with the video portfolio. This includes playing videos, watching significant portions, or engaging with video controls. High engagement suggests the portfolio effectively showcases film creation capabilities.
+            Video Engagement tracks the percentage of visitors who actively interact with the video portfolio. The card shows the overall period rate, while the chart displays daily engagement rates.
           </p>
           <p className="text-xs text-gray-600">
-            Engagement is triggered by video play events, progress milestones (25%, 50%, 75%, completion), and control interactions. Only active engagement counts - autoplay views without user interaction are excluded to ensure meaningful engagement metrics.
+            <strong>Important:</strong> Daily engagement percentages represent rates and should not be summed. The card shows the average engagement rate across the entire period.
           </p>
         </>
       );
