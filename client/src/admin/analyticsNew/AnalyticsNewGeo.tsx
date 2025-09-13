@@ -278,18 +278,20 @@ export const AnalyticsNewGeo: React.FC = () => {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
               <Globe className="h-5 w-5 mr-2 text-blue-600" />
-              🗺️ TEST - Visitor Distribution - TEST 🗺️
+              Interactive Map
             </CardTitle>
             <div className="flex items-center space-x-2">
               <Badge variant="outline">Interactive Map</Badge>
               <Button 
                 size="sm" 
-                variant="ghost" 
+                variant="outline" 
                 onClick={recenterMap}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200"
                 data-testid="recenter-map"
+                title="Recenter Map"
               >
-                <RotateCcw className="h-4 w-4" />
+                <RotateCcw className="h-4 w-4 mr-1" />
+                Reset View
               </Button>
             </div>
           </CardHeader>
