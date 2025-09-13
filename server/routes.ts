@@ -5629,18 +5629,20 @@ export async function registerRoutes(app: Express): Promise<void> {
         endDate = window.effEndStr;
         console.log(`📅 PRESET: ${preset} calculated as ${startDate} to ${endDate}${sinceDate ? ` (filtered since ${sinceDate})` : ''}`);
         locale = req.query.locale ? String(req.query.locale) : "all";
+        const country = req.query.country ? String(req.query.country) : "all";
         nocache = req.query.nocache === "1" || req.query.nocache === "true";
         // ✅ CRITICAL FIX: Accept both 'since' and 'sinceDate' for robust parameter handling
         sinceDate = req.query.since ? String(req.query.since) : req.query.sinceDate ? String(req.query.sinceDate) : undefined;
       } else {
         // Direct date parameters - use getParams for consistency with Geo API
         ({ startDate, endDate, locale, nocache, sinceDate } = getParams(req));
+        const country = req.query.country ? String(req.query.country) : "all";
         console.log(`📅 DIRECT DATES: Using direct dates: ${startDate} to ${endDate}`);
       }
 
       // ✅ FIXED: Exclusion filter already applied in computeParisWindow, no need to reapply
-      // Include since parameter in cache key to prevent cache collision
-      const key = k(`kpis:${startDate}:${endDate}:${locale}:${sinceDate || 'none'}`);
+      // Include since and country parameters in cache key to prevent cache collision
+      const key = k(`kpis:${startDate}:${endDate}:${locale}:${country}:${sinceDate || 'none'}`);
 
       console.log(`🔍 GA4 KPIs REQUEST: ${startDate} to ${endDate}, locale: ${locale}, cache key: ${key}`);
 
@@ -5674,7 +5676,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       try {
         console.log('Testing qPlays...');
         // Add timeout to prevent hanging - this is the root cause of frontend timeouts
-        const playsPromise = qPlays(startDate, endDate, locale);
+        const playsPromise = qPlays(startDate, endDate, locale, country);
         const playsTimeout = new Promise<never>((_, reject) => 
           setTimeout(() => reject(new Error('qPlays timeout after 5 seconds')), 5000)
         );
@@ -5687,7 +5689,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       try {
         console.log('Testing qCompletes...');
-        completes = await qCompletes(startDate, endDate, locale);
+        completes = await qCompletes(startDate, endDate, locale, country);
         console.log(`✅ qCompletes: ${completes}`);
       } catch (e) {
         console.error('❌ qCompletes failed:', (e as Error).message);
@@ -5697,7 +5699,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       try {
         console.log('Testing qWatchTimeTotal...');
         // Pass the already-retrieved plays and completes data to avoid re-fetching
-        totalWatch = await Promise.race([qWatchTimeTotal(startDate, endDate, locale, plays, completes), timeoutPromise('qWatchTimeTotal')]);
+        totalWatch = await Promise.race([qWatchTimeTotal(startDate, endDate, locale, country, plays, completes), timeoutPromise('qWatchTimeTotal')]);
         console.log(`✅ qWatchTimeTotal: ${totalWatch}`);
       } catch (e) {
         console.error('❌ qWatchTimeTotal failed:', (e as Error).message);
@@ -5755,7 +5757,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Fetch visitor metrics for Analytics New
       try {
         console.log('🔍 Testing qSessions() - CAPTURING RAW RESPONSE...');
-        sessions = await Promise.race([qSessions(startDate, endDate, locale), timeoutPromise('qSessions')]);
+        sessions = await Promise.race([qSessions(startDate, endDate, locale, country), timeoutPromise('qSessions')]);
         
         console.log("📋 qSessions RAW RESULT ANALYSIS:");
         console.log(`   ✅ Sessions Returned: ${sessions}`);
@@ -5771,7 +5773,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       try {
         console.log('\n🔍 Testing qTotalUsers() - CAPTURING RAW RESPONSE...');
-        totalUsers = await Promise.race([qTotalUsers(startDate, endDate, locale), timeoutPromise('qTotalUsers')]);
+        totalUsers = await Promise.race([qTotalUsers(startDate, endDate, locale, country), timeoutPromise('qTotalUsers')]);
         
         console.log("📋 qTotalUsers RAW RESULT ANALYSIS:");
         console.log(`   ✅ Users Returned: ${totalUsers}`);
@@ -5787,7 +5789,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       try {
         console.log('Testing qReturningUsers...');
-        returningUsers = await Promise.race([qReturningUsers(startDate, endDate, locale), timeoutPromise('qReturningUsers')]);
+        returningUsers = await Promise.race([qReturningUsers(startDate, endDate, locale, country), timeoutPromise('qReturningUsers')]);
         console.log(`✅ qReturningUsers: ${returningUsers}`);
       } catch (e) {
         console.error('❌ qReturningUsers failed:', (e as Error).message);
@@ -5821,12 +5823,12 @@ export async function registerRoutes(app: Express): Promise<void> {
         
         // Fetch previous period data
         const [prevSessionsData, prevTotalUsersData, prevReturningUsersData, prevPlaysData, prevCompletesData, prevTotalWatchData] = await Promise.all([
-          qSessions(compareStartDateStr, compareEndDateStr, locale).catch(e => { console.error('❌ Previous qSessions failed:', e.message); return 0; }),
-          qTotalUsers(compareStartDateStr, compareEndDateStr).catch(e => { console.error('❌ Previous qTotalUsers failed:', e.message); return 0; }),
-          qReturningUsers(compareStartDateStr, compareEndDateStr).catch(e => { console.error('❌ Previous qReturningUsers failed:', e.message); return 0; }),
-          qPlays(compareStartDateStr, compareEndDateStr, locale).catch(e => { console.error('❌ Previous qPlays failed:', e.message); return 0; }),
-          qCompletes(compareStartDateStr, compareEndDateStr, locale).catch(e => { console.error('❌ Previous qCompletes failed:', e.message); return 0; }),
-          qWatchTimeTotal(compareStartDateStr, compareEndDateStr, locale).catch(e => { console.error('❌ Previous qWatchTimeTotal failed:', e.message); return 0; })
+          qSessions(compareStartDateStr, compareEndDateStr, locale, country).catch(e => { console.error('❌ Previous qSessions failed:', e.message); return 0; }),
+          qTotalUsers(compareStartDateStr, compareEndDateStr, locale, country).catch(e => { console.error('❌ Previous qTotalUsers failed:', e.message); return 0; }),
+          qReturningUsers(compareStartDateStr, compareEndDateStr, locale, country).catch(e => { console.error('❌ Previous qReturningUsers failed:', e.message); return 0; }),
+          qPlays(compareStartDateStr, compareEndDateStr, locale, country).catch(e => { console.error('❌ Previous qPlays failed:', e.message); return 0; }),
+          qCompletes(compareStartDateStr, compareEndDateStr, locale, country).catch(e => { console.error('❌ Previous qCompletes failed:', e.message); return 0; }),
+          qWatchTimeTotal(compareStartDateStr, compareEndDateStr, locale, country).catch(e => { console.error('❌ Previous qWatchTimeTotal failed:', e.message); return 0; })
         ]);
         
         prevSessions = prevSessionsData;
@@ -6859,16 +6861,17 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const range = req.query.range as string || '7d';
       const locale = req.query.locale as string || 'all';
+      const country = req.query.country as string || 'all';
       
       // Convert range to date strings
       const endDate = new Date().toISOString().split('T')[0];
       const startDate = new Date(Date.now() - (parseInt(range.replace('d', '')) * 24 * 60 * 60 * 1000))
         .toISOString().split('T')[0];
 
-      console.log(`🔍 CLEAN GA4 METRICS: ${startDate} to ${endDate}, locale: ${locale}`);
+      console.log(`🔍 CLEAN GA4 METRICS: ${startDate} to ${endDate}, locale: ${locale}, country: ${country}`);
 
       // Simple cache key
-      const cacheKey = k(`clean:${startDate}:${endDate}:${locale}`);
+      const cacheKey = k(`clean:${startDate}:${endDate}:${locale}:${country}`);
       
       // Check cache first
       const cached = await getCache(cacheKey);
@@ -6879,10 +6882,10 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       // Fetch core metrics using existing GA4 functions
       const [plays, completions, watchTimeSeconds, topVideos] = await Promise.all([
-        qPlays(startDate, endDate, locale),
-        qCompletes(startDate, endDate, locale), 
-        qWatchTimeTotal(startDate, endDate, locale),
-        qPlaysByVideo(startDate, endDate, locale)
+        qPlays(startDate, endDate, locale, country),
+        qCompletes(startDate, endDate, locale, country), 
+        qWatchTimeTotal(startDate, endDate, locale, country),
+        qPlaysByVideo(startDate, endDate, locale, country)
       ]);
 
       // Get locale breakdown
