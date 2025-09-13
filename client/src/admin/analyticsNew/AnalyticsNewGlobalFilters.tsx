@@ -330,7 +330,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
             <span className="text-xs font-medium text-gray-600 shrink-0">Filters:</span>
             
             {/* Language Filter - Working Implementation */}
-            <div className="flex items-center gap-1 border border-gray-200 rounded-md p-1 bg-white">
+            <div className="flex items-center gap-1 border border-gray-200 rounded-md p-1 bg-white relative z-[60] isolation-isolate pointer-events-auto">
               <Languages className="h-3.5 w-3.5 text-gray-500 ml-1" />
               <button
                 type="button"
@@ -338,7 +338,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   console.log('🔧 Button clicked: ALL, current:', language);
                   setLanguage('all');
                 }}
-                className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none ${
+                className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                   language === 'all' 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
                     : 'bg-transparent text-gray-700 hover:text-blue-600 hover:bg-blue-50'
@@ -353,7 +353,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   console.log('🔧 Button clicked: EN, current:', language);
                   setLanguage('en');
                 }}
-                className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none ${
+                className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                   language === 'en' 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
                     : 'bg-transparent text-gray-700 hover:text-blue-600 hover:bg-blue-50'
@@ -368,7 +368,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   console.log('🔧 Button clicked: FR, current:', language);
                   setLanguage('fr');
                 }}
-                className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none ${
+                className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                   language === 'fr' 
                     ? 'bg-blue-600 text-white hover:bg-blue-700' 
                     : 'bg-transparent text-gray-700 hover:text-blue-600 hover:bg-blue-50'
