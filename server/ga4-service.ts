@@ -22,7 +22,7 @@ const range = (start: string, end: string): DateRange => ({ startDate: start, en
 const mapLanguageToGA4Locale = (locale: string): string => {
   const mapping: Record<string, string> = {
     'en': 'en-US',     // Frontend "en" → Actual tracking "en-US"
-    'fr': 'fr-FR',     // Frontend "fr" → Actual tracking "fr-FR"  
+    'fr': 'fr-FR',     // Frontend "fr" → Actual tracking "fr-FR"
   };
   return mapping[locale] || locale;
 };
@@ -36,15 +36,11 @@ const localeFilter = (
   }
   
   if (locale === "en") {
-    // ✅ EXPLICIT ENGLISH LOGIC: Include en-US sessions OR sessions without locale data
+    // ✅ DEFAULT LANGUAGE LOGIC: English = everything EXCEPT French (since site only has EN/FR)
+    // Chinese, Vietnamese, unknown sessions should all default to English
     return {
-      orGroup: {
-        expressions: [
-          // Sessions explicitly marked as en-US
-          { filter: { fieldName: "customEvent:locale", stringFilter: { value: "en-US" } } },
-          // Sessions without any locale data (should be very few/none if tracking is working)
-          { filter: { fieldName: "customEvent:locale", stringFilter: { value: "(not set)" } } }
-        ]
+      notExpression: {
+        filter: { fieldName: "customEvent:locale", stringFilter: { value: "fr" } }
       }
     };
   }
