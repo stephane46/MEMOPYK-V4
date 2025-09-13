@@ -2,7 +2,7 @@
 import { resolveDates } from "./resolveDates";
 
 type ReportKind = "kpis" | "topVideos" | "videoFunnel";
-type Preset = "7d" | "30d" | "90d";
+type Preset = "7d" | "30d" | "90d" | "today" | "yesterday";
 
 export type Ga4Parsed = {
   report: ReportKind;
@@ -51,8 +51,8 @@ export function dateRangeFromQuery(q: any): Ga4Parsed {
   const presetRaw = q.preset ? String(q.preset) : undefined;
   let preset: Preset | undefined;
   if (presetRaw) {
-    if (!["7d", "30d", "90d"].includes(presetRaw)) {
-      badRequest('Invalid "preset". Use 7d | 30d | 90d.');
+    if (!["7d", "30d", "90d", "today", "yesterday"].includes(presetRaw)) {
+      badRequest('Invalid "preset". Use 7d | 30d | 90d | today | yesterday.');
     }
     preset = presetRaw as Preset;
   }
@@ -67,8 +67,9 @@ export function dateRangeFromQuery(q: any): Ga4Parsed {
   }
 
   let dateRange: { startDate: string; endDate: string };
-  if (preset) {
-    dateRange = resolveDates(preset);
+  if (preset && ["7d", "30d", "90d"].includes(preset)) {
+    // Use preset for supported day-based ranges
+    dateRange = resolveDates(preset as "7d" | "30d" | "90d");
     // If sinceDate is provided and is later than preset start, use sinceDate instead
     if (sinceDate && sinceDate > dateRange.startDate) {
       dateRange.startDate = sinceDate;
