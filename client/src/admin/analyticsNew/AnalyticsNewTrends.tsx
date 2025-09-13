@@ -462,27 +462,6 @@ export const AnalyticsNewTrends: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent>
-          {selectedMetric === 'visitors' && trendsResponse?.periodAggregates && (
-            <div className="mb-4 flex justify-end">
-              <div className="bg-orange-50 text-orange-700 border border-orange-200 rounded-lg px-3 py-2 text-sm font-medium">
-                {metrics.uniqueVisitors.current.toLocaleString('en-US')} total unique visitors ({datePreset === '7d' ? '7-day' : datePreset === '30d' ? '30-day' : '90-day'} period)
-              </div>
-            </div>
-          )}
-          {selectedMetric === 'watchTime' && trendsResponse?.periodAggregates && (
-            <div className="mb-4 flex justify-end">
-              <div className="bg-orange-50 text-orange-700 border border-orange-200 rounded-lg px-3 py-2 text-sm font-medium">
-                {formatWatchTime(metrics.averageWatchTime.current)} average session duration ({datePreset === '7d' ? '7-day' : datePreset === '30d' ? '30-day' : '90-day'} period)
-              </div>
-            </div>
-          )}
-          {selectedMetric === 'completion' && trendsResponse?.periodAggregates && (
-            <div className="mb-4 flex justify-end">
-              <div className="bg-orange-50 text-orange-700 border border-orange-200 rounded-lg px-3 py-2 text-sm font-medium">
-                {Math.round(metrics.completionRate.current)}% average engagement rate ({datePreset === '7d' ? '7-day' : datePreset === '30d' ? '30-day' : '90-day'} period)
-              </div>
-            </div>
-          )}
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData}>
