@@ -30,17 +30,28 @@ const mapLanguageToGA4Locale = (locale: string): string => {
 const localeFilter = (
   locale?: string
 ): protos.google.analytics.data.v1beta.IFilterExpression | undefined => {
-  if (!locale) {
+  if (!locale || locale === "all") {
+    // "All languages" = no filter (returns all sessions including unknown locale)
     return undefined;
   }
   
-  // ✅ CRITICAL FIX: "all" should mean "all site languages" (en-US + fr-FR), not unfiltered
-  if (locale === "all") {
+  if (locale === "en") {
+    // ✅ DEFAULT LANGUAGE LOGIC: English includes explicit en-US + sessions without locale (default)
+    // This means: sessions with en-US locale OR sessions without any locale data
     return {
       orGroup: {
         expressions: [
           { filter: { fieldName: "customEvent:locale", stringFilter: { value: "en-US" } } },
-          { filter: { fieldName: "customEvent:locale", stringFilter: { value: "fr-FR" } } }
+          { 
+            notExpression: {
+              orGroup: {
+                expressions: [
+                  { filter: { fieldName: "customEvent:locale", stringFilter: { value: "en-US" } } },
+                  { filter: { fieldName: "customEvent:locale", stringFilter: { value: "fr-FR" } } }
+                ]
+              }
+            }
+          }
         ]
       }
     };
