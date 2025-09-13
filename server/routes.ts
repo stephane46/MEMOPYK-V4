@@ -5961,12 +5961,11 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Get current time in Europe/Paris timezone
       const nowLocal = new Date();
       
-      // End date = yesterday in Europe/Paris timezone
+      // ✅ CRITICAL FIX: End date = TODAY (not yesterday) to match computeParisWindow
       const endLocal = new Date(nowLocal);
-      endLocal.setDate(endLocal.getDate() - 1);
       endDate = formatInTimeZone(endLocal, TZ, 'yyyy-MM-dd');
       
-      // Start date = endLocal minus (days - 1) in Europe/Paris timezone
+      // Start date = today minus (days - 1) in Europe/Paris timezone
       const startLocal = new Date(endLocal);
       startLocal.setDate(startLocal.getDate() - (days - 1));
       startDate = formatInTimeZone(startLocal, TZ, 'yyyy-MM-dd');

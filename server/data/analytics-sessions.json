@@ -1934,9 +1934,9 @@
   {
     "id": "session_1755263689487_s8tcmaaup",
     "session_id": "ip_session_127_0_0_1",
-    "duration": 1,
+    "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-09-13T09:07:47.932Z",
+    "updated_at": "2025-09-13T09:36:43.179Z",
     "is_test_data": false
   },
   {
@@ -73032,7 +73032,7 @@
     "city": "Bogota",
     "country_code": null,
     "created_at": "2025-09-13T08:33:21.079Z",
-    "updated_at": "2025-09-13T09:30:49.733Z",
+    "updated_at": "2025-09-13T09:38:12.370Z",
     "is_location_cache": true
   },
   {
@@ -73154,5 +73154,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-13T09:30:19.475Z"
+  },
+  {
+    "id": "5f12cc27-c209-4177-aebb-c3c5d1552910",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T09:36:41.466Z"
+  },
+  {
+    "id": "2e324a68-5609-4fe7-822c-dbd29c3ceb46",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T09:37:42.087Z"
   }
 ]

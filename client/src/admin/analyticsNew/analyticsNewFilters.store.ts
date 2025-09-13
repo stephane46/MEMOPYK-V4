@@ -163,8 +163,9 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
         end: todayStr // Exclusive end date (matches server logic)
       };
     } else {
-      // Handle existing day-based presets
-      const days = state.datePreset === '7d' ? 7 : state.datePreset === '30d' ? 30 : 90;
+      // ✅ CRITICAL FIX: Match server computeParisWindow logic exactly
+      // Server uses: 7d = today minus 6 days, 30d = today minus 29 days, 90d = today minus 89 days
+      const days = state.datePreset === '7d' ? 6 : state.datePreset === '30d' ? 29 : 89;
       const startDate = todayParis.minus({ days });
       
       dateRange = {
