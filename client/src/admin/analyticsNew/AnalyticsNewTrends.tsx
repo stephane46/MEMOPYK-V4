@@ -292,7 +292,7 @@ export const AnalyticsNewTrends: React.FC = () => {
       case 'visitors':
         return {
           color: '#3B82F6',
-          label: 'Visiteurs uniques',
+          label: 'Daily unique visitors (non-additive)',
           format: (value: number) => value.toLocaleString('fr-FR')
         };
       case 'watchTime':
@@ -436,6 +436,13 @@ export const AnalyticsNewTrends: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent>
+          {selectedMetric === 'visitors' && trendsResponse?.periodAggregates && (
+            <div className="mb-4 flex justify-end">
+              <div className="bg-orange-50 text-orange-700 border border-orange-200 rounded-lg px-3 py-2 text-sm font-medium">
+                {metrics.uniqueVisitors.current.toLocaleString('en-US')} total unique visitors ({datePreset === '7d' ? '7-day' : datePreset === '30d' ? '30-day' : '90-day'} period)
+              </div>
+            </div>
+          )}
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData}>
@@ -451,6 +458,12 @@ export const AnalyticsNewTrends: React.FC = () => {
                   fontSize={12}
                   tick={{ fill: '#6b7280' }}
                   tickFormatter={chartConfig.format}
+                  label={selectedMetric === 'visitors' ? {
+                    value: chartConfig.label,
+                    angle: -90,
+                    position: 'insideLeft',
+                    style: { textAnchor: 'middle', fontSize: '12px', fill: '#6b7280' }
+                  } : undefined}
                 />
                 <Tooltip 
                   labelFormatter={(value, payload) => {
@@ -463,11 +476,26 @@ export const AnalyticsNewTrends: React.FC = () => {
                     const label = name === 'previousValue' ? 'Previous Period' : 'Current Period';
                     return [chartConfig.format(value), label] as [string, string];
                   }}
-                  contentStyle={{
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      const formattedDate = payload[0]?.payload?.date ? formatTooltipDate(payload[0].payload.date) : label;
+                      return (
+                        <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-lg">
+                          <p className="font-medium text-gray-900 mb-2">{formattedDate}</p>
+                          {payload.map((entry, index) => (
+                            <p key={index} className="text-sm" style={{ color: entry.color }}>
+                              {entry.name === 'previousValue' ? 'Previous Period' : 'Current Period'}: {chartConfig.format(entry.value as number)}
+                            </p>
+                          ))}
+                          {selectedMetric === 'visitors' && (
+                            <p className="text-xs text-gray-500 mt-2 border-t pt-2">
+                              These are daily unique visitors. Adding across days will overcount. The card shows deduplicated uniques over the full period.
+                            </p>
+                          )}
+                        </div>
+                      );
+                    }
+                    return null;
                   }}
                 />
                 {/* Current period - solid line */}
