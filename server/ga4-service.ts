@@ -915,12 +915,12 @@ export async function qSessionsTrendWithComparison(start: string, end: string, l
   ]);
   
   // ✅ CRITICAL FIX: Calculate period-level aggregates using same functions as Overview tab
-  console.log(`📊 CALCULATING PERIOD AGGREGATES: Using qSessions and qUniqueUsers for consistency with Overview tab`);
+  console.log(`📊 CALCULATING PERIOD AGGREGATES: Using qSessions and qTotalUsers for consistency with Overview tab`);
   const [periodSessions, periodUsers, prevPeriodSessions, prevPeriodUsers] = await Promise.all([
     qSessions(start, end, locale),
-    qUniqueUsers(start, end, locale), 
+    qTotalUsers(start, end, locale), 
     qSessions(formatDate(prevStartDate), formatDate(prevEndDate), locale),
-    qUniqueUsers(formatDate(prevStartDate), formatDate(prevEndDate), locale)
+    qTotalUsers(formatDate(prevStartDate), formatDate(prevEndDate), locale)
   ]);
   
   console.log(`📊 PERIOD AGGREGATES CALCULATED:`);
