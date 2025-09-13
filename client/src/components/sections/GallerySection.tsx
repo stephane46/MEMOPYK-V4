@@ -10,6 +10,7 @@ import { MobileEnhancedGallery } from "@/components/mobile/MobileEnhancedGallery
 import { LazyImage } from "@/components/ui/LazyImage";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useDeviceOrientation } from "@/hooks/useDeviceOrientation";
+import { trackCtaClick } from "@/lib/analytics";
 // Removed useVideoAnalytics import - not used in GallerySection, causing unnecessary re-renders
 
 // Gallery item interface using camelCase (transformed from API snake_case)
@@ -1174,6 +1175,7 @@ export default function GallerySection() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-6 py-4 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer no-underline w-full sm:w-auto whitespace-nowrap min-w-0"
+                        onClick={() => trackCtaClick(cta.id, window.location.pathname, language)}
                       >
                         {cta.id === 'book_call' ? <Phone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" /> : <Edit className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />}
                         <span className="block">

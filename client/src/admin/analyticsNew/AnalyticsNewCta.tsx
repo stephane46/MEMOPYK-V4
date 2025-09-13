@@ -222,42 +222,32 @@ export const AnalyticsNewCta: React.FC<{ className?: string }> = ({ className = 
     );
   }
 
-  // No data state
-  if (!ctaData || ctaData.totalClicks === 0) {
-    return (
-      <div className={cn('analytics-new-container', className)}>
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-[var(--analytics-new-text)]">CTA Analytics</h2>
-            <p className="text-[var(--analytics-new-text-muted)] mt-1">
-              Call-to-Action button performance and engagement metrics
-            </p>
-          </div>
-        </div>
-        
-        <Card className="border-gray-200 bg-gray-50">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <MousePointerClick className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <div className="text-lg font-medium text-gray-600 mb-2">No CTA clicks recorded</div>
-              <p className="text-sm text-gray-500 mb-4">
-                No call-to-action button clicks have been recorded for the selected time period.
-              </p>
-              <Badge variant="outline" className="text-gray-600">
-                Try expanding your date range or check that CTA tracking is enabled
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Create default empty data structure when no data exists
+  const defaultCtaData = {
+    totalClicks: 0,
+    ctas: {
+      book_call: {
+        totalClicks: 0,
+        languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
+        sectionBreakdown: {}
+      },
+      quick_quote: {
+        totalClicks: 0,
+        languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
+        sectionBreakdown: {}
+      }
+    },
+    languageTotals: { 'fr-FR': 0, 'en-US': 0 },
+    dailyTotals: [],
+    topSections: []
+  };
+
+  // Use actual data if available, otherwise use default empty data
+  const displayData = ctaData || defaultCtaData;
 
   // Process data for visualizations
   const processedData = React.useMemo(() => {
-    if (!ctaData) return null;
-
-    const { ctas, languageTotals, dailyTotals, topSections } = ctaData;
+    const { ctas, languageTotals, dailyTotals, topSections } = displayData;
     
     // Language breakdown data for pie chart
     const languageData = [
@@ -289,12 +279,12 @@ export const AnalyticsNewCta: React.FC<{ className?: string }> = ({ className = 
       insights: {
         topCta: ctas.book_call.totalClicks > ctas.quick_quote.totalClicks ? 'book_call' : 'quick_quote',
         dominantLanguage: languageTotals['fr-FR'] > languageTotals['en-US'] ? 'French' : 'English',
-        averageDaily: dailyTotals.length > 0 ? Math.round(ctaData.totalClicks / dailyTotals.length) : 0
+        averageDaily: dailyTotals.length > 0 ? Math.round(displayData.totalClicks / dailyTotals.length) : 0
       }
     };
-  }, [ctaData]);
+  }, [displayData]);
 
-  const { ctas, languageTotals, topSections } = ctaData;
+  const { ctas, languageTotals, topSections } = displayData;
   const insights = processedData?.insights;
 
   return (
@@ -327,7 +317,7 @@ export const AnalyticsNewCta: React.FC<{ className?: string }> = ({ className = 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <CtaKpiCard
           title="Total CTA Clicks"
-          value={ctaData.totalClicks.toLocaleString()}
+          value={displayData.totalClicks.toLocaleString()}
           subtitle="All call-to-action interactions"
           icon={MousePointerClick}
           color="text-orange-600"
@@ -473,22 +463,29 @@ export const AnalyticsNewCta: React.FC<{ className?: string }> = ({ className = 
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {topSections.map((section, index) => (
-                <div key={section.sectionName} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-xs font-medium">
-                      {index + 1}
+              {topSections.length > 0 ? (
+                topSections.map((section, index) => (
+                  <div key={section.sectionName} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-xs font-medium">
+                        {index + 1}
+                      </div>
+                      <span className="font-medium text-gray-900 capitalize">
+                        {section.sectionName.replace(/-/g, ' ')}
+                      </span>
                     </div>
-                    <span className="font-medium text-gray-900 capitalize">
-                      {section.sectionName.replace(/-/g, ' ')}
-                    </span>
+                    <div className="flex items-center space-x-3">
+                      <span className="font-semibold text-gray-900">{section.clicks}</span>
+                      <Badge variant="secondary">{section.percentage}%</Badge>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="font-semibold text-gray-900">{section.clicks}</span>
-                    <Badge variant="secondary">{section.percentage}%</Badge>
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-500 text-sm">No section data available</div>
+                  <div className="text-gray-400 text-xs mt-1">CTA clicks will appear here when recorded</div>
                 </div>
-              ))}
+              )}
             </div>
           </CardContent>
         </Card>
