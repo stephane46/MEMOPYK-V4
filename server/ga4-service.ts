@@ -18,12 +18,26 @@ type DateRange = protos.google.analytics.data.v1beta.IDateRange;
 const range = (start: string, end: string): DateRange => ({ startDate: start, endDate: end });
 
 // optional locale filter builder
+// ✅ CRITICAL FIX: Map frontend language codes to actual GA4 tracking values
+const mapLanguageToGA4Locale = (locale: string): string => {
+  const mapping: Record<string, string> = {
+    'en': 'en-US',     // Frontend "en" → Actual tracking "en-US"
+    'fr': 'fr-FR',     // Frontend "fr" → Actual tracking "fr-FR"  
+  };
+  return mapping[locale] || locale;
+};
+
 const localeFilter = (
   locale?: string
-): protos.google.analytics.data.v1beta.IFilterExpression | undefined =>
-  !locale || locale === "all"
-    ? undefined
-    : { filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } };
+): protos.google.analytics.data.v1beta.IFilterExpression | undefined => {
+  if (!locale || locale === "all") {
+    return undefined;
+  }
+  
+  // Map the frontend locale to the actual GA4 tracking value
+  const mappedLocale = mapLanguageToGA4Locale(locale);
+  return { filter: { fieldName: "customEvent:locale", stringFilter: { value: mappedLocale } } };
+};
 
 /* =============  KPI QUERIES  ============= */
 

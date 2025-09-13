@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, ChevronDown, Filter, X, Clock, CalendarIcon, Info, Video, Globe, Languages } from 'lucide-react';
+import { Calendar, ChevronDown, Filter, X, Clock, CalendarIcon, Info, Globe, Languages } from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
@@ -59,7 +59,6 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
     sinceDateEnabled,
     language,
     country,
-    videoId,
     setDatePreset,
     setCustomDateRange,
     setSinceDate,
@@ -75,11 +74,6 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
   const activeFilters = getActiveFilters();
   const activeFilterCount = Object.keys(activeFilters).length;
 
-  // Fetch real gallery videos for the dropdown
-  const { data: analyticsVideos = [], isLoading: videosLoading } = useQuery<any[]>({
-    queryKey: ['/api/analytics/videos'],
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
   
   // Display logic: Show what the user actually selected (ignoring exclusions)
   const getDisplayDateRange = () => {
@@ -350,8 +344,6 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   <SelectItem value="all">All languages</SelectItem>
                   <SelectItem value="en">English</SelectItem>
                   <SelectItem value="fr">French</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                  <SelectItem value="de">German</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -365,32 +357,20 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All countries</SelectItem>
-                  <SelectItem value="US">United States</SelectItem>
-                  <SelectItem value="FR">France</SelectItem>
-                  <SelectItem value="GB">United Kingdom</SelectItem>
-                  <SelectItem value="DE">Germany</SelectItem>
-                  <SelectItem value="CA">Canada</SelectItem>
+                  <SelectItem value="France">France</SelectItem>
+                  <SelectItem value="United States">United States</SelectItem>
+                  <SelectItem value="Canada">Canada</SelectItem>
+                  <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                  <SelectItem value="Germany">Germany</SelectItem>
+                  <SelectItem value="Australia">Australia</SelectItem>
+                  <SelectItem value="Spain">Spain</SelectItem>
+                  <SelectItem value="Italy">Italy</SelectItem>
+                  <SelectItem value="Brazil">Brazil</SelectItem>
+                  <SelectItem value="Japan">Japan</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Video Filter with Real Data */}
-            <div className="flex items-center gap-2">
-              <Video className="h-4 w-4 text-gray-500" />
-              <Select value={videoId} onValueChange={setVideoId}>
-                <SelectTrigger className="w-40" data-testid="filter-video">
-                  <SelectValue placeholder={videosLoading ? "Loading..." : "Video"} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All videos</SelectItem>
-                  {(analyticsVideos || []).map((video: any) => (
-                    <SelectItem key={video.id} value={video.id}>
-                      {video.title && video.title.length > 25 ? `${video.title.substring(0, 25)}...` : (video.title || 'Untitled')}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
             {/* Reset Button - Only show if filters are active */}
             {activeFilterCount > 0 && (

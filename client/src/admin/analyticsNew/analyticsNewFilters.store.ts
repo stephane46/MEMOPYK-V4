@@ -19,7 +19,6 @@ export interface AnalyticsNewFilters {
   // Segmentation filters
   language: string;
   country: string;
-  videoId: string;
   
   // UI state
   isLoading: boolean;
@@ -34,7 +33,6 @@ interface AnalyticsNewFiltersStore extends AnalyticsNewFilters {
   setSinceDateEnabled: (enabled: boolean) => void;
   setLanguage: (language: string) => void;
   setCountry: (country: string) => void;
-  setVideoId: (videoId: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   reset: () => void;
@@ -59,8 +57,7 @@ const defaultState: AnalyticsNewFilters = {
   sinceDate: getYesterdayDate(), // Default to yesterday in Paris timezone
   sinceDateEnabled: false, // Disable start date filter by default to use preset
   language: 'all',
-  country: 'all', 
-  videoId: 'all',
+  country: 'all',
   isLoading: false,
   error: null,
 };
@@ -121,7 +118,6 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
 
       setLanguage: (language) => set({ language }),
       setCountry: (country) => set({ country }),
-      setVideoId: (videoId) => set({ videoId }),
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
 
@@ -219,7 +215,6 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
     
     if (state.language !== 'all') filters.language = state.language;
     if (state.country !== 'all') filters.country = state.country;
-    if (state.videoId !== 'all') filters.videoId = state.videoId;
     if (state.sinceDateEnabled && state.sinceDate) filters.sinceDate = state.sinceDate;
     
     return filters;
@@ -235,7 +230,6 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
         customDateEnd: state.customDateEnd,
         language: state.language,
         country: state.country,
-        videoId: state.videoId,
       }),
     }
   )
