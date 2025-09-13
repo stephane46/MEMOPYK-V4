@@ -22,6 +22,7 @@ import { scaleSequential } from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { useFilteredGeo, CountryData, CityData, GeoAnalyticsData } from './hooks/useFilteredReports';
+import { CountryFlag } from '@/components/admin/CountryFlag';
 import './analyticsNew.tokens.css';
 
 // World atlas data for map visualization
@@ -29,7 +30,7 @@ const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 interface GeoKpiCardProps {
   title: string;
-  value: string;
+  value: string | React.ReactNode;
   subtitle: string;
   icon: React.ComponentType<any>;
   color: string;
@@ -44,7 +45,9 @@ const GeoKpiCard: React.FC<GeoKpiCardProps> = ({ title, value, subtitle, icon: I
         <Icon className={`h-4 w-4 ${color}`} />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
+        <div className="text-2xl font-bold text-gray-900 mb-1">
+          {typeof value === 'string' ? value : value}
+        </div>
         <p className="text-xs text-gray-500">{subtitle}</p>
         {explanation && (
           <p className="text-xs text-gray-400 mt-2 leading-relaxed">{explanation}</p>
@@ -72,7 +75,7 @@ const CountryRow: React.FC<CountryRowProps> = ({ country, sessions, visitors, ra
           {rank}
         </div>
         <div className="flex items-center space-x-2">
-          <MapPin className="h-4 w-4 text-gray-400" />
+          <CountryFlag country={country} size={16} />
           <span className="font-medium text-gray-900">{country}</span>
         </div>
       </div>
@@ -250,7 +253,12 @@ export const AnalyticsNewGeo: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <GeoKpiCard
           title="Top Market"
-          value={topMarket?.country || 'N/A'}
+          value={
+            <div className="flex items-center space-x-2">
+              <CountryFlag country={topMarket?.country || ''} size={20} />
+              <span>{topMarket?.country || 'N/A'}</span>
+            </div>
+          }
           subtitle={`${topMarket?.sessions.toLocaleString() || 0} sessions`}
           icon={Globe}
           color="text-blue-600"
@@ -264,7 +272,12 @@ export const AnalyticsNewGeo: React.FC = () => {
         />
         <GeoKpiCard
           title="Best Engagement"
-          value={`${bestEngagement?.country || 'N/A'} – ${Math.round((bestEngagement?.sessions / bestEngagement?.visitors) * 100) || 0}% return rate`}
+          value={
+            <div className="flex items-center space-x-2">
+              <CountryFlag country={bestEngagement?.country || ''} size={20} />
+              <span>{bestEngagement?.country || 'N/A'} – {Math.round((bestEngagement?.sessions / bestEngagement?.visitors) * 100) || 0}% return rate</span>
+            </div>
+          }
           subtitle=""
           icon={Activity}
           color="text-orange-600"
