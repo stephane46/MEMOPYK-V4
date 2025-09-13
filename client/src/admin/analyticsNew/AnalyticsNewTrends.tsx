@@ -45,8 +45,10 @@ const TrendCard: React.FC<TrendCardProps> = ({ title, value, trend, icon, descri
           <span className={`text-sm ml-1 ${getTrendColor()}`}>
             {trend !== 0 && (trend > 0 ? '+' : '')}{trend.toFixed(1)}%
           </span>
-          <span className="text-xs text-gray-500 ml-2">{description}</span>
         </div>
+        <p className="text-xs text-gray-500 mt-2">
+          {description}
+        </p>
       </CardContent>
     </Card>
   );

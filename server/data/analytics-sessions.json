@@ -73032,7 +73032,7 @@
     "city": "Bogota",
     "country_code": null,
     "created_at": "2025-09-13T08:33:21.079Z",
-    "updated_at": "2025-09-13T09:48:40.357Z",
+    "updated_at": "2025-09-13T09:54:44.177Z",
     "is_location_cache": true
   },
   {
@@ -73186,5 +73186,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-13T09:48:10.097Z"
+  },
+  {
+    "id": "d8eeff6b-e643-4c31-9b02-126031f4c253",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/en-US",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-13T09:54:13.931Z"
   }
 ]
