@@ -145,7 +145,69 @@ const CtaBreakdownRow: React.FC<CtaBreakdownRowProps> = ({
 export const AnalyticsNewCta: React.FC<{ className?: string }> = ({ className = '' }) => {
   // Use centralized filtering system with the useFilteredCta hook
   const { data: ctaData, isLoading: ctaLoading, error: ctaError, refetch, appliedFilters } = useFilteredCta();
-  
+
+  // Create default empty data structure when no data exists
+  const defaultCtaData = {
+    totalClicks: 0,
+    ctas: {
+      book_call: {
+        totalClicks: 0,
+        languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
+        sectionBreakdown: {}
+      },
+      quick_quote: {
+        totalClicks: 0,
+        languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
+        sectionBreakdown: {}
+      }
+    },
+    languageTotals: { 'fr-FR': 0, 'en-US': 0 },
+    dailyTotals: [],
+    topSections: []
+  };
+
+  // Use actual data if available, otherwise use default empty data
+  const displayData = ctaData || defaultCtaData;
+
+  // Process data for visualizations - ALWAYS call this hook before any returns
+  const processedData = React.useMemo(() => {
+    const { ctas, languageTotals, dailyTotals, topSections } = displayData;
+    
+    // Language breakdown data for pie chart
+    const languageData = [
+      { name: 'French', value: languageTotals['fr-FR'], color: '#3B82F6' },
+      { name: 'English', value: languageTotals['en-US'], color: '#10B981' }
+    ];
+
+    // CTA comparison data
+    const ctaComparisonData = [
+      {
+        name: 'Free Consultation',
+        clicks: ctas.book_call.totalClicks,
+        'fr-FR': ctas.book_call.languageBreakdown['fr-FR'],
+        'en-US': ctas.book_call.languageBreakdown['en-US']
+      },
+      {
+        name: 'Free Quote', 
+        clicks: ctas.quick_quote.totalClicks,
+        'fr-FR': ctas.quick_quote.languageBreakdown['fr-FR'],
+        'en-US': ctas.quick_quote.languageBreakdown['en-US']
+      }
+    ];
+
+    return {
+      languageData,
+      ctaComparisonData,
+      dailyTrend: dailyTotals,
+      sections: topSections,
+      insights: {
+        topCta: ctas.book_call.totalClicks > ctas.quick_quote.totalClicks ? 'book_call' : 'quick_quote',
+        dominantLanguage: languageTotals['fr-FR'] > languageTotals['en-US'] ? 'French' : 'English',
+        averageDaily: dailyTotals.length > 0 ? Math.round(displayData.totalClicks / dailyTotals.length) : 0
+      }
+    };
+  }, [displayData]);
+
   // Loading skeleton
   if (ctaLoading) {
     return (
@@ -222,67 +284,6 @@ export const AnalyticsNewCta: React.FC<{ className?: string }> = ({ className = 
     );
   }
 
-  // Create default empty data structure when no data exists
-  const defaultCtaData = {
-    totalClicks: 0,
-    ctas: {
-      book_call: {
-        totalClicks: 0,
-        languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
-        sectionBreakdown: {}
-      },
-      quick_quote: {
-        totalClicks: 0,
-        languageBreakdown: { 'fr-FR': 0, 'en-US': 0 },
-        sectionBreakdown: {}
-      }
-    },
-    languageTotals: { 'fr-FR': 0, 'en-US': 0 },
-    dailyTotals: [],
-    topSections: []
-  };
-
-  // Use actual data if available, otherwise use default empty data
-  const displayData = ctaData || defaultCtaData;
-
-  // Process data for visualizations
-  const processedData = React.useMemo(() => {
-    const { ctas, languageTotals, dailyTotals, topSections } = displayData;
-    
-    // Language breakdown data for pie chart
-    const languageData = [
-      { name: 'French', value: languageTotals['fr-FR'], color: '#3B82F6' },
-      { name: 'English', value: languageTotals['en-US'], color: '#10B981' }
-    ];
-
-    // CTA comparison data
-    const ctaComparisonData = [
-      {
-        name: 'Free Consultation',
-        clicks: ctas.book_call.totalClicks,
-        'fr-FR': ctas.book_call.languageBreakdown['fr-FR'],
-        'en-US': ctas.book_call.languageBreakdown['en-US']
-      },
-      {
-        name: 'Free Quote', 
-        clicks: ctas.quick_quote.totalClicks,
-        'fr-FR': ctas.quick_quote.languageBreakdown['fr-FR'],
-        'en-US': ctas.quick_quote.languageBreakdown['en-US']
-      }
-    ];
-
-    return {
-      languageData,
-      ctaComparisonData,
-      dailyTrend: dailyTotals,
-      sections: topSections,
-      insights: {
-        topCta: ctas.book_call.totalClicks > ctas.quick_quote.totalClicks ? 'book_call' : 'quick_quote',
-        dominantLanguage: languageTotals['fr-FR'] > languageTotals['en-US'] ? 'French' : 'English',
-        averageDaily: dailyTotals.length > 0 ? Math.round(displayData.totalClicks / dailyTotals.length) : 0
-      }
-    };
-  }, [displayData]);
 
   const { ctas, languageTotals, topSections } = displayData;
   const insights = processedData?.insights;
