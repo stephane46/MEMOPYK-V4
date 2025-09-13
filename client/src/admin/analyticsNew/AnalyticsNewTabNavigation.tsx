@@ -34,6 +34,12 @@ export const ANALYTICS_NEW_TABS: AnalyticsNewTab[] = [
     description: 'Live visitor tracking',
   },
   {
+    id: 'trends',
+    label: 'Trends',
+    icon: TrendingUp,
+    description: 'Time-series analytics',
+  },
+  {
     id: 'video',
     label: 'Video',
     icon: Video,
@@ -50,12 +56,6 @@ export const ANALYTICS_NEW_TABS: AnalyticsNewTab[] = [
     label: 'CTA',
     icon: MousePointer,
     description: 'Call-to-action performance',
-  },
-  {
-    id: 'trends',
-    label: 'Trends',
-    icon: TrendingUp,
-    description: 'Time-series analytics',
   },
   {
     id: 'clarity',
