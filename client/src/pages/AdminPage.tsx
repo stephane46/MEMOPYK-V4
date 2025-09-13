@@ -239,15 +239,15 @@ export default function AdminPage() {
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
     { id: 'why-memopyk', label: 'Pourquoi MEMOPYK', icon: Users },
     { id: 'legal-docs', label: 'Documents Légaux', icon: FileText },
-    { id: 'analytics-new', label: 'Analytics', icon: Layers },
+    { id: 'analytics-new', label: 'Analytics', icon: BarChart3 },
     { id: 'cache-management', label: 'Cache GA4', icon: Database },
     { id: 'tests', label: 'Tests', icon: TestTube },
     { id: 'deployment', label: 'Déploiement', icon: Rocket },
     // Old analytics sections - moved to bottom
     { id: 'separator', label: '—————————————————', icon: null, disabled: true },
-    { id: 'analytics', label: 'Analytics (Previous)', icon: BarChart3 },
-    { id: 'analytics-ga', label: '(Analytics GA)', icon: TrendingUp },
-    { id: 'analytics-ga-clean', label: 'Analytics (Clean)', icon: Sparkles },
+    { id: 'analytics', label: 'Analytics [Previous]', icon: Layers },
+    { id: 'analytics-ga', label: '[Analytics GA]', icon: TrendingUp },
+    { id: 'analytics-ga-clean', label: 'Analytics [Clean]', icon: Sparkles },
   ];
 
   // Fetch hero videos
