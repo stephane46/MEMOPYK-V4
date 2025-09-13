@@ -79,6 +79,9 @@ export function buildAnalyticsParams(
   const params: Partial<FilteredAnalyticsParams> = {
     locale: language === 'all' ? 'all' : language,
   };
+
+  // 🔍 CRITICAL DEBUG: Verify locale parameter handling
+  console.log('🔍 LOCALE PARAM:', language, '→', params.locale);
   
   // ✅ CRITICAL FIX: ALWAYS include explicit dates for endpoints that require them (like /api/ga4/geo)
   // Also include preset for endpoints that support it (backward compatibility)

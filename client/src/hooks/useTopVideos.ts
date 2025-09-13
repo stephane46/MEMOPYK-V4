@@ -1,5 +1,6 @@
 // client/src/hooks/useTopVideos.ts
 import { useEffect, useState, useCallback } from "react";
+import { buildAnalyticsParams, buildAnalyticsUrl } from '../admin/analyticsNew/data/analyticsFilters';
 
 export type TopVideoRow = {
   video_id: string;
@@ -24,12 +25,24 @@ export function useTopVideos(params: { startDate: string; endDate: string; local
     setLoading(true);
     setError(null);
 
-    const url = new URL("/api/ga4/top-videos", window.location.origin);
-    url.searchParams.set("startDate", startDate);
-    url.searchParams.set("endDate", endDate);
-    url.searchParams.set("locale", locale);
+    // ✅ CRITICAL FIX: Use centralized parameter building to ensure locale is sent correctly
+    const filterState = {
+      datePreset: 'custom',
+      start: startDate,
+      end: endDate,
+      sinceDate: undefined,
+      sinceDateEnabled: false,
+      language: locale,
+      country: 'all',
+      videoId: 'all'
+    };
 
-    fetch(url.toString())
+    const filterParams = buildAnalyticsParams('topVideos', filterState);
+    const url = buildAnalyticsUrl('/api/ga4/top-videos', filterParams);
+
+    console.log('🔍 useTopVideos - URL with centralized params:', url);
+
+    fetch(url)
       .then(r => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((json) => { 
         if (alive) {

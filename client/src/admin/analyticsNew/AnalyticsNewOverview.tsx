@@ -53,10 +53,17 @@ export const AnalyticsNewOverview: React.FC<AnalyticsNewOverviewProps> = ({
   const preset = datePreset;
 
   // Get realtime GA4 data for active users
-  const { data: ga4Data, isLoading: ga4Loading } = useQuery<any>({
+  const { data: ga4Data, isLoading: ga4Loading, error: ga4Error } = useQuery<any>({
     queryKey: ['/api/ga4/realtime'],
     refetchInterval: 15000, // Refresh every 15 seconds
     refetchOnWindowFocus: false,
+    retry: (failureCount, error: any) => {
+      // Don't retry on quota exhausted errors
+      if (error?.status === 500 && error?.message?.includes?.('RESOURCE_EXHAUSTED')) {
+        return false;
+      }
+      return failureCount < 3;
+    },
   });
 
   // Use centralized filtering system for consistent data across all analytics tabs

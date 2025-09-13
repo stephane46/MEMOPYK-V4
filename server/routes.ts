@@ -2040,8 +2040,35 @@ export async function registerRoutes(app: Express): Promise<void> {
       console.log(`✅ GA4 Realtime using REAL GA4 API: ${activeUsers} active users`);
       
       res.json(realData);
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ GA4 Realtime error:', error);
+      
+      // ✅ CRITICAL FIX: Handle GA4 quota exhausted errors gracefully
+      if (error?.code === 8 || error?.message?.includes('RESOURCE_EXHAUSTED')) {
+        console.log('🚫 GA4 Quota exhausted - serving cached/stubbed data');
+        
+        // Return cached data if available
+        if (ga4RealtimeCache) {
+          console.log('📊 Using cached realtime data due to quota exhaustion');
+          return res.json({ ...ga4RealtimeCache.data, quotaExhausted: true });
+        }
+        
+        // Return stubbed data if no cache available
+        const stubbedData = {
+          activeUsers: 0,
+          byCountry: [],
+          byDevice: [],
+          timestamp: new Date().toISOString(),
+          cached: false,
+          quotaExhausted: true,
+          note: 'GA4 quota exhausted - showing stubbed data'
+        };
+        
+        console.log('📊 Using stubbed realtime data due to quota exhaustion');
+        return res.status(200).json(stubbedData);
+      }
+      
+      // Other errors still return 500
       res.status(500).json({ error: "Failed to get GA4 realtime data" });
     }
   });
@@ -7345,6 +7372,20 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(data);
     } catch (error: any) {
       console.error("GA4 realtime error:", error);
+      
+      // ✅ CRITICAL FIX: Handle GA4 quota exhausted errors gracefully
+      if (error?.code === 8 || error?.message?.includes('RESOURCE_EXHAUSTED')) {
+        console.log('🚫 GA4 Quota exhausted - serving stubbed realtime data');
+        const stubbedData = {
+          activeUsers: 0,
+          timestamp: new Date().toISOString(),
+          quotaExhausted: true,
+          note: 'GA4 quota exhausted - showing stubbed data'
+        };
+        return res.status(200).json(stubbedData);
+      }
+      
+      // Other errors still return 500
       res.status(500).json({ error: error.message || "Failed to fetch realtime data" });
     }
   });

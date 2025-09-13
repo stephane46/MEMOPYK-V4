@@ -116,7 +116,10 @@ export const useAnalyticsNewFilters = create<AnalyticsNewFiltersStore>()(
       },
       setSinceDateEnabled: (enabled) => set({ sinceDateEnabled: enabled }),
 
-      setLanguage: (language) => set({ language }),
+      setLanguage: (language) => {
+        console.log('🔧 LANGUAGE CHANGED:', language, '→', (language || 'all').toLowerCase());
+        set({ language: (language || 'all').toLowerCase() });
+      },
       setCountry: (country) => set({ country }),
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),

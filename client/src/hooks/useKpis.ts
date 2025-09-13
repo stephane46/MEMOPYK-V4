@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { buildAnalyticsParams, buildAnalyticsUrl } from '../admin/analyticsNew/data/analyticsFilters';
+import { useAnalyticsNewFilters } from '../admin/analyticsNew/analyticsNewFilters.store';
 
 type Kpis = {
   plays: number;
@@ -20,14 +22,14 @@ function prevPeriod(startYmd: string, endYmd: string) {
   return { start: ymd(prevStart), end: ymd(prevEnd) };
 }
 
-async function fetchKpis(startDate: string, endDate: string, locale: string, signal?: AbortSignal): Promise<Kpis> {
-  // Use ONLY authentic GA4 data - no fallbacks, no estimations
-  const url = new URL("/api/ga4/kpis", window.location.origin);
-  url.searchParams.set("startDate", startDate);
-  url.searchParams.set("endDate", endDate);
-  url.searchParams.set("locale", locale);
+async function fetchKpis(filterState: any, signal?: AbortSignal): Promise<Kpis> {
+  // ✅ CRITICAL FIX: Use centralized parameter building to ensure locale is sent correctly
+  const filterParams = buildAnalyticsParams('kpis', filterState);
+  const url = buildAnalyticsUrl('/api/ga4/kpis', filterParams);
   
-  const res = await fetch(url.toString(), { signal });
+  console.log('🔍 useKpis - URL with centralized params:', url);
+  
+  const res = await fetch(url, { signal });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   
   const ga4Data = await res.json();
@@ -65,9 +67,27 @@ export function useKpis(params: { startDate: string; endDate: string; locale: "a
     
     const { start: ps, end: pe } = prevPeriod(startDate, endDate);
 
+    // ✅ CRITICAL FIX: Build filter state for centralized parameter system
+    const currentFilterState = {
+      datePreset: 'custom',
+      start: startDate,
+      end: endDate,
+      sinceDate: undefined,
+      sinceDateEnabled: false,
+      language: locale,
+      country: 'all',
+      videoId: 'all'
+    };
+
+    const previousFilterState = {
+      ...currentFilterState,
+      start: ps,
+      end: pe
+    };
+
     Promise.all([
-      fetchKpis(startDate, endDate, locale, abortController.signal), 
-      fetchKpis(ps, pe, locale, abortController.signal)
+      fetchKpis(currentFilterState, abortController.signal), 
+      fetchKpis(previousFilterState, abortController.signal)
     ])
       .then(([cur, prev]) => { 
         if (alive && !abortController.signal.aborted) { 
