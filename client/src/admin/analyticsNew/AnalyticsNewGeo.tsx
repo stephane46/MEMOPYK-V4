@@ -264,7 +264,7 @@ export const AnalyticsNewGeo: React.FC = () => {
         />
         <GeoKpiCard
           title="Best Engagement"
-          value={`🇫🇷 ${bestEngagement?.country || 'N/A'} – ${Math.round((bestEngagement?.sessions / bestEngagement?.visitors) * 100) || 0}% return rate`}
+          value={`${bestEngagement?.country || 'N/A'} – ${Math.round((bestEngagement?.sessions / bestEngagement?.visitors) * 100) || 0}% return rate`}
           subtitle=""
           icon={Activity}
           color="text-orange-600"
@@ -272,7 +272,7 @@ export const AnalyticsNewGeo: React.FC = () => {
         />
         <GeoKpiCard
           title="Global Reach"
-          value={`🌍 ${totalVisitors.toLocaleString()} unique visitors`}
+          value={`${totalVisitors.toLocaleString()} unique visitors`}
           subtitle=""
           icon={Users}
           color="text-purple-600"
