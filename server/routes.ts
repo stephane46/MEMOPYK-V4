@@ -5689,6 +5689,16 @@ export async function registerRoutes(app: Express): Promise<void> {
         const memoryCached = getCache<any>(key);
         if (memoryCached) {
           console.log(`✅ CACHE HIT (MEMORY): Returning cached data for ${key}`);
+          
+          // ✅ CRITICAL FIX: Add cache debugging headers to identify locale collision issue
+          res.setHeader('X-Cache-Key', key);
+          res.setHeader('X-Locale', locale);
+          res.setHeader('X-Country', country);
+          res.setHeader('X-Since-Date', sinceDate || 'none');
+          res.setHeader('X-Date-Range', `${startDate} to ${endDate}`);
+          res.setHeader('X-Cache-Status', 'HIT-MEMORY');
+          console.log(`🔍 CACHE DEBUG HEADERS ADDED (HIT): locale=${locale}, country=${country}, key=${key}`);
+          
           return res.json(memoryCached);
         }
         
@@ -5940,6 +5950,15 @@ export async function registerRoutes(app: Express): Promise<void> {
       await setDbCache(key, data, 300);
       setCache(key, data, 300);
       console.log(`✅ Data stored in cache for key: ${key}`);
+      
+      // ✅ CRITICAL FIX: Add cache debugging headers to identify locale collision issue
+      res.setHeader('X-Cache-Key', key);
+      res.setHeader('X-Locale', locale);
+      res.setHeader('X-Country', country);
+      res.setHeader('X-Since-Date', sinceDate || 'none');
+      res.setHeader('X-Date-Range', `${startDate} to ${endDate}`);
+      res.setHeader('X-Cache-Status', 'MISS-STORED');
+      console.log(`🔍 CACHE DEBUG HEADERS ADDED: locale=${locale}, country=${country}, key=${key}`);
       
       // Add comprehensive Paris timezone headers
       setParisTimezoneHeaders(res, req.query);

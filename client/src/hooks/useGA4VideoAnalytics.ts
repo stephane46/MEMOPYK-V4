@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { buildAnalyticsParams, buildAnalyticsUrl } from '../admin/analyticsNew/data/analyticsFilters';
+import { useAnalyticsNewFilters } from '../admin/analyticsNew/analyticsNewFilters.store';
 
 export interface GA4KPIsData {
   plays: number;
@@ -60,21 +62,44 @@ export interface UseGA4VideoAnalyticsParams {
 export const useGA4VideoAnalytics = (params: UseGA4VideoAnalyticsParams) => {
   const { startDate, endDate, locale = 'all' } = params;
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // ✅ CRITICAL FIX: Use centralized filter system instead of hardcoded parameters
+  const filters = useAnalyticsNewFilters();
+  
+  // Build filter state for centralized parameter system
+  const filterState = {
+    datePreset: 'custom',
+    start: startDate,
+    end: endDate,
+    sinceDate: undefined,
+    sinceDateEnabled: false,
+    language: locale !== 'all' ? locale : filters.language, // Use store language if locale is 'all'
+    country: 'all',
+    videoId: 'all'
+  };
 
-  // KPIs query
+  // ✅ FIXED: KPIs query using centralized parameter system
   const kpisQuery = useQuery<GA4KPIsData>({
-    queryKey: ['ga4-kpis', startDate, endDate, locale],
+    queryKey: (() => {
+      const filterParams = buildAnalyticsParams('kpis', filterState);
+      return filterParams.queryKey;
+    })(),
     queryFn: async () => {
-      console.log('🔍 GA4 KPIs Request URL:', `/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`);
-      const response = await fetch(
-        `/api/ga4/kpis?startDate=${startDate}&endDate=${endDate}&locale=${locale}`
-      );
+      const filterParams = buildAnalyticsParams('kpis', filterState);
+      const url = buildAnalyticsUrl('/api/ga4/kpis', filterParams);
+      
+      console.log('🔍 GA4 KPIs Request URL (centralized):', url);
+      console.log('🔍 GA4 KPIs Filter State:', filterState);
+      
+      const response = await fetch(url);
       console.log('🔍 GA4 KPIs Response Status:', response.status, response.ok);
+      
       if (!response.ok) {
         const error = await response.json();
         console.log('🔍 GA4 KPIs Error Response:', error);
         throw new Error(error.error || 'Failed to fetch GA4 KPIs');
       }
+      
       const result = await response.json();
       console.log('🔍 GA4 KPIs Success Response:', result);
       return result;
