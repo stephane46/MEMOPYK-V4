@@ -513,6 +513,8 @@ export const AnalyticsNewGeo: React.FC = () => {
                   <Pie
                     data={countries.slice(0, 8).map((country, index) => ({
                       name: country.country,
+                      sessions: country.sessions,
+                      visitors: country.visitors,
                       value: country.sessions,
                       fill: `hsl(${(index * 45) % 360}, 70%, 60%)`
                     }))}
@@ -528,8 +530,29 @@ export const AnalyticsNewGeo: React.FC = () => {
                       <Cell key={`cell-${index}`} fill={`hsl(${(index * 45) % 360}, 70%, 60%)`} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => [value.toLocaleString(), 'Sessions']} />
-                  <Legend />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload[0]) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                            <p className="font-medium text-gray-900 underline">{data.name}</p>
+                            <p className="text-sm">
+                              <span className="font-bold text-blue-600">Sessions: {data.sessions.toLocaleString()}</span>
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Visitors: {data.visitors.toLocaleString()}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend 
+                    wrapperStyle={{ color: '#374151' }}
+                    iconType="circle"
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -551,6 +574,8 @@ export const AnalyticsNewGeo: React.FC = () => {
                   <Pie
                     data={countries.slice(0, 8).map((country, index) => ({
                       name: country.country,
+                      sessions: country.sessions,
+                      visitors: country.visitors,
                       value: country.visitors,
                       fill: `hsl(${120 + (index * 35) % 360}, 65%, 55%)`
                     }))}
@@ -566,8 +591,29 @@ export const AnalyticsNewGeo: React.FC = () => {
                       <Cell key={`cell-${index}`} fill={`hsl(${120 + (index * 35) % 360}, 65%, 55%)`} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => [value.toLocaleString(), 'Visitors']} />
-                  <Legend />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload[0]) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                            <p className="font-medium text-gray-900 underline">{data.name}</p>
+                            <p className="text-sm">
+                              <span className="font-bold text-green-600">Visitors: {data.visitors.toLocaleString()}</span>
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Sessions: {data.sessions.toLocaleString()}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Legend 
+                    wrapperStyle={{ color: '#374151' }}
+                    iconType="circle"
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
