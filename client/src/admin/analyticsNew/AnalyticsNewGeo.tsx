@@ -264,19 +264,19 @@ export const AnalyticsNewGeo: React.FC = () => {
         />
         <GeoKpiCard
           title="Best Engagement"
-          value={bestEngagement?.country || 'N/A'}
-          subtitle={`${Math.round((bestEngagement?.sessions / bestEngagement?.visitors) * 100) || 0}% rate`}
+          value={`🇫🇷 ${bestEngagement?.country || 'N/A'} – ${Math.round((bestEngagement?.sessions / bestEngagement?.visitors) * 100) || 0}% return rate`}
+          subtitle=""
           icon={Activity}
           color="text-orange-600"
-          explanation="Country with the highest sessions-per-visitor ratio, showing where users return most frequently."
+          explanation="Visitors here return more often than anywhere else."
         />
         <GeoKpiCard
           title="Global Reach"
-          value={`${totalVisitors.toLocaleString()}`}
-          subtitle="unique visitors"
+          value={`🌍 ${totalVisitors.toLocaleString()} unique visitors`}
+          subtitle=""
           icon={Users}
           color="text-purple-600"
-          explanation="Total count of unique visitors across all countries who have discovered MEMOPYK."
+          explanation="Total number of distinct users worldwide."
         />
       </div>
 
