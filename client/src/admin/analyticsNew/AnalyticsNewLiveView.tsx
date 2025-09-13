@@ -386,15 +386,13 @@ export const AnalyticsNewLiveView: React.FC = () => {
                 };
                 
                 const getRelativeTime = (dateString: string) => {
-                  console.log('🕐 DEBUG dateString:', dateString);
-                  const date = DateTime.fromISO(dateString, { zone: 'Europe/Paris' });
+                  // Parse UTC timestamp from database, then convert to Paris time
+                  const date = DateTime.fromISO(dateString, { zone: 'UTC' }).setZone('Europe/Paris');
                   const now = DateTime.now().setZone('Europe/Paris');
-                  console.log('🕐 DEBUG date:', date.toString(), 'now:', now.toString());
                   const diffInMs = now.toMillis() - date.toMillis();
                   const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
                   const diffInHours = Math.floor(diffInMinutes / 60);
                   const diffInDays = Math.floor(diffInHours / 24);
-                  console.log('🕐 DEBUG diffInMs:', diffInMs, 'diffInMinutes:', diffInMinutes, 'diffInHours:', diffInHours);
                 
                   if (diffInMinutes < 1) {
                     return 'now';

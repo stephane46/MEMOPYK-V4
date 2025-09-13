@@ -232,7 +232,8 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
   };
 
   const getRelativeTime = (dateString: string) => {
-    const date = DateTime.fromISO(dateString, { zone: 'Europe/Paris' });
+    // Parse UTC timestamp from database, then convert to Paris time
+    const date = DateTime.fromISO(dateString, { zone: 'UTC' }).setZone('Europe/Paris');
     const now = DateTime.now().setZone('Europe/Paris');
     const diffInMs = now.toMillis() - date.toMillis();
     const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
