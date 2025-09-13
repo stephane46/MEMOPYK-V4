@@ -534,8 +534,8 @@ export const AnalyticsNewGeo: React.FC = () => {
                     content={({ active, payload }) => {
                       if (active && payload && payload[0]) {
                         const data = payload[0].payload;
-                        const sessionsPercent = totalSessions > 0 ? ((data.sessions / totalSessions) * 100).toFixed(1) : '0.0';
-                        const visitorsPercent = totalVisitors > 0 ? ((data.visitors / totalVisitors) * 100).toFixed(1) : '0.0';
+                        const sessionsPercent = totalSessions > 0 ? Math.ceil((data.sessions / totalSessions) * 100) : 0;
+                        const visitorsPercent = totalVisitors > 0 ? Math.ceil((data.visitors / totalVisitors) * 100) : 0;
                         return (
                           <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
                             <p className="font-medium text-gray-900 underline">{data.name}</p>
@@ -597,8 +597,8 @@ export const AnalyticsNewGeo: React.FC = () => {
                     content={({ active, payload }) => {
                       if (active && payload && payload[0]) {
                         const data = payload[0].payload;
-                        const sessionsPercent = totalSessions > 0 ? ((data.sessions / totalSessions) * 100).toFixed(1) : '0.0';
-                        const visitorsPercent = totalVisitors > 0 ? ((data.visitors / totalVisitors) * 100).toFixed(1) : '0.0';
+                        const sessionsPercent = totalSessions > 0 ? Math.ceil((data.sessions / totalSessions) * 100) : 0;
+                        const visitorsPercent = totalVisitors > 0 ? Math.ceil((data.visitors / totalVisitors) * 100) : 0;
                         return (
                           <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
                             <p className="font-medium text-gray-900 underline">{data.name}</p>
