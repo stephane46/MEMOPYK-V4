@@ -252,6 +252,32 @@ export const AnalyticsNewTrends: React.FC = () => {
     }
   };
 
+  const formatDurationTooltip = (seconds: number): string => {
+    if (seconds < 60) {
+      return `${Math.round(seconds)}s`;
+    }
+    const totalMinutes = Math.floor(seconds / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    const secs = Math.round(seconds % 60);
+    
+    if (hours > 0) {
+      if (mins > 0 && secs > 0) {
+        return `${hours}h ${mins}min ${secs}s`;
+      } else if (mins > 0) {
+        return `${hours}h ${mins}min`;
+      } else {
+        return `${hours}h`;
+      }
+    } else {
+      if (secs > 0) {
+        return `${mins}min ${secs}s`;
+      } else {
+        return `${mins}min`;
+      }
+    }
+  };
+
   const getChartData = () => {
     // ✅ CRITICAL FIX: Use dailyData for charts (line visualizations)
     const dailyData = trendsResponse?.dailyData;
@@ -298,13 +324,13 @@ export const AnalyticsNewTrends: React.FC = () => {
       case 'watchTime':
         return {
           color: '#10B981',
-          label: 'Temps de visionnage (sec)',
-          format: (value: number) => `${Math.round(value)}s`
+          label: 'Daily session duration (non-additive)',
+          format: (value: number) => formatDurationTooltip(value)
         };
       case 'completion':
         return {
           color: '#8B5CF6',
-          label: 'Completion Rate (%)',
+          label: 'Daily engagement rate (non-additive)',
           format: (value: number) => `${Math.round(value)}%`
         };
       default:
@@ -443,6 +469,20 @@ export const AnalyticsNewTrends: React.FC = () => {
               </div>
             </div>
           )}
+          {selectedMetric === 'watchTime' && trendsResponse?.periodAggregates && (
+            <div className="mb-4 flex justify-end">
+              <div className="bg-orange-50 text-orange-700 border border-orange-200 rounded-lg px-3 py-2 text-sm font-medium">
+                {formatWatchTime(metrics.averageWatchTime.current)} average session duration ({datePreset === '7d' ? '7-day' : datePreset === '30d' ? '30-day' : '90-day'} period)
+              </div>
+            </div>
+          )}
+          {selectedMetric === 'completion' && trendsResponse?.periodAggregates && (
+            <div className="mb-4 flex justify-end">
+              <div className="bg-orange-50 text-orange-700 border border-orange-200 rounded-lg px-3 py-2 text-sm font-medium">
+                {Math.round(metrics.completionRate.current)}% average engagement rate ({datePreset === '7d' ? '7-day' : datePreset === '30d' ? '30-day' : '90-day'} period)
+              </div>
+            </div>
+          )}
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData}>
@@ -458,7 +498,7 @@ export const AnalyticsNewTrends: React.FC = () => {
                   fontSize={12}
                   tick={{ fill: '#6b7280' }}
                   tickFormatter={chartConfig.format}
-                  label={selectedMetric === 'visitors' ? {
+                  label={(selectedMetric === 'visitors' || selectedMetric === 'watchTime' || selectedMetric === 'completion') ? {
                     value: chartConfig.label,
                     angle: -90,
                     position: 'insideLeft',
@@ -482,14 +522,27 @@ export const AnalyticsNewTrends: React.FC = () => {
                       return (
                         <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-lg">
                           <p className="font-medium text-gray-900 mb-2">{formattedDate}</p>
-                          {payload.map((entry, index) => (
-                            <p key={index} className="text-sm" style={{ color: entry.color }}>
-                              {entry.name === 'previousValue' ? 'Previous Period' : 'Current Period'}: {chartConfig.format(entry.value as number)}
-                            </p>
-                          ))}
+                          {payload.map((entry, index) => {
+                            const isCurrent = entry.name !== 'previousValue';
+                            return (
+                              <p key={index} className={`text-sm ${isCurrent ? 'font-bold' : ''}`} style={{ color: entry.color }}>
+                                {entry.name === 'previousValue' ? 'Previous Period' : 'Current Period'}: {chartConfig.format(entry.value as number)}
+                              </p>
+                            );
+                          })}
                           {selectedMetric === 'visitors' && (
                             <p className="text-xs text-gray-500 mt-2 border-t pt-2">
                               These are daily unique visitors. Adding across days will overcount. The card shows deduplicated uniques over the full period.
+                            </p>
+                          )}
+                          {selectedMetric === 'watchTime' && (
+                            <p className="text-xs text-gray-500 mt-2 border-t pt-2">
+                              These are daily session durations. Adding across days will overcount. The card shows the period average duration.
+                            </p>
+                          )}
+                          {selectedMetric === 'completion' && (
+                            <p className="text-xs text-gray-500 mt-2 border-t pt-2">
+                              These are daily engagement rates. Adding across days will overcount. The card shows the period average rate.
                             </p>
                           )}
                         </div>
