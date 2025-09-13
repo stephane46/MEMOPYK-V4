@@ -524,19 +524,6 @@ export const AnalyticsNewCta: React.FC<{ className?: string }> = ({ className = 
         </CardContent>
       </Card>
 
-      {/* Filter Debug Info */}
-      {process.env.NODE_ENV === 'development' && (
-        <Card className="border-gray-200 bg-gray-50">
-          <CardHeader>
-            <CardTitle className="text-sm text-gray-600">Filter Debug (Dev Only)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <pre className="text-xs text-gray-500 whitespace-pre-wrap">
-              {JSON.stringify(appliedFilters, null, 2)}
-            </pre>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
