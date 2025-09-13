@@ -247,7 +247,7 @@ export default function AdminPage() {
     { id: 'separator', label: '—————————————————', icon: null, disabled: true },
     { id: 'analytics', label: 'Analytics (Previous)', icon: BarChart3 },
     { id: 'analytics-ga', label: '(Analytics GA)', icon: TrendingUp },
-    { id: 'analytics-ga-clean', label: 'Analytics', icon: Sparkles },
+    { id: 'analytics-ga-clean', label: 'Analytics (Clean)', icon: Sparkles },
   ];
 
   // Fetch hero videos
