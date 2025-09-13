@@ -68,6 +68,22 @@ export interface TrendDataPoint {
   previousCompletionRate: number;
 }
 
+export interface PeriodAggregates {
+  periodSessions: number;
+  periodUsers: number;
+  periodAverageWatchTime: number;
+  periodTotalEngagement: number;
+  prevPeriodSessions: number;
+  prevPeriodUsers: number;
+  prevPeriodAverageWatchTime: number;
+  prevPeriodTotalEngagement: number;
+}
+
+export interface TrendsResponse {
+  dailyData: TrendDataPoint[];
+  periodAggregates: PeriodAggregates;
+}
+
 export type TrendsData = TrendDataPoint[];
 
 // Common return type for all hooks with debugging info
@@ -265,7 +281,7 @@ export function useFilteredGeo(): FilteredAnalyticsResult<GeoAnalyticsData> {
  * Hook for Trends data (Trends tab)
  * Fetches time series analytics with centralized filtering
  */
-export function useFilteredTrends(): FilteredAnalyticsResult<TrendsData> {
+export function useFilteredTrends(): FilteredAnalyticsResult<TrendsResponse> {
   // Get filter state from store
   const {
     datePreset,
@@ -293,7 +309,7 @@ export function useFilteredTrends(): FilteredAnalyticsResult<TrendsData> {
   });
   
   // Use TanStack Query with proper queryKey
-  const { data, isLoading, error, refetch } = useQuery<TrendsData>({
+  const { data, isLoading, error, refetch } = useQuery<TrendsResponse>({
     queryKey: filterParams.queryKey,
     queryFn: async () => {
       // Debug logging
@@ -308,6 +324,13 @@ export function useFilteredTrends(): FilteredAnalyticsResult<TrendsData> {
       }
       
       const rawData = await response.json();
+      
+      console.log('🔍 TRENDS HOOK: Received backend response structure:', {
+        hasDailyData: !!rawData.dailyData,
+        hasPeriodAggregates: !!rawData.periodAggregates,
+        legacyStructure: !rawData.dailyData && Array.isArray(rawData),
+        keys: Object.keys(rawData)
+      });
       
       // Helper function to format dates
       const formatDate = (dateStr: string): string => {
@@ -335,7 +358,45 @@ export function useFilteredTrends(): FilteredAnalyticsResult<TrendsData> {
         });
       };
       
-      // Transform data to expected format
+      // ✅ CRITICAL FIX: Handle new backend structure with period aggregates
+      if (rawData.dailyData && rawData.periodAggregates) {
+        console.log('📊 TRENDS HOOK: Using NEW backend structure with period aggregates');
+        console.log('📊 PERIOD AGGREGATES:', rawData.periodAggregates);
+        
+        // Process daily data
+        const processedDailyData = rawData.dailyData.map((item: any) => {
+          const rawDate = item.date || item.day;
+          return {
+            date: rawDate,
+            formattedDate: formatDate(rawDate),
+            totalViews: item.sessions || item.views || item.totalViews || 0,
+            uniqueVisitors: item.users || item.visitors || item.uniqueVisitors || 0,
+            averageWatchTime: item.avgSessionDuration || item.avg_watch_time || item.averageWatchTime || 0,
+            completionRate: item.bounceRate || item.completion_rate || 0,
+            videoViews: item.sessions || item.videoViews || 0,
+            totalEngagementSeconds: item.totalEngagementSeconds || 0,
+            // Previous period data for comparison
+            previousTotalViews: item.previousSessions || 0,
+            previousUniqueVisitors: item.previousUsers || 0,
+            previousAverageWatchTime: item.previousAvgDuration || 0,
+            previousCompletionRate: item.previousBounceRate || 0,
+            previousTotalEngagementSeconds: item.previousTotalEngagementSeconds || 0
+          };
+        });
+        
+        // Sort data chronologically by date to prevent artifacts
+        const sortedDailyData = processedDailyData.sort((a, b) => {
+          return a.date.localeCompare(b.date);
+        });
+        
+        return {
+          dailyData: sortedDailyData,
+          periodAggregates: rawData.periodAggregates
+        };
+      }
+      
+      // ✅ FALLBACK: Handle legacy structure (array format) for backward compatibility
+      console.log('⚠️ TRENDS HOOK: Using LEGACY backend structure - daily data only');
       const trends = rawData.trends || rawData.daily || rawData;
       const processedData = (Array.isArray(trends) ? trends : []).map((item: any) => {
         const rawDate = item.date || item.day;
@@ -347,21 +408,35 @@ export function useFilteredTrends(): FilteredAnalyticsResult<TrendsData> {
           averageWatchTime: item.avgSessionDuration || item.avg_watch_time || item.averageWatchTime || 0,
           completionRate: item.bounceRate || item.completion_rate || 0,
           videoViews: item.sessions || item.videoViews || 0,
-          totalEngagementSeconds: item.totalEngagementSeconds || 0, // NEW: For weighted averages
+          totalEngagementSeconds: item.totalEngagementSeconds || 0,
           // Previous period data for comparison
           previousTotalViews: item.previousSessions || 0,
           previousUniqueVisitors: item.previousUsers || 0,
           previousAverageWatchTime: item.previousAvgDuration || 0,
           previousCompletionRate: item.previousBounceRate || 0,
-          previousTotalEngagementSeconds: item.previousTotalEngagementSeconds || 0 // NEW: For weighted averages
+          previousTotalEngagementSeconds: item.previousTotalEngagementSeconds || 0
         };
       });
       
       // Sort data chronologically by date to prevent artifacts
-      return processedData.sort((a, b) => {
-        // GA4 dates are in YYYYMMDD format, so string comparison works
+      const sortedData = processedData.sort((a, b) => {
         return a.date.localeCompare(b.date);
       });
+      
+      // Return in new format with empty period aggregates as fallback
+      return {
+        dailyData: sortedData,
+        periodAggregates: {
+          periodSessions: 0,
+          periodUsers: 0,
+          periodAverageWatchTime: 0,
+          periodTotalEngagement: 0,
+          prevPeriodSessions: 0,
+          prevPeriodUsers: 0,
+          prevPeriodAverageWatchTime: 0,
+          prevPeriodTotalEngagement: 0
+        }
+      };
     },
     enabled: true,
     refetchOnWindowFocus: false,

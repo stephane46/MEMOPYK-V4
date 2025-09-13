@@ -904,15 +904,34 @@ export async function qSessionsTrendWithComparison(start: string, end: string, l
   const prevStartDate = new Date(prevEndDate);
   prevStartDate.setDate(prevEndDate.getDate() - periodDays + 1); // Go back the same number of days
   
-  console.log(`🔍 GA4 Sessions Trend WITH COMPARISON`);
+  console.log(`🔍 GA4 Sessions Trend WITH COMPARISON AND PERIOD AGGREGATES`);
   console.log(`   Current Period: ${start} to ${end} (${periodDays} days)`);
   console.log(`   Previous Period: ${formatDate(prevStartDate)} to ${formatDate(prevEndDate)} (${periodDays} days)`);
   
-  // Fetch both periods
+  // Fetch daily data for both periods
   const [currentData, previousData] = await Promise.all([
     qSessionsTrend(start, end, locale),
     qSessionsTrend(formatDate(prevStartDate), formatDate(prevEndDate), locale)
   ]);
+  
+  // ✅ CRITICAL FIX: Calculate period-level aggregates using same functions as Overview tab
+  console.log(`📊 CALCULATING PERIOD AGGREGATES: Using qSessions and qUniqueUsers for consistency with Overview tab`);
+  const [periodSessions, periodUsers, prevPeriodSessions, prevPeriodUsers] = await Promise.all([
+    qSessions(start, end, locale),
+    qUniqueUsers(start, end, locale), 
+    qSessions(formatDate(prevStartDate), formatDate(prevEndDate), locale),
+    qUniqueUsers(formatDate(prevStartDate), formatDate(prevEndDate), locale)
+  ]);
+  
+  console.log(`📊 PERIOD AGGREGATES CALCULATED:`);
+  console.log(`   Current: ${periodSessions} sessions, ${periodUsers} unique users`);
+  console.log(`   Previous: ${prevPeriodSessions} sessions, ${prevPeriodUsers} unique users`);
+  
+  // Calculate period-level averages and totals for cards
+  const currentTotalEngagement = currentData.reduce((sum, day) => sum + day.totalEngagementSeconds, 0);
+  const previousTotalEngagement = previousData.reduce((sum, day) => sum + day.totalEngagementSeconds, 0);
+  const periodAverageWatchTime = periodSessions > 0 ? Math.round(currentTotalEngagement / periodSessions) : 0;
+  const prevPeriodAverageWatchTime = prevPeriodSessions > 0 ? Math.round(previousTotalEngagement / prevPeriodSessions) : 0;
   
   // Map previous data by relative day (day 1, day 2, etc.) for alignment
   const prevDataByDay = new Map();
@@ -920,8 +939,8 @@ export async function qSessionsTrendWithComparison(start: string, end: string, l
     prevDataByDay.set(index, item);
   });
   
-  // Combine current and previous data
-  return currentData.map((current, index) => ({
+  // Combine current and previous data with period-level aggregates
+  const dailyData = currentData.map((current, index) => ({
     ...current,
     // Add previous period data for comparison dotted lines
     previousSessions: prevDataByDay.get(index)?.sessions || 0,
@@ -930,6 +949,21 @@ export async function qSessionsTrendWithComparison(start: string, end: string, l
     previousAvgDuration: prevDataByDay.get(index)?.avgSessionDuration || 0,
     previousTotalEngagementSeconds: prevDataByDay.get(index)?.totalEngagementSeconds || 0
   }));
+  
+  // ✅ CRITICAL: Add period-level aggregates to the response for cards
+  return {
+    dailyData,
+    periodAggregates: {
+      periodSessions,
+      periodUsers,
+      periodAverageWatchTime,
+      periodTotalEngagement: currentTotalEngagement,
+      prevPeriodSessions,
+      prevPeriodUsers, 
+      prevPeriodAverageWatchTime,
+      prevPeriodTotalEngagement: previousTotalEngagement
+    }
+  };
 }
 
 /* =============  CORE ANALYTICS FUNCTIONS  ============= */

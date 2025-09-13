@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart, ComposedChart } from 'recharts';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
-import { useFilteredTrends, TrendDataPoint, TrendsData } from './hooks/useFilteredReports';
+import { useFilteredTrends, TrendDataPoint, TrendsData, TrendsResponse } from './hooks/useFilteredReports';
 import './analyticsNew.tokens.css';
 
 // Using centralized TrendDataPoint and TrendsData types from useFilteredReports
@@ -113,16 +113,17 @@ export const AnalyticsNewTrends: React.FC = () => {
   const { datePreset } = useAnalyticsNewFilters();
 
   // Fetch trend data using centralized filtering hook
-  const { data: trendData, isLoading, error, appliedFilters } = useFilteredTrends();
+  const { data: trendsResponse, isLoading, error, appliedFilters } = useFilteredTrends();
 
   console.log('📈 TRENDS: Using centralized filtering:', {
     appliedFilters,
-    dataPoints: trendData?.length || 0
+    dataPoints: trendsResponse?.dailyData?.length || 0,
+    hasPeriodAggregates: !!trendsResponse?.periodAggregates
   });
 
-  // Calculate trend metrics with actual percentage changes
+  // ✅ CRITICAL FIX: Use period aggregates for cards, daily data for charts
   const calculateTrendMetrics = () => {
-    if (!trendData || trendData.length === 0) {
+    if (!trendsResponse || !trendsResponse.dailyData || trendsResponse.dailyData.length === 0) {
       return {
         totalViews: { current: 0, trend: 0 },
         uniqueVisitors: { current: 0, trend: 0 },
@@ -131,13 +132,57 @@ export const AnalyticsNewTrends: React.FC = () => {
       };
     }
 
-    const calculatePeriodSum = (period: TrendsData, metric: keyof TrendDataPoint) => {
-      return period.reduce((sum, item) => sum + (item[metric] as number), 0);
-    };
-
     const calculatePercentageChange = (current: number, previous: number): number => {
       if (previous === 0) return current > 0 ? 100 : 0;
       return ((current - previous) / previous) * 100;
+    };
+
+    const { periodAggregates, dailyData } = trendsResponse;
+
+    // ✅ CRITICAL FIX: Use period aggregates for cards (matches Overview tab exactly)
+    if (periodAggregates && (periodAggregates.periodSessions > 0 || periodAggregates.periodUsers > 0)) {
+      console.log('📊 TRENDS: Using PERIOD AGGREGATES for cards (consistent with Overview tab)');
+      console.log('📊 PERIOD DATA:', {
+        sessions: periodAggregates.periodSessions,
+        users: periodAggregates.periodUsers,
+        avgWatchTime: periodAggregates.periodAverageWatchTime,
+        prevSessions: periodAggregates.prevPeriodSessions,
+        prevUsers: periodAggregates.prevPeriodUsers,
+        prevAvgWatchTime: periodAggregates.prevPeriodAverageWatchTime
+      });
+
+      // Calculate completion rate from daily averages (since it's a rate metric)
+      const currentCompletion = dailyData.length > 0
+        ? dailyData.reduce((sum, item) => sum + item.completionRate, 0) / dailyData.length
+        : 0;
+      const previousCompletion = dailyData.length > 0
+        ? dailyData.reduce((sum, item) => sum + item.previousCompletionRate, 0) / dailyData.length
+        : 0;
+
+      return {
+        totalViews: {
+          current: periodAggregates.periodSessions,
+          trend: calculatePercentageChange(periodAggregates.periodSessions, periodAggregates.prevPeriodSessions)
+        },
+        uniqueVisitors: {
+          current: periodAggregates.periodUsers, // ✅ CRITICAL: Using period-level unique users (non-additive metric)
+          trend: calculatePercentageChange(periodAggregates.periodUsers, periodAggregates.prevPeriodUsers)
+        },
+        averageWatchTime: {
+          current: periodAggregates.periodAverageWatchTime,
+          trend: calculatePercentageChange(periodAggregates.periodAverageWatchTime, periodAggregates.prevPeriodAverageWatchTime)
+        },
+        completionRate: {
+          current: currentCompletion,
+          trend: calculatePercentageChange(currentCompletion, previousCompletion)
+        }
+      };
+    }
+
+    // ✅ FALLBACK: Legacy calculation for backward compatibility
+    console.log('⚠️ TRENDS: Using LEGACY summing for cards (fallback mode)');
+    const calculatePeriodSum = (period: typeof dailyData, metric: keyof TrendDataPoint) => {
+      return period.reduce((sum, item) => sum + (item[metric] as number), 0);
     };
 
     // Helper function for safe division (avoid NaN)
@@ -145,28 +190,28 @@ export const AnalyticsNewTrends: React.FC = () => {
       return denominator > 0 ? numerator / denominator : 0;
     };
 
-    // Current period totals
-    const currentViews = calculatePeriodSum(trendData, 'totalViews');
-    const currentVisitors = calculatePeriodSum(trendData, 'uniqueVisitors');
+    // Current period totals (legacy summing)
+    const currentViews = calculatePeriodSum(dailyData, 'totalViews');
+    const currentVisitors = calculatePeriodSum(dailyData, 'uniqueVisitors'); // ⚠️ Still incorrect for unique users
     
-    // FIXED: Calculate weighted average (total_engagement_seconds / total_sessions)
-    const currentTotalEngagement = calculatePeriodSum(trendData, 'totalEngagementSeconds');
+    // Calculate weighted average (total_engagement_seconds / total_sessions)
+    const currentTotalEngagement = calculatePeriodSum(dailyData, 'totalEngagementSeconds');
     const currentWatchTime = safeDiv(currentTotalEngagement, currentViews);
     
-    const currentCompletion = trendData.length > 0
-      ? calculatePeriodSum(trendData, 'completionRate') / trendData.length
+    const currentCompletion = dailyData.length > 0
+      ? calculatePeriodSum(dailyData, 'completionRate') / dailyData.length
       : 0;
 
-    // Previous period totals  
-    const previousViews = calculatePeriodSum(trendData, 'previousTotalViews');
-    const previousVisitors = calculatePeriodSum(trendData, 'previousUniqueVisitors');
+    // Previous period totals (legacy summing)
+    const previousViews = calculatePeriodSum(dailyData, 'previousTotalViews');
+    const previousVisitors = calculatePeriodSum(dailyData, 'previousUniqueVisitors'); // ⚠️ Still incorrect for unique users
     
-    // FIXED: Calculate weighted average for previous period
-    const previousTotalEngagement = calculatePeriodSum(trendData, 'previousTotalEngagementSeconds');
+    // Calculate weighted average for previous period
+    const previousTotalEngagement = calculatePeriodSum(dailyData, 'previousTotalEngagementSeconds');
     const previousWatchTime = safeDiv(previousTotalEngagement, previousViews);
     
-    const previousCompletion = trendData.length > 0
-      ? calculatePeriodSum(trendData, 'previousCompletionRate') / trendData.length
+    const previousCompletion = dailyData.length > 0
+      ? calculatePeriodSum(dailyData, 'previousCompletionRate') / dailyData.length
       : 0;
 
     return {
@@ -206,29 +251,33 @@ export const AnalyticsNewTrends: React.FC = () => {
   };
 
   const getChartData = () => {
-    if (!trendData) return [];
+    // ✅ CRITICAL FIX: Use dailyData for charts (line visualizations)
+    const dailyData = trendsResponse?.dailyData;
+    if (!dailyData || dailyData.length === 0) return [];
+    
+    console.log('📈 CHART DATA: Using dailyData for line charts');
     
     switch (selectedMetric) {
       case 'visitors':
-        return trendData.map(item => ({ 
+        return dailyData.map(item => ({ 
           ...item, 
           value: item.uniqueVisitors,
           previousValue: item.previousUniqueVisitors
         }));
       case 'watchTime':
-        return trendData.map(item => ({ 
+        return dailyData.map(item => ({ 
           ...item, 
           value: item.averageWatchTime,
           previousValue: item.previousAverageWatchTime
         }));
       case 'completion':
-        return trendData.map(item => ({ 
+        return dailyData.map(item => ({ 
           ...item, 
           value: item.completionRate,
           previousValue: item.previousCompletionRate
         }));
       default:
-        return trendData.map(item => ({ 
+        return dailyData.map(item => ({ 
           ...item, 
           value: item.totalViews,
           previousValue: item.previousTotalViews
