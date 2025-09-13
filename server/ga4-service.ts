@@ -925,7 +925,7 @@ export async function qWatchTimeByVideo(start: string, end: string, locale?: str
   }
 }
 
-export async function qProgressByVideo(start: string, end: string, locale?: string) {
+export async function qProgressByVideo(start: string, end: string, locale?: string, country?: string) {
   const localeExpr =
     locale && locale !== "all"
       ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
@@ -933,8 +933,8 @@ export async function qProgressByVideo(start: string, end: string, locale?: stri
 
   // Simplified version using basic completion estimates
   try {
-    const plays = await qPlays(start, end, locale);
-    const completes = await qCompletes(start, end, locale);
+    const plays = await qPlays(start, end, locale, country);
+    const completes = await qCompletes(start, end, locale, country);
     
     // Estimate 50% completion as halfway between plays and completes
     const estimated50 = Math.round((plays + completes) / 2);
@@ -1010,10 +1010,13 @@ export async function getTopVideosTable(start: string, end: string, locale?: str
 /* =============  FUNNEL & TREND  ============= */
 
 // Phase 3: Funnel data for progress buckets (10, 25, 50, 75, 90)
-export async function qVideoFunnel(start: string, end: string, videoId?: string, locale?: string) {
+export async function qVideoFunnel(start: string, end: string, videoId?: string, locale?: string, country?: string) {
   const buckets = [10, 25, 50, 75, 90];
   const localeExpr = locale && locale !== "all" 
     ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }] 
+    : [];
+  const countryExpr = country && country !== "all" 
+    ? [{ filter: { fieldName: "country", stringFilter: { value: country } } }] 
     : [];
   const videoExpr = videoId 
     ? [{ filter: { fieldName: "customEvent:video_id", stringFilter: { value: videoId } } }] 
@@ -1032,6 +1035,7 @@ export async function qVideoFunnel(start: string, end: string, videoId?: string,
                 { filter: { fieldName: "eventName", stringFilter: { value: "video_progress" } } },
                 { filter: { fieldName: "customEvent:progress_bucket", stringFilter: { value: String(bucket) } } },
                 ...localeExpr,
+                ...countryExpr,
                 ...videoExpr
               ]
             }
@@ -1050,10 +1054,14 @@ export async function qVideoFunnel(start: string, end: string, videoId?: string,
   }
 }
 
-export async function qTrendDaily(start: string, end: string, locale?: string) {
+export async function qTrendDaily(start: string, end: string, locale?: string, country?: string) {
   const localeExpr =
     locale && locale !== "all"
       ? [{ filter: { fieldName: "customEvent:locale", stringFilter: { value: locale } } }]
+      : [];
+  const countryExpr =
+    country && country !== "all"
+      ? [{ filter: { fieldName: "country", stringFilter: { value: country } } }]
       : [];
 
   const [res] = await client.runReport({
@@ -1068,7 +1076,8 @@ export async function qTrendDaily(start: string, end: string, locale?: string) {
       andGroup: {
         expressions: [
           { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } },
-          ...localeExpr
+          ...localeExpr,
+          ...countryExpr
         ]
       }
     }
@@ -1085,7 +1094,7 @@ export async function qTrendDaily(start: string, end: string, locale?: string) {
   });
 }
 
-export async function qTrend(start: string, end: string, locale?: string) {
+export async function qTrend(start: string, end: string, locale?: string, country?: string) {
   const [p] = await client.runReport({
     property: PROPERTY,
     dateRanges: [range(start, end)],
@@ -1095,7 +1104,8 @@ export async function qTrend(start: string, end: string, locale?: string) {
       andGroup: {
         expressions: [
           { filter: { fieldName: "eventName", stringFilter: { value: "video_start" } } },
-          ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
+          ...(localeFilter(locale) ? [localeFilter(locale)!] : []),
+          ...(countryFilter(country) ? [countryFilter(country)!] : [])
         ]
       }
     }
@@ -1110,7 +1120,8 @@ export async function qTrend(start: string, end: string, locale?: string) {
       andGroup: {
         expressions: [
           { filter: { fieldName: "eventName", stringFilter: { value: "video_watch_time" } } },
-          ...(localeFilter(locale) ? [localeFilter(locale)!] : [])
+          ...(localeFilter(locale) ? [localeFilter(locale)!] : []),
+          ...(countryFilter(country) ? [countryFilter(country)!] : [])
         ]
       }
     }
@@ -1130,7 +1141,7 @@ export async function qTrend(start: string, end: string, locale?: string) {
 }
 
 // NEW: Daily website sessions trend (for MEMOPYK service business analytics)
-export async function qSessionsTrend(start: string, end: string, locale?: string) {
+export async function qSessionsTrend(start: string, end: string, locale?: string, country?: string) {
   const requestParams = {
     property: PROPERTY,
     dateRanges: [range(start, end)],
@@ -1142,13 +1153,14 @@ export async function qSessionsTrend(start: string, end: string, locale?: string
       { name: "averageSessionDuration" },
       { name: "userEngagementDuration" } // Total engagement seconds for weighted averages
     ],
-    // ONLY locale filter, NO eventName filter (get all website sessions)
-    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+    // ONLY locale and country filters, NO eventName filter (get all website sessions)
+    ...(combineFilters(locale, country) ? { dimensionFilter: combineFilters(locale, country) } : {})
   };
   
   console.log(`🔍 GA4 Sessions Trend - Daily website sessions for service business analytics`);
   console.log(`   Date Range: ${start} to ${end}`);
   console.log(`   Locale: ${locale || 'all'}`);
+  console.log(`   Country: ${country || 'all'}`);
   
   const [res] = await client.runReport(requestParams);
   
@@ -1172,7 +1184,7 @@ export async function qSessionsTrend(start: string, end: string, locale?: string
 }
 
 // NEW: Sessions trend with comparison to previous period (for dotted lines)
-export async function qSessionsTrendWithComparison(start: string, end: string, locale?: string) {
+export async function qSessionsTrendWithComparison(start: string, end: string, locale?: string, country?: string) {
   const formatDate = (date: Date) => date.toISOString().split('T')[0];
   
   // Calculate previous period of same length
@@ -1192,20 +1204,22 @@ export async function qSessionsTrendWithComparison(start: string, end: string, l
   console.log(`🔍 GA4 Sessions Trend WITH COMPARISON AND PERIOD AGGREGATES`);
   console.log(`   Current Period: ${start} to ${end} (${periodDays} days)`);
   console.log(`   Previous Period: ${formatDate(prevStartDate)} to ${formatDate(prevEndDate)} (${periodDays} days)`);
+  console.log(`   Locale: ${locale || 'all'}`);
+  console.log(`   Country: ${country || 'all'}`);
   
   // Fetch daily data for both periods
   const [currentData, previousData] = await Promise.all([
-    qSessionsTrend(start, end, locale),
-    qSessionsTrend(formatDate(prevStartDate), formatDate(prevEndDate), locale)
+    qSessionsTrend(start, end, locale, country),
+    qSessionsTrend(formatDate(prevStartDate), formatDate(prevEndDate), locale, country)
   ]);
   
   // ✅ CRITICAL FIX: Calculate period-level aggregates using same functions as Overview tab
   console.log(`📊 CALCULATING PERIOD AGGREGATES: Using qSessions and qTotalUsers for consistency with Overview tab`);
   const [periodSessions, periodUsers, prevPeriodSessions, prevPeriodUsers] = await Promise.all([
-    qSessions(start, end, locale),
-    qTotalUsers(start, end, locale), 
-    qSessions(formatDate(prevStartDate), formatDate(prevEndDate), locale),
-    qTotalUsers(formatDate(prevStartDate), formatDate(prevEndDate), locale)
+    qSessions(start, end, locale, country),
+    qTotalUsers(start, end, locale, country), 
+    qSessions(formatDate(prevStartDate), formatDate(prevEndDate), locale, country),
+    qTotalUsers(formatDate(prevStartDate), formatDate(prevEndDate), locale, country)
   ]);
   
   console.log(`📊 PERIOD AGGREGATES CALCULATED:`);
@@ -1253,14 +1267,14 @@ export async function qSessionsTrendWithComparison(start: string, end: string, l
 
 /* =============  CORE ANALYTICS FUNCTIONS  ============= */
 
-export async function qUniqueUsers(start: string, end: string, locale?: string) {
-  console.log(`🎯 qUniqueUsers CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
+export async function qUniqueUsers(start: string, end: string, locale?: string, country?: string) {
+  console.log(`🎯 qUniqueUsers CALLED: ${start} to ${end}, locale: ${locale || 'all'}, country: ${country || 'all'}`);
   
   const [res] = await client.runReport({
     property: PROPERTY,
     dateRanges: [range(start, end)],
     metrics: [{ name: "activeUsers" }],
-    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+    ...(combineFilters(locale, country) ? { dimensionFilter: combineFilters(locale, country) } : {})
   });
   
   const users = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
@@ -1268,14 +1282,14 @@ export async function qUniqueUsers(start: string, end: string, locale?: string) 
   return users;
 }
 
-export async function qPageViews(start: string, end: string, locale?: string) {
-  console.log(`🎯 qPageViews CALLED: ${start} to ${end}, locale: ${locale || 'all'}`);
+export async function qPageViews(start: string, end: string, locale?: string, country?: string) {
+  console.log(`🎯 qPageViews CALLED: ${start} to ${end}, locale: ${locale || 'all'}, country: ${country || 'all'}`);
   
   const [res] = await client.runReport({
     property: PROPERTY,
     dateRanges: [range(start, end)],
     metrics: [{ name: "screenPageViews" }],
-    ...(localeFilter(locale) ? { dimensionFilter: localeFilter(locale) } : {})
+    ...(combineFilters(locale, country) ? { dimensionFilter: combineFilters(locale, country) } : {})
   });
   
   const pageViews = Number(res.rows?.[0]?.metricValues?.[0]?.value ?? 0);
