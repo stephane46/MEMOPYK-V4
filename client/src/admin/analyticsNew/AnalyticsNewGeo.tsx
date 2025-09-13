@@ -20,6 +20,7 @@ import {
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps';
 import { scaleSequential } from 'd3-scale';
 import { interpolateBlues } from 'd3-scale-chromatic';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { useFilteredGeo, CountryData, CityData, GeoAnalyticsData } from './hooks/useFilteredReports';
 import './analyticsNew.tokens.css';
 
@@ -495,55 +496,84 @@ export const AnalyticsNewGeo: React.FC = () => {
         </Card>
       </div>
 
-      {/* Business Insights */}
-      <Card className="bg-white border border-gray-200">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-            <Eye className="h-5 w-5 mr-2 text-purple-600" />
-            Market Intelligence Insights
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600 mb-1">
-                {Math.round((totalSessions / totalVisitors) * 100) || 0}%
-              </div>
-              <div className="text-sm font-medium text-blue-700 mb-1">Global Engagement</div>
-              <div className="text-xs text-blue-600">
-                Average session-to-visitor ratio across all markets
-              </div>
+      {/* Country Distribution Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Sessions by Country */}
+        <Card className="bg-white border border-gray-200">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
+              <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
+              Sessions by Country
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={countries.slice(0, 8).map((country, index) => ({
+                      name: country.country,
+                      value: country.sessions,
+                      fill: `hsl(${(index * 45) % 360}, 70%, 60%)`
+                    }))}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    innerRadius={30}
+                    paddingAngle={2}
+                  >
+                    {countries.slice(0, 8).map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={`hsl(${(index * 45) % 360}, 70%, 60%)`} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value: number) => [value.toLocaleString(), 'Sessions']} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-            
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600 mb-1">
-                {Math.round((countries.length / Math.max(totalVisitors, 1)) * 100) || 0}%
-              </div>
-              <div className="text-sm font-medium text-green-700 mb-1">Market Diversity</div>
-              <div className="text-xs text-green-600">
-                Geographic distribution effectiveness score
-              </div>
+          </CardContent>
+        </Card>
+
+        {/* Visitors by Country */}
+        <Card className="bg-white border border-gray-200">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
+              <Users className="h-5 w-5 mr-2 text-green-600" />
+              Visitors by Country
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={countries.slice(0, 8).map((country, index) => ({
+                      name: country.country,
+                      value: country.visitors,
+                      fill: `hsl(${120 + (index * 35) % 360}, 65%, 55%)`
+                    }))}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    innerRadius={30}
+                    paddingAngle={2}
+                  >
+                    {countries.slice(0, 8).map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={`hsl(${120 + (index * 35) % 360}, 65%, 55%)`} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value: number) => [value.toLocaleString(), 'Visitors']} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-            
-            <div className="text-center p-4 bg-orange-50 rounded-lg">
-              <div className="text-2xl font-bold text-orange-600 mb-1">
-                {topMarket ? Math.round((topMarket.sessions / totalSessions) * 100) : 0}%
-              </div>
-              <div className="text-sm font-medium text-orange-700 mb-1">Top Market Share</div>
-              <div className="text-xs text-orange-600">
-                Percentage of total sessions from leading market
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <div className="text-sm text-gray-700">
-              <strong>Geographic Reach:</strong> MEMOPYK's cinematic storytelling reaches {coverageCount} international markets. 
-              {topMarket && ` ${topMarket.country} represents your strongest market with ${topMarket.sessions} sessions.`}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
