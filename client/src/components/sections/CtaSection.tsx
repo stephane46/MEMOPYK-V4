@@ -3,6 +3,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import { Phone, Edit } from 'lucide-react';
 import type { CtaSettings } from '@shared/schema';
+import { trackCtaClick } from '@/lib/analytics';
 
 export function CtaSection() {
   const { language } = useLanguage();
@@ -51,6 +52,7 @@ export function CtaSection() {
                     rel="noopener noreferrer"
                     id={cta.id === 'book_call' ? undefined : 'cta-questionnaire'}
                     className="inline-flex items-center justify-center gap-3 bg-memopyk-orange hover:bg-memopyk-orange/90 text-white px-6 py-4 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer no-underline w-full sm:w-auto whitespace-nowrap min-w-0"
+                    onClick={() => trackCtaClick(cta.id, window.location.pathname, language)}
                   >
                     {cta.id === 'book_call' ? <Phone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" /> : <Edit className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />}
                     <span className="block">
