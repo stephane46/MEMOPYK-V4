@@ -273,9 +273,14 @@ export const AnalyticsNewGeo: React.FC = () => {
         <GeoKpiCard
           title="Best Engagement"
           value={
-            <div className="flex items-center space-x-2">
-              <CountryFlag country={bestEngagement?.country || ''} size={20} />
-              <span>{bestEngagement?.country || 'N/A'} – {Math.round((bestEngagement?.sessions / bestEngagement?.visitors) * 100) || 0}% return rate</span>
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2">
+                <CountryFlag country={bestEngagement?.country || ''} size={20} />
+                <span className="font-bold">{bestEngagement?.country || 'N/A'}</span>
+              </div>
+              <div className="text-xl font-semibold text-orange-600">
+                {Math.round((bestEngagement?.sessions / bestEngagement?.visitors) * 100) || 0}% return rate
+              </div>
             </div>
           }
           subtitle=""
