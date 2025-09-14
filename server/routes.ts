@@ -2881,9 +2881,9 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Recent Visitors - GET visitor details filtered by date range (for Analytics New eye icons)
   app.get("/api/analytics/recent-visitors", async (req, res) => {
     try {
-      const { dateFrom, dateTo, skipEnrichment, datePreset } = req.query;
+      const { dateFrom, dateTo, skipEnrichment, datePreset, country } = req.query;
       
-      console.log(`🔍 Recent Visitors Request: datePreset=${datePreset}, dateFrom=${dateFrom}, dateTo=${dateTo}`);
+      console.log(`🔍 Recent Visitors Request: datePreset=${datePreset}, dateFrom=${dateFrom}, dateTo=${dateTo}, country=${country}`);
       
       // Handle datePreset parameter for Analytics New consistency
       let startDate = dateFrom;
@@ -2918,7 +2918,8 @@ export async function registerRoutes(app: Express): Promise<void> {
         finalStartDate,
         finalEndDate,
         undefined, // language
-        true // **CRITICAL FIX**: Include production data like main analytics endpoint
+        true, // **CRITICAL FIX**: Include production data like main analytics endpoint
+        country as string // Add country filtering support
       );
       
       // Apply same filtering logic as main analytics dashboard
