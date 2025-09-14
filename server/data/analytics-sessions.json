@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-14T18:06:29.683Z",
-    "duration": 2868938,
+    "updated_at": "2025-09-14T18:08:25.817Z",
+    "duration": 2869054,
     "region": "Occitanie"
   },
   {
@@ -71996,7 +71996,7 @@
     "city": "Nantes",
     "country_code": null,
     "created_at": "2025-09-09T09:45:56.208Z",
-    "updated_at": "2025-09-14T14:16:23.361Z",
+    "updated_at": "2025-09-14T18:08:24.306Z",
     "is_location_cache": true
   },
   {
@@ -72036,7 +72036,7 @@
     "city": "Sao Paulo",
     "country_code": null,
     "created_at": "2025-09-12T16:16:07.000Z",
-    "updated_at": "2025-09-14T14:16:20.222Z",
+    "updated_at": "2025-09-14T18:08:21.130Z",
     "is_location_cache": true
   },
   {
@@ -72120,7 +72120,7 @@
     "city": "Tokyo",
     "country_code": null,
     "created_at": "2025-09-12T17:53:08.302Z",
-    "updated_at": "2025-09-14T14:15:47.997Z",
+    "updated_at": "2025-09-14T18:07:48.881Z",
     "is_location_cache": true
   },
   {
@@ -72404,7 +72404,7 @@
     "city": "Perth",
     "country_code": null,
     "created_at": "2025-09-12T20:10:15.889Z",
-    "updated_at": "2025-09-14T14:15:44.859Z",
+    "updated_at": "2025-09-14T18:07:45.745Z",
     "is_location_cache": true
   },
   {
@@ -72632,7 +72632,7 @@
     "city": "Montreal",
     "country_code": null,
     "created_at": "2025-09-13T05:25:45.198Z",
-    "updated_at": "2025-09-14T14:15:12.623Z",
+    "updated_at": "2025-09-14T18:07:13.481Z",
     "is_location_cache": true
   },
   {
@@ -72668,7 +72668,7 @@
     "city": "Mexico City",
     "country_code": null,
     "created_at": "2025-09-13T05:30:01.555Z",
-    "updated_at": "2025-09-14T14:15:09.494Z",
+    "updated_at": "2025-09-14T18:07:10.330Z",
     "is_location_cache": true
   },
   {
@@ -73032,7 +73032,7 @@
     "city": "Bogota",
     "country_code": null,
     "created_at": "2025-09-13T08:33:21.079Z",
-    "updated_at": "2025-09-14T14:14:37.259Z",
+    "updated_at": "2025-09-14T18:06:38.054Z",
     "is_location_cache": true
   },
   {
@@ -73532,7 +73532,7 @@
     "city": "Montreal",
     "country_code": null,
     "created_at": "2025-09-14T08:59:27.051Z",
-    "updated_at": "2025-09-14T14:14:34.139Z",
+    "updated_at": "2025-09-14T18:06:34.898Z",
     "is_location_cache": true
   },
   {

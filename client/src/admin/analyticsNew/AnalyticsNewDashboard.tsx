@@ -179,11 +179,19 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
         </div>
       </div>
 
-      {/* Content - No longer needs its own scroll container */}
+      {/* Content - Ensure sufficient height for scrolling */}
       <div className="pb-6">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[400px]">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[200vh]">
             {renderTabContent()}
+            
+            {/* Test content to ensure page is tall enough to scroll */}
+            <div className="mt-8 opacity-20 text-xs">
+              <p>Test content to ensure scrolling - The filters above should stick to the top when you scroll down</p>
+              {Array.from({ length: 50 }, (_, i) => (
+                <p key={i} className="py-2">Test line {i + 1} - Keep scrolling to test sticky behavior</p>
+              ))}
+            </div>
           </div>
         </div>
       </div>

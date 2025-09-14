@@ -138,14 +138,13 @@
   }
 }
 
-/* Sticky Header Styles - FIXED FOR DROPDOWN COMPATIBILITY */
+/* Sticky Header Styles - SIMPLIFIED FOR MAXIMUM COMPATIBILITY */
 .analytics-new-sticky-header {
   position: sticky !important;
   top: 0 !important;
   z-index: 1000 !important;
-  overflow: visible !important; /* Prevent clipping dropdowns */
-  border-bottom: 1px solid var(--analytics-new-border);
-  background-color: rgba(255, 255, 255, 0.95) !important; /* White with opacity for better contrast */
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-bottom: 1px solid #e5e7eb !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
