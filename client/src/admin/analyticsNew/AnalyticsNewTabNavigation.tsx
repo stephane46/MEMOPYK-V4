@@ -25,7 +25,7 @@ export const ANALYTICS_NEW_TABS: AnalyticsNewTab[] = [
     id: 'overview',
     label: 'Overview',
     icon: BarChart3,
-    description: 'Key metrics and performance summary',
+    description: '',
   },
   {
     id: 'live',
