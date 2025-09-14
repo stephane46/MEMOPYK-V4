@@ -409,50 +409,91 @@ export const AnalyticsNewLiveView: React.FC = () => {
                 };
                 
                 return (
-                  <div 
-                    key={`${visitor.ip_address}-${index}`}
-                    className="bg-gray-50 rounded-lg p-3 border border-gray-200"
-                  >
-                    <div className="grid grid-cols-3 gap-3 text-sm">
-                      <div>
-                        <div className="flex items-center gap-1 mb-1">
-                          <MapPin className="h-3 w-3 text-blue-600" />
-                          <span className="font-medium text-gray-900">Location</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <CountryFlag country={visitor.country} size={14} />
-                          <div className="text-xs">
-                            <div className="font-medium">{visitor.country || 'Unknown'}</div>
-                            {visitor.city && (
-                              <div className="text-gray-600">
-                                {visitor.city}, {visitor.region}
+                  <TooltipProvider key={`${visitor.ip_address}-${index}`}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div 
+                          className="bg-gray-50 rounded-lg p-3 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors relative group"
+                        >
+                          {/* Compact visitor summary */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <CountryFlag country={visitor.country} size={16} />
+                              <div className="text-sm">
+                                <div className="font-medium text-gray-900">
+                                  {visitor.country || 'Unknown'}
+                                </div>
+                                <div className="text-xs text-gray-600">
+                                  {getRelativeTime(visitor.last_visit)}
+                                </div>
                               </div>
-                            )}
+                            </div>
+                            <Info className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                           </div>
                         </div>
-                      </div>
-                
-                      <div>
-                        <div className="flex items-center gap-1 mb-1">
-                          <Languages className="h-3 w-3 text-green-600" />
-                          <span className="font-medium text-gray-900">Language</span>
+                      </TooltipTrigger>
+                      <TooltipContent 
+                        side="right" 
+                        align="center" 
+                        sideOffset={12}
+                        className="z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-lg"
+                        style={{
+                          marginTop: '-60px' // Account for sticky header height
+                        }}
+                      >
+                        <div className="space-y-3">
+                          <div className="pb-2 border-b border-gray-100">
+                            <h4 className="font-semibold text-gray-900 text-sm mb-1">Visitor Details</h4>
+                            <p className="text-xs text-gray-500">Hover to view details</p>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 gap-3 text-sm">
+                            {/* Location */}
+                            <div className="flex items-start gap-2">
+                              <MapPin className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-900 mb-1">Location</div>
+                                <div className="flex items-center gap-2">
+                                  <CountryFlag country={visitor.country} size={16} />
+                                  <div className="text-xs">
+                                    <div className="font-medium">{visitor.country || 'Unknown'}</div>
+                                    {visitor.city && (
+                                      <div className="text-gray-600">
+                                        {visitor.city}, {visitor.region}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Language */}
+                            <div className="flex items-start gap-2">
+                              <Languages className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-900 mb-1">Language</div>
+                                <div className="text-xs flex items-center gap-1">
+                                  <span>{formatLanguage(visitor.language).flag}</span>
+                                  <span>{formatLanguage(visitor.language).display}</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Visit Time */}
+                            <div className="flex items-start gap-2">
+                              <Clock className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-900 mb-1">Visit Time</div>
+                                <div className="text-xs text-gray-600">
+                                  {getRelativeTime(visitor.last_visit)}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-xs">
-                          {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
-                        </div>
-                      </div>
-                
-                      <div>
-                        <div className="flex items-center gap-1 mb-1">
-                          <Clock className="h-3 w-3 text-orange-600" />
-                          <span className="font-medium text-gray-900">Visit Time</span>
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          {getRelativeTime(visitor.last_visit)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 );
               })}
             </div>
