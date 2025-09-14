@@ -337,8 +337,8 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 onClick={() => setLanguage('all')}
                 className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                   language === 'all' 
-                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'bg-transparent text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    ? 'seo-language-btn-active' 
+                    : 'seo-language-btn-inactive'
                 }`}
                 data-testid="filter-language-all"
               >
@@ -349,8 +349,8 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 onClick={() => setLanguage('en')}
                 className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                   language === 'en' 
-                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'bg-transparent text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    ? 'seo-language-btn-active' 
+                    : 'seo-language-btn-inactive'
                 }`}
                 data-testid="filter-language-en"
               >
@@ -361,8 +361,8 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 onClick={() => setLanguage('fr')}
                 className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                   language === 'fr' 
-                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'bg-transparent text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                    ? 'seo-language-btn-active' 
+                    : 'seo-language-btn-inactive'
                 }`}
                 data-testid="filter-language-fr"
               >

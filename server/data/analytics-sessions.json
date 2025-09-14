@@ -1936,7 +1936,7 @@
     "session_id": "ip_session_127_0_0_1",
     "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-09-13T20:17:57.502Z",
+    "updated_at": "2025-09-14T07:10:21.093Z",
     "is_test_data": false
   },
   {
@@ -73486,5 +73486,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-14T06:56:07.715Z"
+  },
+  {
+    "id": "5e0401bf-cfa4-4e22-bc8f-44c337cc48ff",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-14T07:10:19.161Z"
+  },
+  {
+    "id": "7c686f92-00f9-4c56-a8d5-c4272dffd41f",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar13o%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-14T07:10:24.862Z"
   }
 ]
