@@ -116,10 +116,10 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
     <div className={`analytics-new-container ${className}`}>
       <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mx-6 my-4">
-          <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             
             {/* Language/Country Filters - Always on the left */}
-            <div className="flex items-center gap-4 overflow-x-auto shrink-0">
+            <div className="flex items-center gap-4 shrink-0">
               <span className="text-sm font-medium text-gray-600 shrink-0">Filters:</span>
               
               {/* Language Filter - Working Implementation */}
@@ -201,14 +201,14 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
             {/* Date Filters - On the right */}
             {!hideDateFilters && (
-              <div className="flex items-center gap-6">
+              <div className="flex flex-wrap items-center gap-4">
                 {/* Date Range Label and Buttons */}
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-gray-700 flex items-center">
-                    <Calendar className="h-4 w-4 mr-2" />
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700 flex items-center shrink-0">
+                    <Calendar className="h-4 w-4 mr-1" />
                     Date Range:
                   </span>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-1">
                     {DATE_PRESETS.map((preset) => (
                     <Button
                       key={preset.key}
@@ -226,7 +226,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
                 {/* Custom Date Range - Show when custom is selected */}
                 {datePreset === 'custom' && (
-                  <div className="flex gap-3 items-center">
+                  <div className="flex flex-wrap gap-2 items-center">
                     {/* Start Date with Calendar */}
                     <div className="relative">
                       <Input
@@ -261,7 +261,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                             setCustomDateRange(value, customDateEnd);
                           }
                         }}
-                        className="w-36 h-8 pr-10"
+                        className="w-32 h-8 pr-8"
                         data-testid="filter-custom-start"
                         placeholder="dd/mm/yyyy"
                         maxLength={10}
@@ -300,7 +300,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                       </Dialog>
                     </div>
                     
-                    <span className="text-sm text-gray-500">to</span>
+                    <span className="text-sm text-gray-500 shrink-0">to</span>
                     
                     {/* End Date with Calendar */}
                     <div className="relative">
@@ -336,7 +336,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                             setCustomDateRange(customDateStart, value);
                           }
                         }}
-                        className="w-36 h-8 pr-10"
+                        className="w-32 h-8 pr-8"
                         data-testid="filter-custom-end"
                         placeholder="dd/mm/yyyy"
                         maxLength={10}
@@ -377,17 +377,17 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   </div>
                 )}
 
-                {/* Active Window Display - To the right of date range */}
-                <div className="flex items-center gap-3">
+                {/* Active Window Display - Blue pill - Always visible when date filters shown */}
+                <div className="flex items-center gap-2 shrink-0">
                   <Badge 
                     variant="outline" 
-                    className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium flex items-center justify-center px-4 py-2"
+                    className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium px-3 py-1 whitespace-nowrap"
                     data-testid="active-window-badge"
                   >
                     <div className="text-center">
                       <div>{windowDisplay}</div>
                       {sinceDateEnabled && sinceDate && (
-                        <div className="text-orange-700 text-xs mt-1">
+                        <div className="text-orange-700 text-xs mt-0.5">
                           ⚠️ Excluding data before: {formatEnglishDate(sinceDate)}
                         </div>
                       )}
