@@ -138,11 +138,11 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
 
   return (
     <div 
-      className={`min-h-screen bg-[var(--analytics-new-background)] font-[var(--analytics-new-font-family)] text-[var(--analytics-new-text)] ${className}`}
+      className={`min-h-screen bg-[var(--analytics-new-background)] font-[var(--analytics-new-font-family)] text-[var(--analytics-new-text)] flex flex-col ${className}`}
       data-testid="analytics-new-dashboard"
     >
       {/* Fixed Header Section - Properly Sticky */}
-      <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
+      <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200 flex-shrink-0">
         <div className="max-w-7xl mx-auto py-3 px-4">
           {/* Compact Header */}
           <div className="flex items-center justify-between gap-2 mb-2">
@@ -180,9 +180,11 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
       </div>
 
       {/* Scrollable Content */}
-      <div className="max-w-7xl mx-auto p-6 pt-0">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[400px]">
-          {renderTabContent()}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-7xl mx-auto p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[400px]">
+            {renderTabContent()}
+          </div>
         </div>
       </div>
     </div>

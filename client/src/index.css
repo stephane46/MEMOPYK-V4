@@ -413,6 +413,12 @@ img, video, iframe, canvas, svg {
   fill: #fff !important;
 }
 
+/* Force Globe icons to be visible */
+.country-select-trigger .lucide {
+  color: #011526 !important;
+  stroke: #011526 !important;
+}
+
 /* Custom modal content class - precise targeting */
 .modal-force-white {
   background: #ffffff !important;

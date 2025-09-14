@@ -163,74 +163,74 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
               {/* Country Filter - Compact */}
               <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger className="h-8 px-4 text-sm w-[140px] shrink-0 bg-orange-500 border-orange-500 text-white" data-testid="filter-country">
-                  <Globe className="h-4 w-4 mr-2" />
+                <SelectTrigger className="h-8 px-4 text-sm w-[140px] shrink-0 bg-orange-500 border-orange-500 text-white country-select-trigger" data-testid="filter-country">
+                  <Globe className="h-4 w-4 mr-2" style={{ stroke: '#011526' }} />
                   <SelectValue placeholder="Market" />
                 </SelectTrigger>
                 <SelectContent className="max-h-48 text-sm">
                   <SelectItem value="all">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       ALL
                     </div>
                   </SelectItem>
                   <SelectItem value="France">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       France
                     </div>
                   </SelectItem>
                   <SelectItem value="United States">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       United States
                     </div>
                   </SelectItem>
                   <SelectItem value="Canada">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       Canada
                     </div>
                   </SelectItem>
                   <SelectItem value="United Kingdom">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       United Kingdom
                     </div>
                   </SelectItem>
                   <SelectItem value="Germany">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       Germany
                     </div>
                   </SelectItem>
                   <SelectItem value="Australia">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       Australia
                     </div>
                   </SelectItem>
                   <SelectItem value="Spain">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       Spain
                     </div>
                   </SelectItem>
                   <SelectItem value="Italy">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       Italy
                     </div>
                   </SelectItem>
                   <SelectItem value="Brazil">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       Brazil
                     </div>
                   </SelectItem>
                   <SelectItem value="Japan">
                     <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
+                      <Globe className="h-4 w-4" style={{ stroke: '#011526' }} />
                       Japan
                     </div>
                   </SelectItem>

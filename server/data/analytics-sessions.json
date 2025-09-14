@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-14T14:14:49.923Z",
-    "duration": 2855039,
+    "updated_at": "2025-09-14T14:20:19.944Z",
+    "duration": 2855369,
     "region": "Occitanie"
   },
   {
@@ -71996,7 +71996,7 @@
     "city": "Nantes",
     "country_code": null,
     "created_at": "2025-09-09T09:45:56.208Z",
-    "updated_at": "2025-09-14T10:44:46.568Z",
+    "updated_at": "2025-09-14T14:16:23.361Z",
     "is_location_cache": true
   },
   {
@@ -72036,7 +72036,7 @@
     "city": "Sao Paulo",
     "country_code": null,
     "created_at": "2025-09-12T16:16:07.000Z",
-    "updated_at": "2025-09-14T10:44:14.313Z",
+    "updated_at": "2025-09-14T14:16:20.222Z",
     "is_location_cache": true
   },
   {
@@ -72120,7 +72120,7 @@
     "city": "Tokyo",
     "country_code": null,
     "created_at": "2025-09-12T17:53:08.302Z",
-    "updated_at": "2025-09-14T10:44:11.195Z",
+    "updated_at": "2025-09-14T14:15:47.997Z",
     "is_location_cache": true
   },
   {
@@ -72382,9 +72382,9 @@
   {
     "id": "session_1757707755111_qy4rfdos0",
     "session_id": "session_1756910821388_wht3pler0:f3p35xblu:PomGalleryC.mp4_1757699563079_psra",
-    "duration": 2438436,
+    "duration": 2438753,
     "created_at": "2025-09-12T20:09:15.111Z",
-    "updated_at": "2025-09-14T14:14:42.320Z",
+    "updated_at": "2025-09-14T14:19:58.943Z",
     "is_test_data": false
   },
   {
@@ -72404,7 +72404,7 @@
     "city": "Perth",
     "country_code": null,
     "created_at": "2025-09-12T20:10:15.889Z",
-    "updated_at": "2025-09-14T10:43:38.945Z",
+    "updated_at": "2025-09-14T14:15:44.859Z",
     "is_location_cache": true
   },
   {
@@ -72632,7 +72632,7 @@
     "city": "Montreal",
     "country_code": null,
     "created_at": "2025-09-13T05:25:45.198Z",
-    "updated_at": "2025-09-14T10:43:35.818Z",
+    "updated_at": "2025-09-14T14:15:12.623Z",
     "is_location_cache": true
   },
   {
@@ -72668,7 +72668,7 @@
     "city": "Mexico City",
     "country_code": null,
     "created_at": "2025-09-13T05:30:01.555Z",
-    "updated_at": "2025-09-14T10:43:03.536Z",
+    "updated_at": "2025-09-14T14:15:09.494Z",
     "is_location_cache": true
   },
   {
