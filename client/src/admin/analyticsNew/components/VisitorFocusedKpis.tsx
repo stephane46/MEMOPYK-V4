@@ -21,7 +21,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
   const { data, isLoading: loading, error } = useFilteredKpis<KpisResponse>();
   
   // Get dates from global filter store instead of local calculations
-  const { getDateRange } = useAnalyticsNewFilters();
+  const { getDateRange, country } = useAnalyticsNewFilters();
   
   // Modal states
   const [isTotalViewsModalOpen, setIsTotalViewsModalOpen] = useState(false);
@@ -124,7 +124,17 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         console.warn('Location enrichment failed:', enrichError);
       });
       
-      const response = await fetch(`/api/analytics/recent-visitors?dateFrom=${calcStartDate}&dateTo=${calcEndDate}&skipEnrichment=true`);
+      // Build URL with country filter if one is selected
+      const url = new URL('/api/analytics/recent-visitors', window.location.origin);
+      url.searchParams.set('dateFrom', calcStartDate);
+      url.searchParams.set('dateTo', calcEndDate);
+      url.searchParams.set('skipEnrichment', 'true');
+      if (country && country !== 'all') {
+        url.searchParams.set('country', country);
+        console.log('🌍 TOTAL VIEWS: Including country filter:', country);
+      }
+      
+      const response = await fetch(url.toString());
       const allVisitors = await response.json();
       
       // Show ALL visitors/sessions (can include multiple sessions from same IP)
@@ -156,8 +166,19 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         console.warn('Location enrichment failed:', enrichError);
       });
       
+      // Build URL with country filter if one is selected
+      const url = new URL('/api/analytics/recent-visitors', window.location.origin);
+      url.searchParams.set('dateFrom', calcStartDate);
+      url.searchParams.set('dateTo', calcEndDate);
+      url.searchParams.set('skipEnrichment', 'true');
+      url.searchParams.set('uniqueOnly', 'true');
+      if (country && country !== 'all') {
+        url.searchParams.set('country', country);
+        console.log('🌍 UNIQUE VISITORS: Including country filter:', country);
+      }
+      
       // Call UNIQUE visitors endpoint (different from total sessions)
-      const response = await fetch(`/api/analytics/recent-visitors?dateFrom=${calcStartDate}&dateTo=${calcEndDate}&skipEnrichment=true&uniqueOnly=true`);
+      const response = await fetch(url.toString());
       const uniqueVisitors = await response.json();
       
       // For unique visitors, ensure we only show the latest visit per IP
@@ -202,7 +223,17 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         console.warn('Location enrichment failed:', enrichError);
       });
       
-      const response = await fetch(`/api/analytics/recent-visitors?dateFrom=${calcStartDate}&dateTo=${calcEndDate}&skipEnrichment=true`);
+      // Build URL with country filter if one is selected
+      const url = new URL('/api/analytics/recent-visitors', window.location.origin);
+      url.searchParams.set('dateFrom', calcStartDate);
+      url.searchParams.set('dateTo', calcEndDate);
+      url.searchParams.set('skipEnrichment', 'true');
+      if (country && country !== 'all') {
+        url.searchParams.set('country', country);
+        console.log('🌍 RETURN VISITORS: Including country filter:', country);
+      }
+      
+      const response = await fetch(url.toString());
       const allVisitors = await response.json();
       
       // Filter to show returning visitors only (server already deduplicates and tracks visit counts)
