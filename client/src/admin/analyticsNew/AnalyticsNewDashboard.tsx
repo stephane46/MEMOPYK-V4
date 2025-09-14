@@ -138,11 +138,11 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
 
   return (
     <div 
-      className={`min-h-screen bg-[var(--analytics-new-background)] font-[var(--analytics-new-font-family)] text-[var(--analytics-new-text)] flex flex-col ${className}`}
+      className={`h-screen bg-[var(--analytics-new-background)] font-[var(--analytics-new-font-family)] text-[var(--analytics-new-text)] overflow-y-auto ${className}`}
       data-testid="analytics-new-dashboard"
     >
-      {/* Fixed Header Section - Properly Sticky */}
-      <div className="analytics-new-sticky-header flex-shrink-0">
+      {/* Sticky Header Section - Now properly sticky within scroll container */}
+      <div className="analytics-new-sticky-header">
         <div className="max-w-7xl mx-auto py-3 px-4">
           {/* Compact Header */}
           <div className="flex items-center justify-between gap-2 mb-2">
@@ -179,9 +179,9 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
         </div>
       </div>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto p-6">
+      {/* Content - No longer needs its own scroll container */}
+      <div className="pb-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[400px]">
             {renderTabContent()}
           </div>
