@@ -115,20 +115,20 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
   return (
     <div className={`analytics-new-container ${className}`}>
       <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 mx-4 my-2">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mx-6 my-4">
+          <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
             
             {/* Language/Country Filters - Always on the left */}
-            <div className="flex items-center gap-2 overflow-x-auto shrink-0">
-              <span className="text-xs font-medium text-gray-600 shrink-0">Filters:</span>
+            <div className="flex items-center gap-4 overflow-x-auto shrink-0">
+              <span className="text-sm font-medium text-gray-600 shrink-0">Filters:</span>
               
               {/* Language Filter - Working Implementation */}
-              <div className="flex items-center gap-1 border border-gray-200 rounded-md p-1 bg-white relative z-[60] isolation-isolate pointer-events-auto">
-                <Languages className="h-3.5 w-3.5 text-gray-500 ml-1" />
+              <div className="flex items-center gap-1 border border-gray-200 rounded-md p-2 bg-white relative z-[60] isolation-isolate pointer-events-auto">
+                <Languages className="h-4 w-4 text-gray-500 ml-1" />
                 <button
                   type="button"
                   onClick={() => setLanguage('all')}
-                  className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
+                  className={`h-7 px-3 text-sm font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                     language === 'all' 
                       ? 'seo-language-btn-active' 
                       : 'seo-language-btn-inactive'
@@ -140,7 +140,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 <button
                   type="button"
                   onClick={() => setLanguage('en')}
-                  className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
+                  className={`h-7 px-3 text-sm font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                     language === 'en' 
                       ? 'seo-language-btn-active' 
                       : 'seo-language-btn-inactive'
@@ -152,7 +152,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 <button
                   type="button"
                   onClick={() => setLanguage('fr')}
-                  className={`h-6 px-2 text-xs font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
+                  className={`h-7 px-3 text-sm font-medium rounded cursor-pointer transition-colors border-0 outline-none pointer-events-auto ${
                     language === 'fr' 
                       ? 'seo-language-btn-active' 
                       : 'seo-language-btn-inactive'
@@ -165,11 +165,11 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
               {/* Country Filter - Compact */}
               <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger className="h-7 px-2 text-xs w-[80px] border-gray-200 shrink-0" data-testid="filter-country">
-                  <Globe className="h-3.5 w-3.5 mr-1 text-gray-500" />
+                <SelectTrigger className="h-8 px-3 text-sm w-[100px] border-gray-200 shrink-0" data-testid="filter-country">
+                  <Globe className="h-4 w-4 mr-2 text-gray-500" />
                   <SelectValue placeholder="Market" />
                 </SelectTrigger>
-                <SelectContent className="max-h-48 text-xs">
+                <SelectContent className="max-h-48 text-sm">
                   <SelectItem value="all">ALL</SelectItem>
                   <SelectItem value="France">FR</SelectItem>
                   <SelectItem value="United States">US</SelectItem>
@@ -190,7 +190,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   variant="ghost" 
                   size="icon"
                   onClick={reset}
-                  className="h-7 w-7 p-0 text-gray-500 hover:text-gray-700 shrink-0"
+                  className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700 shrink-0"
                   data-testid="filter-reset"
                   aria-label="Reset filters"
                 >
@@ -201,21 +201,21 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
             {/* Date Filters - On the right */}
             {!hideDateFilters && (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-6">
                 {/* Date Range Label and Buttons */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <span className="text-sm font-medium text-gray-700 flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
+                    <Calendar className="h-4 w-4 mr-2" />
                     Date Range:
                   </span>
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
                     {DATE_PRESETS.map((preset) => (
                     <Button
                       key={preset.key}
                       variant={datePreset === preset.key ? "default" : "outline"}
                       size="sm"
                       onClick={() => setDatePreset(preset.key)}
-                      className={`h-8 ${datePreset === preset.key ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}`}
+                      className={`h-8 px-3 ${datePreset === preset.key ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}`}
                       data-testid={`filter-preset-${preset.key}`}
                     >
                       {preset.label}
@@ -226,7 +226,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
                 {/* Custom Date Range - Show when custom is selected */}
                 {datePreset === 'custom' && (
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-3 items-center">
                     {/* Start Date with Calendar */}
                     <div className="relative">
                       <Input
@@ -261,7 +261,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                             setCustomDateRange(value, customDateEnd);
                           }
                         }}
-                        className="w-32 h-8 pr-8"
+                        className="w-36 h-8 pr-10"
                         data-testid="filter-custom-start"
                         placeholder="dd/mm/yyyy"
                         maxLength={10}
@@ -336,7 +336,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                             setCustomDateRange(customDateStart, value);
                           }
                         }}
-                        className="w-32 h-8 pr-8"
+                        className="w-36 h-8 pr-10"
                         data-testid="filter-custom-end"
                         placeholder="dd/mm/yyyy"
                         maxLength={10}
@@ -378,10 +378,10 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 )}
 
                 {/* Active Window Display - To the right of date range */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <Badge 
                     variant="outline" 
-                    className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium flex items-center justify-center"
+                    className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium flex items-center justify-center px-4 py-2"
                     data-testid="active-window-badge"
                   >
                     <div className="text-center">
