@@ -7,7 +7,6 @@ import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 import { Badge } from '@/components/ui/badge';
 import { CountryFlag } from '@/components/admin/CountryFlag';
 import { DateTime } from 'luxon';
-
 interface VisitorFocusedKpisProps {
   preset?: "today" | "yesterday" | "7d" | "30d" | "90d";
   className?: string;
