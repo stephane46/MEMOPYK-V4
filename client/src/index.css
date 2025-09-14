@@ -394,15 +394,19 @@ img, video, iframe, canvas, svg {
 }
 
 /* Country Select active styling (beats bg-background override) */
+[data-testid="filter-country"],
+[data-testid="filter-country"][data-state="open"],
 [data-testid="filter-country"].country-active,
 [data-testid="filter-country"].country-active[data-state="open"] {
   background-color: #D67C4A !important;
   border-color: #D67C4A !important;
   color: #fff !important;
 }
+[data-testid="filter-country"]:hover,
 [data-testid="filter-country"].country-active:hover {
   background-color: #bf6d42 !important;
 }
+[data-testid="filter-country"]:focus,
 [data-testid="filter-country"].country-active:focus {
   box-shadow: 0 0 0 2px rgba(214,124,74,0.3) !important;
 }
