@@ -165,26 +165,22 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
               {/* Country Filter - Compact */}
               <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger className={`h-8 px-3 text-sm w-[120px] shrink-0 ${
-                  country !== 'all' 
-                    ? 'country-active' 
-                    : 'bg-white border-gray-200 text-gray-700'
-                }`} data-testid="filter-country">
-                  <Globe className={`h-4 w-4 mr-2 ${country !== 'all' ? 'text-white' : 'text-gray-500'}`} />
+                <SelectTrigger className="h-8 px-3 text-sm w-[120px] shrink-0 country-active" data-testid="filter-country">
+                  <Globe className="h-4 w-4 mr-2 text-white" />
                   <SelectValue placeholder="Market" />
                 </SelectTrigger>
                 <SelectContent className="max-h-48 text-sm">
                   <SelectItem value="all">ALL</SelectItem>
-                  <SelectItem value="France">FR</SelectItem>
-                  <SelectItem value="United States">US</SelectItem>
-                  <SelectItem value="Canada">CA</SelectItem>
-                  <SelectItem value="United Kingdom">UK</SelectItem>
-                  <SelectItem value="Germany">DE</SelectItem>
-                  <SelectItem value="Australia">AU</SelectItem>
-                  <SelectItem value="Spain">ES</SelectItem>
-                  <SelectItem value="Italy">IT</SelectItem>
-                  <SelectItem value="Brazil">BR</SelectItem>
-                  <SelectItem value="Japan">JP</SelectItem>
+                  <SelectItem value="France">France</SelectItem>
+                  <SelectItem value="United States">United States</SelectItem>
+                  <SelectItem value="Canada">Canada</SelectItem>
+                  <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                  <SelectItem value="Germany">Germany</SelectItem>
+                  <SelectItem value="Australia">Australia</SelectItem>
+                  <SelectItem value="Spain">Spain</SelectItem>
+                  <SelectItem value="Italy">Italy</SelectItem>
+                  <SelectItem value="Brazil">Brazil</SelectItem>
+                  <SelectItem value="Japan">Japan</SelectItem>
                 </SelectContent>
               </Select>
 
