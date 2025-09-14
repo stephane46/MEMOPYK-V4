@@ -116,220 +116,8 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
     <div className={`analytics-new-container ${className} sticky top-0 z-10 bg-white border-b border-gray-200 pb-2 mb-1`}>
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-          {/* Date Presets */}
-          {!hideDateFilters && (
-            <div className="flex flex-wrap gap-4 items-center">
-              {/* Active Window Display */}
-              <div className="flex items-center gap-2">
-                <Badge 
-                  variant="outline" 
-                  className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
-                  data-testid="active-window-badge"
-                >
-                  <div className="flex flex-col">
-                    <span>{windowDisplay}</span>
-                    {sinceDateEnabled && sinceDate && (
-                      <span className="text-orange-700 text-xs mt-1">
-                        ⚠️ Excluding data before: {formatEnglishDate(sinceDate)}
-                      </span>
-                    )}
-                  </div>
-                </Badge>
-                
-                {/* Badge System Info */}
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-xs">
-                      <div className="text-sm space-y-1">
-                        <div className="font-medium">Data Source Legend:</div>
-                        <div>🟠 IP Filtered = Data that respects your IP exclusions (Supabase analytics)</div>
-                        <div>No badge = Raw GA4 data that cannot be filtered by IP</div>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              
-              {/* Date Preset Buttons */}
-              <div className="flex flex-wrap gap-2">
-                <span className="text-sm font-medium text-gray-700 flex items-center mr-2">
-                  <Calendar className="h-4 w-4 mr-1" />
-                  Date Range:
-                </span>
-                {DATE_PRESETS.map((preset) => (
-                <Button
-                  key={preset.key}
-                  variant={datePreset === preset.key ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setDatePreset(preset.key)}
-                  className={datePreset === preset.key ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
-                  data-testid={`filter-preset-${preset.key}`}
-                >
-                  {preset.label}
-                </Button>
-              ))}
-              </div>
-            </div>
-          )}
-
-          {/* Custom Date Range - Show when custom is selected */}
-          {!hideDateFilters && datePreset === 'custom' && (
-            <div className="flex gap-2 items-center">
-              {/* Start Date with Calendar */}
-              <div className="relative">
-                <Input
-                  type="text"
-                  value={(() => {
-                    if (!customDateStart) return '';
-                    // If it's already in DD/MM/YYYY format, return as-is
-                    if (customDateStart.includes('/')) return customDateStart;
-                    // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
-                    const date = new Date(customDateStart);
-                    if (isNaN(date.getTime())) return customDateStart;
-                    const day = date.getDate().toString().padStart(2, '0');
-                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    return `${day}/${month}/${year}`;
-                  })()}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    // Allow typing - store the display value temporarily
-                    if (value.length <= 10) {
-                      // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
-                      const parts = value.split('/');
-                      if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
-                        const [day, month, year] = parts;
-                        if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
-                          const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                          setCustomDateRange(isoDate, customDateEnd);
-                          return;
-                        }
-                      }
-                      // Otherwise store as display format for partial input
-                      setCustomDateRange(value, customDateEnd);
-                    }
-                  }}
-                  className="w-44 pr-8"
-                  data-testid="filter-custom-start"
-                  placeholder="dd/mm/yyyy"
-                  maxLength={10}
-                />
-                <Dialog open={startCalendarOpen} onOpenChange={setStartCalendarOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
-                      data-testid="start-date-calendar-trigger"
-                    >
-                      <CalendarIcon className="h-4 w-4 text-gray-500" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="w-auto">
-                    <CalendarComponent
-                      mode="single"
-                      selected={customDateStart ? new Date(customDateStart.includes('/') ? 
-                        customDateStart.split('/').reverse().join('-') : customDateStart) : undefined}
-                      onSelect={(date) => {
-                        if (date) {
-                          // Fix timezone issue - use local date formatting
-                          const year = date.getFullYear();
-                          const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                          const day = date.getDate().toString().padStart(2, '0');
-                          const isoDate = `${year}-${month}-${day}`;
-                          setCustomDateRange(isoDate, customDateEnd);
-                        }
-                        setStartCalendarOpen(false);
-                      }}
-                      weekStartsOn={1}
-                      initialFocus
-                    />
-                  </DialogContent>
-                </Dialog>
-              </div>
-              
-              <span className="text-sm text-gray-500">to</span>
-              
-              {/* End Date with Calendar */}
-              <div className="relative">
-                <Input
-                  type="text"
-                  value={(() => {
-                    if (!customDateEnd) return '';
-                    // If it's already in DD/MM/YYYY format, return as-is
-                    if (customDateEnd.includes('/')) return customDateEnd;
-                    // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
-                    const date = new Date(customDateEnd);
-                    if (isNaN(date.getTime())) return customDateEnd;
-                    const day = date.getDate().toString().padStart(2, '0');
-                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    return `${day}/${month}/${year}`;
-                  })()}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    // Allow typing - store the display value temporarily
-                    if (value.length <= 10) {
-                      // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
-                      const parts = value.split('/');
-                      if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
-                        const [day, month, year] = parts;
-                        if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
-                          const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                          setCustomDateRange(customDateStart, isoDate);
-                          return;
-                        }
-                      }
-                      // Otherwise store as display format for partial input
-                      setCustomDateRange(customDateStart, value);
-                    }
-                  }}
-                  className="w-44 pr-8"
-                  data-testid="filter-custom-end"
-                  placeholder="dd/mm/yyyy"
-                  maxLength={10}
-                />
-                <Dialog open={endCalendarOpen} onOpenChange={setEndCalendarOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
-                      data-testid="end-date-calendar-trigger"
-                    >
-                      <CalendarIcon className="h-4 w-4 text-gray-500" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="w-auto">
-                    <CalendarComponent
-                      mode="single"
-                      selected={customDateEnd ? new Date(customDateEnd.includes('/') ? 
-                        customDateEnd.split('/').reverse().join('-') : customDateEnd) : undefined}
-                      onSelect={(date) => {
-                        if (date) {
-                          // Fix timezone issue - use local date formatting
-                          const year = date.getFullYear();
-                          const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                          const day = date.getDate().toString().padStart(2, '0');
-                          const isoDate = `${year}-${month}-${day}`;
-                          setCustomDateRange(customDateStart, isoDate);
-                        }
-                        setEndCalendarOpen(false);
-                      }}
-                      weekStartsOn={1}
-                      initialFocus
-                    />
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </div>
-          )}
-
-
-          {/* Compact Filters - Single Line */}
+          
+          {/* Language/Country Filters - Always on the left */}
           <div className="flex items-center gap-2 overflow-x-auto shrink-0">
             <span className="text-xs font-medium text-gray-600 shrink-0">Filters:</span>
             
@@ -409,6 +197,218 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               </Button>
             )}
           </div>
+
+          {/* Date Filters - On the right */}
+          {!hideDateFilters && (
+            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+              {/* Active Window Display */}
+              <div className="flex items-center gap-2">
+                <Badge 
+                  variant="outline" 
+                  className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
+                  data-testid="active-window-badge"
+                >
+                  <div className="flex flex-col">
+                    <span>{windowDisplay}</span>
+                    {sinceDateEnabled && sinceDate && (
+                      <span className="text-orange-700 text-xs mt-1">
+                        ⚠️ Excluding data before: {formatEnglishDate(sinceDate)}
+                      </span>
+                    )}
+                  </div>
+                </Badge>
+                
+                {/* Badge System Info */}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <div className="text-sm space-y-1">
+                        <div className="font-medium">Data Source Legend:</div>
+                        <div>🟠 IP Filtered = Data that respects your IP exclusions (Supabase analytics)</div>
+                        <div>No badge = Raw GA4 data that cannot be filtered by IP</div>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              
+              {/* Date Preset Buttons */}
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm font-medium text-gray-700 flex items-center mr-2">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  Date Range:
+                </span>
+                {DATE_PRESETS.map((preset) => (
+                <Button
+                  key={preset.key}
+                  variant={datePreset === preset.key ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setDatePreset(preset.key)}
+                  className={datePreset === preset.key ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
+                  data-testid={`filter-preset-${preset.key}`}
+                >
+                  {preset.label}
+                </Button>
+              ))}
+              </div>
+
+              {/* Custom Date Range - Show when custom is selected */}
+              {datePreset === 'custom' && (
+                <div className="flex gap-2 items-center">
+                  {/* Start Date with Calendar */}
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      value={(() => {
+                        if (!customDateStart) return '';
+                        // If it's already in DD/MM/YYYY format, return as-is
+                        if (customDateStart.includes('/')) return customDateStart;
+                        // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
+                        const date = new Date(customDateStart);
+                        if (isNaN(date.getTime())) return customDateStart;
+                        const day = date.getDate().toString().padStart(2, '0');
+                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        const year = date.getFullYear();
+                        return `${day}/${month}/${year}`;
+                      })()}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Allow typing - store the display value temporarily
+                        if (value.length <= 10) {
+                          // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
+                          const parts = value.split('/');
+                          if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+                            const [day, month, year] = parts;
+                            if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
+                              const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                              setCustomDateRange(isoDate, customDateEnd);
+                              return;
+                            }
+                          }
+                          // Otherwise store as display format for partial input
+                          setCustomDateRange(value, customDateEnd);
+                        }
+                      }}
+                      className="w-44 pr-8"
+                      data-testid="filter-custom-start"
+                      placeholder="dd/mm/yyyy"
+                      maxLength={10}
+                    />
+                    <Dialog open={startCalendarOpen} onOpenChange={setStartCalendarOpen}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
+                          data-testid="start-date-calendar-trigger"
+                        >
+                          <CalendarIcon className="h-4 w-4 text-gray-500" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="w-auto">
+                        <CalendarComponent
+                          mode="single"
+                          selected={customDateStart ? new Date(customDateStart.includes('/') ? 
+                            customDateStart.split('/').reverse().join('-') : customDateStart) : undefined}
+                          onSelect={(date) => {
+                            if (date) {
+                              // Fix timezone issue - use local date formatting
+                              const year = date.getFullYear();
+                              const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                              const day = date.getDate().toString().padStart(2, '0');
+                              const isoDate = `${year}-${month}-${day}`;
+                              setCustomDateRange(isoDate, customDateEnd);
+                            }
+                            setStartCalendarOpen(false);
+                          }}
+                          weekStartsOn={1}
+                          initialFocus
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                  
+                  <span className="text-sm text-gray-500">to</span>
+                  
+                  {/* End Date with Calendar */}
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      value={(() => {
+                        if (!customDateEnd) return '';
+                        // If it's already in DD/MM/YYYY format, return as-is
+                        if (customDateEnd.includes('/')) return customDateEnd;
+                        // Otherwise convert from YYYY-MM-DD to DD/MM/YYYY
+                        const date = new Date(customDateEnd);
+                        if (isNaN(date.getTime())) return customDateEnd;
+                        const day = date.getDate().toString().padStart(2, '0');
+                        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        const year = date.getFullYear();
+                        return `${day}/${month}/${year}`;
+                      })()}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Allow typing - store the display value temporarily
+                        if (value.length <= 10) {
+                          // If complete DD/MM/YYYY format, convert to YYYY-MM-DD for backend
+                          const parts = value.split('/');
+                          if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
+                            const [day, month, year] = parts;
+                            if (!isNaN(Number(day)) && !isNaN(Number(month)) && !isNaN(Number(year))) {
+                              const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                              setCustomDateRange(customDateStart, isoDate);
+                              return;
+                            }
+                          }
+                          // Otherwise store as display format for partial input
+                          setCustomDateRange(customDateStart, value);
+                        }
+                      }}
+                      className="w-44 pr-8"
+                      data-testid="filter-custom-end"
+                      placeholder="dd/mm/yyyy"
+                      maxLength={10}
+                    />
+                    <Dialog open={endCalendarOpen} onOpenChange={setEndCalendarOpen}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 hover:bg-gray-100"
+                          data-testid="end-date-calendar-trigger"
+                        >
+                          <CalendarIcon className="h-4 w-4 text-gray-500" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="w-auto">
+                        <CalendarComponent
+                          mode="single"
+                          selected={customDateEnd ? new Date(customDateEnd.includes('/') ? 
+                            customDateEnd.split('/').reverse().join('-') : customDateEnd) : undefined}
+                          onSelect={(date) => {
+                            if (date) {
+                              // Fix timezone issue - use local date formatting
+                              const year = date.getFullYear();
+                              const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                              const day = date.getDate().toString().padStart(2, '0');
+                              const isoDate = `${year}-${month}-${day}`;
+                              setCustomDateRange(customDateStart, isoDate);
+                            }
+                            setEndCalendarOpen(false);
+                          }}
+                          weekStartsOn={1}
+                          initialFocus
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
       </div>
