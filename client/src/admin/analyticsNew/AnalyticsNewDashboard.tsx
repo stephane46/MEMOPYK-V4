@@ -141,11 +141,11 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
       className={`min-h-screen bg-[var(--analytics-new-background)] font-[var(--analytics-new-font-family)] text-[var(--analytics-new-text)] ${className}`}
       data-testid="analytics-new-dashboard"
     >
-      {/* Fixed Header Section - Not scrollable */}
-      <div className="sticky top-0 z-50 bg-[var(--analytics-new-background)] border-b border-gray-200">
-        <div className="max-w-7xl mx-auto py-2 px-4">
+      {/* Fixed Header Section - Properly Sticky */}
+      <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto py-3 px-4">
           {/* Compact Header */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 mb-2">
             <div>
               <h1 className="text-xl font-bold text-[var(--analytics-new-text)] flex items-center gap-2">
                 Analytics Dashboard
@@ -168,14 +168,14 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
           
           {/* Global Filters - Context-aware filtering */}
           <AnalyticsNewGlobalFilters hideDateFilters={activeTab === 'live'} />
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="max-w-7xl mx-auto px-4 mt-1">
-          <AnalyticsNewTabNavigation 
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
+          
+          {/* Tab Navigation */}
+          <div className="mt-2">
+            <AnalyticsNewTabNavigation 
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+            />
+          </div>
         </div>
       </div>
 

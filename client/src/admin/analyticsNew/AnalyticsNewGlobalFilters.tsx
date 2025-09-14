@@ -164,7 +164,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               {/* Country Filter - Compact */}
               <Select value={country} onValueChange={setCountry}>
                 <SelectTrigger className="h-8 px-4 text-sm w-[140px] shrink-0 country-active" data-testid="filter-country">
-                  <Globe className="h-4 w-4 mr-2 text-white" />
+                  <Globe className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Market" />
                 </SelectTrigger>
                 <SelectContent className="max-h-48 text-sm">
