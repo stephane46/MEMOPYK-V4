@@ -437,9 +437,6 @@ export const AnalyticsNewLiveView: React.FC = () => {
                         align="center" 
                         sideOffset={12}
                         className="z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-lg"
-                        style={{
-                          marginTop: '-60px' // Account for sticky header height
-                        }}
                       >
                         <div className="space-y-3">
                           <div className="pb-2 border-b border-gray-100">
