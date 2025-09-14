@@ -166,14 +166,8 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
             </div>
           </div>
           
-          {/* Global Filters - Hide in Live View since real-time data doesn't need date filters */}
-          {activeTab !== 'live' ? (
-            <AnalyticsNewGlobalFilters />
-          ) : (
-            <div className="h-16 flex items-center justify-center bg-gray-50 rounded-lg border border-gray-200">
-              <span className="text-sm text-gray-500">Live View - Real-time data (no filters needed)</span>
-            </div>
-          )}
+          {/* Global Filters - Context-aware filtering */}
+          <AnalyticsNewGlobalFilters hideDateFilters={activeTab === 'live'} />
         </div>
 
         {/* Tab Navigation */}

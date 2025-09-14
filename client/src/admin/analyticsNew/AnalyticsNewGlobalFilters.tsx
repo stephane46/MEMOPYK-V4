@@ -27,6 +27,7 @@ import './analyticsNew.tokens.css';
 
 interface AnalyticsNewGlobalFiltersProps {
   className?: string;
+  hideDateFilters?: boolean;
 }
 
 // Simple English date formatter for Start Override badge
@@ -46,7 +47,8 @@ const formatEnglishDate = (dateStr: string): string => {
 };
 
 export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps> = ({ 
-  className = '' 
+  className = '',
+  hideDateFilters = false
 }) => {
   const [startCalendarOpen, setStartCalendarOpen] = useState(false);
   const [endCalendarOpen, setEndCalendarOpen] = useState(false);
@@ -115,64 +117,66 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           {/* Date Presets */}
-          <div className="flex flex-wrap gap-4 items-center">
-            {/* Active Window Display */}
-            <div className="flex items-center gap-2">
-              <Badge 
-                variant="outline" 
-                className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
-                data-testid="active-window-badge"
-              >
-                <div className="flex flex-col">
-                  <span>{windowDisplay}</span>
-                  {sinceDateEnabled && sinceDate && (
-                    <span className="text-orange-700 text-xs mt-1">
-                      ⚠️ Excluding data before: {formatEnglishDate(sinceDate)}
-                    </span>
-                  )}
-                </div>
-              </Badge>
+          {!hideDateFilters && (
+            <div className="flex flex-wrap gap-4 items-center">
+              {/* Active Window Display */}
+              <div className="flex items-center gap-2">
+                <Badge 
+                  variant="outline" 
+                  className="bg-blue-50 border-blue-300 text-blue-800 text-sm font-medium"
+                  data-testid="active-window-badge"
+                >
+                  <div className="flex flex-col">
+                    <span>{windowDisplay}</span>
+                    {sinceDateEnabled && sinceDate && (
+                      <span className="text-orange-700 text-xs mt-1">
+                        ⚠️ Excluding data before: {formatEnglishDate(sinceDate)}
+                      </span>
+                    )}
+                  </div>
+                </Badge>
+                
+                {/* Badge System Info */}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <div className="text-sm space-y-1">
+                        <div className="font-medium">Data Source Legend:</div>
+                        <div>🟠 IP Filtered = Data that respects your IP exclusions (Supabase analytics)</div>
+                        <div>No badge = Raw GA4 data that cannot be filtered by IP</div>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               
-              {/* Badge System Info */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 text-gray-400 hover:text-gray-600 cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <div className="text-sm space-y-1">
-                      <div className="font-medium">Data Source Legend:</div>
-                      <div>🟠 IP Filtered = Data that respects your IP exclusions (Supabase analytics)</div>
-                      <div>No badge = Raw GA4 data that cannot be filtered by IP</div>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              {/* Date Preset Buttons */}
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm font-medium text-gray-700 flex items-center mr-2">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  Date Range:
+                </span>
+                {DATE_PRESETS.map((preset) => (
+                <Button
+                  key={preset.key}
+                  variant={datePreset === preset.key ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setDatePreset(preset.key)}
+                  className={datePreset === preset.key ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
+                  data-testid={`filter-preset-${preset.key}`}
+                >
+                  {preset.label}
+                </Button>
+              ))}
+              </div>
             </div>
-            
-            {/* Date Preset Buttons */}
-            <div className="flex flex-wrap gap-2">
-              <span className="text-sm font-medium text-gray-700 flex items-center mr-2">
-                <Calendar className="h-4 w-4 mr-1" />
-                Date Range:
-              </span>
-              {DATE_PRESETS.map((preset) => (
-              <Button
-                key={preset.key}
-                variant={datePreset === preset.key ? "default" : "outline"}
-                size="sm"
-                onClick={() => setDatePreset(preset.key)}
-                className={datePreset === preset.key ? 'seo-language-btn-active' : 'seo-language-btn-inactive'}
-                data-testid={`filter-preset-${preset.key}`}
-              >
-                {preset.label}
-              </Button>
-            ))}
-            </div>
-          </div>
+          )}
 
           {/* Custom Date Range - Show when custom is selected */}
-          {datePreset === 'custom' && (
+          {!hideDateFilters && datePreset === 'custom' && (
             <div className="flex gap-2 items-center">
               {/* Start Date with Calendar */}
               <div className="relative">
