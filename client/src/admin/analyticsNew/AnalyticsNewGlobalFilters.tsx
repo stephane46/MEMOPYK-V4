@@ -161,12 +161,13 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                 </button>
               </div>
 
-              {/* Country Filter - Compact */}
-              <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger className="h-10 px-4 text-sm w-[180px] shrink-0 bg-orange-500 border-orange-500 text-white country-select-trigger" data-testid="filter-country">
-                  <Globe className="h-4 w-4 mr-2" style={{ stroke: '#011526' }} />
-                  <SelectValue placeholder="Market" />
-                </SelectTrigger>
+              {/* Country Filter - Match Language Style */}
+              <div className="flex items-center gap-1 border border-gray-200 rounded-md p-2 bg-white relative z-[60] isolation-isolate pointer-events-auto">
+                <Globe className="h-4 w-4 text-gray-500 ml-1" />
+                <Select value={country} onValueChange={setCountry}>
+                  <SelectTrigger className="h-7 px-3 text-sm w-[140px] shrink-0 bg-orange-500 border-orange-500 text-white country-select-trigger border-0" data-testid="filter-country">
+                    <SelectValue placeholder="Market" />
+                  </SelectTrigger>
                 <SelectContent className="max-h-48 text-sm">
                   <SelectItem value="all">
                     <div className="flex items-center gap-2">
@@ -224,7 +225,8 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                     </div>
                   </SelectItem>
                 </SelectContent>
-              </Select>
+                </Select>
+              </div>
 
               {/* Reset Button - Icon Only */}
               {activeFilterCount > 0 && (

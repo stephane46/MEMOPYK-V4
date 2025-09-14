@@ -138,13 +138,14 @@
   }
 }
 
-/* Sticky Header Styles */
+/* Sticky Header Styles - FORCE STICKY POSITIONING */
 .analytics-new-sticky-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--analytics-new-border);
-  background-color: rgba(242, 235, 220, 0.95); /* var(--analytics-new-background) with opacity */
+  background-color: rgba(255, 255, 255, 0.95) !important; /* White with opacity for better contrast */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
