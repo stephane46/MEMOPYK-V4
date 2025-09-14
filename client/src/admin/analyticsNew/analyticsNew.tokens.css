@@ -62,10 +62,6 @@
   color: var(--analytics-new-text);
   background-color: var(--analytics-new-background);
   padding: var(--analytics-new-space-6);
-  /* Ensure sticky positioning works properly */
-  position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .analytics-new-card {
