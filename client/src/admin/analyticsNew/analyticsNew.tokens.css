@@ -62,6 +62,10 @@
   color: var(--analytics-new-text);
   background-color: var(--analytics-new-background);
   padding: var(--analytics-new-space-6);
+  /* Ensure sticky positioning works properly */
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .analytics-new-card {
@@ -136,4 +140,15 @@
   100% {
     background-position: 200% 0;
   }
+}
+
+/* Sticky Header Styles */
+.analytics-new-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--analytics-new-border);
+  background-color: rgba(242, 235, 220, 0.95); /* var(--analytics-new-background) with opacity */
 }

@@ -142,7 +142,7 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
       data-testid="analytics-new-dashboard"
     >
       {/* Fixed Header Section - Not scrollable */}
-      <div className="sticky top-0 z-50 bg-[var(--analytics-new-background)] border-b border-gray-200">
+      <div className="analytics-new-sticky-header">
         <div className="max-w-7xl mx-auto p-6 pb-3">
           {/* Compact Header */}
           <div className="flex items-center justify-between mb-4">
