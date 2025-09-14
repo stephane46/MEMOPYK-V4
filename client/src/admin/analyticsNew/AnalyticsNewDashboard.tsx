@@ -179,8 +179,11 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
         </div>
       </div>
 
+      {/* Spacer to prevent content from appearing under sticky header */}
+      <div className="h-4" aria-hidden="true" />
+
       {/* Content - Ensure sufficient height for sticky behavior */}
-      <div className="pb-6 pt-6">
+      <div className="pb-6">
         <div className="max-w-7xl mx-auto px-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[150vh]">
             {renderTabContent()}
