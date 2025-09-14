@@ -143,9 +143,9 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
     >
       {/* Fixed Header Section - Not scrollable */}
       <div className="sticky top-0 z-50 bg-[var(--analytics-new-background)] border-b border-gray-200">
-        <div className="max-w-7xl mx-auto pt-4 px-6 pb-2">
+        <div className="max-w-7xl mx-auto py-2 px-4">
           {/* Compact Header */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between gap-2">
             <div>
               <h1 className="text-xl font-bold text-[var(--analytics-new-text)] flex items-center gap-2">
                 Analytics Dashboard
@@ -171,7 +171,7 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div className="max-w-7xl mx-auto px-6 pt-1 pb-2">
+        <div className="max-w-7xl mx-auto px-4 mt-1">
           <AnalyticsNewTabNavigation 
             activeTab={activeTab}
             onTabChange={handleTabChange}

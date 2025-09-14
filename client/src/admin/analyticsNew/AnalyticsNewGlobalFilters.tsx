@@ -113,10 +113,8 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
   const windowDisplay = formatParisDateWindow(displayRange.start, displayRange.end);
 
   return (
-    <div className={`analytics-new-container ${className}`}>
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mx-6 my-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className={`w-full py-2 px-0 ${className}`}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
             
             {/* Language/Country Filters - Always on the left */}
             <div className="flex items-center gap-4 shrink-0">
@@ -469,7 +467,5 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
             )}
           </div>
         </div>
-      </div>
-    </div>
   );
 };

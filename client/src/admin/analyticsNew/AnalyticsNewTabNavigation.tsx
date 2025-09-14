@@ -95,10 +95,10 @@ export const AnalyticsNewTabNavigation: React.FC<AnalyticsNewTabNavigationProps>
   };
 
   return (
-    <div className={`analytics-new-container ${className}`}>
+    <div className={`w-full ${className}`}>
       {/* Desktop Navigation */}
       <div className="hidden md:block">
-        <nav className="bg-white border border-gray-200 rounded-lg shadow-sm">
+        <nav className="border-b border-gray-200">
           <div className="flex overflow-x-auto">
             {ANALYTICS_NEW_TABS.map((tab) => {
               const Icon = tab.icon;
@@ -109,7 +109,7 @@ export const AnalyticsNewTabNavigation: React.FC<AnalyticsNewTabNavigationProps>
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id)}
                   className={cn(
-                    'flex items-center px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors',
+                    'flex items-center px-3 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors',
                     isActive
                       ? 'border-[var(--analytics-new-accent)] text-[var(--analytics-new-accent)] bg-[var(--analytics-new-surface)]'
                       : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
