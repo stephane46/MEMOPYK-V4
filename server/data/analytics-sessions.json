@@ -1936,7 +1936,7 @@
     "session_id": "ip_session_127_0_0_1",
     "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-09-14T14:57:24.669Z",
+    "updated_at": "2025-09-14T15:50:06.197Z",
     "is_test_data": false
   },
   {
@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-14T15:47:00.524Z",
-    "duration": 2860569,
+    "updated_at": "2025-09-14T15:48:31.102Z",
+    "duration": 2860660,
     "region": "Occitanie"
   },
   {
@@ -73730,5 +73730,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-14T14:58:20.605Z"
+  },
+  {
+    "id": "fcdf0dd6-3743-47f5-a57c-92d71832d507",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-14T15:50:04.515Z"
+  },
+  {
+    "id": "e1c29c0c-d082-49a5-a445-500b69c3dbad",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Argjf%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-14T15:50:11.249Z"
   }
 ]

@@ -423,21 +423,7 @@ img, video, iframe, canvas, svg {
   stroke: #011526 !important;
 }
 
-/* FORCE COUNTRY DROPDOWN TO APPEAR ON TOP OF EVERYTHING */
-[data-radix-select-content] {
-  z-index: 99999 !important;
-  position: fixed !important;
-}
-
-/* Alternative selector for country dropdown */
-.country-dropdown-content {
-  z-index: 99999 !important;
-  position: fixed !important;
-  background: white !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 6px !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
-}
+/* Remove conflicting dropdown overrides - let Radix handle positioning */
 
 /* Custom modal content class - precise targeting */
 .modal-force-white {

@@ -168,7 +168,7 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
                   <SelectTrigger className="h-7 px-3 text-sm w-[140px] shrink-0 bg-orange-500 border-orange-500 text-white country-select-trigger border-0" data-testid="filter-country">
                     <SelectValue placeholder="Market" />
                   </SelectTrigger>
-                <SelectContent className="max-h-48 text-sm z-[9999] country-dropdown-content">
+                <SelectContent className="max-h-48 text-sm z-[1010]" position="popper" avoidCollisions={false}>
                   <SelectItem value="all">
                     <div className="flex items-center gap-2">
                       ALL
