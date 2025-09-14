@@ -167,14 +167,10 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
               <Select value={country} onValueChange={setCountry}>
                 <SelectTrigger className={`h-8 px-3 text-sm w-[100px] shrink-0 ${
                   country !== 'all' 
-                    ? 'border-[#D67C4A] bg-[#D67C4A] text-white' 
+                    ? 'seo-language-btn-active' 
                     : 'border-gray-200'
-                }`} data-testid="filter-country" style={country !== 'all' ? {
-                  backgroundColor: '#D67C4A !important',
-                  borderColor: '#D67C4A !important', 
-                  color: 'white !important'
-                } : {}}>
-                  <Globe className={`h-4 w-4 mr-2 ${country !== 'all' ? 'text-white' : 'text-gray-500'}`} style={country !== 'all' ? {color: 'white !important'} : {}} />
+                }`} data-testid="filter-country">
+                  <Globe className={`h-4 w-4 mr-2 ${country !== 'all' ? 'text-white' : 'text-gray-500'}`} />
                   <SelectValue placeholder="Market" />
                 </SelectTrigger>
                 <SelectContent className="max-h-48 text-sm">
