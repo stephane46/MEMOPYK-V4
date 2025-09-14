@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-14T14:13:49.923Z",
-    "duration": 2854979,
+    "updated_at": "2025-09-14T14:14:49.923Z",
+    "duration": 2855039,
     "region": "Occitanie"
   },
   {
@@ -72382,9 +72382,9 @@
   {
     "id": "session_1757707755111_qy4rfdos0",
     "session_id": "session_1756910821388_wht3pler0:f3p35xblu:PomGalleryC.mp4_1757699563079_psra",
-    "duration": 2438376,
+    "duration": 2438436,
     "created_at": "2025-09-12T20:09:15.111Z",
-    "updated_at": "2025-09-14T14:13:41.969Z",
+    "updated_at": "2025-09-14T14:14:42.320Z",
     "is_test_data": false
   },
   {
@@ -73032,7 +73032,7 @@
     "city": "Bogota",
     "country_code": null,
     "created_at": "2025-09-13T08:33:21.079Z",
-    "updated_at": "2025-09-14T10:43:00.419Z",
+    "updated_at": "2025-09-14T14:14:37.259Z",
     "is_location_cache": true
   },
   {
@@ -73276,7 +73276,7 @@
     "city": "Vancouver",
     "country_code": null,
     "created_at": "2025-09-13T10:33:25.249Z",
-    "updated_at": "2025-09-14T10:42:25.025Z",
+    "updated_at": "2025-09-14T14:14:01.928Z",
     "is_location_cache": true
   },
   {
@@ -73520,7 +73520,7 @@
     "city": "Mountain View",
     "country_code": null,
     "created_at": "2025-09-14T08:58:51.693Z",
-    "updated_at": "2025-09-14T10:41:52.788Z",
+    "updated_at": "2025-09-14T14:13:58.777Z",
     "is_location_cache": true
   },
   {
@@ -73532,7 +73532,7 @@
     "city": "Montreal",
     "country_code": null,
     "created_at": "2025-09-14T08:59:27.051Z",
-    "updated_at": "2025-09-14T10:42:28.151Z",
+    "updated_at": "2025-09-14T14:14:34.139Z",
     "is_location_cache": true
   },
   {
