@@ -165,22 +165,77 @@ export const AnalyticsNewGlobalFilters: React.FC<AnalyticsNewGlobalFiltersProps>
 
               {/* Country Filter - Compact */}
               <Select value={country} onValueChange={setCountry}>
-                <SelectTrigger className="h-8 px-3 text-sm w-[120px] shrink-0 country-active" data-testid="filter-country">
+                <SelectTrigger className="h-8 px-4 text-sm w-[140px] shrink-0 country-active" data-testid="filter-country">
                   <Globe className="h-4 w-4 mr-2 text-white" />
                   <SelectValue placeholder="Market" />
                 </SelectTrigger>
                 <SelectContent className="max-h-48 text-sm">
-                  <SelectItem value="all">ALL</SelectItem>
-                  <SelectItem value="France">France</SelectItem>
-                  <SelectItem value="United States">United States</SelectItem>
-                  <SelectItem value="Canada">Canada</SelectItem>
-                  <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                  <SelectItem value="Germany">Germany</SelectItem>
-                  <SelectItem value="Australia">Australia</SelectItem>
-                  <SelectItem value="Spain">Spain</SelectItem>
-                  <SelectItem value="Italy">Italy</SelectItem>
-                  <SelectItem value="Brazil">Brazil</SelectItem>
-                  <SelectItem value="Japan">Japan</SelectItem>
+                  <SelectItem value="all">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      ALL
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="France">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      France
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="United States">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      United States
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Canada">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Canada
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="United Kingdom">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      United Kingdom
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Germany">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Germany
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Australia">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Australia
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Spain">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Spain
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Italy">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Italy
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Brazil">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Brazil
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Japan">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Japan
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
