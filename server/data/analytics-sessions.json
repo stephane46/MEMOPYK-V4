@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-14T14:20:19.944Z",
-    "duration": 2855369,
+    "updated_at": "2025-09-14T14:20:50.015Z",
+    "duration": 2855399,
     "region": "Occitanie"
   },
   {
@@ -72382,9 +72382,9 @@
   {
     "id": "session_1757707755111_qy4rfdos0",
     "session_id": "session_1756910821388_wht3pler0:f3p35xblu:PomGalleryC.mp4_1757699563079_psra",
-    "duration": 2438753,
+    "duration": 2438813,
     "created_at": "2025-09-12T20:09:15.111Z",
-    "updated_at": "2025-09-14T14:19:58.943Z",
+    "updated_at": "2025-09-14T14:20:58.959Z",
     "is_test_data": false
   },
   {
