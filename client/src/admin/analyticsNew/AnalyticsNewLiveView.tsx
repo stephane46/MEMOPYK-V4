@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Users, Globe, Monitor, Smartphone, Tablet, Eye, Info, MapPin, Clock, Languages } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { Badge } from '@/components/ui/badge';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { CountryFlag } from '@/components/admin/CountryFlag';
 import { DateTime } from 'luxon';
+
+const STICKY_HEADER_HEIGHT = 120; // Approximate height of sticky filtering section
 
 interface PrivateTrackingData {
   activeUsers: number;
@@ -105,6 +108,7 @@ const AnalyticsNewProgressBar: React.FC<{
 
 export const AnalyticsNewLiveView: React.FC = () => {
   const queryClient = useQueryClient();
+  const listRef = useRef<HTMLDivElement>(null);
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const [lastWatchingUpdate, setLastWatchingUpdate] = useState<string>('');
   const [isVisible, setIsVisible] = useState<boolean>(!document.hidden);
@@ -373,7 +377,8 @@ export const AnalyticsNewLiveView: React.FC = () => {
               ))}
             </div>
           ) : recentVisitors && recentVisitors.length > 0 ? (
-            <div className="space-y-4 max-h-80 overflow-y-auto">
+            <TooltipProvider>
+              <div ref={listRef} className="relative space-y-4 max-h-80 overflow-y-auto">
               {recentVisitors.slice(0, 5).map((visitor, index) => {
                 const formatLanguage = (lang: string) => {
                   const languageMap: { [key: string]: { flag: string; display: string } } = {
@@ -409,34 +414,41 @@ export const AnalyticsNewLiveView: React.FC = () => {
                 };
                 
                 return (
-                  <TooltipProvider key={`${visitor.ip_address}-${index}`}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div 
-                          className="bg-gray-50 rounded-lg p-3 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors relative group"
-                        >
-                          {/* Compact visitor summary */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <CountryFlag country={visitor.country} size={16} />
-                              <div className="text-sm">
-                                <div className="font-medium text-gray-900">
-                                  {visitor.country || 'Unknown'}
-                                </div>
-                                <div className="text-xs text-gray-600">
-                                  {getRelativeTime(visitor.last_visit)}
-                                </div>
+                  <TooltipPrimitive.Root key={`${visitor.ip_address}-${index}`}>
+                    <TooltipPrimitive.Trigger asChild>
+                      <div 
+                        className="bg-gray-50 rounded-lg p-3 border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors relative group"
+                      >
+                        {/* Compact visitor summary */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <CountryFlag country={visitor.country} size={16} />
+                            <div className="text-sm">
+                              <div className="font-medium text-gray-900">
+                                {visitor.country || 'Unknown'}
+                              </div>
+                              <div className="text-xs text-gray-600">
+                                {getRelativeTime(visitor.last_visit)}
                               </div>
                             </div>
-                            <Info className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                           </div>
+                          <Info className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent 
+                      </div>
+                    </TooltipPrimitive.Trigger>
+                    <TooltipPrimitive.Portal container={listRef.current}>
+                      <TooltipPrimitive.Content 
                         side="right" 
                         align="center" 
                         sideOffset={12}
-                        className="z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-lg"
+                        avoidCollisions
+                        collisionBoundary={listRef.current}
+                        collisionPadding={{ 
+                          top: STICKY_HEADER_HEIGHT, 
+                          bottom: 8, 
+                          right: 8 
+                        }}
+                        className="z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-lg animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
                       >
                         <div className="space-y-3">
                           <div className="pb-2 border-b border-gray-100">
@@ -488,12 +500,13 @@ export const AnalyticsNewLiveView: React.FC = () => {
                             </div>
                           </div>
                         </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                      </TooltipPrimitive.Content>
+                    </TooltipPrimitive.Portal>
+                  </TooltipPrimitive.Root>
                 );
               })}
-            </div>
+              </div>
+            </TooltipProvider>
           ) : (
             <div className="text-center py-4 text-[var(--analytics-new-text-muted)]">
               <Users className="w-6 h-6 mx-auto mb-2 text-gray-400" />
@@ -643,18 +656,18 @@ export const AnalyticsNewLiveView: React.FC = () => {
                     <span>
                       {getDeviceDisplay()} • {getTimeAgo()}
                     </span>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="w-3 h-3 ml-1 text-gray-400 cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p className="text-sm">
+                    <TooltipPrimitive.Root>
+                      <TooltipPrimitive.Trigger asChild>
+                        <Info className="w-3 h-3 ml-1 text-gray-400 cursor-help" />
+                      </TooltipPrimitive.Trigger>
+                      <TooltipPrimitive.Portal>
+                        <TooltipPrimitive.Content className="max-w-xs z-50 p-2 bg-white border border-gray-200 rounded-lg shadow-lg text-sm">
+                          <p>
                             This shows when the viewer's last activity was detected. If it's only a few seconds ago, the video is actively playing. If it's longer, the viewer may have paused, left the page, or lost connection.
                           </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                        </TooltipPrimitive.Content>
+                      </TooltipPrimitive.Portal>
+                    </TooltipPrimitive.Root>
                     <span className="text-gray-400 ml-1"> • {getShortId()}</span>
                   </div>
 
