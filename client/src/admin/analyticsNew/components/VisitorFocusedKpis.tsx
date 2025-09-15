@@ -345,12 +345,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       {/* Total Views Modal */}
       {isTotalViewsModalOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-80 z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-[340px] z-50"
           onClick={(e) => e.target === e.currentTarget && setIsTotalViewsModalOpen(false)}
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="px-6 pt-6 pb-0 bg-gray-800 text-white"
+              className="px-6 pt-6 pb-0 bg-white text-gray-900 border-b border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -359,7 +359,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                 </div>
                 <button
                   onClick={() => setIsTotalViewsModalOpen(false)}
-                  className="text-white hover:text-gray-200 transition-colors"
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -464,7 +464,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="px-6 pt-6 pb-0 bg-gray-800 text-white"
+              className="px-6 pt-6 pb-0 bg-white text-gray-900 border-b border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -578,7 +578,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="px-6 pt-6 pb-0 bg-gray-800 text-white"
+              className="px-6 pt-6 pb-0 bg-white text-gray-900 border-b border-gray-200"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
