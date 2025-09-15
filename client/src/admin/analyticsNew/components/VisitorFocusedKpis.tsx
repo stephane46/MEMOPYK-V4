@@ -327,7 +327,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="p-6 border-b border-gray-200"
+              className="px-6 pt-6 pb-0"
               style={{
                 background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
                 color: '#ffffff'
@@ -453,7 +453,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="p-6 border-b border-gray-200"
+              className="px-6 pt-6 pb-0"
               style={{
                 background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
                 color: '#ffffff'
@@ -579,7 +579,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="p-6 border-b border-gray-200"
+              className="px-6 pt-6 pb-0"
               style={{
                 background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
                 color: '#ffffff'
