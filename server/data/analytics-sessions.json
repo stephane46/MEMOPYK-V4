@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-15T06:16:59.418Z",
-    "duration": 2912767,
+    "updated_at": "2025-09-15T06:18:28.838Z",
+    "duration": 2912856,
     "region": "Occitanie"
   },
   {
@@ -73820,7 +73820,7 @@
     "city": "Zhengzhou",
     "country_code": null,
     "created_at": "2025-09-15T05:52:23.188Z",
-    "updated_at": "2025-09-15T06:15:27.105Z",
+    "updated_at": "2025-09-15T06:18:23.706Z",
     "is_location_cache": true
   },
   {
@@ -73832,7 +73832,7 @@
     "city": "Zhengzhou",
     "country_code": null,
     "created_at": "2025-09-15T05:52:26.323Z",
-    "updated_at": "2025-09-15T06:15:30.262Z",
+    "updated_at": "2025-09-15T06:18:26.830Z",
     "is_location_cache": true
   },
   {
