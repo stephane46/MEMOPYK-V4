@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, Users, UserCheck, RotateCcw, X, MapPin, Clock, Languages } from 'lucide-react';
+import { Eye, Users, UserCheck, RotateCcw, X, MapPin, Clock, Languages, Info } from 'lucide-react';
 import { useFilteredKpis } from "../hooks/useFilteredAnalytics";
 import { useAnalyticsNewFilters } from '../analyticsNewFilters.store';
 import type { KpisResponse } from "../data/types";
 import { AnalyticsNewLoadingStates } from '../AnalyticsNewLoadingStates';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CountryFlag } from '@/components/admin/CountryFlag';
 import { DateTime } from 'luxon';
 interface VisitorFocusedKpisProps {
@@ -282,7 +283,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
   };
 
   return (
-    <>
+    <TooltipProvider>
       <div className={`grid gap-4 md:grid-cols-3 ${className}`}>
         <VisitorKpiCard 
           label="Total Views" 
@@ -318,6 +319,28 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
           data-testid="kpi-return-visitors"
         />
       </div>
+      
+      {/* Help tooltip for data source explanation */}
+      <div className="mt-4 flex justify-center">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800 transition-colors">
+              <Info className="h-4 w-4" />
+              Why do numbers differ between GA4 and MEMOPYK logs?
+            </button>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-sm p-4">
+            <div className="space-y-2 text-sm">
+              <div className="font-medium">ℹ️ Numbers differ because:</div>
+              <div className="space-y-1 ml-4">
+                <div>- GA4: Advanced ML identifies cross-device visitors</div>
+                <div>- MEMOPYK logs: Precise same-IP tracking only</div>
+                <div>- Both perspectives provide valuable insights</div>
+              </div>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </div>
 
       {/* Total Views Modal */}
       {isTotalViewsModalOpen && (
@@ -327,11 +350,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="px-6 pt-6 pb-0"
-              style={{
-                background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
-                color: '#ffffff'
-              }}
+              className="px-6 pt-6 pb-0 bg-gray-800 text-white"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -445,11 +464,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="px-6 pt-6 pb-0"
-              style={{
-                background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
-                color: '#ffffff'
-              }}
+              className="px-6 pt-6 pb-0 bg-gray-800 text-white"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -563,11 +578,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="px-6 pt-6 pb-0"
-              style={{
-                background: 'linear-gradient(135deg, #2A4759 0%, #89BAD9 100%)',
-                color: '#ffffff'
-              }}
+              className="px-6 pt-6 pb-0 bg-gray-800 text-white"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -675,7 +686,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
           </div>
         </div>
       )}
-    </>
+    </TooltipProvider>
   );
 }
 

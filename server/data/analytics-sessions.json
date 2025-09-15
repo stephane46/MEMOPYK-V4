@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-15T06:42:01.013Z",
-    "duration": 2914268,
+    "updated_at": "2025-09-15T06:45:32.273Z",
+    "duration": 2914480,
     "region": "Occitanie"
   },
   {
@@ -73858,5 +73858,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-15T06:23:26.087Z"
+  },
+  {
+    "id": "a52283a4-97c4-48a3-a13b-21ca788edd6c",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-15T06:45:25.609Z"
   }
 ]
