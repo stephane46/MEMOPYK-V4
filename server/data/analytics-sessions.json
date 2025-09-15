@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-15T07:09:03.164Z",
-    "duration": 2915891,
+    "updated_at": "2025-09-15T07:11:33.210Z",
+    "duration": 2916041,
     "region": "Occitanie"
   },
   {
@@ -71996,7 +71996,7 @@
     "city": "Nantes",
     "country_code": null,
     "created_at": "2025-09-09T09:45:56.208Z",
-    "updated_at": "2025-09-15T07:02:18.410Z",
+    "updated_at": "2025-09-15T07:10:08.847Z",
     "is_location_cache": true
   },
   {
@@ -72036,7 +72036,7 @@
     "city": "Sao Paulo",
     "country_code": null,
     "created_at": "2025-09-12T16:16:07.000Z",
-    "updated_at": "2025-09-15T07:02:17.411Z",
+    "updated_at": "2025-09-15T07:10:05.724Z",
     "is_location_cache": true
   },
   {
@@ -72120,7 +72120,7 @@
     "city": "Tokyo",
     "country_code": null,
     "created_at": "2025-09-12T17:53:08.302Z",
-    "updated_at": "2025-09-15T07:01:45.369Z",
+    "updated_at": "2025-09-15T07:09:33.508Z",
     "is_location_cache": true
   },
   {
@@ -72404,7 +72404,7 @@
     "city": "Perth",
     "country_code": null,
     "created_at": "2025-09-12T20:10:15.889Z",
-    "updated_at": "2025-09-15T07:01:44.367Z",
+    "updated_at": "2025-09-15T07:09:30.360Z",
     "is_location_cache": true
   },
   {

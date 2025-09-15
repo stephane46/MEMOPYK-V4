@@ -352,7 +352,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div 
               className="px-6 pt-6 pb-0 bg-white text-gray-900 border-b border-gray-200"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <Eye style={{ width: '24px', height: '24px' }} />
                   <span>Total Views Details</span>
@@ -466,14 +466,14 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div 
               className="px-6 pt-6 pb-0 bg-white text-gray-900 border-b border-gray-200"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <Users style={{ width: '24px', height: '24px' }} />
                   <span>Unique Visitors Details</span>
                 </div>
                 <button
                   onClick={() => setIsUniqueVisitorsModalOpen(false)}
-                  className="text-white hover:text-gray-200 transition-colors"
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -573,21 +573,21 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       {/* Return Visitors Modal */}
       {isReturnVisitorsModalOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-[340px] z-50"
           onClick={(e) => e.target === e.currentTarget && setIsReturnVisitorsModalOpen(false)}
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
               className="px-6 pt-6 pb-0 bg-white text-gray-900 border-b border-gray-200"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <UserCheck style={{ width: '24px', height: '24px' }} />
                   <span>Return Visitors Details</span>
                 </div>
                 <button
                   onClick={() => setIsReturnVisitorsModalOpen(false)}
-                  className="text-white hover:text-gray-200 transition-colors"
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
                 >
                   <X size={24} />
                 </button>
