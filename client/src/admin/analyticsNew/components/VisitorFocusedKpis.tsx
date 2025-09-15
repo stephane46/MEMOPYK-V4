@@ -369,7 +369,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div className="overflow-y-auto max-h-[70vh] px-6 pb-6 -mt-6 pt-6">
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-6 p-4 bg-blue-50 border border-blue-200 rounded-b-lg border-t-0">
-                <div className="space-y-1 text-sm">
+                <div className="space-y-0 text-sm">
                   <div className="font-semibold text-gray-900 flex items-center gap-2">
                     📊 Showing {totalViewsData?.length || 0} detailed records from MEMOPYK logs
                     <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
@@ -422,7 +422,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                             <span className="text-xs text-gray-600">Language</span>
                           </div>
                           <div className="text-base font-semibold text-gray-900">
-                            {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                            {formatLanguage(visitor.language).display}
                           </div>
                         </div>
 
@@ -483,7 +483,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div className="overflow-y-auto max-h-[70vh] px-6 pb-6 -mt-6 pt-6">
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-6 p-4 bg-green-50 border border-green-200 rounded-b-lg border-t-0">
-                <div className="space-y-1 text-sm">
+                <div className="space-y-0 text-sm">
                   <div className="font-semibold text-gray-900 flex items-center gap-2">
                     📊 Showing {uniqueVisitorsData?.length || 0} detailed records from MEMOPYK logs
                     <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
@@ -536,7 +536,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                             <span className="text-xs text-gray-600">Language</span>
                           </div>
                           <div className="text-base font-semibold text-gray-900">
-                            {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                            {formatLanguage(visitor.language).display}
                           </div>
                         </div>
 
@@ -597,7 +597,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div className="overflow-y-auto max-h-[70vh] px-6 pb-6 -mt-6 pt-6">
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-6 p-4 bg-purple-50 border border-purple-200 rounded-b-lg border-t-0">
-                <div className="space-y-1 text-sm">
+                <div className="space-y-0 text-sm">
                   <div className="font-semibold text-gray-900 flex items-center gap-2">
                     📊 Showing {returningVisitors?.length || 0} detailed records from MEMOPYK logs
                     <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
@@ -650,7 +650,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                             <span className="text-xs text-gray-600">Language</span>
                           </div>
                           <div className="text-base font-semibold text-gray-900">
-                            {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
+                            {formatLanguage(visitor.language).display}
                           </div>
                         </div>
 
