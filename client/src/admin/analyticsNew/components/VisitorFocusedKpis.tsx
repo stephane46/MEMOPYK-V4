@@ -360,14 +360,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   <div className="font-medium text-orange-700">
                     ⚠️ GA4 reports {totalViews?.value || 0} total (includes cross-device returns)
                   </div>
-                  <div className="text-blue-800">
-                    <div className="font-medium mb-1">ℹ️ Numbers differ because:</div>
-                    <div className="text-xs space-y-1 ml-4">
-                      <div>- GA4: Advanced ML identifies cross-device visitors</div>
-                      <div>- MEMOPYK logs: Precise same-IP tracking only</div>
-                      <div>- Both perspectives provide valuable insights</div>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -486,14 +478,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   <div className="font-medium text-orange-700">
                     ⚠️ GA4 reports {uniqueVisitors?.value || 0} total (includes cross-device returns)
                   </div>
-                  <div className="text-green-800">
-                    <div className="font-medium mb-1">ℹ️ Numbers differ because:</div>
-                    <div className="text-xs space-y-1 ml-4">
-                      <div>- GA4: Advanced ML identifies cross-device visitors</div>
-                      <div>- MEMOPYK logs: Precise same-IP tracking only</div>
-                      <div>- Both perspectives provide valuable insights</div>
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -611,14 +595,6 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                   </div>
                   <div className="font-medium text-orange-700">
                     ⚠️ GA4 reports {returnVisitors?.value || 0} total (includes cross-device returns)
-                  </div>
-                  <div className="text-purple-800">
-                    <div className="font-medium mb-1">ℹ️ Numbers differ because:</div>
-                    <div className="text-xs space-y-1 ml-4">
-                      <div>- GA4: Advanced ML identifies cross-device visitors</div>
-                      <div>- MEMOPYK logs: Precise same-IP tracking only</div>
-                      <div>- Both perspectives provide valuable insights</div>
-                    </div>
                   </div>
                 </div>
               </div>
