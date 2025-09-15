@@ -363,9 +363,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               </div>
             </div>
 
-            <div className="overflow-y-auto max-h-[70vh] px-6 pb-6 pt-2">
+            <div className="overflow-y-auto max-h-[70vh] px-6 pb-6">
               {/* Data Source Explanation Header */}
-              <div className="-mx-6 mb-6 p-4 bg-blue-50 border border-blue-200 rounded-b-lg border-t-0">
+              <div className="-mx-6 mb-6 -mt-4 p-4 bg-blue-50 border border-blue-200 rounded-b-lg border-t-0">
                 <div className="space-y-0 text-sm">
                   <div className="text-gray-900">
                     📊 Showing {totalViewsData?.length || 0} detailed records from MEMOPYK logs
@@ -471,9 +471,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               </div>
             </div>
 
-            <div className="overflow-y-auto max-h-[70vh] px-6 pb-6 pt-2">
+            <div className="overflow-y-auto max-h-[70vh] px-6 pb-6">
               {/* Data Source Explanation Header */}
-              <div className="-mx-6 mb-6 p-4 bg-green-50 border border-green-200 rounded-b-lg border-t-0">
+              <div className="-mx-6 mb-6 -mt-4 p-4 bg-green-50 border border-green-200 rounded-b-lg border-t-0">
                 <div className="space-y-0 text-sm">
                   <div className="text-gray-900">
                     📊 Showing {uniqueVisitorsData?.length || 0} detailed records from MEMOPYK logs
@@ -579,9 +579,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               </div>
             </div>
 
-            <div className="overflow-y-auto max-h-[70vh] px-6 pb-6 pt-2">
+            <div className="overflow-y-auto max-h-[70vh] px-6 pb-6">
               {/* Data Source Explanation Header */}
-              <div className="-mx-6 mb-6 p-4 bg-purple-50 border border-purple-200 rounded-b-lg border-t-0">
+              <div className="-mx-6 mb-6 -mt-4 p-4 bg-purple-50 border border-purple-200 rounded-b-lg border-t-0">
                 <div className="space-y-0 text-sm">
                   <div className="text-gray-900">
                     📊 Showing {returningVisitors?.length || 0} detailed records from MEMOPYK logs
