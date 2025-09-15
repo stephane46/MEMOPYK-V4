@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-15T07:37:53.502Z",
-    "duration": 2917621,
+    "updated_at": "2025-09-15T07:38:53.192Z",
+    "duration": 2917681,
     "region": "Occitanie"
   },
   {
@@ -71996,7 +71996,7 @@
     "city": "Nantes",
     "country_code": null,
     "created_at": "2025-09-09T09:45:56.208Z",
-    "updated_at": "2025-09-15T07:16:36.405Z",
+    "updated_at": "2025-09-15T07:38:10.939Z",
     "is_location_cache": true
   },
   {
@@ -72036,7 +72036,7 @@
     "city": "Sao Paulo",
     "country_code": null,
     "created_at": "2025-09-12T16:16:07.000Z",
-    "updated_at": "2025-09-15T07:16:33.277Z",
+    "updated_at": "2025-09-15T07:38:07.827Z",
     "is_location_cache": true
   },
   {
@@ -73820,7 +73820,7 @@
     "city": "Zhengzhou",
     "country_code": null,
     "created_at": "2025-09-15T05:52:23.188Z",
-    "updated_at": "2025-09-15T07:34:35.452Z",
+    "updated_at": "2025-09-15T07:38:57.517Z",
     "is_location_cache": true
   },
   {
@@ -73832,7 +73832,7 @@
     "city": "Zhengzhou",
     "country_code": null,
     "created_at": "2025-09-15T05:52:26.323Z",
-    "updated_at": "2025-09-15T07:34:38.591Z",
+    "updated_at": "2025-09-15T07:38:58.524Z",
     "is_location_cache": true
   },
   {
