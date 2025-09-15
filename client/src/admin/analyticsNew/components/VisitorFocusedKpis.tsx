@@ -369,14 +369,14 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div className="overflow-y-auto max-h-[70vh] px-6 pb-6 -mt-6 pt-6">
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-6 p-4 bg-blue-50 border border-blue-200 rounded-b-lg border-t-0">
-                <div className="space-y-2 text-sm">
-                  <div className="font-semibold text-blue-900 flex items-center gap-2">
+                <div className="space-y-1 text-sm">
+                  <div className="font-semibold text-gray-900 flex items-center gap-2">
                     📊 Showing {totalViewsData?.length || 0} detailed records from MEMOPYK logs
                     <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
                       🟠 IP Filtered
                     </Badge>
                   </div>
-                  <div className="font-medium text-orange-700">
+                  <div className="font-medium text-gray-900">
                     ⚠️ GA4 reports {totalViews?.value || 0} total (includes cross-device returns)
                   </div>
                 </div>
@@ -401,12 +401,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <MapPin className="h-4 w-4 text-blue-600" />
-                            <span className="font-medium text-gray-900">Location</span>
+                            <span className="text-xs text-gray-600">Location</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <CountryFlag country={visitor.country_code || visitor.country} size={20} />
                             <div>
-                              <div className="text-sm font-medium">{visitor.country || 'Unknown'}</div>
+                              <div className="text-base font-semibold text-gray-900">{visitor.country || 'Unknown'}</div>
                               {visitor.city && visitor.region && (
                                 <div className="text-xs text-gray-600">
                                   {visitor.city}, {visitor.region}
@@ -419,19 +419,19 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <Languages className="h-4 w-4 text-green-600" />
-                            <span className="font-medium text-gray-900">Language</span>
+                            <span className="text-xs text-gray-600">Language</span>
                           </div>
-                          <Badge variant="outline">
+                          <div className="text-base font-semibold text-gray-900">
                             {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
-                          </Badge>
+                          </div>
                         </div>
 
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <Clock className="h-4 w-4 text-orange-600" />
-                            <span className="font-medium text-gray-900">Visit Time</span>
+                            <span className="text-xs text-gray-600">Visit Time</span>
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-base font-semibold text-gray-900">
                             {getRelativeTime(visitor.last_visit || visitor.created_at)}
                           </div>
                         </div>
@@ -483,14 +483,14 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div className="overflow-y-auto max-h-[70vh] px-6 pb-6 -mt-6 pt-6">
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-6 p-4 bg-green-50 border border-green-200 rounded-b-lg border-t-0">
-                <div className="space-y-2 text-sm">
-                  <div className="font-semibold text-green-900 flex items-center gap-2">
+                <div className="space-y-1 text-sm">
+                  <div className="font-semibold text-gray-900 flex items-center gap-2">
                     📊 Showing {uniqueVisitorsData?.length || 0} detailed records from MEMOPYK logs
                     <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
                       🟠 IP Filtered
                     </Badge>
                   </div>
-                  <div className="font-medium text-orange-700">
+                  <div className="font-medium text-gray-900">
                     ⚠️ GA4 reports {uniqueVisitors?.value || 0} total (includes cross-device returns)
                   </div>
                 </div>
@@ -515,12 +515,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <MapPin className="h-4 w-4 text-blue-600" />
-                            <span className="font-medium text-gray-900">Location</span>
+                            <span className="text-xs text-gray-600">Location</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <CountryFlag country={visitor.country_code || visitor.country} size={20} />
                             <div>
-                              <div className="text-sm font-medium">{visitor.country || 'Unknown'}</div>
+                              <div className="text-base font-semibold text-gray-900">{visitor.country || 'Unknown'}</div>
                               {visitor.city && visitor.region && (
                                 <div className="text-xs text-gray-600">
                                   {visitor.city}, {visitor.region}
@@ -533,19 +533,19 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <Languages className="h-4 w-4 text-green-600" />
-                            <span className="font-medium text-gray-900">Language</span>
+                            <span className="text-xs text-gray-600">Language</span>
                           </div>
-                          <Badge variant="outline">
+                          <div className="text-base font-semibold text-gray-900">
                             {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
-                          </Badge>
+                          </div>
                         </div>
 
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <Clock className="h-4 w-4 text-orange-600" />
-                            <span className="font-medium text-gray-900">First Visit</span>
+                            <span className="text-xs text-gray-600">First Visit</span>
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-base font-semibold text-gray-900">
                             {getRelativeTime(visitor.last_visit || visitor.created_at)}
                           </div>
                         </div>
@@ -597,14 +597,14 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div className="overflow-y-auto max-h-[70vh] px-6 pb-6 -mt-6 pt-6">
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-6 p-4 bg-purple-50 border border-purple-200 rounded-b-lg border-t-0">
-                <div className="space-y-2 text-sm">
-                  <div className="font-semibold text-purple-900 flex items-center gap-2">
+                <div className="space-y-1 text-sm">
+                  <div className="font-semibold text-gray-900 flex items-center gap-2">
                     📊 Showing {returningVisitors?.length || 0} detailed records from MEMOPYK logs
                     <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
                       🟠 IP Filtered
                     </Badge>
                   </div>
-                  <div className="font-medium text-orange-700">
+                  <div className="font-medium text-gray-900">
                     ⚠️ GA4 reports {returnVisitors?.value || 0} total (includes cross-device returns)
                   </div>
                 </div>
@@ -629,12 +629,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <MapPin className="h-4 w-4 text-blue-600" />
-                            <span className="font-medium text-gray-900">Location</span>
+                            <span className="text-xs text-gray-600">Location</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <CountryFlag country={visitor.country_code || visitor.country} size={20} />
                             <div>
-                              <div className="text-sm font-medium">{visitor.country || 'Unknown'}</div>
+                              <div className="text-base font-semibold text-gray-900">{visitor.country || 'Unknown'}</div>
                               {visitor.city && visitor.region && (
                                 <div className="text-xs text-gray-600">
                                   {visitor.city}, {visitor.region}
@@ -647,17 +647,17 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <Languages className="h-4 w-4 text-green-600" />
-                            <span className="font-medium text-gray-900">Language</span>
+                            <span className="text-xs text-gray-600">Language</span>
                           </div>
-                          <Badge variant="outline">
+                          <div className="text-base font-semibold text-gray-900">
                             {formatLanguage(visitor.language).flag} {formatLanguage(visitor.language).display}
-                          </Badge>
+                          </div>
                         </div>
 
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <Clock className="h-4 w-4 text-orange-600" />
-                            <span className="font-medium text-gray-900">Last Visit</span>
+                            <span className="text-xs text-gray-600">Last Visit</span>
                           </div>
                           <div className="text-sm text-gray-600">
                             {getRelativeTime(visitor.last_visit)}
