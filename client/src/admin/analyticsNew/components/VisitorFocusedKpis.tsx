@@ -352,9 +352,14 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div 
               className="px-6 pt-6 pb-0 bg-blue-50 text-gray-900"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <Eye style={{ width: '24px', height: '24px' }} />
-                <span className="font-bold">Total Views Details</span>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <Eye style={{ width: '24px', height: '24px' }} />
+                  <span className="font-bold">Total Views Details</span>
+                </div>
+                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                  🟠 IP Filtered
+                </Badge>
               </div>
             </div>
 
@@ -362,11 +367,8 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-6 p-4 bg-blue-50 border border-blue-200 rounded-b-lg border-t-0">
                 <div className="space-y-0 text-sm">
-                  <div className="text-gray-900 flex items-center gap-2">
+                  <div className="text-gray-900">
                     📊 Showing {totalViewsData?.length || 0} detailed records from MEMOPYK logs
-                    <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
-                      🟠 IP Filtered
-                    </Badge>
                   </div>
                   <div className="text-gray-900">
                     ⚠️ GA4 reports {totalViews?.value || 0} total (includes cross-device returns)
@@ -458,9 +460,14 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div 
               className="px-6 pt-6 pb-0 bg-green-50 text-gray-900"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <Users style={{ width: '24px', height: '24px' }} />
-                <span className="font-bold">Unique Visitors Details</span>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <Users style={{ width: '24px', height: '24px' }} />
+                  <span className="font-bold">Unique Visitors Details</span>
+                </div>
+                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                  🟠 IP Filtered
+                </Badge>
               </div>
             </div>
 
@@ -468,11 +475,8 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-6 p-4 bg-green-50 border border-green-200 rounded-b-lg border-t-0">
                 <div className="space-y-0 text-sm">
-                  <div className="text-gray-900 flex items-center gap-2">
+                  <div className="text-gray-900">
                     📊 Showing {uniqueVisitorsData?.length || 0} detailed records from MEMOPYK logs
-                    <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
-                      🟠 IP Filtered
-                    </Badge>
                   </div>
                   <div className="text-gray-900">
                     ⚠️ GA4 reports {uniqueVisitors?.value || 0} total (includes cross-device returns)
@@ -564,9 +568,14 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
             <div 
               className="px-6 pt-6 pb-0 bg-purple-50 text-gray-900"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <UserCheck style={{ width: '24px', height: '24px' }} />
-                <span className="font-bold">Return Visitors Details</span>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <UserCheck style={{ width: '24px', height: '24px' }} />
+                  <span className="font-bold">Return Visitors Details</span>
+                </div>
+                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                  🟠 IP Filtered
+                </Badge>
               </div>
             </div>
 
@@ -574,11 +583,8 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-6 p-4 bg-purple-50 border border-purple-200 rounded-b-lg border-t-0">
                 <div className="space-y-0 text-sm">
-                  <div className="text-gray-900 flex items-center gap-2">
+                  <div className="text-gray-900">
                     📊 Showing {returningVisitors?.length || 0} detailed records from MEMOPYK logs
-                    <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
-                      🟠 IP Filtered
-                    </Badge>
                   </div>
                   <div className="text-gray-900">
                     ⚠️ GA4 reports {returnVisitors?.value || 0} total (includes cross-device returns)
