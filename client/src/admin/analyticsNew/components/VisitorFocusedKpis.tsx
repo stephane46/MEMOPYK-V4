@@ -350,7 +350,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="px-6 pt-6 pb-0 bg-blue-50 text-gray-900"
+              className="px-6 pt-6 pb-4 bg-blue-50 text-gray-900"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -458,7 +458,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="px-6 pt-6 pb-0 bg-green-50 text-gray-900"
+              className="px-6 pt-6 pb-4 bg-green-50 text-gray-900"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -566,7 +566,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
             <div 
-              className="px-6 pt-6 pb-0 bg-purple-50 text-gray-900"
+              className="px-6 pt-6 pb-4 bg-purple-50 text-gray-900"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
