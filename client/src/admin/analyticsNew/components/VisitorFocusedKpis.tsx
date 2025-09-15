@@ -345,7 +345,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
       {/* Total Views Modal */}
       {isTotalViewsModalOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-32 z-50"
           onClick={(e) => e.target === e.currentTarget && setIsTotalViewsModalOpen(false)}
         >
           <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
