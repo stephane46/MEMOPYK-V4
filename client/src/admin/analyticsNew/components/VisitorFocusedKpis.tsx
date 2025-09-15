@@ -349,7 +349,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
 
             <div className="px-6 pb-6 pt-0 overflow-y-auto max-h-[70vh]">
               {/* Data Source Explanation Header */}
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="mb-6 mt-0 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="space-y-2 text-sm">
                   <div className="font-semibold text-blue-900 flex items-center gap-2">
                     📊 Showing {totalViewsData?.length || 0} detailed records from MEMOPYK logs
@@ -475,7 +475,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
 
             <div className="px-6 pb-6 pt-0 overflow-y-auto max-h-[70vh]">
               {/* Data Source Explanation Header */}
-              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="mb-6 mt-0 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="space-y-2 text-sm">
                   <div className="font-semibold text-green-900 flex items-center gap-2">
                     📊 Showing {uniqueVisitorsData?.length || 0} detailed records from MEMOPYK logs
@@ -601,7 +601,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
 
             <div className="px-6 pb-6 pt-0 overflow-y-auto max-h-[70vh]">
               {/* Data Source Explanation Header */}
-              <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+              <div className="mb-6 mt-0 p-4 bg-purple-50 border border-purple-200 rounded-lg">
                 <div className="space-y-2 text-sm">
                   <div className="font-semibold text-purple-900 flex items-center gap-2">
                     📊 Showing {returningVisitors?.length || 0} detailed records from MEMOPYK logs

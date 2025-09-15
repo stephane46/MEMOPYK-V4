@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-15T06:12:10.708Z",
-    "duration": 2912479,
+    "updated_at": "2025-09-15T06:13:41.869Z",
+    "duration": 2912569,
     "region": "Occitanie"
   },
   {
@@ -73032,7 +73032,7 @@
     "city": "Bogota",
     "country_code": null,
     "created_at": "2025-09-13T08:33:21.079Z",
-    "updated_at": "2025-09-15T06:07:41.565Z",
+    "updated_at": "2025-09-15T06:13:17.744Z",
     "is_location_cache": true
   },
   {
@@ -73276,7 +73276,7 @@
     "city": "Vancouver",
     "country_code": null,
     "created_at": "2025-09-13T10:33:25.249Z",
-    "updated_at": "2025-09-15T06:07:08.533Z",
+    "updated_at": "2025-09-15T06:12:44.688Z",
     "is_location_cache": true
   },
   {
@@ -73520,7 +73520,7 @@
     "city": "Mountain View",
     "country_code": null,
     "created_at": "2025-09-14T08:58:51.693Z",
-    "updated_at": "2025-09-15T06:07:07.540Z",
+    "updated_at": "2025-09-15T06:12:43.696Z",
     "is_location_cache": true
   },
   {
@@ -73532,7 +73532,7 @@
     "city": "Montreal",
     "country_code": null,
     "created_at": "2025-09-14T08:59:27.051Z",
-    "updated_at": "2025-09-15T06:07:40.567Z",
+    "updated_at": "2025-09-15T06:13:16.742Z",
     "is_location_cache": true
   },
   {
@@ -73834,5 +73834,13 @@
     "created_at": "2025-09-15T05:52:26.323Z",
     "updated_at": "2025-09-15T06:11:38.594Z",
     "is_location_cache": true
+  },
+  {
+    "id": "ba5d0ba6-2886-4b1c-88fc-8270a6d7736e",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Art1s%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-15T06:14:19.100Z"
   }
 ]
