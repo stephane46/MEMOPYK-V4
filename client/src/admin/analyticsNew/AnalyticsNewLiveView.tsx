@@ -441,15 +441,8 @@ export const AnalyticsNewLiveView: React.FC = () => {
                         side="right" 
                         align="start" 
                         sideOffset={16}
-                        alignOffset={80}
-                        avoidCollisions
-                        collisionBoundary={listRef.current}
-                        collisionPadding={{ 
-                          top: 20, 
-                          bottom: 8, 
-                          right: 8,
-                          left: 8
-                        }}
+                        alignOffset={100}
+                        avoidCollisions={false}
                         className="z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-lg animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
                       >
                         <div className="space-y-3">
