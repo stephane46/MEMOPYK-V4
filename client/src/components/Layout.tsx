@@ -225,36 +225,48 @@ export function Layout({ children }: LayoutProps) {
             <div className="flex items-center space-x-4">
               {/* Desktop Language Toggle - Hidden on mobile */}
               <div className="hidden lg:flex items-center space-x-2">
-                <button
-                  onClick={() => setLanguage('en-US')}
+                <a
+                  href="/en-US"
+                  hrefLang="en-US"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setLanguage('en-US');
+                  }}
                   className={`p-2 rounded-md transition-all ${
                     language === 'en-US' 
                       ? 'border-2 border-memopyk-navy bg-memopyk-cream shadow-md' 
                       : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
                   }`}
                   title="Switch to English"
+                  data-testid="lang-switcher-en"
                 >
                   <img 
                     src="https://flagcdn.com/w40/us.png" 
                     alt="English"
                     className="w-8 h-5 object-cover rounded"
                   />
-                </button>
-                <button
-                  onClick={() => setLanguage('fr-FR')}
+                </a>
+                <a
+                  href="/fr-FR"
+                  hrefLang="fr-FR"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setLanguage('fr-FR');
+                  }}
                   className={`p-2 rounded-md transition-all ${
                     language === 'fr-FR' 
                       ? 'border-2 border-memopyk-navy bg-memopyk-cream shadow-md' 
                       : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
                   }`}
                   title="Passer au français"
+                  data-testid="lang-switcher-fr"
                 >
                   <img 
                     src="https://flagcdn.com/w40/fr.png" 
                     alt="French"
                     className="w-8 h-5 object-cover rounded"
                   />
-                </button>
+                </a>
               </div>
 
               {/* Mobile menu button - Enhanced with 44px touch target */}
@@ -333,8 +345,11 @@ export function Layout({ children }: LayoutProps) {
                   {language === 'fr-FR' ? 'Langue' : 'Language'}
                 </p>
                 <div className="px-4 flex items-center space-x-3">
-                  <button
-                    onClick={() => {
+                  <a
+                    href="/en-US"
+                    hrefLang="en-US"
+                    onClick={(e) => {
+                      e.preventDefault();
                       setLanguage('en-US');
                       setIsMobileMenuOpen(false);
                     }}
@@ -344,6 +359,7 @@ export function Layout({ children }: LayoutProps) {
                         : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
                     }`}
                     title="Switch to English"
+                    data-testid="mobile-lang-switcher-en"
                   >
                     <img 
                       src="https://flagcdn.com/w40/us.png" 
@@ -351,9 +367,12 @@ export function Layout({ children }: LayoutProps) {
                       className="w-8 h-5 object-cover rounded"
                     />
                     <span className="text-sm font-medium">English</span>
-                  </button>
-                  <button
-                    onClick={() => {
+                  </a>
+                  <a
+                    href="/fr-FR"
+                    hrefLang="fr-FR"
+                    onClick={(e) => {
+                      e.preventDefault();
                       setLanguage('fr-FR');
                       setIsMobileMenuOpen(false);
                     }}
@@ -363,6 +382,7 @@ export function Layout({ children }: LayoutProps) {
                         : 'border-2 border-transparent hover:border-memopyk-blue-gray hover:bg-gray-50'
                     }`}
                     title="Passer au français"
+                    data-testid="mobile-lang-switcher-fr"
                   >
                     <img 
                       src="https://flagcdn.com/w40/fr.png" 
@@ -370,7 +390,7 @@ export function Layout({ children }: LayoutProps) {
                       className="w-8 h-5 object-cover rounded"
                     />
                     <span className="text-sm font-medium">Français</span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
