@@ -525,8 +525,9 @@ const SeoManagement: React.FC = () => {
                     placeholder="keyword1, keyword2, keyword3"
                     data-testid="input-keywords"
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Comma-separated keywords
+                  <p className="text-xs text-amber-600 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    Comma-separated keywords (Note: Google ignores meta keywords since 2009, but other search engines may still use them)
                   </p>
                 </div>
 
@@ -902,23 +903,58 @@ const SeoManagement: React.FC = () => {
 
           {/* Live Preview Tab */}
           <TabsContent value="preview-tab" className="space-y-4">
+            {/* HTML Language Attribute Info */}
             <Card>
               <CardHeader>
-                <CardTitle>Live HTML Preview</CardTitle>
-                <CardDescription>Preview of the generated HTML head tags</CardDescription>
+                <CardTitle>HTML Language Attribute</CardTitle>
+                <CardDescription>
+                  The HTML lang attribute that will be set based on the current language selection
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <span className="font-medium text-blue-900 dark:text-blue-100">Current Language Setting:</span>
+                  </div>
+                  <div className="bg-gray-900 text-green-400 p-3 rounded border">
+                    <code className="text-sm">
+                      {`<html lang="${currentLang === 'fr-FR' ? 'fr' : 'en'}">`}
+                    </code>
+                  </div>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-2">
+                    This indicates to search engines and browsers that the page content is in{' '}
+                    <strong>{currentLang === 'fr-FR' ? 'French' : 'English'}</strong>, helping with:
+                  </p>
+                  <ul className="text-xs text-blue-600 dark:text-blue-400 mt-1 ml-4 list-disc space-y-1">
+                    <li>Search engine language detection and indexing</li>
+                    <li>Screen reader pronunciation and accessibility</li>
+                    <li>Browser translation offers and language-specific features</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Live HTML Preview */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Complete HTML Head Tags Preview</CardTitle>
+                <CardDescription>
+                  Preview of all generated HTML meta tags and structured data for the current language
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-auto max-h-96">
                   <pre className="text-sm">
                     <code>
-                      {previewHtml || 'Click "Generate Preview" button to see HTML output'}
+                      {previewHtml || 'Click "Generate Preview" button to see complete HTML head output including all meta tags, Open Graph data, and structured markup'}
                     </code>
                   </pre>
                 </div>
                 <div className="mt-4">
                   <Button onClick={generatePreview} variant="outline" data-testid="button-generate-preview">
                     <Eye className="w-4 h-4 mr-2" />
-                    Generate Preview
+                    Generate Complete Preview
                   </Button>
                 </div>
               </CardContent>
