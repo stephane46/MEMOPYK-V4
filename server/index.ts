@@ -8,6 +8,7 @@ import { registerRoutes } from "./routes";
 import { log } from "./vite";           
 import { testDatabaseConnection } from "./database";
 import { VideoCache } from "./video-cache";
+import { processSeoForDev, isHtmlResponse, shouldProcessSeoUrl, prodSeoMiddleware } from "./seo-middleware";
 // Import GA4 scheduler after server startup to avoid blocking deployment
 setImmediate(() => {
   import("./ga4-scheduler.js").catch(err => {
@@ -216,6 +217,39 @@ app.use((req, res, next) => {
     app.use('/logo.svg', express.static(path.join(__dirname, '../public/logo.svg')));
     app.use('/flags', express.static(path.join(__dirname, '../public/flags')));
     
+    // SEO middleware for development - intercepts HTML pages before proxy
+    app.use(async (req: Request, res: Response, next: NextFunction) => {
+      // Only process HTML requests for specific routes that need SEO
+      const isHtmlRequest = req.headers.accept?.includes('text/html');
+      const needsSeo = shouldProcessSeoUrl(req.path);
+      
+      if (isHtmlRequest && needsSeo && !req.path.startsWith('/api')) {
+        try {
+          // Make internal request to Vite to get HTML
+          const viteResponse = await fetch(`http://localhost:5173${req.originalUrl}`);
+          
+          if (viteResponse.ok && viteResponse.headers.get('content-type')?.includes('text/html')) {
+            const originalHtml = await viteResponse.text();
+            
+            // Process HTML with SEO injection
+            const modifiedHtml = await processSeoForDev(req.originalUrl, originalHtml);
+            
+            // Set appropriate headers
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.setHeader('Content-Length', Buffer.byteLength(modifiedHtml));
+            
+            console.log(`✅ SEO injection completed for ${req.originalUrl}`);
+            return res.send(modifiedHtml);
+          }
+        } catch (error) {
+          console.error('❌ SEO processing error:', error);
+          // Fall through to proxy on error
+        }
+      }
+      
+      next();
+    });
+    
     // Create proxy for Vite dev server
     const proxy = createProxyMiddleware({
       target: "http://localhost:5173",
@@ -231,9 +265,9 @@ app.use((req, res, next) => {
         return next(); // Skip proxy for API routes and static assets
       }
       
-      // Handle proxy with try-catch
+      // Handle proxy
       try {
-        return proxy(req, res, (error: any) => {
+        return proxy(req, res, (error?: Error) => {
           if (error) {
             console.error("❌ Proxy error:", error.message);
             res.status(503).send('Vite dev server not ready. Please wait and refresh.');
@@ -241,8 +275,9 @@ app.use((req, res, next) => {
             next();
           }
         });
-      } catch (error: any) {
-        console.error("❌ Proxy setup error:", error.message);
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error("❌ Proxy setup error:", errorMessage);
         res.status(503).send('Proxy configuration error. Please restart the server.');
       }
     });
@@ -263,12 +298,17 @@ app.use((req, res, next) => {
     // Serve flags from public directory in production
     app.use('/flags', express.static(path.resolve(process.cwd(), 'public/flags')));
     
-    // Serve index.html for all non-API routes (SPA fallback)
-    app.get("*", (req: Request, res: Response, next) => {
+    // Serve index.html for all non-API routes (SPA fallback) with SEO injection
+    app.get("*", async (req: Request, res: Response, next) => {
       if (req.path.startsWith("/api")) {
         return next(); // Let API routes be handled directly
       }
-      res.sendFile(path.join(clientDist, "index.html"));
+      
+      // Use SEO middleware for production HTML serving
+      await prodSeoMiddleware(req, res, () => {
+        // Fallback to static file if SEO middleware doesn't handle it
+        res.sendFile(path.join(clientDist, "index.html"));
+      });
     });
     
     console.log("📦 Serving static files from", clientDist);
