@@ -232,10 +232,10 @@ export default function AdminPage() {
 
   const sidebarItems = [
     { id: 'analytics-new', label: 'Analytics', icon: BarChart3 },
+    { id: 'seo', label: 'SEO Management', icon: Globe },
     { id: 'hero-management', label: 'Vidéos Hero', icon: Video },
     { id: 'gallery', label: 'Galerie Vidéos', icon: Play },
     { id: 'cache', label: 'Cache', icon: HardDrive },
-    { id: 'seo', label: 'SEO Management', icon: Globe },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
     { id: 'why-memopyk', label: 'Pourquoi MEMOPYK', icon: Users },
