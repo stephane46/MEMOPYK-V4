@@ -78,6 +78,7 @@ const SeoManagement: React.FC = () => {
   const [seoData, setSeoData] = useState<SeoData | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewHtml, setPreviewHtml] = useState('');
   const [showHistory, setShowHistory] = useState(false);
@@ -306,6 +307,7 @@ const SeoManagement: React.FC = () => {
 
   // Publish settings
   const publishSettings = async () => {
+    setPublishing(true);
     try {
       const response = await apiRequest(`/api/admin/seo/publish?lang=${currentLang}`, {
         method: 'POST',
@@ -316,7 +318,7 @@ const SeoManagement: React.FC = () => {
       }
 
       toast({
-        title: 'Success',
+        title: 'Published',
         description: 'SEO settings published successfully',
       });
     } catch (error) {
@@ -326,6 +328,8 @@ const SeoManagement: React.FC = () => {
         description: 'Failed to publish settings',
         variant: 'destructive',
       });
+    } finally {
+      setPublishing(false);
     }
   };
 
@@ -426,9 +430,19 @@ const SeoManagement: React.FC = () => {
             size="sm"
             className="seo-btn-publish"
             data-testid="button-publish-seo"
+            disabled={publishing}
           >
-            <Globe className="w-4 h-4 mr-2" />
-            Publish
+            {publishing ? (
+              <>
+                <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                Publishing...
+              </>
+            ) : (
+              <>
+                <Globe className="w-4 h-4 mr-2" />
+                Publish
+              </>
+            )}
           </Button>
         </div>
       </div>

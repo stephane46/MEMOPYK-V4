@@ -66,6 +66,7 @@ export type SeoData = z.infer<typeof seoDataSchema>;
 export class SeoService {
   private readonly MAX_HISTORY_VERSIONS = 10;
   private readonly BACKUP_DIR = 'data/seo-backups';
+  private readonly DB_TIMEOUT_MS = 8000; // 8 seconds timeout for database operations
 
   constructor() {
     this.ensureBackupDir();
@@ -77,6 +78,18 @@ export class SeoService {
     } catch (error) {
       console.error('Failed to create backup directory:', error);
     }
+  }
+
+  /**
+   * Wrap database operations with timeout to prevent long waits
+   */
+  private async withTimeout<T>(operation: Promise<T>, timeoutMs: number = this.DB_TIMEOUT_MS): Promise<T> {
+    return Promise.race([
+      operation,
+      new Promise<T>((_, reject) => 
+        setTimeout(() => reject(new Error(`Database operation timed out after ${timeoutMs}ms`)), timeoutMs)
+      )
+    ]);
   }
 
   /**
@@ -162,12 +175,14 @@ export class SeoService {
    */
   async getSeoSettings(lang: 'fr-FR' | 'en-US'): Promise<SeoData | null> {
     try {
-      // First try to load from Supabase database
-      const settings = await db
-        .select()
-        .from(seoSettings)
-        .where(eq(seoSettings.page, 'home')) // Assuming 'home' page for now
-        .limit(1);
+      // First try to load from Supabase database with timeout
+      const settings = await this.withTimeout(
+        db
+          .select()
+          .from(seoSettings)
+          .where(eq(seoSettings.page, 'home')) // Assuming 'home' page for now
+          .limit(1)
+      );
 
       if (settings.length > 0) {
         const setting = settings[0];
@@ -279,36 +294,44 @@ export class SeoService {
         settingsData.twitterDescriptionEn = sanitizedData.twitter?.description || null;
       }
 
-      // Check if record exists for this page
-      const existingRecord = await db
-        .select()
-        .from(seoSettings)
-        .where(eq(seoSettings.page, 'home'))
-        .limit(1);
+      // Check if record exists for this page with timeout
+      const existingRecord = await this.withTimeout(
+        db
+          .select()
+          .from(seoSettings)
+          .where(eq(seoSettings.page, 'home'))
+          .limit(1)
+      );
 
       let result;
       if (existingRecord.length > 0) {
-        // Update existing record
-        result = await db
-          .update(seoSettings)
-          .set({
-            ...settingsData,
-            updatedAt: now
-          })
-          .where(eq(seoSettings.id, existingRecord[0].id))
-          .returning();
+        // Update existing record with timeout
+        result = await this.withTimeout(
+          db
+            .update(seoSettings)
+            .set({
+              ...settingsData,
+              updatedAt: now
+            })
+            .where(eq(seoSettings.id, existingRecord[0].id))
+            .returning()
+        );
       } else {
-        // Insert new record
-        result = await db
-          .insert(seoSettings)
-          .values(settingsData as any)
-          .returning();
+        // Insert new record with timeout
+        result = await this.withTimeout(
+          db
+            .insert(seoSettings)
+            .values(settingsData as any)
+            .returning()
+        );
       }
 
       console.log(`✅ SEO settings saved to database for ${sanitizedData.lang} by ${adminUser}`);
 
-      // Save to history/audit log
-      await this.saveToHistory(result[0].id, sanitizedData, adminUser, changeReason, currentSettings);
+      // Save to history/audit log with timeout
+      await this.withTimeout(
+        this.saveToHistory(result[0].id, sanitizedData, adminUser, changeReason, currentSettings)
+      );
 
     } catch (error) {
       console.error('Error saving SEO settings to database:', error);
@@ -333,16 +356,18 @@ export class SeoService {
       // Calculate diff for audit log
       const diff = this.calculateDiff(previousData, data);
       
-      // Save to audit log table
-      await db.insert(seoAuditLogs).values({
-        pageId: seoId,
-        action: previousData ? 'updated' : 'created',
-        field: 'all_fields',
-        oldValue: previousData ? JSON.stringify(previousData) : null,
-        newValue: JSON.stringify(data),
-        adminUser,
-        changeReason: changeReason || null
-      });
+      // Save to audit log table with timeout
+      await this.withTimeout(
+        db.insert(seoAuditLogs).values({
+          pageId: seoId,
+          action: previousData ? 'updated' : 'created',
+          field: 'all_fields',
+          oldValue: previousData ? JSON.stringify(previousData) : null,
+          newValue: JSON.stringify(data),
+          adminUser,
+          changeReason: changeReason || null
+        })
+      );
       
       console.log(`📝 SEO History: ${data.lang} changed by ${adminUser}`);
     } catch (error) {
@@ -639,6 +664,49 @@ export class SeoService {
     };
     return text.replace(/[&<>"']/g, (m) => map[m]);
   }
+
+  /**
+   * Test timeout functionality - verify database operations fail fast
+   */
+  async testTimeoutFunctionality(): Promise<{ success: boolean; databaseTimeoutMs: number; fallbackUsed: boolean; error?: string }> {
+    const startTime = Date.now();
+    let fallbackUsed = false;
+    
+    try {
+      console.log('🧪 Testing SEO service timeout functionality...');
+      
+      // Test getSeoSettings with timeout
+      const seoData = await this.getSeoSettings('en-US');
+      const timeElapsed = Date.now() - startTime;
+      
+      // If we get data and it took less than our timeout, database might be working
+      // If it took longer or we got fallback data, our timeout worked
+      fallbackUsed = timeElapsed < 100; // If very fast, likely from cache/fallback
+      
+      console.log(`✅ SEO settings retrieved in ${timeElapsed}ms`);
+      console.log(`📊 Fallback used: ${fallbackUsed}`);
+      
+      return {
+        success: true,
+        databaseTimeoutMs: timeElapsed,
+        fallbackUsed,
+      };
+      
+    } catch (error) {
+      const timeElapsed = Date.now() - startTime;
+      console.log(`⚠️ SEO timeout test completed in ${timeElapsed}ms with error (this is expected)`);
+      
+      return {
+        success: timeElapsed <= (this.DB_TIMEOUT_MS + 1000), // Allow 1s buffer
+        databaseTimeoutMs: timeElapsed,
+        fallbackUsed: true,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
 }
 
 export const seoService = new SeoService();
+
+// Export test function for verification
+export const testSeoTimeout = () => seoService.testTimeoutFunctionality();

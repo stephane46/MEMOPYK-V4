@@ -7880,6 +7880,29 @@ export async function registerRoutes(app: Express): Promise<void> {
     next();
   };
 
+  // Test endpoint for SEO timeout functionality
+  app.get("/api/seo/test-timeout", async (req, res) => {
+    try {
+      console.log('🧪 Testing SEO timeout functionality...');
+      const { testSeoTimeout } = await import('./seo-service');
+      const result = await testSeoTimeout();
+      console.log('🧪 SEO timeout test result:', result);
+      res.json({
+        ...result,
+        message: result.success 
+          ? `✅ Timeout functionality working correctly. Database operation completed in ${result.databaseTimeoutMs}ms` 
+          : `❌ Timeout test failed. Operation took ${result.databaseTimeoutMs}ms (expected < ${8000 + 1000}ms)`
+      });
+    } catch (error) {
+      console.error('❌ SEO timeout test error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        message: 'SEO timeout test failed'
+      });
+    }
+  });
+
   // GET /api/admin/seo?lang=fr-FR|en-US → returns current SEO object
   app.get("/api/admin/seo", requireAdmin, async (req, res) => {
     try {

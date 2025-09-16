@@ -6340,7 +6340,8 @@ Allow: /contact`;
     }
     return false;
 
-    /* DISABLED UNTIL TABLE EXISTS
+    /* DISABLED UNTIL TABLE EXISTS */
+    /*
     try {
       // First check database for active exclusions
       const { data: exclusions, error } = await this.supabase
@@ -6374,8 +6375,8 @@ Allow: /contact`;
       console.warn('⚠️ IP Exclusions: Database check failed:', error);
       return false;
     }
+    */
   }
-
 
   // Helper function to check if an IP is within a CIDR range
   private isIPInCIDR(ip: string, cidr: string): boolean {
@@ -6418,37 +6419,9 @@ Allow: /contact`;
       
       // TEMPORARY FIX: Skip database query until table is created
       return this.loadJsonFile('ip-exclusions.json') || [];
-      
-      /* DISABLED UNTIL TABLE EXISTS
-      console.log('🔍 IP Exclusions: Querying Supabase database...');
-      
-      const { data, error } = await this.supabase
-        .from('analytics_exclusions')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.warn('⚠️ IP Exclusions: Database query failed, checking JSON fallback:', error);
-        throw error;
-      }
-
-      if (data) {
-        console.log(`✅ IP Exclusions: Found ${data.length} exclusions in Supabase`);
-        return data;
-      }
-      
-      return [];
     } catch (error) {
-      console.warn('⚠️ IP Exclusions: Supabase connection failed, using JSON fallback:', error);
-      
-      // Fallback to JSON
-      try {
-        const exclusions = this.loadJsonFile('ip-exclusions.json');
-        return Array.isArray(exclusions) ? exclusions : [];
-      } catch (jsonError) {
-        console.error('Error getting IP exclusions from JSON:', jsonError);
-        return [];
-      }
+      console.warn('⚠️ IP Exclusions: JSON fallback failed:', error);
+      return [];
     }
   }
 
