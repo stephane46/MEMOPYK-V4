@@ -1936,7 +1936,7 @@
     "session_id": "ip_session_127_0_0_1",
     "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-09-14T20:33:20.648Z",
+    "updated_at": "2025-09-16T12:45:33.387Z",
     "is_test_data": false
   },
   {
@@ -33858,9 +33858,9 @@
   {
     "id": "session_1756814906549_m56c3zfev",
     "session_id": "ip_session_109_17_150_48",
-    "duration": 9121,
+    "duration": 9210,
     "created_at": "2025-09-02T12:08:26.549Z",
-    "updated_at": "2025-09-16T12:43:37.652Z",
+    "updated_at": "2025-09-16T12:45:06.923Z",
     "is_test_data": false
   },
   {
@@ -73922,5 +73922,21 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-16T10:11:36.858Z"
+  },
+  {
+    "id": "92a85749-d236-442a-873c-f66112a6d569",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-16T12:45:31.397Z"
+  },
+  {
+    "id": "9a240389-8d50-44f1-8c0a-bc0e91612708",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2cl%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-16T12:45:35.788Z"
   }
 ]
