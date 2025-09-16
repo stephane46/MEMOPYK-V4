@@ -6332,6 +6332,15 @@ Allow: /contact`;
       return false;
     }
 
+    // TEMPORARY FIX: Skip database query until table is created
+    // Check if it's your admin IP and exclude it
+    if (ipAddress === '109.17.150.48') {
+      console.log(`🚫 IP EXCLUDED: ${ipAddress} (admin IP - hardcoded exclusion)`);
+      return true;
+    }
+    return false;
+
+    /* DISABLED UNTIL TABLE EXISTS
     try {
       // First check database for active exclusions
       const { data: exclusions, error } = await this.supabase
@@ -6405,6 +6414,12 @@ Allow: /contact`;
   // IP Exclusions Management Methods
   async getIpExclusions(): Promise<any[]> {
     try {
+      console.log('🔍 IP Exclusions: Temporarily using JSON fallback only (database table missing)');
+      
+      // TEMPORARY FIX: Skip database query until table is created
+      return this.loadJsonFile('ip-exclusions.json') || [];
+      
+      /* DISABLED UNTIL TABLE EXISTS
       console.log('🔍 IP Exclusions: Querying Supabase database...');
       
       const { data, error } = await this.supabase
