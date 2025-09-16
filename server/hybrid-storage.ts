@@ -2831,35 +2831,60 @@ Sitemap: https://memopyk.com/sitemap.xml`,
       const baseUrl = "https://memopyk.com";
       
       let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">`;
 
-      // Add homepage
+      // Add homepage English version
       sitemap += `
   <url>
-    <loc>${baseUrl}/</loc>
+    <loc>${baseUrl}/en-US</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr-FR" href="${baseUrl}/fr-FR"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="${baseUrl}/en-US"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/en-US"/>
+  </url>`;
+
+      // Add homepage French version
+      sitemap += `
+  <url>
+    <loc>${baseUrl}/fr-FR</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr-FR" href="${baseUrl}/fr-FR"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="${baseUrl}/en-US"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/en-US"/>
   </url>`;
 
       // Add pages from SEO settings
       for (const page of seoSettings) {
         if (page.isActive) {
-          const englishUrl = page.urlSlugEn ? `${baseUrl}/${page.urlSlugEn}` : `${baseUrl}/${page.page}`;
+          const englishUrl = page.urlSlugEn ? `${baseUrl}/en-US/${page.urlSlugEn}` : `${baseUrl}/en-US/${page.page}`;
           const frenchUrl = page.urlSlugFr ? `${baseUrl}/fr-FR/${page.urlSlugFr}` : `${baseUrl}/fr-FR/${page.page}`;
           
+          // English page with hreflang alternates
           sitemap += `
   <url>
     <loc>${englishUrl}</loc>
     <lastmod>${page.updatedAt?.split('T')[0] || new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>${page.changeFreq || 'monthly'}</changefreq>
     <priority>${page.priority || '0.5'}</priority>
-  </url>
+    <xhtml:link rel="alternate" hreflang="fr-FR" href="${frenchUrl}"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="${englishUrl}"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="${englishUrl}"/>
+  </url>`;
+  
+          // French page with hreflang alternates
+          sitemap += `
   <url>
     <loc>${frenchUrl}</loc>
     <lastmod>${page.updatedAt?.split('T')[0] || new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>${page.changeFreq || 'monthly'}</changefreq>
     <priority>${page.priority || '0.5'}</priority>
+    <xhtml:link rel="alternate" hreflang="fr-FR" href="${frenchUrl}"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="${englishUrl}"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="${englishUrl}"/>
   </url>`;
         }
       }
@@ -2867,7 +2892,7 @@ Sitemap: https://memopyk.com/sitemap.xml`,
       sitemap += `
 </urlset>`;
 
-      console.log('✅ Sitemap generated successfully');
+      console.log('✅ Sitemap generated successfully with hreflang alternates');
       return sitemap;
     } catch (error) {
       console.error('❌ Sitemap generation failed:', error);
@@ -3740,7 +3765,7 @@ Allow: /contact`;
           return this.loadAnalyticsSessionsFromJson(finalDateFrom, finalDateTo, language, includeProduction, excludedIpRanges, country);
         } catch (jsonError) {
           console.error('❌ Analytics Sessions: Both Supabase and JSON cache failed');
-          throw new Error(`Analytics data unavailable: Supabase (${supabaseError.message}), JSON fallback (${jsonError.message})`);
+          throw new Error(`Analytics data unavailable: Supabase (${(supabaseError as Error).message}), JSON fallback (${(jsonError as Error).message})`);
         }
       }
     }
@@ -3797,7 +3822,7 @@ Allow: /contact`;
           return this.loadAnalyticsSessionsFromJson(dateFrom, dateTo, language, includeProduction, excludedIpRanges, country);
         } catch (jsonError) {
           console.error('❌ Analytics Sessions: Historical data unavailable in both Supabase and JSON');
-          throw new Error(`Analytics data unavailable: Supabase empty, JSON fallback (${jsonError.message})`);
+          throw new Error(`Analytics data unavailable: Supabase empty, JSON fallback (${(jsonError as Error).message})`);
         }
       }
     } catch (supabaseError) {
@@ -3807,7 +3832,7 @@ Allow: /contact`;
         return this.loadAnalyticsSessionsFromJson(dateFrom, dateTo, language, includeProduction, excludedIpRanges, country);
       } catch (jsonError) {
         console.error('❌ Analytics Sessions: Both Supabase and JSON cache failed for historical data');
-        throw new Error(`Analytics data unavailable: Supabase (${supabaseError.message}), JSON fallback (${jsonError.message})`);
+        throw new Error(`Analytics data unavailable: Supabase (${(supabaseError as Error).message}), JSON fallback (${(jsonError as Error).message})`);
       }
     }
   }
