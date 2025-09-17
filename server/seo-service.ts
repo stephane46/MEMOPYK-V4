@@ -175,7 +175,13 @@ export class SeoService {
    */
   async getSeoSettings(lang: 'fr-FR' | 'en-US'): Promise<SeoData | null> {
     try {
-      // First try to load from Supabase database with timeout
+      // First try to load from JSON settings file
+      const jsonData = await this.getFromJsonSettings(lang);
+      if (jsonData) {
+        return jsonData;
+      }
+
+      // Then try to load from Supabase database with timeout
       const settings = await this.withTimeout(
         db
           .select()
@@ -200,6 +206,11 @@ export class SeoService {
           robotsNoArchive: setting.robotsNoArchive ?? false,
           robotsNoSnippet: setting.robotsNoSnippet ?? false,
           jsonLd: setting.jsonLd ? JSON.stringify(setting.jsonLd) : undefined,
+          hreflang: [
+            { lang: 'fr-FR', href: 'https://memopyk.com/fr-FR' },
+            { lang: 'en-US', href: 'https://memopyk.com/en-US' },
+            { lang: 'x-default', href: 'https://memopyk.com/en-US' }
+          ],
           openGraph: {
             title: (isFrench ? setting.ogTitleFr : setting.ogTitleEn) || undefined,
             description: (isFrench ? setting.ogDescriptionFr : setting.ogDescriptionEn) || undefined,
@@ -487,6 +498,8 @@ export class SeoService {
 
     // Open Graph
     if (data.openGraph) {
+      // Add site name
+      lines.push(`<meta property="og:site_name" content="MEMOPYK" />`);
       if (data.openGraph.title) {
         lines.push(`<meta property="og:title" content="${this.escapeHtml(data.openGraph.title)}" />`);
       }
@@ -549,10 +562,10 @@ export class SeoService {
     return {
       lang,
       title: isFrench 
-        ? 'MEMOPYK – Films & albums souvenirs à partir de vos photos et vidéos'
+        ? 'MEMOPYK – Films et albums souvenirs uniques à partir de vos photos et vidéos'
         : 'MEMOPYK – Unique memory films & albums from your photos and videos',
       description: isFrench
-        ? 'MEMOPYK transforme vos photos et vidéos en albums et films souvenirs uniques. Un service 100 % humain, créatif et inspirant.'
+        ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
         : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.',
       canonical: `https://memopyk.com/${lang}`,
       robotsIndex: true,
@@ -564,6 +577,31 @@ export class SeoService {
         { lang: 'en-US', href: 'https://memopyk.com/en-US' },
         { lang: 'x-default', href: 'https://memopyk.com/en-US' }
       ],
+      openGraph: {
+        title: isFrench 
+          ? 'MEMOPYK – Films et albums souvenirs uniques'
+          : 'MEMOPYK – Unique memory films & albums',
+        description: isFrench
+          ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
+          : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.',
+        type: 'website',
+        url: `https://memopyk.com/${lang}`,
+        image: isFrench 
+          ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
+          : 'https://memopyk.com/social/en-home-1200x630.jpg'
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: isFrench 
+          ? 'MEMOPYK – Films et albums souvenirs uniques'
+          : 'MEMOPYK – Unique memory films & albums',
+        description: isFrench
+          ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
+          : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.',
+        image: isFrench 
+          ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
+          : 'https://memopyk.com/social/en-home-1200x630.jpg'
+      },
       jsonLd: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Organization",
@@ -619,6 +657,69 @@ export class SeoService {
       await fs.writeFile(filepath, JSON.stringify(backupData, null, 2));
     } catch (error) {
       console.error('Error creating backup:', error);
+    }
+  }
+
+  /**
+   * Get SEO settings from JSON file
+   */
+  async getFromJsonSettings(lang: 'fr-FR' | 'en-US'): Promise<SeoData | null> {
+    try {
+      const jsonPath = path.resolve(process.cwd(), 'server/data/seo-settings.json');
+      const content = await fs.readFile(jsonPath, 'utf-8');
+      const jsonArray = JSON.parse(content);
+      
+      // Find the most recent record with non-null content for the requested language
+      const isFrench = lang === 'fr-FR';
+      const record = jsonArray
+        .filter((item: any) => 
+          item.isActive && 
+          (isFrench ? item.metaTitleFr : item.metaTitleEn) &&
+          (isFrench ? item.metaDescriptionFr : item.metaDescriptionEn)
+        )
+        .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0];
+      
+      if (record) {
+        return {
+          lang,
+          title: isFrench ? record.metaTitleFr : record.metaTitleEn,
+          description: isFrench ? record.metaDescriptionFr : record.metaDescriptionEn,
+          keywords: isFrench ? record.metaKeywordsFr : record.metaKeywordsEn,
+          canonical: record.canonicalUrl || `https://memopyk.com/${lang}`,
+          robotsIndex: record.robotsIndex ?? true,
+          robotsFollow: record.robotsFollow ?? true,
+          robotsNoArchive: record.robotsNoArchive ?? false,
+          robotsNoSnippet: record.robotsNoSnippet ?? false,
+          hreflang: [
+            { lang: 'fr-FR', href: 'https://memopyk.com/fr-FR' },
+            { lang: 'en-US', href: 'https://memopyk.com/en-US' },
+            { lang: 'x-default', href: 'https://memopyk.com/en-US' }
+          ],
+          openGraph: {
+            title: isFrench ? record.ogTitleFr : record.ogTitleEn,
+            description: isFrench ? record.ogDescriptionFr : record.ogDescriptionEn,
+            image: record.ogImageUrl || (isFrench 
+              ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
+              : 'https://memopyk.com/social/en-home-1200x630.jpg'),
+            type: record.ogType || 'website',
+            url: record.canonicalUrl || `https://memopyk.com/${lang}`
+          },
+          twitter: {
+            card: record.twitterCard || 'summary_large_image',
+            title: isFrench ? record.twitterTitleFr : record.twitterTitleEn,
+            description: isFrench ? record.twitterDescriptionFr : record.twitterDescriptionEn,
+            image: record.twitterImageUrl || (isFrench 
+              ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
+              : 'https://memopyk.com/social/en-home-1200x630.jpg')
+          },
+          jsonLd: record.jsonLd ? JSON.stringify(record.jsonLd) : undefined
+        } as SeoData;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error(`Error loading JSON settings for ${lang}:`, error);
+      return null;
     }
   }
 

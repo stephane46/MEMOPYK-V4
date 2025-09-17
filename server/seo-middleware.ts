@@ -93,10 +93,10 @@ async function getCachedSeoData(lang: 'fr-FR' | 'en-US'): Promise<SeoData> {
   const fallbackData: SeoData = {
     lang,
     title: lang === 'fr-FR' 
-      ? 'MEMOPYK – Films & albums souvenirs à partir de vos photos et vidéos'
+      ? 'MEMOPYK – Films et albums souvenirs uniques à partir de vos photos et vidéos'
       : 'MEMOPYK – Unique memory films & albums from your photos and videos',
     description: lang === 'fr-FR'
-      ? 'MEMOPYK transforme vos photos et vidéos en albums et films souvenirs uniques. Un service 100 % humain, créatif et inspirant.'
+      ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
       : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.',
     canonical: `https://memopyk.com/${lang}`,
     robotsIndex: true,
@@ -110,22 +110,28 @@ async function getCachedSeoData(lang: 'fr-FR' | 'en-US'): Promise<SeoData> {
     ],
     openGraph: {
       title: lang === 'fr-FR' 
-        ? 'MEMOPYK – Films & albums souvenirs'
+        ? 'MEMOPYK – Films et albums souvenirs uniques'
         : 'MEMOPYK – Unique memory films & albums',
       description: lang === 'fr-FR'
-        ? 'MEMOPYK transforme vos photos et vidéos en albums et films souvenirs uniques.'
-        : 'MEMOPYK turns your photos and videos into unique memory films and albums.',
+        ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
+        : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.',
       type: 'website',
-      url: `https://memopyk.com/${lang}`
+      url: `https://memopyk.com/${lang}`,
+      image: lang === 'fr-FR' 
+        ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
+        : 'https://memopyk.com/social/en-home-1200x630.jpg'
     },
     twitter: {
       card: 'summary_large_image',
       title: lang === 'fr-FR' 
-        ? 'MEMOPYK – Films & albums souvenirs'
+        ? 'MEMOPYK – Films et albums souvenirs uniques'
         : 'MEMOPYK – Unique memory films & albums',
       description: lang === 'fr-FR'
-        ? 'MEMOPYK transforme vos photos et vidéos en albums et films souvenirs uniques.'
-        : 'MEMOPYK turns your photos and videos into unique memory films and albums.'
+        ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
+        : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.',
+      image: lang === 'fr-FR' 
+        ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
+        : 'https://memopyk.com/social/en-home-1200x630.jpg'
     }
   };
   
@@ -189,6 +195,8 @@ function generateSeoTags(seoData: SeoData, currentUrl: string): string {
 
   // Open Graph
   if (seoData.openGraph) {
+    // Add site name
+    tags.push(`<meta property="og:site_name" content="MEMOPYK" />`);
     if (seoData.openGraph.title) {
       tags.push(`<meta property="og:title" content="${escapeHtml(seoData.openGraph.title)}" />`);
     }
