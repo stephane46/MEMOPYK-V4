@@ -175,13 +175,7 @@ export class SeoService {
    */
   async getSeoSettings(lang: 'fr-FR' | 'en-US'): Promise<SeoData | null> {
     try {
-      // First try to load from JSON settings file
-      const jsonData = await this.getFromJsonSettings(lang);
-      if (jsonData) {
-        return jsonData;
-      }
-
-      // Then try to load from Supabase database with timeout
+      // First try to load from Supabase database (primary source of truth)
       const settings = await this.withTimeout(
         db
           .select()
@@ -212,22 +206,34 @@ export class SeoService {
             { lang: 'x-default', href: 'https://memopyk.com/en-US' }
           ],
           openGraph: {
-            title: (isFrench ? setting.ogTitleFr : setting.ogTitleEn) || undefined,
-            description: (isFrench ? setting.ogDescriptionFr : setting.ogDescriptionEn) || undefined,
-            image: setting.ogImageUrl || undefined,
+            title: (isFrench ? setting.ogTitleFr : setting.ogTitleEn) || (isFrench 
+              ? 'MEMOPYK – Films et albums souvenirs uniques à partir de vos photos et vidéos'
+              : 'MEMOPYK – Unique memory films & albums from your photos and videos'),
+            description: (isFrench ? setting.ogDescriptionFr : setting.ogDescriptionEn) || (isFrench
+              ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
+              : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.'),
+            image: setting.ogImageUrl || (isFrench 
+              ? 'https://memopyk.com/images/fr-home-1200x630.jpg'
+              : 'https://memopyk.com/images/en-home-1200x630.jpg'),
             type: setting.ogType || 'website',
-            url: setting.canonicalUrl || undefined
+            url: setting.canonicalUrl || `https://memopyk.com/${lang}`
           },
           twitter: {
             card: setting.twitterCard || 'summary_large_image',
-            title: (isFrench ? setting.twitterTitleFr : setting.twitterTitleEn) || undefined,
-            description: (isFrench ? setting.twitterDescriptionFr : setting.twitterDescriptionEn) || undefined,
-            image: setting.twitterImageUrl || undefined
+            title: (isFrench ? setting.twitterTitleFr : setting.twitterTitleEn) || (isFrench 
+              ? 'MEMOPYK – Films et albums souvenirs uniques à partir de vos photos et vidéos'
+              : 'MEMOPYK – Unique memory films & albums from your photos and videos'),
+            description: (isFrench ? setting.twitterDescriptionFr : setting.twitterDescriptionEn) || (isFrench
+              ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
+              : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.'),
+            image: setting.twitterImageUrl || (isFrench 
+              ? 'https://memopyk.com/images/fr-home-1200x630.jpg'
+              : 'https://memopyk.com/images/en-home-1200x630.jpg')
           }
         };
       }
 
-      // Fallback to JSON backup if no database record
+      // No database record found, fallback to JSON backup
       const backupData = await this.getLatestBackup(lang);
       if (backupData) {
         return backupData;
@@ -238,7 +244,7 @@ export class SeoService {
       
     } catch (error) {
       console.error('Error fetching SEO settings from database:', error);
-      // Fallback to JSON backup on database error
+      // Database error, fallback to JSON backup then defaults
       try {
         const backupData = await this.getLatestBackup(lang);
         if (backupData) {
