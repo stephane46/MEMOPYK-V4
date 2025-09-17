@@ -587,8 +587,8 @@ export class SeoService {
         type: 'website',
         url: `https://memopyk.com/${lang}`,
         image: isFrench 
-          ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
-          : 'https://memopyk.com/social/en-home-1200x630.jpg'
+          ? 'https://memopyk.com/images/fr-home-1200x630.jpg'
+          : 'https://memopyk.com/images/en-home-1200x630.jpg'
       },
       twitter: {
         card: 'summary_large_image',
@@ -599,8 +599,8 @@ export class SeoService {
           ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
           : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.',
         image: isFrench 
-          ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
-          : 'https://memopyk.com/social/en-home-1200x630.jpg'
+          ? 'https://memopyk.com/images/fr-home-1200x630.jpg'
+          : 'https://memopyk.com/images/en-home-1200x630.jpg'
       },
       jsonLd: JSON.stringify({
         "@context": "https://schema.org",
@@ -699,8 +699,8 @@ export class SeoService {
             title: isFrench ? record.ogTitleFr : record.ogTitleEn,
             description: isFrench ? record.ogDescriptionFr : record.ogDescriptionEn,
             image: record.ogImageUrl || (isFrench 
-              ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
-              : 'https://memopyk.com/social/en-home-1200x630.jpg'),
+              ? 'https://memopyk.com/images/fr-home-1200x630.jpg'
+              : 'https://memopyk.com/images/en-home-1200x630.jpg'),
             type: record.ogType || 'website',
             url: record.canonicalUrl || `https://memopyk.com/${lang}`
           },
@@ -709,8 +709,8 @@ export class SeoService {
             title: isFrench ? record.twitterTitleFr : record.twitterTitleEn,
             description: isFrench ? record.twitterDescriptionFr : record.twitterDescriptionEn,
             image: record.twitterImageUrl || (isFrench 
-              ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
-              : 'https://memopyk.com/social/en-home-1200x630.jpg')
+              ? 'https://memopyk.com/images/fr-home-1200x630.jpg'
+              : 'https://memopyk.com/images/en-home-1200x630.jpg')
           },
           jsonLd: record.jsonLd ? JSON.stringify(record.jsonLd) : undefined
         } as SeoData;

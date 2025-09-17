@@ -1936,7 +1936,7 @@
     "session_id": "ip_session_127_0_0_1",
     "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-09-16T20:22:50.084Z",
+    "updated_at": "2025-09-17T10:45:11.858Z",
     "is_test_data": false
   },
   {
@@ -33858,9 +33858,9 @@
   {
     "id": "session_1756814906549_m56c3zfev",
     "session_id": "ip_session_109_17_150_48",
-    "duration": 82880,
+    "duration": 86956,
     "created_at": "2025-09-02T12:08:26.549Z",
-    "updated_at": "2025-09-17T09:12:43.802Z",
+    "updated_at": "2025-09-17T10:20:40.271Z",
     "is_test_data": false
   },
   {
@@ -74106,5 +74106,49 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-17T08:53:43.486Z"
+  },
+  {
+    "id": "ef08ede3-9092-430f-a8bc-b3a2faa1cb81",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ards7%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-17T10:40:06.953Z"
+  },
+  {
+    "id": "location_cache_1758105637211_6juq9aebb",
+    "ip_address": "79.95.86.219",
+    "server_detected_ip": "79.95.86.219",
+    "country": "France",
+    "region": "Pays de la Loire",
+    "city": "Nantes",
+    "country_code": null,
+    "created_at": "2025-09-17T10:40:37.211Z",
+    "updated_at": "2025-09-17T10:48:10.516Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "7a4acbc1-8ee3-469d-85e4-63b7f4dad3b3",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-17T10:45:10.111Z"
+  },
+  {
+    "id": "0200f334-2b49-416b-ab45-c85eca8ad582",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ardv8%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-17T10:45:19.644Z"
+  },
+  {
+    "id": "5071aafc-dc18-413d-a573-1b27f26aa52c",
+    "referrer": "https://365df2cf-1884-444c-a9e8-235602456363-00-37q39xpqlgvdy.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Are11%3A",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-17T10:47:40.277Z"
   }
 ]

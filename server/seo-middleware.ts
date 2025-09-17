@@ -118,8 +118,8 @@ async function getCachedSeoData(lang: 'fr-FR' | 'en-US'): Promise<SeoData> {
       type: 'website',
       url: `https://memopyk.com/${lang}`,
       image: lang === 'fr-FR' 
-        ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
-        : 'https://memopyk.com/social/en-home-1200x630.jpg'
+        ? 'https://memopyk.com/images/fr-home-1200x630.jpg'
+        : 'https://memopyk.com/images/en-home-1200x630.jpg'
     },
     twitter: {
       card: 'summary_large_image',
@@ -130,8 +130,8 @@ async function getCachedSeoData(lang: 'fr-FR' | 'en-US'): Promise<SeoData> {
         ? 'MEMOPYK transforme vos photos et vidéos en films et albums souvenirs uniques. Un service entièrement humain, créatif et inspirant.'
         : 'MEMOPYK turns your photos and videos into unique memory films and albums. A fully human, creative, and inspiring service.',
       image: lang === 'fr-FR' 
-        ? 'https://memopyk.com/social/fr-home-1200x630.jpg'
-        : 'https://memopyk.com/social/en-home-1200x630.jpg'
+        ? 'https://memopyk.com/images/fr-home-1200x630.jpg'
+        : 'https://memopyk.com/images/en-home-1200x630.jpg'
     }
   };
   
