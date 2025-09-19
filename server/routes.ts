@@ -2772,6 +2772,37 @@ export async function registerRoutes(app: Express): Promise<void> {
 
   // Helper function to build visitor list from sessions
   function buildVisitorList(sessions: any[], dateFrom?: string, dateTo?: string) {
+    // Helper function to normalize visitor duration from available timestamps
+    const normalizeVisitorDuration = (session: any): number => {
+      // First try explicit duration fields
+      const explicitDuration = session.duration || session.session_duration;
+      if (explicitDuration && explicitDuration > 0) {
+        return explicitDuration;
+      }
+      
+      // Calculate from timestamps - priority: ended_at > updated_at > now
+      if (session.created_at) {
+        const startTime = new Date(session.created_at).getTime();
+        let endTime: number;
+        
+        if (session.ended_at) {
+          // Use ended_at if available (session properly closed)
+          endTime = new Date(session.ended_at).getTime();
+        } else if (session.updated_at) {
+          // Use updated_at as proxy for last activity
+          endTime = new Date(session.updated_at).getTime();
+        } else {
+          // For active sessions, use current time
+          endTime = Date.now();
+        }
+        
+        const calculatedDuration = Math.round((endTime - startTime) / 1000); // Convert to seconds
+        return Math.max(calculatedDuration, 0); // Ensure non-negative
+      }
+      
+      return 0; // No usable timestamp data
+    };
+
     console.log(`🔍 VISITOR BUILD v2: Starting with ${sessions.length} input sessions`);
     if (sessions.length > 0) {
       console.log(`🔍 VISITOR BUILD v2: Sample session keys:`, Object.keys(sessions[0]));
@@ -2833,23 +2864,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         last_visit: latestSession.created_at || latestSession.createdAt,
         user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
         visit_count: sessions.length,
-        session_duration: (() => {
-          // First try explicit duration fields
-          const explicitDuration = latestSession.duration || latestSession.session_duration;
-          if (explicitDuration && explicitDuration > 0) {
-            return explicitDuration;
-          }
-          
-          // Fallback: calculate from timestamps if available
-          if (latestSession.created_at && latestSession.ended_at) {
-            const startTime = new Date(latestSession.created_at).getTime();
-            const endTime = new Date(latestSession.ended_at).getTime();
-            const calculatedDuration = Math.round((endTime - startTime) / 1000); // Convert to seconds
-            return calculatedDuration > 0 ? calculatedDuration : 0;
-          }
-          
-          return 0; // No duration data available
-        })(),
+        session_duration: normalizeVisitorDuration(latestSession),
         previous_visit: previousSession ? (previousSession.created_at || previousSession.createdAt) : null
       });
     });
@@ -3093,23 +3108,7 @@ export async function registerRoutes(app: Express): Promise<void> {
             last_visit: latestSession.created_at,
             user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
             visit_count: sessions.length,
-            session_duration: (() => {
-          // First try explicit duration fields
-          const explicitDuration = latestSession.duration || latestSession.session_duration;
-          if (explicitDuration && explicitDuration > 0) {
-            return explicitDuration;
-          }
-          
-          // Fallback: calculate from timestamps if available
-          if (latestSession.created_at && latestSession.ended_at) {
-            const startTime = new Date(latestSession.created_at).getTime();
-            const endTime = new Date(latestSession.ended_at).getTime();
-            const calculatedDuration = Math.round((endTime - startTime) / 1000); // Convert to seconds
-            return calculatedDuration > 0 ? calculatedDuration : 0;
-          }
-          
-          return 0; // No duration data available
-        })(),
+            session_duration: normalizeVisitorDuration(latestSession),
             previous_visit: previousSession ? previousSession.created_at : null
           });
         }
