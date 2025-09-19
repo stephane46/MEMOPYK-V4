@@ -282,12 +282,12 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
     }
   };
 
-  const formatDuration = (durationMs: number | null | undefined) => {
-    if (!durationMs || durationMs <= 0) {
+  const formatDuration = (durationSeconds: number | null | undefined) => {
+    if (!durationSeconds || durationSeconds <= 0) {
       return 'Unknown';
     }
 
-    const seconds = Math.floor(durationMs / 1000);
+    const seconds = Math.floor(durationSeconds); // Duration is already in seconds from backend
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
 
