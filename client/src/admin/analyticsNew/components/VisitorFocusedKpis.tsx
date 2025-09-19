@@ -464,7 +464,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                             <span className="text-xs text-gray-600">Duration</span>
                           </div>
                           <div className="text-base font-semibold text-gray-900">
-                            {formatDuration(visitor.duration)}
+                            {formatDuration(visitor.session_duration)}
                           </div>
                         </div>
                       </div>
@@ -592,7 +592,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                             <span className="text-xs text-gray-600">Duration</span>
                           </div>
                           <div className="text-base font-semibold text-gray-900">
-                            {formatDuration(visitor.duration)}
+                            {formatDuration(visitor.session_duration)}
                           </div>
                         </div>
                       </div>
@@ -723,7 +723,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                             <span className="text-xs text-gray-600">Duration</span>
                           </div>
                           <div className="text-base font-semibold text-gray-900">
-                            {formatDuration(visitor.duration)}
+                            {formatDuration(visitor.session_duration)}
                           </div>
                         </div>
                       </div>
