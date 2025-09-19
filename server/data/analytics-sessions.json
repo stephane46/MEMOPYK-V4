@@ -1934,9 +1934,9 @@
   {
     "id": "session_1755263689487_s8tcmaaup",
     "session_id": "ip_session_127_0_0_1",
-    "duration": 79,
+    "duration": 314,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-09-19T15:35:23.895Z",
+    "updated_at": "2025-09-19T15:39:18.923Z",
     "is_test_data": false
   },
   {
@@ -33858,9 +33858,9 @@
   {
     "id": "session_1756814906549_m56c3zfev",
     "session_id": "ip_session_109_17_150_48",
-    "duration": 278831,
+    "duration": 278875,
     "created_at": "2025-09-02T12:08:26.549Z",
-    "updated_at": "2025-09-19T15:38:36.609Z",
+    "updated_at": "2025-09-19T15:39:20.618Z",
     "is_test_data": false
   },
   {
@@ -74318,5 +74318,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-09-19T15:35:21.924Z"
+  },
+  {
+    "id": "631d8912-7fcb-4e3b-bd06-08f964406c35",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-09-19T15:39:17.213Z"
   }
 ]
