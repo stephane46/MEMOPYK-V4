@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, Users, UserCheck, RotateCcw, X, MapPin, Clock, Languages, Info } from 'lucide-react';
+import { Eye, Users, UserCheck, RotateCcw, X, MapPin, Clock, Languages, Info, Network, Timer } from 'lucide-react';
 import { useFilteredKpis } from "../hooks/useFilteredAnalytics";
 import { useAnalyticsNewFilters } from '../analyticsNewFilters.store';
 import type { KpisResponse } from "../data/types";
@@ -282,6 +282,24 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
     }
   };
 
+  const formatDuration = (durationMs: number | null | undefined) => {
+    if (!durationMs || durationMs <= 0) {
+      return 'Unknown';
+    }
+
+    const seconds = Math.floor(durationMs / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+
+    if (seconds < 60) {
+      return `${seconds}s`;
+    } else if (minutes < 60) {
+      return `${minutes}m ${seconds % 60}s`;
+    } else {
+      return `${hours}h ${minutes % 60}m`;
+    }
+  };
+
   return (
     <TooltipProvider>
       <div className={`grid gap-4 md:grid-cols-3 ${className}`}>
@@ -391,7 +409,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <MapPin className="h-4 w-4 text-blue-600" />
@@ -427,6 +445,26 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                           </div>
                           <div className="text-base font-semibold text-gray-900">
                             {getRelativeTime(visitor.last_visit || visitor.created_at)}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Network className="h-4 w-4 text-purple-600" />
+                            <span className="text-xs text-gray-600">IP Address</span>
+                          </div>
+                          <div className="text-base font-semibold text-gray-900">
+                            {visitor.ip_address || 'Unknown'}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Timer className="h-4 w-4 text-red-600" />
+                            <span className="text-xs text-gray-600">Duration</span>
+                          </div>
+                          <div className="text-base font-semibold text-gray-900">
+                            {formatDuration(visitor.duration)}
                           </div>
                         </div>
                       </div>
@@ -499,7 +537,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <MapPin className="h-4 w-4 text-blue-600" />
@@ -535,6 +573,26 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                           </div>
                           <div className="text-base font-semibold text-gray-900">
                             {getRelativeTime(visitor.last_visit || visitor.created_at)}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Network className="h-4 w-4 text-purple-600" />
+                            <span className="text-xs text-gray-600">IP Address</span>
+                          </div>
+                          <div className="text-base font-semibold text-gray-900">
+                            {visitor.ip_address || 'Unknown'}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Timer className="h-4 w-4 text-red-600" />
+                            <span className="text-xs text-gray-600">Duration</span>
+                          </div>
+                          <div className="text-base font-semibold text-gray-900">
+                            {formatDuration(visitor.duration)}
                           </div>
                         </div>
                       </div>
@@ -607,7 +665,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                       key={`${visitor.ip_address}-${index}`}
                       className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <MapPin className="h-4 w-4 text-blue-600" />
@@ -646,6 +704,26 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
                           </div>
                           <div className="text-xs text-gray-500 mt-1">
                             {visitor.visit_count} visits total
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Network className="h-4 w-4 text-purple-600" />
+                            <span className="text-xs text-gray-600">IP Address</span>
+                          </div>
+                          <div className="text-base font-semibold text-gray-900">
+                            {visitor.ip_address || 'Unknown'}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Timer className="h-4 w-4 text-red-600" />
+                            <span className="text-xs text-gray-600">Duration</span>
+                          </div>
+                          <div className="text-base font-semibold text-gray-900">
+                            {formatDuration(visitor.duration)}
                           </div>
                         </div>
                       </div>
