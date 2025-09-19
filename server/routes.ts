@@ -2833,7 +2833,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         last_visit: latestSession.created_at || latestSession.createdAt,
         user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
         visit_count: sessions.length,
-        session_duration: latestSession.session_duration || Math.floor(Math.random() * 300 + 30), // Mock duration between 30-330 seconds for demo
+        session_duration: latestSession.session_duration || latestSession.duration || 0, // Use real session duration or 0 if null
         previous_visit: previousSession ? (previousSession.created_at || previousSession.createdAt) : null
       });
     });
@@ -3077,7 +3077,7 @@ export async function registerRoutes(app: Express): Promise<void> {
             last_visit: latestSession.created_at,
             user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
             visit_count: sessions.length,
-            session_duration: latestSession.session_duration || Math.floor(Math.random() * 300 + 30),
+            session_duration: latestSession.session_duration || latestSession.duration || 0, // Use real session duration or 0 if null
             previous_visit: previousSession ? previousSession.created_at : null
           });
         }
