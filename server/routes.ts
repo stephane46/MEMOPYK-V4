@@ -2833,7 +2833,23 @@ export async function registerRoutes(app: Express): Promise<void> {
         last_visit: latestSession.created_at || latestSession.createdAt,
         user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
         visit_count: sessions.length,
-        session_duration: latestSession.duration || latestSession.session_duration || 0, // Use real session duration (database field is 'duration') or 0 if null
+        session_duration: (() => {
+          // First try explicit duration fields
+          const explicitDuration = latestSession.duration || latestSession.session_duration;
+          if (explicitDuration && explicitDuration > 0) {
+            return explicitDuration;
+          }
+          
+          // Fallback: calculate from timestamps if available
+          if (latestSession.created_at && latestSession.ended_at) {
+            const startTime = new Date(latestSession.created_at).getTime();
+            const endTime = new Date(latestSession.ended_at).getTime();
+            const calculatedDuration = Math.round((endTime - startTime) / 1000); // Convert to seconds
+            return calculatedDuration > 0 ? calculatedDuration : 0;
+          }
+          
+          return 0; // No duration data available
+        })(),
         previous_visit: previousSession ? (previousSession.created_at || previousSession.createdAt) : null
       });
     });
@@ -3077,7 +3093,23 @@ export async function registerRoutes(app: Express): Promise<void> {
             last_visit: latestSession.created_at,
             user_agent: latestSession.user_agent ? latestSession.user_agent.substring(0, 50) + '...' : 'Unknown',
             visit_count: sessions.length,
-            session_duration: latestSession.duration || latestSession.session_duration || 0, // Use real session duration (database field is 'duration') or 0 if null
+            session_duration: (() => {
+          // First try explicit duration fields
+          const explicitDuration = latestSession.duration || latestSession.session_duration;
+          if (explicitDuration && explicitDuration > 0) {
+            return explicitDuration;
+          }
+          
+          // Fallback: calculate from timestamps if available
+          if (latestSession.created_at && latestSession.ended_at) {
+            const startTime = new Date(latestSession.created_at).getTime();
+            const endTime = new Date(latestSession.ended_at).getTime();
+            const calculatedDuration = Math.round((endTime - startTime) / 1000); // Convert to seconds
+            return calculatedDuration > 0 ? calculatedDuration : 0;
+          }
+          
+          return 0; // No duration data available
+        })(),
             previous_visit: previousSession ? previousSession.created_at : null
           });
         }
