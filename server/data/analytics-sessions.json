@@ -30303,8 +30303,8 @@
     "is_bot": false,
     "is_test_data": false,
     "created_at": "2025-09-01T18:02:26.413Z",
-    "updated_at": "2025-09-20T05:03:16.484Z",
-    "duration": 3340358,
+    "updated_at": "2025-09-20T05:04:44.854Z",
+    "duration": 3340447,
     "region": "Occitanie"
   },
   {
@@ -33858,9 +33858,9 @@
   {
     "id": "session_1756814906549_m56c3zfev",
     "session_id": "ip_session_109_17_150_48",
-    "duration": 327078,
+    "duration": 327198,
     "created_at": "2025-09-02T12:08:26.549Z",
-    "updated_at": "2025-09-20T05:02:44.928Z",
+    "updated_at": "2025-09-20T05:04:44.911Z",
     "is_test_data": false
   },
   {
@@ -72382,9 +72382,9 @@
   {
     "id": "session_1757707755111_qy4rfdos0",
     "session_id": "session_1756910821388_wht3pler0:f3p35xblu:PomGalleryC.mp4_1757699563079_psra",
-    "duration": 2923732,
+    "duration": 2923852,
     "created_at": "2025-09-12T20:09:15.111Z",
-    "updated_at": "2025-09-20T05:02:44.901Z",
+    "updated_at": "2025-09-20T05:04:44.810Z",
     "is_test_data": false
   },
   {
