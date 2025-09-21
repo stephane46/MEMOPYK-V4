@@ -163,11 +163,9 @@ export const useVideoAnalytics = () => {
     console.log('📊 PRODUCTION ANALYTICS: Environment:', import.meta.env.NODE_ENV || 'production');
     console.log('📊 PRODUCTION ANALYTICS: Current URL:', window.location.href);
     
-    // Store session start time for duration calculation
-    if (!localStorage.getItem(sessionStartKey)) {
-      localStorage.setItem(sessionStartKey, now.toString());
-      console.log('📊 SESSION DURATION: Session start time recorded');
-    }
+    // Store session start time for duration calculation (reset for each new visit)
+    localStorage.setItem(sessionStartKey, now.toString());
+    console.log('📊 SESSION DURATION: Session start time recorded');
     
     localStorage.setItem(sessionKey, now.toString());
     
