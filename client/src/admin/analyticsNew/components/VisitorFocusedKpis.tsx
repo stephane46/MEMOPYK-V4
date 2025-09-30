@@ -366,9 +366,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
           className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-[340px] z-50"
           onClick={(e) => e.target === e.currentTarget && setIsTotalViewsModalOpen(false)}
         >
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 flex flex-col max-h-[calc(100vh-400px)]">
             <div 
-              className="px-6 py-2 bg-blue-50 text-gray-900"
+              className="px-6 py-2 bg-blue-50 text-gray-900 flex-shrink-0"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -381,7 +381,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               </div>
             </div>
 
-            <div className="overflow-y-auto max-h-[70vh] px-6 pb-6">
+            <div className="overflow-y-auto flex-1 px-6 pb-6" onWheel={(e) => e.stopPropagation()}>
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-4 p-4 bg-blue-50 border border-blue-200 rounded-b-lg border-t-0">
                 <div className="space-y-0 text-sm">
@@ -494,9 +494,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
           className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-[340px] z-50"
           onClick={(e) => e.target === e.currentTarget && setIsUniqueVisitorsModalOpen(false)}
         >
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 flex flex-col max-h-[calc(100vh-400px)]">
             <div 
-              className="px-6 py-2 bg-green-50 text-gray-900"
+              className="px-6 py-2 bg-green-50 text-gray-900 flex-shrink-0"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -509,7 +509,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               </div>
             </div>
 
-            <div className="overflow-y-auto max-h-[70vh] px-6 pb-6">
+            <div className="overflow-y-auto flex-1 px-6 pb-6" onWheel={(e) => e.stopPropagation()}>
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-4 p-4 bg-green-50 border border-green-200 rounded-b-lg border-t-0">
                 <div className="space-y-0 text-sm">
@@ -622,9 +622,9 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
           className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center pt-[340px] z-50"
           onClick={(e) => e.target === e.currentTarget && setIsReturnVisitorsModalOpen(false)}
         >
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl max-h-[90vh] overflow-hidden relative">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 flex flex-col max-h-[calc(100vh-400px)]">
             <div 
-              className="px-6 py-2 bg-purple-50 text-gray-900"
+              className="px-6 py-2 bg-purple-50 text-gray-900 flex-shrink-0"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -637,7 +637,7 @@ export function VisitorFocusedKpis({ preset = "7d", className = "", startDate, e
               </div>
             </div>
 
-            <div className="overflow-y-auto max-h-[70vh] px-6 pb-6">
+            <div className="overflow-y-auto flex-1 px-6 pb-6" onWheel={(e) => e.stopPropagation()}>
               {/* Data Source Explanation Header */}
               <div className="-mx-6 mb-6 -mt-4 p-4 bg-purple-50 border border-purple-200 rounded-b-lg border-t-0">
                 <div className="space-y-0 text-sm">
