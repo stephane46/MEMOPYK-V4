@@ -60,7 +60,7 @@
 - **Directus CMS:** Headless CMS for blog content management
 - **Supabase PostgreSQL:** Existing database (shared with Next.js)
 - **Coolify:** Self-hosted deployment platform
-- **Domain:** `https://directus.memopyk.org`
+- **Domain:** `https://cms.memopyk.org`
 - **MCP Integration:** Claude Desktop for AI-powered content creation
 
 **Why This Architecture:**
@@ -111,15 +111,15 @@ Value: [Your VPS IP Address]
 TTL: 3600
 ```
 
-**Result:** `https://directus.memopyk.org` will point to your VPS
+**Result:** `https://cms.memopyk.org` will point to your VPS
 
 **Verification:**
 ```bash
 # Test DNS propagation
-nslookup directus.memopyk.org
+nslookup cms.memopyk.org
 
 # Or use dig
-dig directus.memopyk.org +short
+dig cms.memopyk.org +short
 ```
 
 ### Step 3: Generate Secure Keys
@@ -181,7 +181,7 @@ services:
       ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
       
       # === Public URL ===
-      PUBLIC_URL: "https://directus.memopyk.org"
+      PUBLIC_URL: "https://cms.memopyk.org"
       
       # === File Storage (Local for now) ===
       STORAGE_LOCATIONS: "local"
@@ -313,7 +313,7 @@ ADMIN_PASSWORD=ChangeThisSecurePassword123!
 ### Step 2: Configure Domain & SSL in Coolify
 
 1. **Navigate to:** Directus service → "Domains"
-2. **Add domain:** `directus.memopyk.org`
+2. **Add domain:** `cms.memopyk.org`
 3. **Enable SSL:** Toggle "Enable SSL" (Coolify auto-provisions Let's Encrypt)
 4. **Port mapping:** Map internal port `8055` to HTTP/HTTPS
 
@@ -326,16 +326,16 @@ ADMIN_PASSWORD=ChangeThisSecurePassword123!
 **SSL Verification:**
 ```bash
 # Check SSL certificate
-curl -I https://directus.memopyk.org
+curl -I https://cms.memopyk.org
 
 # Should return: HTTP/2 200
 ```
 
 ### Step 3: Verify Deployment
 
-1. **Access:** `https://directus.memopyk.org`
+1. **Access:** `https://cms.memopyk.org`
 2. **You should see:** Directus login page
-3. **Health check:** `https://directus.memopyk.org/server/health`
+3. **Health check:** `https://cms.memopyk.org/server/health`
    - Should return: `{"status":"ok"}`
 
 ---
@@ -344,7 +344,7 @@ curl -I https://directus.memopyk.org
 
 ### Step 1: Initial Login
 
-1. **Navigate to:** `https://directus.memopyk.org`
+1. **Navigate to:** `https://cms.memopyk.org`
 2. **Login with:**
    - Email: `admin@memopyk.org` (from env vars)
    - Password: (from env vars)
@@ -503,7 +503,7 @@ npm install -g @modelcontextprotocol/server-directus
         "@modelcontextprotocol/server-directus"
       ],
       "env": {
-        "DIRECTUS_URL": "https://directus.memopyk.org",
+        "DIRECTUS_URL": "https://cms.memopyk.org",
         "DIRECTUS_TOKEN": "YOUR_API_TOKEN_FROM_STEP_4"
       }
     }
@@ -545,7 +545,7 @@ interface Schema {
 }
 
 const directus = createDirectus<Schema>(
-  process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://directus.memopyk.org'
+  process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://cms.memopyk.org'
 )
   .with(rest())
   .with(authentication('json'));
@@ -558,7 +558,7 @@ export default directus;
 **File:** `.env.local`
 
 ```bash
-NEXT_PUBLIC_DIRECTUS_URL=https://directus.memopyk.org
+NEXT_PUBLIC_DIRECTUS_URL=https://cms.memopyk.org
 DIRECTUS_ADMIN_TOKEN=YOUR_ADMIN_TOKEN  # Server-side only
 ```
 
