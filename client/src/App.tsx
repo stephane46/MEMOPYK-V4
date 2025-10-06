@@ -13,6 +13,8 @@ import TestGalleryVideo from './pages/TestGalleryVideo';
 import SimpleVideoPlayer from './pages/SimpleVideoPlayer';
 import GV2Page from './pages/GV2Page';
 import NotFoundPage from './pages/not-found';
+import BlogIndexPage from './pages/BlogIndexPage';
+import BlogPostPage from './pages/BlogPostPage';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 import { CookieBanner } from '@/components/ui/CookieBanner';
@@ -73,6 +75,12 @@ function AnalyticsRouter() {
         {/* Legal Document Routes */}
         <Route path="/fr-FR/legal/:docType" component={LegalDocumentPage} />
         <Route path="/en-US/legal/:docType" component={LegalDocumentPage} />
+        
+        {/* Blog Routes */}
+        <Route path="/fr-FR/blog/:slug" component={BlogPostPage} />
+        <Route path="/en-US/blog/:slug" component={BlogPostPage} />
+        <Route path="/fr-FR/blog" component={BlogIndexPage} />
+        <Route path="/en-US/blog" component={BlogIndexPage} />
         
         {/* Catch-all routes temporarily removed to prevent FAQ section conflict */}
         {/* Will restore with proper configuration after identifying root cause */}

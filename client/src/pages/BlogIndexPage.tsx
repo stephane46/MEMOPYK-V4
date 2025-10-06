@@ -50,6 +50,10 @@ export default function BlogIndexPage() {
       <Helmet>
         <title>{t.title} | MEMOPYK</title>
         <meta name="description" content={t.description} />
+        <meta property="og:title" content={`${t.title} | MEMOPYK`} />
+        <meta property="og:description" content={t.description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://memopyk.org${blogRoute}`} />
       </Helmet>
 
       <div className="min-h-screen bg-[#F2EBDC]">
