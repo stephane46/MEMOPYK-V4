@@ -16,22 +16,11 @@ export default function BlogIndexPage() {
       const response = await directus.request(
         readItems('posts', {
           filter: {
-            status: { _eq: 'published' }
+            status: { _eq: 'published' },
+            language: { _eq: languageCode }
           },
-          sort: ['-published_date'],
-          fields: [
-            '*',
-            {
-              translations: [
-                '*',
-                {
-                  _filter: {
-                    languages_code: { _eq: languageCode }
-                  }
-                }
-              ]
-            }
-          ] as any
+          sort: ['-publish_date'],
+          fields: ['*', { author: ['name', 'avatar'] }] as any
         })
       );
       return response as unknown as Post[];
@@ -102,51 +91,46 @@ export default function BlogIndexPage() {
             </div>
           ) : posts && posts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post) => {
-                const translation = post.translations?.[0];
-                if (!translation) return null;
-
-                return (
-                  <Link
-                    key={post.id}
-                    href={`${blogRoute}/${post.slug}`}
-                    data-testid={`card-blog-post-${post.slug}`}
-                  >
-                    <article className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer h-full flex flex-col">
-                      {post.featured_image && (
-                        <img
-                          src={`https://cms.memopyk.org/assets/${post.featured_image}`}
-                          alt={translation.title}
-                          className="w-full h-64 object-cover"
-                          data-testid={`img-blog-featured-${post.slug}`}
-                        />
-                      )}
-                      <div className="p-6 flex-1 flex flex-col">
-                        <h2
-                          className="text-2xl font-['Playfair_Display'] text-[#2A4759] mb-3"
-                          data-testid={`text-blog-title-${post.slug}`}
-                        >
-                          {translation.title}
-                        </h2>
-                        <p className="text-gray-700 mb-4 flex-1" data-testid={`text-blog-excerpt-${post.slug}`}>
-                          {translation.excerpt}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-500" data-testid={`text-blog-date-${post.slug}`}>
-                            {new Date(post.published_date).toLocaleDateString(
-                              languageCode === 'fr-FR' ? 'fr-FR' : 'en-US',
-                              { year: 'numeric', month: 'long', day: 'numeric' }
-                            )}
-                          </span>
-                          <span className="text-[#D67C4A] font-semibold" data-testid={`link-read-more-${post.slug}`}>
-                            {t.readMore} →
-                          </span>
-                        </div>
+              {posts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`${blogRoute}/${post.slug}`}
+                  data-testid={`card-blog-post-${post.slug}`}
+                >
+                  <article className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer h-full flex flex-col">
+                    {post.featured_image_url && (
+                      <img
+                        src={post.featured_image_url}
+                        alt={post.featured_image_alt || post.title}
+                        className="w-full h-64 object-cover"
+                        data-testid={`img-blog-featured-${post.slug}`}
+                      />
+                    )}
+                    <div className="p-6 flex-1 flex flex-col">
+                      <h2
+                        className="text-2xl font-['Playfair_Display'] text-[#2A4759] mb-3"
+                        data-testid={`text-blog-title-${post.slug}`}
+                      >
+                        {post.title}
+                      </h2>
+                      <p className="text-gray-700 mb-4 flex-1" data-testid={`text-blog-excerpt-${post.slug}`}>
+                        {post.excerpt}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500" data-testid={`text-blog-date-${post.slug}`}>
+                          {new Date(post.publish_date).toLocaleDateString(
+                            languageCode === 'fr-FR' ? 'fr-FR' : 'en-US',
+                            { year: 'numeric', month: 'long', day: 'numeric' }
+                          )}
+                        </span>
+                        <span className="text-[#D67C4A] font-semibold" data-testid={`link-read-more-${post.slug}`}>
+                          {t.readMore} →
+                        </span>
                       </div>
-                    </article>
-                  </Link>
-                );
-              })}
+                    </div>
+                  </article>
+                </Link>
+              ))}
             </div>
           ) : (
             <div className="text-center py-20">

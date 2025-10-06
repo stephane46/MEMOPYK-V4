@@ -3,25 +3,26 @@ import { useLocation, Link, useParams } from 'wouter';
 import { Helmet } from 'react-helmet-async';
 import directus from '@/lib/directus';
 import { readItems } from '@directus/sdk';
-import type { BlogPost } from '@/lib/directus';
-import BlockRenderer from '@/components/blog/BlockRenderer';
+import type { Post } from '@/lib/directus';
 
 export default function BlogPostPage() {
   const [location] = useLocation();
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
-  const language = location.includes('/fr-FR') ? 'fr' : 'en';
+  const languageCode = location.includes('/fr-FR') ? 'fr-FR' : 'en-US';
+  const language = languageCode === 'fr-FR' ? 'fr' : 'en';
 
-  const { data: post, isLoading } = useQuery<BlogPost | null>({
-    queryKey: ['/api/blog/post', slug],
+  const { data: post, isLoading } = useQuery<Post | null>({
+    queryKey: ['/api/blog/post', slug, languageCode],
     queryFn: async () => {
       const response = await directus.request(
-        readItems('blog_posts', {
+        readItems('posts', {
           filter: {
             slug: { _eq: slug },
-            status: { _eq: 'published' }
+            status: { _eq: 'published' },
+            language: { _eq: languageCode }
           },
-          fields: ['*', { blocks: ['*'] }] as any,
+          fields: ['*', { author: ['name', 'avatar', 'bio'] }] as any,
           limit: 1
         })
       );
@@ -30,22 +31,24 @@ export default function BlogPostPage() {
         return null;
       }
       
-      return response[0] as unknown as BlogPost;
+      return response[0] as unknown as Post;
     }
   });
 
   const t = {
-    fr: {
+    'fr-FR': {
       backToBlog: 'Retour au blog',
       notFound: 'Article non trouvé',
-      notFoundDescription: 'L\'article que vous recherchez n\'existe pas ou a été supprimé.'
+      notFoundDescription: 'L\'article que vous recherchez n\'existe pas ou a été supprimé.',
+      readingTime: 'min de lecture'
     },
-    en: {
+    'en-US': {
       backToBlog: 'Back to blog',
       notFound: 'Article not found',
-      notFoundDescription: 'The article you are looking for does not exist or has been removed.'
+      notFoundDescription: 'The article you are looking for does not exist or has been removed.',
+      readingTime: 'min read'
     }
-  }[language];
+  }[languageCode];
 
   const blogRoute = language === 'fr' ? '/fr-FR/blog' : '/en-US/blog';
 
@@ -104,12 +107,10 @@ export default function BlogPostPage() {
     );
   }
 
-  const title = language === 'fr' ? post.title_fr : post.title_en;
-  const seoTitle = language === 'fr' ? (post.seo_title_fr || post.title_fr) : (post.seo_title_en || post.title_en);
-  const seoDescription = language === 'fr' ? (post.seo_description_fr || post.excerpt_fr) : (post.seo_description_en || post.excerpt_en);
-  const seoKeywords = language === 'fr' ? post.seo_keywords_fr : post.seo_keywords_en;
-
-  const sortedBlocks = post.blocks ? [...post.blocks].sort((a, b) => a.sort - b.sort) : [];
+  const seoTitle = post.meta_title || post.title;
+  const seoDescription = post.meta_description || post.excerpt;
+  const seoKeywords = post.meta_keywords;
+  const ogImage = post.og_image_url || post.featured_image_url;
 
   return (
     <>
@@ -117,12 +118,12 @@ export default function BlogPostPage() {
         <title>{seoTitle} | MEMOPYK</title>
         <meta name="description" content={seoDescription || ''} />
         {seoKeywords && <meta name="keywords" content={seoKeywords} />}
+        {post.canonical_url && <link rel="canonical" href={post.canonical_url} />}
         <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDescription || ''} />
-        {post.featured_image && (
-          <meta property="og:image" content={`https://cms.memopyk.org/assets/${post.featured_image}`} />
-        )}
+        <meta property="og:description" content={post.og_description || seoDescription || ''} />
+        {ogImage && <meta property="og:image" content={ogImage} />}
         <meta property="og:type" content="article" />
+        <meta property="article:published_time" content={post.publish_date} />
       </Helmet>
 
       <div className="min-h-screen bg-[#F2EBDC]">
@@ -137,37 +138,63 @@ export default function BlogPostPage() {
         </header>
 
         <article className="pb-12">
+          {post.featured_image_url && (
+            <div className="w-full h-[400px] md:h-[500px] overflow-hidden">
+              <img
+                src={post.featured_image_url}
+                alt={post.featured_image_alt || post.title}
+                className="w-full h-full object-cover"
+                data-testid="img-post-featured"
+              />
+            </div>
+          )}
+
           <header className="bg-white py-12 mb-8 shadow-sm">
             <div className="container mx-auto px-4 max-w-4xl">
               <h1
                 className="text-4xl md:text-5xl font-['Playfair_Display'] text-[#2A4759] mb-4"
                 data-testid="text-post-title"
               >
-                {title}
+                {post.title}
               </h1>
-              <div className="flex items-center gap-4 text-gray-600">
-                {post.published_date && (
-                  <time dateTime={post.published_date} data-testid="text-post-date">
-                    {new Date(post.published_date).toLocaleDateString(
-                      language === 'fr' ? 'fr-FR' : 'en-US',
+              <div className="flex items-center gap-4 text-gray-600 flex-wrap">
+                {post.publish_date && (
+                  <time dateTime={post.publish_date} data-testid="text-post-date">
+                    {new Date(post.publish_date).toLocaleDateString(
+                      languageCode === 'fr-FR' ? 'fr-FR' : 'en-US',
                       { year: 'numeric', month: 'long', day: 'numeric' }
                     )}
                   </time>
                 )}
-                {post.author && (
+                {post.author && typeof post.author === 'object' && post.author.name && (
                   <>
                     <span>•</span>
-                    <span data-testid="text-post-author">{post.author}</span>
+                    <span data-testid="text-post-author">{post.author.name}</span>
+                  </>
+                )}
+                {post.reading_time_minutes && (
+                  <>
+                    <span>•</span>
+                    <span data-testid="text-reading-time">{post.reading_time_minutes} {t.readingTime}</span>
                   </>
                 )}
               </div>
             </div>
           </header>
 
-          <div className="container mx-auto px-4">
-            {sortedBlocks.map((block) => (
-              <BlockRenderer key={block.id} block={block} language={language} />
-            ))}
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div
+              className="prose prose-lg max-w-none
+                prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759]
+                prose-p:text-gray-700 prose-p:leading-relaxed
+                prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
+                prose-strong:text-[#2A4759]
+                prose-img:rounded-lg prose-img:shadow-lg
+                prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic
+                bg-white p-8 rounded-lg shadow-sm"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+              data-testid="post-content"
+            />
           </div>
         </article>
       </div>

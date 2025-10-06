@@ -1,14 +1,9 @@
 import { createDirectus, rest, authentication } from '@directus/sdk';
 
-interface Language {
-  code: string;
-  name: string;
-}
-
 interface Author {
   id: string;
   name: string;
-  email: string;
+  email?: string;
   bio?: string;
   avatar?: string;
 }
@@ -19,56 +14,47 @@ interface Category {
   slug: string;
 }
 
-interface Tag {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface PostTranslation {
-  id: string;
-  posts_id: string;
-  languages_code: string;
-  title: string;
-  excerpt: string;
-  content?: string;
-  seo_title?: string;
-  seo_description?: string;
-  seo_keywords?: string;
-}
-
-interface PostBlock {
-  id: string;
-  posts_id: string;
-  sort: number;
-  block_type: string;
-  content: any;
-}
-
 interface Post {
   id: string;
-  status: 'published' | 'draft' | 'archived';
+  title: string;
   slug: string;
-  featured_image?: string;
-  published_date: string;
+  excerpt: string;
+  content: string;
+  content_text?: string;
+  language: string;
+  author_id?: string;
   author?: Author;
+  category_id?: string;
   category?: Category;
-  tags?: Tag[];
-  translations: PostTranslation[];
-  blocks?: PostBlock[];
+  status: 'draft' | 'published' | 'archived';
+  publish_date: string;
+  scheduled_date?: string;
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+  canonical_url?: string;
+  og_image_url?: string;
+  og_description?: string;
+  featured_image_url?: string;
+  featured_image_alt?: string;
   view_count?: number;
+  like_count?: number;
+  comment_count?: number;
+  share_count?: number;
+  reading_time_minutes?: number;
+  word_count?: number;
+  is_featured?: boolean;
+  is_pinned?: boolean;
+  allow_comments?: boolean;
   created_at: string;
   updated_at: string;
+  deleted_at?: string;
 }
 
 interface DirectusSchema {
   posts: Post[];
-  post_translations: PostTranslation[];
-  post_blocks: PostBlock[];
   authors: Author[];
   categories: Category[];
-  tags: Tag[];
-  languages: Language[];
 }
 
 const directusUrl = import.meta.env.VITE_DIRECTUS_URL || 'https://cms.memopyk.org';
@@ -79,4 +65,4 @@ const directus = createDirectus<DirectusSchema>(directusUrl)
 
 export default directus;
 
-export type { Post, PostTranslation, PostBlock, Author, Category, Tag, Language, DirectusSchema };
+export type { Post, Author, Category, DirectusSchema };
