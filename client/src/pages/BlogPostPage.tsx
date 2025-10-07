@@ -1,9 +1,34 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, Link, useParams } from 'wouter';
 import { Helmet } from 'react-helmet-async';
-import directus from '@/lib/directus';
-import { readItems } from '@directus/sdk';
-import type { Post } from '@/lib/directus';
+
+interface Author {
+  id: string;
+  name: string;
+  avatar?: string;
+  bio?: string;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  language: string;
+  author?: Author;
+  status: string;
+  publish_date: string;
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+  canonical_url?: string;
+  og_image_url?: string;
+  og_description?: string;
+  featured_image_url?: string;
+  featured_image_alt?: string;
+  reading_time_minutes?: number;
+}
 
 export default function BlogPostPage() {
   const [location] = useLocation();
@@ -15,23 +40,10 @@ export default function BlogPostPage() {
   const { data: post, isLoading } = useQuery<Post | null>({
     queryKey: ['/api/blog/post', slug, languageCode],
     queryFn: async () => {
-      const response = await directus.request(
-        readItems('posts', {
-          filter: {
-            slug: { _eq: slug },
-            status: { _eq: 'published' },
-            language: { _eq: languageCode }
-          },
-          fields: ['*', { author: ['name', 'avatar', 'bio'] }] as any,
-          limit: 1
-        })
-      );
-      
-      if (!response || response.length === 0) {
-        return null;
-      }
-      
-      return response[0] as unknown as Post;
+      const response = await fetch(`/api/blog/posts/${slug}?language=${languageCode}`);
+      if (response.status === 404) return null;
+      if (!response.ok) throw new Error('Failed to fetch post');
+      return response.json();
     }
   });
 

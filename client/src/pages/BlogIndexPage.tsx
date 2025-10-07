@@ -1,9 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, Link } from 'wouter';
 import { Helmet } from 'react-helmet-async';
-import directus from '@/lib/directus';
-import { readItems } from '@directus/sdk';
-import type { Post } from '@/lib/directus';
+
+interface Author {
+  id: string;
+  name: string;
+  avatar?: string;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  language: string;
+  author?: Author;
+  status: string;
+  publish_date: string;
+  meta_title?: string;
+  meta_description?: string;
+  featured_image_url?: string;
+  featured_image_alt?: string;
+  reading_time_minutes?: number;
+}
 
 export default function BlogIndexPage() {
   const [location] = useLocation();
@@ -13,17 +32,9 @@ export default function BlogIndexPage() {
   const { data: posts, isLoading } = useQuery<Post[]>({
     queryKey: ['/api/blog/posts', languageCode],
     queryFn: async () => {
-      const response = await directus.request(
-        readItems('posts', {
-          filter: {
-            status: { _eq: 'published' },
-            language: { _eq: languageCode }
-          },
-          sort: ['-publish_date'],
-          fields: ['*', { author: ['name', 'avatar'] }] as any
-        })
-      );
-      return response as unknown as Post[];
+      const response = await fetch(`/api/blog/posts?language=${languageCode}`);
+      if (!response.ok) throw new Error('Failed to fetch posts');
+      return response.json();
     }
   });
 

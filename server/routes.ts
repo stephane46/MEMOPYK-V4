@@ -8788,6 +8788,56 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Blog Routes - Proxy to Directus CMS
+  app.get("/api/blog/posts", async (req, res) => {
+    try {
+      const { language } = req.query;
+      
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*, author:authors(*), category:categories(*)')
+        .eq('status', 'published')
+        .eq('language', language || 'en-US')
+        .order('publish_date', { ascending: false });
+      
+      if (error) throw error;
+      
+      res.json(data || []);
+    } catch (error) {
+      console.error('❌ Error fetching blog posts:', error);
+      res.status(500).json({ error: 'Failed to fetch blog posts' });
+    }
+  });
+
+  app.get("/api/blog/posts/:slug", async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const { language } = req.query;
+      
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*, author:authors(*), category:categories(*)')
+        .eq('slug', slug)
+        .eq('status', 'published')
+        .eq('language', language || 'en-US')
+        .limit(1)
+        .single();
+      
+      if (error) {
+        if (error.code === 'PGRST116') {
+          res.status(404).json({ error: 'Post not found' });
+          return;
+        }
+        throw error;
+      }
+      
+      res.json(data);
+    } catch (error) {
+      console.error('❌ Error fetching blog post:', error);
+      res.status(500).json({ error: 'Failed to fetch blog post' });
+    }
+  });
+
   // Admin Routes
   app.use(adminCountryNames);
   
