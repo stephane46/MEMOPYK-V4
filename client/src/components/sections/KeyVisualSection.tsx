@@ -2,7 +2,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { Smartphone, Laptop, Package } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 // Using direct path to public asset
-const keyVisualImage = '/images/photos_video_organization_chaos.png';
+const keyVisualImage = '/images/brand/photos_video_organization_chaos.png';
 
 export function KeyVisualSection() {
   const { language } = useLanguage();
