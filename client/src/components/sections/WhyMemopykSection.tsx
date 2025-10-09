@@ -131,7 +131,7 @@ export function WhyMemopykSection() {
             <div className="group relative h-full order-1 md:order-2">
               <div className="relative bg-gradient-to-br from-memopyk-cream/20 to-memopyk-sky-blue/10 backdrop-blur-sm rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full overflow-hidden">
                 <img 
-                  src="/images/photos_video_organization_chaos.png"
+                  src="/images/souvenir_film.png"
                   alt=""
                   className="w-full h-full object-cover"
                 />
