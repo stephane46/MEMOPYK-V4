@@ -1,7 +1,6 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Clock, Zap, Users, Settings, Shield, Star, Heart, CheckCircle, Target } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import filmstripImage from "@assets/souvenir_film_1755960575328.png";
 import { useState, useEffect } from 'react';
 
 export function WhyMemopykSection() {
@@ -132,7 +131,7 @@ export function WhyMemopykSection() {
             <div className="group relative h-full order-1 md:order-2">
               <div className="relative bg-gradient-to-br from-memopyk-cream/20 to-memopyk-sky-blue/10 backdrop-blur-sm rounded-2xl shadow-lg md:hover:shadow-2xl transition-[transform,shadow] duration-300 md:transform md:hover:-translate-y-2 border border-white/20 h-full overflow-hidden">
                 <img 
-                  src={filmstripImage}
+                  src="/images/photos_video_organization_chaos.png"
                   alt=""
                   className="w-full h-full object-cover"
                 />
