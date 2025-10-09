@@ -1936,7 +1936,7 @@
     "session_id": "ip_session_127_0_0_1",
     "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-10-09T17:43:46.729Z",
+    "updated_at": "2025-10-09T20:22:41.895Z",
     "is_test_data": false
   },
   {
@@ -72382,9 +72382,9 @@
   {
     "id": "session_1757707755111_qy4rfdos0",
     "session_id": "session_1756910821388_wht3pler0:f3p35xblu:PomGalleryC.mp4_1757699563079_psra",
-    "duration": 334,
+    "duration": 1774,
     "created_at": "2025-09-12T20:09:15.111Z",
-    "updated_at": "2025-10-09T18:49:16.390Z",
+    "updated_at": "2025-10-09T19:13:16.453Z",
     "is_test_data": false
   },
   {
@@ -75317,5 +75317,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-10-09T18:43:42.256Z"
+  },
+  {
+    "id": "706136d9-f46a-4703-a25e-03ff24063d3e",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-10-09T20:22:40.427Z"
   }
 ]

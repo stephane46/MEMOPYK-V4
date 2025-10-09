@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, Link, useParams } from 'wouter';
 import { Helmet } from 'react-helmet-async';
+import { BlockRenderer } from '@/components/blog/BlockRenderer';
 
 interface Author {
   id: string;
@@ -9,12 +10,24 @@ interface Author {
   bio?: string;
 }
 
+interface PostContent {
+  blocks?: Array<{
+    type: string;
+    content?: string | any;
+    level?: number;
+    url?: string;
+    alt?: string;
+    caption?: string;
+    items?: string[];
+  }>;
+}
+
 interface Post {
   id: string;
   title: string;
   slug: string;
   excerpt: string;
-  content: string;
+  content: string | PostContent;
   language: string;
   author?: Author;
   status: string;
@@ -196,17 +209,24 @@ export default function BlogPostPage() {
 
           <div className="container mx-auto px-4 max-w-4xl">
             <div
-              className="prose prose-lg max-w-none
-                prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759]
-                prose-p:text-gray-700 prose-p:leading-relaxed
-                prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
-                prose-strong:text-[#2A4759]
-                prose-img:rounded-lg prose-img:shadow-lg
-                prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic
-                bg-white p-8 rounded-lg shadow-sm"
-              dangerouslySetInnerHTML={{ __html: post.content }}
+              className="bg-white p-8 md:p-12 rounded-lg shadow-sm"
               data-testid="post-content"
-            />
+            >
+              {typeof post.content === 'object' && post.content.blocks ? (
+                <BlockRenderer blocks={post.content.blocks} />
+              ) : (
+                <div
+                  className="prose prose-lg max-w-none
+                    prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759]
+                    prose-p:text-gray-700 prose-p:leading-relaxed
+                    prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-[#2A4759]
+                    prose-img:rounded-lg prose-img:shadow-lg
+                    prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
+                  dangerouslySetInnerHTML={{ __html: typeof post.content === 'string' ? post.content : '' }}
+                />
+              )}
+            </div>
           </div>
         </article>
       </div>
