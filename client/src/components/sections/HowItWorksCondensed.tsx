@@ -56,7 +56,7 @@ export function HowItWorksCondensed() {
       descriptionEn: "Send us your photos and videos as they are.\nTell us everything you have in mind, via our questionnaire, or the free consultation session.\nYou receive a clear and tailored quote before any work.",
       subDescriptionFr: "Nous sommes à l'écoute de vos souhaits, puis vous fournissons un lien unique et crypté pour un partage de fichiers sécurisé et privé.",
       subDescriptionEn: "We listen carefully to your wishes, then provide you with a unique, encrypted link for secure and private file sharing.",
-      image: "/images/How_we_work_Step1.png"
+      image: "/images/brand/How_we_work_Step1.png"
     },
     {
       number: 2,
@@ -67,7 +67,7 @@ export function HowItWorksCondensed() {
       descriptionEn: "We sort, select and keep only the best.\nWe build the scenario with the music, rhythm and format that suits you.\nWe connect every detail into your unique souvenir film.",
       subDescriptionFr: "Nous faisons revivre vos souvenirs avec soin et créativité, pour en faire un film que vous aurez plaisir à redécouvrir.",
       subDescriptionEn: "We bring your memories to life with dedicated care and creativity, transforming them into a film you'll treasure.",
-      image: "/images/How_we_work_Step2.png"
+      image: "/images/brand/How_we_work_Step2.png"
     },
     {
       number: 3,
@@ -78,7 +78,7 @@ export function HowItWorksCondensed() {
       descriptionEn: "You receive the first version of your souvenir film in one to three weeks, ready to be reviewed.\nTwo rounds of feedback are included to refine the editing to your complete satisfaction.",
       subDescriptionFr: "Nous peaufinons chaque détail selon vos retours, pour un film vraiment personnel, parfaitement abouti et livré dans les délais.",
       subDescriptionEn: "We refine every detail from your feedback, making your film truly personal, perfectly finished, and delivered on time.",
-      image: "/images/How_we_work_Step3.png"
+      image: "/images/brand/How_we_work_Step3.png"
     }
   ];
 

@@ -21,7 +21,7 @@ export function HowItWorksSection() {
       descriptionEn: "Give us your photos and videos as they are — no need to sort, rename, or organize.\nWe support collaborative uploads, so your family/friends can contribute.\nWe also help you with the digitization of your analog materials (printed old photos, CDs, VHS tapes,…).",
       subDescriptionFr: "Vous recevrez également un court questionnaire pour nous en dire plus sur votre histoire — qu'elle soit encore floue ou déjà bien construite.",
       subDescriptionEn: "You'll first fill in a short questionnaire, or have a consultation chat with us, to tell us more about what you have in mind — whether it's a vague or detailed vision.",
-      image: "/images/How_we_work_Step1.png"
+      image: "/images/brand/How_we_work_Step1.png"
     },
     {
       number: 2,
@@ -32,7 +32,7 @@ export function HowItWorksSection() {
       descriptionEn: "We study each photo and each video to identify the most meaningful moments, then establish a personalized storyline, suggest music, duration, and format — every details are tailored to your memories.",
       subDescriptionFr: "Bien entendu, votre brief initial et tout commentaire que vous pourriez avoir sont toujours respectés, à chaque étape du processus.",
       subDescriptionEn: "Of course, your initial brief and any comment that you may have are always respected, each step of the way.",
-      image: "/images/How_we_work_Step2.png"
+      image: "/images/brand/How_we_work_Step2.png"
     },
     {
       number: 3,
@@ -43,7 +43,7 @@ export function HowItWorksSection() {
       descriptionEn: "We bring your film to life, in the format of you choice, best suited for example for TV viewing or for Facebook. Expect a beautifully crafted result within 1-3 weeks, with 2 revision rounds included. You'll receive a high-quality visual story that truly reflects your vision and wishes.",
       subDescriptionFr: "Ce film est parfait pour préserver vos souvenirs, offrir un cadeau plein d'émotion à un proche, ou partager un moment privilégié en famille ou entre amis.",
       subDescriptionEn: "The film is ideal for cherishing memories, sharing a heartfelt gift with a loved one, or enjoying together with family and friends.",
-      image: "/images/How_we_work_Step3.png"
+      image: "/images/brand/How_we_work_Step3.png"
     }
   ];
 
