@@ -24,8 +24,8 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
   const renderBlock = (block: Block, index: number) => {
     const sanitizeHtml = (html: string) => {
       return DOMPurify.sanitize(html, {
-        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'span', 'code', 'mark', 'sub', 'sup'],
-        ALLOWED_ATTR: ['href', 'target', 'rel', 'class']
+        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'span', 'code', 'mark', 'sub', 'sup', 'img'],
+        ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'src', 'alt', 'width', 'height', 'loading', 'decoding', 'srcset', 'sizes']
       });
     };
 
