@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import { directusAsset } from '@/constants/directus';
 
 interface EditorJsBlock {
   id?: string;
@@ -136,23 +137,26 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
         );
 
       case 'image':
-        const imageUrl = data.file?.url || data.url || (block as CustomBlock).url;
-        if (!imageUrl) return null;
-        
-        const imageAlt = data.caption || data.alt || (block as CustomBlock).alt || '';
-        const imageCaption = data.caption || (block as CustomBlock).caption;
-        
+        const f = data?.file || {};
+        const raw = f.url || f.fileURL || f.fileId || f.id || '';
+        if (!raw) return null;
+
+        const src = directusAsset(raw, { width: 1200, quality: 80, format: 'webp' });
+        const alt = data?.caption || f.title || '';
+
         return (
           <figure key={index} className="mb-8 mt-8">
             <img
-              src={imageUrl}
-              alt={imageAlt}
-              className="w-full rounded-lg shadow-lg"
+              src={src}
+              alt={alt}
               loading="lazy"
+              decoding="async"
+              className="w-full rounded-lg shadow-lg"
+              style={{ display: 'block' }}
             />
-            {imageCaption && (
+            {alt && (
               <figcaption className="text-center text-sm text-gray-600 mt-3 italic">
-                {imageCaption}
+                {alt}
               </figcaption>
             )}
           </figure>
