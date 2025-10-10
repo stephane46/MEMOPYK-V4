@@ -113,17 +113,17 @@ app.use(express.urlencoded({
   parameterLimit: 50000
 }));
 
-// Configure CSP headers to allow Google Analytics, Supabase, and Google Fonts
+// Configure CSP headers to allow Google Analytics, Supabase, Directus CMS, and Google Fonts
 app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://replit.com https://www.clarity.ms https://scripts.clarity.ms; " +
     "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://stats.g.doubleclick.net https://cdn.jsdelivr.net https://supabase.memopyk.org wss://supabase.memopyk.org https://api.ipapi.co wss: ws:; " +
-    "img-src 'self' data: blob: https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cdn.jsdelivr.net https://flagcdn.com; " +
+    "img-src 'self' data: blob: https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cdn.jsdelivr.net https://flagcdn.com https://cms.memopyk.org; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "font-src 'self' https://fonts.gstatic.com; " +
+    "font-src 'self' data: https://fonts.gstatic.com; " +
     "frame-src 'self' https://www.googletagmanager.com; " +
-    "media-src 'self' https://supabase.memopyk.org http://supabase.memopyk.org:8001;"
+    "media-src 'self' https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cms.memopyk.org;"
   );
   next();
 });
