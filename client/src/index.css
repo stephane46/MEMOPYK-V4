@@ -1151,3 +1151,12 @@ button[role="switch"]:focus-visible {
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #D67C4A !important; 
 }
 
+/* Blog Post Inline Images - Responsive and Centered */
+[data-testid="post-content"] img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem auto;
+  border-radius: 0.5rem;
+}
+
