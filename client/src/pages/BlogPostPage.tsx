@@ -3,6 +3,7 @@ import { useLocation, Link, useParams } from 'wouter';
 import { Helmet } from 'react-helmet-async';
 import { BlockRenderer } from '@/components/blog/BlockRenderer';
 import { DEFAULT_OG, DEFAULT_OG_FR } from '@/constants/seo';
+import { directusAsset } from '@/constants/directus';
 
 interface Author {
   id: string;
@@ -139,8 +140,20 @@ export default function BlogPostPage() {
   const seoDescription = post.meta_description || post.excerpt || "";
   const seoKeywords = post.meta_keywords;
   
-  const heroUrl = post.featured_image_url ?? post.og_image_url ?? defaultOg.url;
-  const ogUrl = post.og_image_url ?? post.featured_image_url ?? defaultOg.url;
+  const isValidImageUrl = (url?: string | null): boolean => {
+    if (!url) return false;
+    if (url.includes('REPLACE') || url.startsWith('[')) return false;
+    return true;
+  };
+
+  const processImageUrl = (url?: string | null): string => {
+    if (!isValidImageUrl(url)) return defaultOg.url;
+    if (url!.startsWith('/assets/')) return directusAsset(url!, { width: 1200, quality: 80, format: 'webp' });
+    return url!;
+  };
+  
+  const heroUrl = processImageUrl(post.featured_image_url) || processImageUrl(post.og_image_url) || defaultOg.url;
+  const ogUrl = processImageUrl(post.og_image_url) || processImageUrl(post.featured_image_url) || defaultOg.url;
 
   return (
     <>
