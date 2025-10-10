@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useLocation, Link, useParams } from 'wouter';
 import { Helmet } from 'react-helmet-async';
 import { BlockRenderer } from '@/components/blog/BlockRenderer';
+import { DEFAULT_OG, DEFAULT_OG_FR } from '@/constants/seo';
 
 interface Author {
   id: string;
@@ -132,23 +133,35 @@ export default function BlogPostPage() {
     );
   }
 
+  const defaultOg = languageCode === 'fr-FR' ? DEFAULT_OG_FR : DEFAULT_OG;
+  
   const seoTitle = post.meta_title || post.title;
-  const seoDescription = post.meta_description || post.excerpt;
+  const seoDescription = post.meta_description || post.excerpt || "";
   const seoKeywords = post.meta_keywords;
-  const ogImage = post.og_image_url || post.featured_image_url;
+  
+  const heroUrl = post.featured_image_url ?? post.og_image_url ?? defaultOg.url;
+  const ogUrl = post.og_image_url ?? post.featured_image_url ?? defaultOg.url;
 
   return (
     <>
       <Helmet>
         <title>{seoTitle} | MEMOPYK</title>
-        <meta name="description" content={seoDescription || ''} />
+        <meta name="description" content={seoDescription} />
         {seoKeywords && <meta name="keywords" content={seoKeywords} />}
         {post.canonical_url && <link rel="canonical" href={post.canonical_url} />}
+        
         <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={post.og_description || seoDescription || ''} />
-        {ogImage && <meta property="og:image" content={ogImage} />}
+        <meta property="og:description" content={post.og_description || seoDescription} />
+        <meta property="og:image" content={ogUrl} />
+        <meta property="og:image:width" content={String(defaultOg.width)} />
+        <meta property="og:image:height" content={String(defaultOg.height)} />
         <meta property="og:type" content="article" />
         <meta property="article:published_time" content={post.publish_date} />
+        
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={post.og_description || seoDescription} />
+        <meta name="twitter:image" content={ogUrl} />
       </Helmet>
 
       <div className="min-h-screen bg-[#F2EBDC]">
@@ -163,11 +176,13 @@ export default function BlogPostPage() {
         </header>
 
         <article className="pb-12">
-          {post.featured_image_url && (
+          {heroUrl && (
             <div className="w-full h-[400px] md:h-[500px] overflow-hidden">
               <img
-                src={post.featured_image_url}
+                src={heroUrl}
                 alt={post.featured_image_alt || post.title}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
                 data-testid="img-post-featured"
               />

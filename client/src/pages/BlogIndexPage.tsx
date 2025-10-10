@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, Link } from 'wouter';
 import { Helmet } from 'react-helmet-async';
+import { DEFAULT_OG, DEFAULT_OG_FR } from '@/constants/seo';
 
 interface Author {
   id: string;
@@ -57,16 +58,26 @@ export default function BlogIndexPage() {
 
   const homeRoute = language === 'fr' ? '/fr-FR' : '/en-US';
   const blogRoute = language === 'fr' ? '/fr-FR/blog' : '/en-US/blog';
+  const defaultOg = languageCode === 'fr-FR' ? DEFAULT_OG_FR : DEFAULT_OG;
 
   return (
     <>
       <Helmet>
         <title>{t.title} | MEMOPYK</title>
         <meta name="description" content={t.description} />
+        
         <meta property="og:title" content={`${t.title} | MEMOPYK`} />
         <meta property="og:description" content={t.description} />
+        <meta property="og:image" content={defaultOg.url} />
+        <meta property="og:image:width" content={String(defaultOg.width)} />
+        <meta property="og:image:height" content={String(defaultOg.height)} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://memopyk.org${blogRoute}`} />
+        
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${t.title} | MEMOPYK`} />
+        <meta name="twitter:description" content={t.description} />
+        <meta name="twitter:image" content={defaultOg.url} />
       </Helmet>
 
       <div className="min-h-screen bg-[#F2EBDC]">
