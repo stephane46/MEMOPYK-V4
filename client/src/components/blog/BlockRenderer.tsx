@@ -1,6 +1,12 @@
 import DOMPurify from 'dompurify';
 
-interface Block {
+interface EditorJsBlock {
+  id?: string;
+  type: string;
+  data: any;
+}
+
+interface CustomBlock {
   type: string;
   content?: string | any;
   level?: number;
@@ -11,6 +17,8 @@ interface Block {
   language?: string;
   code?: string;
 }
+
+type Block = EditorJsBlock | CustomBlock;
 
 interface BlockRendererProps {
   blocks: Block[];
@@ -29,18 +37,36 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
       });
     };
 
+    // Normalize block data to handle both Editor.js and custom formats
+    const isEditorJs = 'data' in block && block.data !== undefined;
+    const data = isEditorJs ? (block as EditorJsBlock).data : (block as CustomBlock);
+    
+    // Extract content based on format
+    const getContent = () => {
+      if (isEditorJs) {
+        return data.text || data.content || '';
+      }
+      return (block as CustomBlock).content || '';
+    };
+
     switch (block.type) {
       case 'paragraph':
+        const paragraphText = getContent();
+        if (!paragraphText) return null;
         return (
           <p
             key={index}
             className="mb-6 text-gray-700 leading-relaxed text-lg"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content || '') }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(paragraphText) }}
           />
         );
 
+      case 'header':
       case 'heading':
-        const level = block.level || 2;
+        const headingText = getContent();
+        if (!headingText) return null;
+        
+        const level = data.level || (block as CustomBlock).level || 2;
         const headingClasses = {
           1: 'text-4xl md:text-5xl font-playfair font-bold text-memopyk-dark-blue mb-8 mt-12',
           2: 'text-3xl md:text-4xl font-playfair font-bold text-memopyk-dark-blue mb-6 mt-10',
@@ -50,7 +76,7 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
           6: 'text-base md:text-lg font-poppins font-semibold text-memopyk-navy mb-3 mt-4'
         };
         const headingClass = headingClasses[level as keyof typeof headingClasses] || headingClasses[2];
-        const headingContent = { __html: sanitizeHtml(block.content || '') };
+        const headingContent = { __html: sanitizeHtml(headingText) };
         
         switch (level) {
           case 1:
@@ -70,9 +96,13 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
         }
 
       case 'list':
-        const isOrdered = block.content?.type === 'ordered';
+        const listItems = data.items || (block as CustomBlock).items || [];
+        if (!listItems.length) return null;
+        
+        const style = data.style || 'unordered';
+        const isOrdered = style === 'ordered';
         const ListTag = isOrdered ? 'ol' : 'ul';
-        const items = block.items || block.content?.items || [];
+        
         return (
           <ListTag
             key={index}
@@ -80,7 +110,7 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
               isOrdered ? 'list-decimal' : 'list-disc'
             }`}
           >
-            {items.map((item: string, i: number) => (
+            {listItems.map((item: string, i: number) => (
               <li key={i} dangerouslySetInnerHTML={{ __html: sanitizeHtml(item) }} />
             ))}
           </ListTag>
@@ -88,96 +118,107 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
 
       case 'quote':
       case 'blockquote':
+        const quoteText = getContent();
+        if (!quoteText) return null;
+        
         return (
           <blockquote
             key={index}
             className="border-l-4 border-memopyk-orange pl-6 py-4 mb-6 italic text-gray-700 text-lg bg-memopyk-cream/30 rounded-r-lg"
           >
-            <p dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content || '') }} />
+            <p dangerouslySetInnerHTML={{ __html: sanitizeHtml(quoteText) }} />
+            {data.caption && (
+              <footer className="text-sm text-gray-600 mt-2 not-italic">
+                — {data.caption}
+              </footer>
+            )}
           </blockquote>
         );
 
       case 'image':
+        const imageUrl = data.file?.url || data.url || (block as CustomBlock).url;
+        if (!imageUrl) return null;
+        
+        const imageAlt = data.caption || data.alt || (block as CustomBlock).alt || '';
+        const imageCaption = data.caption || (block as CustomBlock).caption;
+        
         return (
           <figure key={index} className="mb-8 mt-8">
             <img
-              src={block.url || block.content?.url}
-              alt={block.alt || block.content?.alt || ''}
+              src={imageUrl}
+              alt={imageAlt}
               className="w-full rounded-lg shadow-lg"
               loading="lazy"
             />
-            {(block.caption || block.content?.caption) && (
+            {imageCaption && (
               <figcaption className="text-center text-sm text-gray-600 mt-3 italic">
-                {block.caption || block.content?.caption}
+                {imageCaption}
               </figcaption>
             )}
           </figure>
         );
 
       case 'code':
+        const codeContent = data.code || (block as CustomBlock).code || getContent();
+        if (!codeContent) return null;
+        
         return (
           <pre
             key={index}
             className="bg-gray-900 text-gray-100 p-6 rounded-lg mb-6 overflow-x-auto"
           >
             <code className="text-sm font-mono">
-              {block.code || block.content}
+              {codeContent}
             </code>
           </pre>
         );
 
-      case 'divider':
-      case 'horizontal-rule':
-        return (
-          <hr key={index} className="my-10 border-t-2 border-memopyk-sky-blue/30" />
-        );
-
+      case 'warning':
       case 'callout':
+        const calloutText = data.message || data.text || getContent();
+        if (!calloutText) return null;
+        
+        const calloutType = data.type || 'info';
+        const calloutColors = {
+          info: 'bg-blue-50 border-blue-400 text-blue-800',
+          warning: 'bg-yellow-50 border-yellow-400 text-yellow-800',
+          danger: 'bg-red-50 border-red-400 text-red-800',
+          success: 'bg-green-50 border-green-400 text-green-800'
+        };
+        
         return (
           <div
             key={index}
-            className="bg-memopyk-sky-blue/10 border-l-4 border-memopyk-sky-blue p-6 mb-6 rounded-r-lg"
+            className={`border-l-4 pl-6 py-4 mb-6 rounded-r-lg ${
+              calloutColors[calloutType as keyof typeof calloutColors] || calloutColors.info
+            }`}
           >
-            <div
-              className="text-gray-700 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content || '') }}
-            />
+            {data.title && (
+              <p className="font-semibold mb-2">{data.title}</p>
+            )}
+            <p dangerouslySetInnerHTML={{ __html: sanitizeHtml(calloutText) }} />
           </div>
         );
 
-      case 'video':
-        const videoUrl = block.url || block.content?.url;
-        if (videoUrl && (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be'))) {
-          const videoId = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/)?.[1];
-          return (
-            <div key={index} className="mb-8 mt-8 aspect-video">
-              <iframe
-                src={`https://www.youtube.com/embed/${videoId}`}
-                title="Video"
-                className="w-full h-full rounded-lg shadow-lg"
-                allowFullScreen
-              />
+      case 'delimiter':
+        return (
+          <div key={index} className="flex justify-center items-center my-8">
+            <div className="flex space-x-2">
+              <span className="w-2 h-2 bg-memopyk-orange rounded-full"></span>
+              <span className="w-2 h-2 bg-memopyk-orange rounded-full"></span>
+              <span className="w-2 h-2 bg-memopyk-orange rounded-full"></span>
             </div>
-          );
-        }
-        return null;
+          </div>
+        );
 
       default:
-        if (typeof block.content === 'string') {
-          return (
-            <div
-              key={index}
-              className="mb-6 text-gray-700 leading-relaxed text-lg"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content) }}
-            />
-          );
-        }
+        console.warn(`Unknown block type: ${block.type}`, block);
         return null;
     }
   };
 
   return (
-    <div className="blog-content">
+    <div data-testid="post-content" className="prose prose-lg max-w-none">
       {blocks.map((block, index) => renderBlock(block, index))}
     </div>
   );
