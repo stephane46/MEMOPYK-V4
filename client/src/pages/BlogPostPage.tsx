@@ -140,20 +140,21 @@ export default function BlogPostPage() {
   const seoDescription = post.meta_description || post.excerpt || "";
   const seoKeywords = post.meta_keywords;
   
-  const isValidImageUrl = (url?: string | null): boolean => {
-    if (!url) return false;
-    if (url.includes('REPLACE') || url.startsWith('[')) return false;
-    return true;
-  };
+  function resolveHero(raw?: string | null) {
+    if (!raw) return null;
+    if (raw.includes('REPLACE') || raw.startsWith('[')) return null;
+    return directusAsset(raw, { width: 1600, quality: 80, format: 'webp' });
+  }
 
-  const processImageUrl = (url?: string | null): string => {
-    if (!isValidImageUrl(url)) return defaultOg.url;
-    if (url!.startsWith('/assets/')) return directusAsset(url!, { width: 1200, quality: 80, format: 'webp' });
-    return url!;
-  };
-  
-  const heroUrl = processImageUrl(post.featured_image_url) || processImageUrl(post.og_image_url) || defaultOg.url;
-  const ogUrl = processImageUrl(post.og_image_url) || processImageUrl(post.featured_image_url) || defaultOg.url;
+  const heroUrl =
+    resolveHero(post.featured_image_url) ??
+    resolveHero(post.og_image_url) ??
+    defaultOg.url;
+
+  const ogUrl =
+    resolveHero(post.og_image_url) ??
+    resolveHero(post.featured_image_url) ??
+    defaultOg.url;
 
   return (
     <>
