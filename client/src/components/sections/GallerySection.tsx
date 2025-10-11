@@ -375,18 +375,28 @@ export default function GallerySection() {
   };
 
   const getVideoUrl = (item: GalleryItem, index: number) => {
-    // FIXED v1.0.1754928443: USE SAME VIDEO PROXY AS HERO VIDEOS - EXTRACT FILENAME ONLY
-    let filename = item.videoFilename || '';
+    // FIXED: Respect language and use_same_video flag for bilingual videos
+    let videoUrl = '';
     
-    // If it's a full URL, extract just the filename
+    if (item.useSameVideo) {
+      // Use the same video for both languages
+      videoUrl = item.videoUrlEn || item.videoFilename || '';
+    } else {
+      // Use language-specific video
+      videoUrl = language === 'fr-FR' ? (item.videoUrlFr || '') : (item.videoUrlEn || '');
+      // Fallback to videoFilename if language-specific URL is missing
+      if (!videoUrl) {
+        videoUrl = item.videoFilename || '';
+      }
+    }
+    
+    // Extract just the filename from the URL
+    let filename = videoUrl;
     if (filename.includes('/')) {
       filename = filename.split('/').pop() || '';
     }
     
     const proxyUrl = `/api/video-proxy?filename=${encodeURIComponent(filename)}`;
-    
-
-
     
     return proxyUrl;
   };
