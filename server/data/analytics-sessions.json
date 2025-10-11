@@ -74990,7 +74990,7 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-09-23T23:28:42.679Z",
-    "updated_at": "2025-10-11T22:04:52.328Z",
+    "updated_at": "2025-10-11T22:06:15.043Z",
     "duration": 90
   },
   {
@@ -75453,5 +75453,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-10-11T22:04:52.005Z"
+  },
+  {
+    "id": "session_1760220317874_sp64b5xl8",
+    "session_id": "session_1756910821388_wht3pler0:qy99b3ia0:PomGalleryC.mp4_1760220298535_9ku3",
+    "duration": 90,
+    "created_at": "2025-10-11T22:05:17.875Z",
+    "updated_at": "2025-10-11T22:06:22.010Z",
+    "is_test_data": false
   }
 ]
