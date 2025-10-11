@@ -81,9 +81,14 @@ export const galleryItems = pgTable("gallery_items", {
   videoUrlFr: text("video_url_fr"),
   videoFilename: text("video_filename"), // Unified filename for memopyk-videos bucket (e.g., "VideoHero1.mp4")
   useSameVideo: boolean("use_same_video").default(true), // When true, use videoUrlEn for both languages
-  videoWidth: integer("video_width"),
-  videoHeight: integer("video_height"),
+  videoWidth: integer("video_width"), // Legacy field - kept for backward compatibility
+  videoHeight: integer("video_height"), // Legacy field - kept for backward compatibility
   videoOrientation: text("video_orientation"), // "portrait" or "landscape"
+  // Language-specific video dimensions (used when useSameVideo is false)
+  videoWidthEn: integer("video_width_en"),
+  videoHeightEn: integer("video_height_en"),
+  videoWidthFr: integer("video_width_fr"),
+  videoHeightFr: integer("video_height_fr"),
   
   // Image fields
   imageUrlEn: text("image_url_en"),
