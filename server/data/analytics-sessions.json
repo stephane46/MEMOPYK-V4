@@ -74990,8 +74990,8 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-09-23T23:28:42.679Z",
-    "updated_at": "2025-10-11T22:03:19.723Z",
-    "duration": 450
+    "updated_at": "2025-10-11T22:03:49.716Z",
+    "duration": 480
   },
   {
     "id": "session_1758685756001_7dsw8q3jz",
@@ -75629,9 +75629,9 @@
   {
     "id": "session_1760219907367_le1l2e43p",
     "session_id": "session_1756910821388_wht3pler0:qy99b3ia0:VitaminSeaC.mp4_1760219903909_o5jq",
-    "duration": 30,
+    "duration": 60,
     "created_at": "2025-10-11T21:58:27.367Z",
-    "updated_at": "2025-10-11T22:03:12.025Z",
+    "updated_at": "2025-10-11T22:03:42.014Z",
     "is_test_data": false
   },
   {
