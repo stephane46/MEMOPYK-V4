@@ -481,6 +481,15 @@ export default function GallerySection() {
     const dbWidth = (item as any).video_width || item.videoWidth;
     const dbHeight = (item as any).video_height || item.videoHeight;
     
+    console.log(`🔍 DEBUG DIMENSIONS for ${cleanFilename}:`, {
+      video_width: (item as any).video_width,
+      video_height: (item as any).video_height,
+      videoWidth: item.videoWidth,
+      videoHeight: item.videoHeight,
+      dbWidth,
+      dbHeight
+    });
+    
     if (dbWidth && dbHeight) {
       const orientation = dbWidth > dbHeight ? 'landscape' : 'portrait';
       console.log(`✅ DATABASE VIDEO DIMENSIONS for ${cleanFilename}:`, {
