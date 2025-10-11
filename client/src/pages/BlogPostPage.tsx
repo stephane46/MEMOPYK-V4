@@ -140,16 +140,22 @@ export default function BlogPostPage() {
   const seoDescription = post.meta_description || post.excerpt || "";
   const seoKeywords = post.meta_keywords;
   
-  function resolveHero(raw?: string | null) {
+  function resolveHero(raw?: string | null, width?: number) {
     if (!raw) return null;
     if (raw.includes('REPLACE') || raw.startsWith('[')) return null;
-    return directusAsset(raw, { width: 1920, quality: 82, fit: 'inside' });
+    return directusAsset(raw, { ...(width ? { width } : {}), quality: 82, fit: 'inside' });
   }
 
   const heroUrl =
     resolveHero(post.featured_image_url) ??
     resolveHero(post.og_image_url) ??
     defaultOg.url;
+
+  const heroSrcSet = post.featured_image_url || post.og_image_url
+    ? [640, 828, 1200, 1920]
+        .map(w => `${resolveHero(post.featured_image_url || post.og_image_url, w)} ${w}w`)
+        .join(', ')
+    : undefined;
 
   const ogUrl =
     resolveHero(post.og_image_url) ??
@@ -191,15 +197,21 @@ export default function BlogPostPage() {
 
         <article className="pb-12">
           {heroUrl && (
-            <div className="relative w-full aspect-[16/9] bg-gray-100">
-              <img
-                src={heroUrl}
-                alt={post.featured_image_alt || post.title}
-                loading="eager"
-                decoding="async"
-                className="w-full h-full object-contain"
-                data-testid="img-post-featured"
-              />
+            <div className="w-full">
+              <div className="mx-auto max-w-screen-xl px-4">
+                <div className="relative w-full aspect-[16/9] max-h-[70vh] bg-gray-100 rounded-xl overflow-hidden">
+                  <img
+                    src={heroUrl}
+                    srcSet={heroSrcSet}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
+                    alt={post.featured_image_alt || post.title}
+                    loading="eager"
+                    decoding="async"
+                    className="w-full h-full object-contain"
+                    data-testid="img-post-featured"
+                  />
+                </div>
+              </div>
             </div>
           )}
 
