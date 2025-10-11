@@ -61,10 +61,22 @@ export function SyncDatabaseButton({
       size={size}
       variant="outline"
       disabled={syncMutation.isPending}
-      className={`bg-orange-500 hover:bg-orange-600 text-white border-none shadow-lg font-bold ${className}`}
+      className={`border-none shadow-lg font-bold ${className}`}
+      style={{ 
+        backgroundColor: '#f97316',
+        color: '#ffffff',
+        borderColor: 'transparent'
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#ea580c'}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f97316'}
     >
-      <RefreshCw className={`${syncMutation.isPending ? 'animate-spin' : ''} ${size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'} mr-2`} />
-      {syncMutation.isPending ? 'Synchronisation...' : 'SYNC DATABASE → JSON'}
+      <RefreshCw 
+        className={`${syncMutation.isPending ? 'animate-spin' : ''} ${size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'} mr-2`}
+        style={{ color: '#ffffff' }}
+      />
+      <span style={{ color: '#ffffff' }}>
+        {syncMutation.isPending ? 'Synchronisation...' : 'SYNC DATABASE → JSON'}
+      </span>
     </Button>
   );
 }
