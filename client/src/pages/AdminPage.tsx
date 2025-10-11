@@ -16,7 +16,6 @@ import { useToast } from '@/hooks/use-toast';
 import GalleryManagementNew from '@/components/admin/GalleryManagementNew';
 import FormatBadgeManager from '@/components/admin/FormatBadgeManager';
 import SeoManagement from '@/components/admin/SeoManagement';
-import { SyncDatabaseButton } from '@/components/admin/SyncDatabaseButton';
 
 import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
@@ -582,17 +581,9 @@ export default function AdminPage() {
           {/* Hero Management */}
           {activeSection === 'hero-management' && (
             <div className="space-y-6">
-              <div className="mb-6 flex justify-between items-start">
-                <div>
-                  <h2 className="text-2xl font-bold">Gestion Hero</h2>
-                  <p className="text-muted-foreground">Gérer les vidéos du carrousel héros avec support bilingue</p>
-                </div>
-                <SyncDatabaseButton 
-                  endpoint="/api/admin/hero-videos/sync-to-json"
-                  dataType="Vidéos Hero"
-                  queryKeys={['/api/hero-videos']}
-                  size="default"
-                />
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold">Gestion Hero</h2>
+                <p className="text-muted-foreground">Gérer les vidéos du carrousel héros avec support bilingue</p>
               </div>
               
               {/* Hero Tabs - SEO Management Style */}
