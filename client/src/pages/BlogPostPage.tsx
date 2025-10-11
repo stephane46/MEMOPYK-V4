@@ -143,7 +143,7 @@ export default function BlogPostPage() {
   function resolveHero(raw?: string | null) {
     if (!raw) return null;
     if (raw.includes('REPLACE') || raw.startsWith('[')) return null;
-    return directusAsset(raw, { width: 1600, quality: 80, format: 'webp' });
+    return directusAsset(raw, { width: 1920, quality: 82, fit: 'inside' });
   }
 
   const heroUrl =
@@ -191,13 +191,13 @@ export default function BlogPostPage() {
 
         <article className="pb-12">
           {heroUrl && (
-            <div className="w-full h-[400px] md:h-[500px] overflow-hidden">
+            <div className="relative w-full aspect-[16/9] bg-gray-100">
               <img
                 src={heroUrl}
                 alt={post.featured_image_alt || post.title}
-                loading="lazy"
+                loading="eager"
                 decoding="async"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 data-testid="img-post-featured"
               />
             </div>
