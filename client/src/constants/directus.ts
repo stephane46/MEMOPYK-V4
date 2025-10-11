@@ -7,10 +7,13 @@ export function directusAsset(
   if (!raw) return "";
   if (raw.startsWith("http")) return raw;
   const path = raw.startsWith("/assets/") ? raw : `/assets/${raw}`;
+  
+  const isWebP = raw.toLowerCase().endsWith('.webp');
+  
   const q = new URLSearchParams({
     ...(opts?.width ? { width: String(opts.width) } : {}),
     ...(opts?.quality ? { quality: String(opts.quality) } : {}),
-    ...(opts?.format ? { format: opts.format } : { format: "webp" }),
+    ...(opts?.format ? { format: opts.format } : !isWebP ? { format: "webp" } : {}),
   });
   return `${DIRECTUS_URL}${path}${q.toString() ? `?${q}` : ""}`;
 }
