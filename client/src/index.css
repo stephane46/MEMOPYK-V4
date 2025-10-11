@@ -88,6 +88,27 @@ html, body {
   color: white !important;
 }
 
+/* Admin Sync Database Button Fix - Orange with White Text */
+.sync-database-button {
+  background-color: #f97316 !important;
+  background: #f97316 !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  color: #ffffff !important;
+}
+
+.sync-database-button:hover {
+  background-color: #ea580c !important;
+  background: #ea580c !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+.sync-database-button svg,
+.sync-database-button span {
+  color: #ffffff !important;
+}
+
 /* REMOVED - Previous IP icon override was causing issues */
 
 /* Card Back Gradient Background Fix - Following Modal Transparency Solution Pattern */
