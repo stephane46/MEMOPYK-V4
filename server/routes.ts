@@ -446,6 +446,51 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Admin: Sync Database to JSON - Export production database changes to JSON files
+  app.post("/api/admin/gallery/sync-to-json", async (req, res) => {
+    try {
+      console.log('🔄 ADMIN SYNC: Starting database → JSON export...');
+      
+      // Fetch latest data from Supabase database
+      const galleryItems = await hybridStorage.supabase
+        .from('gallery_items')
+        .select('*')
+        .order('order_index', { ascending: true });
+
+      if (galleryItems.error) {
+        throw new Error(`Supabase query failed: ${galleryItems.error.message}`);
+      }
+
+      if (!galleryItems.data || galleryItems.data.length === 0) {
+        return res.status(404).json({ 
+          success: false, 
+          error: "No gallery items found in database" 
+        });
+      }
+
+      // Save to JSON file
+      const jsonPath = path.join(process.cwd(), 'server/data/gallery.json');
+      fs.writeFileSync(jsonPath, JSON.stringify(galleryItems.data, null, 2), 'utf8');
+
+      console.log(`✅ ADMIN SYNC: Exported ${galleryItems.data.length} items to gallery.json`);
+      
+      // Clear cache to force reload
+      galleryCache = null;
+      
+      res.json({ 
+        success: true, 
+        itemsExported: galleryItems.data.length,
+        message: `Successfully synced ${galleryItems.data.length} gallery items to JSON`
+      });
+    } catch (error: any) {
+      console.error('❌ ADMIN SYNC ERROR:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error.message || "Failed to sync database to JSON" 
+      });
+    }
+  });
+
   // DIAGNOSTIC ENDPOINT: Investigate locale values in GA4 data
   app.get("/api/ga4/locales-debug", async (req, res) => {
     try {

@@ -155,7 +155,8 @@ import {
   Palette,
   Globe,
   Info,
-  RotateCcw
+  RotateCcw,
+  RefreshCw
 } from "lucide-react";
 import SimpleImageCropper from './SimpleImageCropper';
 // Force cache bust v1.0.99 - ensure optimized component loads
@@ -693,6 +694,31 @@ export default function GalleryManagementNew() {
     }
   });
 
+  // Sync Database to JSON Mutation
+  const syncDatabaseMutation = useMutation({
+    mutationFn: async () => {
+      console.log('🔄 SYNC: Requesting database → JSON export...');
+      return apiRequest('/api/admin/gallery/sync-to-json', 'POST');
+    },
+    onSuccess: (response: any) => {
+      console.log('✅ SYNC: Success -', response);
+      toast({ 
+        title: "✅ Synchronisation réussie", 
+        description: `${response.itemsExported} éléments exportés vers JSON`,
+        className: "bg-emerald-50 border-emerald-200 text-emerald-900"
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+    },
+    onError: (error: any) => {
+      console.error('❌ SYNC: Error -', error);
+      toast({ 
+        title: "❌ Erreur de synchronisation", 
+        description: error?.message || "Échec de l'export",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleSave = () => {
     if (isCreateMode) {
       createItemMutation.mutate(formData);
@@ -741,7 +767,12 @@ export default function GalleryManagementNew() {
     });
   };
 
-
+  // Sync Database to JSON handler
+  const handleSyncDatabase = () => {
+    if (confirm("Synchroniser la base de données vers JSON?\n\nCela va exporter toutes les modifications de la base de données Supabase vers les fichiers JSON locaux.")) {
+      syncDatabaseMutation.mutate();
+    }
+  };
 
   if (isLoading) {
     return <div className="p-8">Chargement...</div>;
@@ -757,17 +788,28 @@ export default function GalleryManagementNew() {
     >
 
 
-      {/* Top Left: NEW Button */}
-      <div className="mb-6">
+      {/* Top Left: NEW Button and Sync Button */}
+      <div className="mb-6 flex gap-4">
         {!isCreateMode ? (
-          <Button
-            onClick={handleCreateNew}
-            size="lg"
-            className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-bold text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4"
-          >
-            <Plus className="w-6 h-6 mr-2" />
-            NOUVELLE VIDEO
-          </Button>
+          <>
+            <Button
+              onClick={handleCreateNew}
+              size="lg"
+              className="bg-gradient-to-r from-[#89BAD9] to-[#2A4759] hover:from-[#7AA8CC] hover:to-[#1e3340] text-white border-none shadow-lg font-bold text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4"
+            >
+              <Plus className="w-6 h-6 mr-2" />
+              NOUVELLE VIDEO
+            </Button>
+            <Button
+              onClick={handleSyncDatabase}
+              size="lg"
+              variant="outline"
+              className="bg-orange-500 hover:bg-orange-600 text-white border-none shadow-lg font-bold text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4"
+            >
+              <RefreshCw className="w-5 h-5 mr-2" />
+              SYNC DATABASE → JSON
+            </Button>
+          </>
         ) : (
           <Button
             onClick={handleCancelCreate}
