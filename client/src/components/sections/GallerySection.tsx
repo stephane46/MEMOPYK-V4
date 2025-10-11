@@ -180,9 +180,9 @@ export default function GallerySection() {
       videoUrlEn: item.video_url_en,
       videoUrlFr: item.video_url_fr,
       videoFilename: item.video_filename || item.video_url_en || item.video_url_fr, // TIMESTAMP PREFIX FIX
-      videoWidth: item.videoWidth,
-      videoHeight: item.videoHeight,
-      videoOrientation: item.videoOrientation,
+      videoWidth: item.video_width,
+      videoHeight: item.video_height,
+      videoOrientation: item.video_orientation,
       imageUrlEn: item.image_url_en,
       imageUrlFr: item.image_url_fr,
       staticImageUrlEn: item.static_image_url_en,
@@ -477,29 +477,16 @@ export default function GallerySection() {
       : videoFilename;
 
     // PRIORITY 1: Use database values if available (from admin panel updates)
-    // NOTE: API returns snake_case properties (video_width, video_height) not camelCase
-    const dbWidth = (item as any).video_width || item.videoWidth;
-    const dbHeight = (item as any).video_height || item.videoHeight;
-    
-    console.log(`🔍 DEBUG DIMENSIONS for ${cleanFilename}:`, {
-      video_width: (item as any).video_width,
-      video_height: (item as any).video_height,
-      videoWidth: item.videoWidth,
-      videoHeight: item.videoHeight,
-      dbWidth,
-      dbHeight
-    });
-    
-    if (dbWidth && dbHeight) {
-      const orientation = dbWidth > dbHeight ? 'landscape' : 'portrait';
+    if (item.videoWidth && item.videoHeight) {
+      const orientation = item.videoWidth > item.videoHeight ? 'landscape' : 'portrait';
       console.log(`✅ DATABASE VIDEO DIMENSIONS for ${cleanFilename}:`, {
-        width: dbWidth,
-        height: dbHeight,
+        width: item.videoWidth,
+        height: item.videoHeight,
         orientation
       });
       return {
-        width: dbWidth,
-        height: dbHeight,
+        width: item.videoWidth,
+        height: item.videoHeight,
         orientation: orientation as 'portrait' | 'landscape'
       };
     }
