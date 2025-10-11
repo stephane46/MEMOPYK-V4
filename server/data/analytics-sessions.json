@@ -72382,9 +72382,9 @@
   {
     "id": "session_1757707755111_qy4rfdos0",
     "session_id": "session_1756910821388_wht3pler0:f3p35xblu:PomGalleryC.mp4_1757699563079_psra",
-    "duration": 30,
+    "duration": 93,
     "created_at": "2025-09-12T20:09:15.111Z",
-    "updated_at": "2025-10-11T21:46:24.139Z",
+    "updated_at": "2025-10-11T21:47:27.152Z",
     "is_test_data": false
   },
   {
@@ -74057,10 +74057,10 @@
     "server_detected_ip": "52.42.228.5",
     "country": "United States",
     "region": "Oregon",
-    "city": "Boardman",
+    "city": "Portland",
     "country_code": null,
     "created_at": "2025-09-16T20:24:27.536Z",
-    "updated_at": "2025-09-30T13:17:09.377Z",
+    "updated_at": "2025-10-11T21:46:29.969Z",
     "is_location_cache": true
   },
   {
@@ -74392,7 +74392,7 @@
     "city": "Mountain View",
     "country_code": null,
     "created_at": "2025-09-19T15:46:45.237Z",
-    "updated_at": "2025-09-30T13:17:12.498Z",
+    "updated_at": "2025-10-11T21:46:33.013Z",
     "is_location_cache": true
   },
   {
@@ -74990,8 +74990,8 @@
     "ip_address": "109.17.150.48",
     "is_test_data": false,
     "created_at": "2025-09-23T23:28:42.679Z",
-    "updated_at": "2025-10-11T21:46:00.952Z",
-    "duration": 2791
+    "updated_at": "2025-10-11T21:47:30.134Z",
+    "duration": 2880
   },
   {
     "id": "session_1758685756001_7dsw8q3jz",
@@ -75540,6 +75540,42 @@
     "country_code": null,
     "created_at": "2025-10-11T21:46:26.921Z",
     "updated_at": "2025-10-11T21:46:26.921Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760219196037_2r21brii5",
+    "ip_address": "136.227.161.48",
+    "server_detected_ip": "136.227.161.48",
+    "country": "United States",
+    "region": "California",
+    "city": "Los Angeles",
+    "country_code": null,
+    "created_at": "2025-10-11T21:46:36.037Z",
+    "updated_at": "2025-10-11T21:46:36.037Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760219199066_4jcdkirip",
+    "ip_address": "34.58.62.160",
+    "server_detected_ip": "34.58.62.160",
+    "country": "United States",
+    "region": "Iowa",
+    "city": "Council Bluffs",
+    "country_code": null,
+    "created_at": "2025-10-11T21:46:39.066Z",
+    "updated_at": "2025-10-11T21:46:39.066Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760219202104_8vhq2ak5x",
+    "ip_address": "66.249.68.69",
+    "server_detected_ip": "66.249.68.69",
+    "country": "United States",
+    "region": "California",
+    "city": "Mountain View",
+    "country_code": null,
+    "created_at": "2025-10-11T21:46:42.104Z",
+    "updated_at": "2025-10-11T21:46:42.104Z",
     "is_location_cache": true
   }
 ]
