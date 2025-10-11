@@ -4458,5 +4458,21 @@
     "is_test_data": false,
     "created_at": "2025-10-11T22:18:06.105Z",
     "updated_at": "2025-10-11T22:18:06.105Z"
+  },
+  {
+    "id": "view_1760221163650_7ek2s2w0y",
+    "video_id": "PomGalleryC.mp4",
+    "video_filename": "PomGalleryC.mp4",
+    "video_type": "gallery",
+    "video_title": "",
+    "session_id": "session_1760221163649",
+    "language": "en-US",
+    "watch_time": 7,
+    "completion_rate": 0,
+    "ip_address": "172.31.89.194",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0",
+    "is_test_data": false,
+    "created_at": "2025-10-11T22:19:23.650Z",
+    "updated_at": "2025-10-11T22:19:23.650Z"
   }
 ]
