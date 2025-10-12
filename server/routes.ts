@@ -2774,9 +2774,15 @@ export async function registerRoutes(app: Express): Promise<void> {
   function buildVisitorList(sessions: any[], dateFrom?: string, dateTo?: string) {
     // Helper function to normalize visitor duration from available timestamps
     const normalizeVisitorDuration = (session: any): number => {
-      // First try explicit duration fields
+      // CRITICAL FIX: Check explicit duration fields but reject impossible values
+      const MAX_REASONABLE_DURATION = 2 * 60 * 60; // 2 hours in seconds
       const explicitDuration = session.duration || session.session_duration;
       if (explicitDuration && explicitDuration > 0) {
+        // Reject impossible durations (> 2 hours)
+        if (explicitDuration > MAX_REASONABLE_DURATION) {
+          console.warn(`🚫 REJECTED impossible stored duration: ${explicitDuration}s (${Math.round(explicitDuration/3600)}h) for IP ${session.ip_address}`);
+          return 0; // Return 0 for impossible stored durations
+        }
         return explicitDuration;
       }
       
@@ -2806,6 +2812,13 @@ export async function registerRoutes(app: Express): Promise<void> {
         }
         
         const calculatedDuration = Math.round((endTime - startTime) / 1000); // Convert to seconds
+        
+        // Double-check calculated duration is reasonable
+        if (calculatedDuration > MAX_REASONABLE_DURATION) {
+          console.warn(`🚫 REJECTED impossible calculated duration: ${calculatedDuration}s for IP ${session.ip_address}`);
+          return 0;
+        }
+        
         return Math.max(calculatedDuration, 0); // Ensure non-negative
       }
       
