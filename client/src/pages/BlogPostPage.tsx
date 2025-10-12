@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { BlockRenderer } from '@/components/blog/BlockRenderer';
 import { DEFAULT_OG, DEFAULT_OG_FR } from '@/constants/seo';
 import { directusAsset } from '@/constants/directus';
+import DOMPurify from 'dompurify';
 
 interface Author {
   id: string;
@@ -30,6 +31,7 @@ interface Post {
   slug: string;
   excerpt: string;
   content: string | PostContent;
+  body_html?: string;
   language: string;
   author?: Author;
   status: string;
@@ -253,7 +255,18 @@ export default function BlogPostPage() {
               className="bg-white p-8 md:p-12 rounded-lg shadow-sm"
               data-testid="post-content"
             >
-              {typeof post.content === 'object' && post.content.blocks ? (
+              {post.body_html ? (
+                <article
+                  className="prose prose-lg max-w-none
+                    prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759]
+                    prose-p:text-gray-700 prose-p:leading-relaxed
+                    prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-[#2A4759]
+                    prose-img:rounded-lg prose-img:shadow-lg prose-img:max-w-full prose-img:h-auto
+                    prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.body_html) }}
+                />
+              ) : typeof post.content === 'object' && post.content.blocks ? (
                 <BlockRenderer blocks={post.content.blocks} />
               ) : (
                 <div
