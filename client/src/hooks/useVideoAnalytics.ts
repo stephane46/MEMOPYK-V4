@@ -197,7 +197,21 @@ export const useVideoAnalytics = () => {
       const sessionStart = localStorage.getItem(sessionStartKey);
       if (!sessionStart) return;
       
-      const duration = Math.round((Date.now() - parseInt(sessionStart)) / 1000);
+      const startTime = parseInt(sessionStart);
+      const now = Date.now();
+      const sessionAge = now - startTime;
+      
+      // CRITICAL FIX: Ignore stale sessions (older than 2 hours)
+      // Prevents impossible durations like 40h+ from old unclosed sessions
+      const MAX_SESSION_AGE = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+      if (sessionAge > MAX_SESSION_AGE) {
+        console.warn(`🚫 SESSION DURATION: Ignoring stale session (${Math.round(sessionAge / 3600000)}h old) - resetting`);
+        localStorage.removeItem(sessionStartKey);
+        localStorage.removeItem(sessionIdKey);
+        return;
+      }
+      
+      const duration = Math.round(sessionAge / 1000);
       const sessionId = localStorage.getItem(sessionIdKey);
       
       console.log(`📊 SESSION DURATION: Current session duration: ${duration}s for session: ${sessionId || 'none'}`);
