@@ -2780,7 +2780,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         return explicitDuration;
       }
       
-      // Calculate from timestamps - priority: ended_at > updated_at > now
+      // Calculate from timestamps - priority: ended_at > updated_at
       if (session.created_at) {
         const startTime = new Date(session.created_at).getTime();
         let endTime: number;
@@ -2792,8 +2792,17 @@ export async function registerRoutes(app: Express): Promise<void> {
           // Use updated_at as proxy for last activity
           endTime = new Date(session.updated_at).getTime();
         } else {
-          // For active sessions, use current time
-          endTime = Date.now();
+          // CRITICAL FIX: For sessions without ended_at or updated_at, 
+          // only use current time if session is very recent (< 1 hour old)
+          // Otherwise return 0 to avoid impossible durations for old unclosed sessions
+          const sessionAge = (Date.now() - startTime) / 1000; // Age in seconds
+          if (sessionAge < 3600) {
+            // Session is less than 1 hour old - likely active, use current time
+            endTime = Date.now();
+          } else {
+            // Session is old without closure - duration unknown, return 0
+            return 0;
+          }
         }
         
         const calculatedDuration = Math.round((endTime - startTime) / 1000); // Convert to seconds
