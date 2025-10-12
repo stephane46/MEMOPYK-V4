@@ -242,7 +242,12 @@ export default function BlogPostPage() {
           {heroUrl && (
             <div className="w-full">
               <div className="mx-auto max-w-screen-xl px-4">
-                <div className="relative w-full aspect-[16/9] max-h-[70vh] bg-gray-100 rounded-xl overflow-hidden">
+                <div 
+                  className="relative w-full aspect-[16/9] max-h-[70vh] bg-gray-100 rounded-xl overflow-hidden"
+                  {...(inVisualEditingMode && {
+                    'data-directus': `collection:posts;item:${post.id};fields:featured_image_url;mode:popover`
+                  })}
+                >
                   <img
                     src={heroUrl}
                     srcSet={heroSrcSet}
@@ -263,6 +268,9 @@ export default function BlogPostPage() {
               <h1
                 className="text-4xl md:text-5xl font-['Playfair_Display'] text-[#2A4759] mb-4"
                 data-testid="text-post-title"
+                {...(inVisualEditingMode && {
+                  'data-directus': `collection:posts;item:${post.id};fields:title;mode:popover`
+                })}
               >
                 {post.title}
               </h1>
@@ -305,6 +313,9 @@ export default function BlogPostPage() {
                     prose-strong:text-[#2A4759]
                     prose-img:rounded-lg prose-img:shadow-lg prose-img:max-w-full prose-img:h-auto
                     prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
+                  {...(inVisualEditingMode && {
+                    'data-directus': `collection:posts;item:${post.id};fields:body_html;mode:drawer`
+                  })}
                   dangerouslySetInnerHTML={{ __html: rewriteBodyImages(DOMPurify.sanitize(post.body_html)) }}
                 />
               ) : typeof post.content === 'object' && post.content.blocks ? (
