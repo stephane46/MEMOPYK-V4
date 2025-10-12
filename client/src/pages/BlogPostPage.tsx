@@ -322,7 +322,13 @@ export default function BlogPostPage() {
                   dangerouslySetInnerHTML={{ __html: rewriteBodyImages(DOMPurify.sanitize(post.body_html)) }}
                 />
               ) : typeof post.content === 'object' && post.content.blocks ? (
-                <BlockRenderer blocks={post.content.blocks} />
+                <div
+                  {...(inVisualEditingMode && {
+                    'data-directus': `collection:posts;item:${post.id};fields:content;mode:drawer`
+                  })}
+                >
+                  <BlockRenderer blocks={post.content.blocks} />
+                </div>
               ) : (
                 <div
                   className="prose prose-lg max-w-none
@@ -332,6 +338,9 @@ export default function BlogPostPage() {
                     prose-strong:text-[#2A4759]
                     prose-img:rounded-lg prose-img:shadow-lg
                     prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
+                  {...(inVisualEditingMode && {
+                    'data-directus': `collection:posts;item:${post.id};fields:content;mode:drawer`
+                  })}
                   dangerouslySetInnerHTML={{ __html: typeof post.content === 'string' ? post.content : '' }}
                 />
               )}
