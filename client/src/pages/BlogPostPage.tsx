@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, Link, useParams } from 'wouter';
 import { Helmet } from 'react-helmet-async';
@@ -95,6 +96,14 @@ export default function BlogPostPage() {
       return response.json();
     }
   });
+
+  const inVisualEditingMode = typeof window !== 'undefined' && window.location.search.includes('ve=1');
+
+  useEffect(() => {
+    if (!inVisualEditingMode) return;
+    
+    import('@/lib/visualEditing').then(m => m.applyVisualEditing());
+  }, [inVisualEditingMode]);
 
   const t = {
     'fr-FR': {
