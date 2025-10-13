@@ -18,3 +18,28 @@ export function directusAsset(
   });
   return `${DIRECTUS_URL}${path}${q.toString() ? `?${q}` : ""}`;
 }
+
+export async function getPostWithBlocks(slug: string, locale: string) {
+  const language = locale === 'fr-FR' ? 'fr' : 'en';
+  
+  const params = new URLSearchParams({
+    'filter[slug][_eq]': slug,
+    'filter[language][_eq]': language,
+    'fields': '*,blocks.collection,blocks.item.*',
+    'limit': '1'
+  });
+
+  const response = await fetch(`${DIRECTUS_URL}/items/posts?${params}`);
+  
+  if (!response.ok) {
+    return null;
+  }
+
+  const data = await response.json();
+  
+  if (!data.data || data.data.length === 0) {
+    return null;
+  }
+
+  return data.data[0];
+}

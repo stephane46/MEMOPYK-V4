@@ -4,8 +4,9 @@ import { useLocation, Link, useParams } from 'wouter';
 import { Helmet } from 'react-helmet-async';
 import { setAttr } from '@directus/visual-editing';
 import { BlockRenderer } from '@/components/blog/BlockRenderer';
+import PostBlocks from '@/components/blog/PostBlocks';
 import { DEFAULT_OG, DEFAULT_OG_FR } from '@/constants/seo';
-import { directusAsset } from '@/constants/directus';
+import { directusAsset, getPostWithBlocks } from '@/constants/directus';
 import DOMPurify from 'dompurify';
 
 function rewriteBodyImages(html: string): string {
@@ -79,6 +80,10 @@ interface Post {
   featured_image_url?: string;
   featured_image_alt?: string;
   reading_time_minutes?: number;
+  blocks?: Array<{
+    collection: string;
+    item: any;
+  }>;
 }
 
 export default function BlogPostPage() {
@@ -91,6 +96,13 @@ export default function BlogPostPage() {
   const { data: post, isLoading } = useQuery<Post | null>({
     queryKey: ['/api/blog/post', slug, languageCode],
     queryFn: async () => {
+      // Try fetching from Directus first to get blocks
+      const directusPost = await getPostWithBlocks(slug!, languageCode);
+      if (directusPost && directusPost.blocks && directusPost.blocks.length > 0) {
+        return directusPost;
+      }
+      
+      // Fallback to existing API endpoint when blocks not available
       const response = await fetch(`/api/blog/posts/${slug}?language=${languageCode}`);
       if (response.status === 404) return null;
       if (!response.ok) throw new Error('Failed to fetch post');
@@ -333,7 +345,11 @@ export default function BlogPostPage() {
               className="bg-white p-8 md:p-12 rounded-lg shadow-sm"
               data-testid="post-content"
             >
-              {post.body_html ? (
+              {post.blocks && post.blocks.length > 0 ? (
+                <div {...getDirectusAttr('blocks', 'drawer')}>
+                  <PostBlocks blocks={post.blocks} />
+                </div>
+              ) : post.body_html ? (
                 <article
                   className="prose prose-lg max-w-none
                     prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759]
