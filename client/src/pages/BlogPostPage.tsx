@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, Link, useParams } from 'wouter';
 import { Helmet } from 'react-helmet-async';
+import { setAttr } from '@directus/visual-editing';
 import { BlockRenderer } from '@/components/blog/BlockRenderer';
 import { DEFAULT_OG, DEFAULT_OG_FR } from '@/constants/seo';
 import { directusAsset } from '@/constants/directus';
@@ -103,10 +104,24 @@ export default function BlogPostPage() {
   }, [location]);
 
   useEffect(() => {
-    if (!inVisualEditingMode) return;
+    if (!inVisualEditingMode || !post) return;
     
-    import('@/lib/visualEditing').then(m => m.applyVisualEditing());
-  }, [inVisualEditingMode]);
+    // Debug: verify we have the correct primary key
+    console.log('🔍 Visual Editing - Post ID:', post.id, 'Type:', typeof post.id);
+    
+    // Apply visual editing AFTER post data is loaded
+    import('@directus/visual-editing').then(async ({ apply }) => {
+      await apply({ directusUrl: 'https://cms.memopyk.org' });
+      console.log('✏️ Visual Editing applied');
+      
+      // Debug: log all data-directus attributes found
+      setTimeout(() => {
+        document.querySelectorAll('[data-directus]').forEach(el => {
+          console.log('📌 Found data-directus:', el.getAttribute('data-directus'));
+        });
+      }, 100);
+    });
+  }, [inVisualEditingMode, post]);
 
   const t = {
     'fr-FR': {
@@ -248,7 +263,12 @@ export default function BlogPostPage() {
                 <div 
                   className="relative w-full aspect-[16/9] max-h-[70vh] bg-gray-100 rounded-xl overflow-hidden"
                   {...(inVisualEditingMode && {
-                    'data-directus': `collection:posts;item:${post.id};fields:featured_image_url;mode:popover`
+                    'data-directus': setAttr({
+                      collection: 'posts',
+                      item: String(post.id),
+                      fields: 'featured_image_url',
+                      mode: 'popover'
+                    })
                   })}
                 >
                   <img
@@ -272,7 +292,12 @@ export default function BlogPostPage() {
                 className="text-4xl md:text-5xl font-['Playfair_Display'] text-[#2A4759] mb-4"
                 data-testid="text-post-title"
                 {...(inVisualEditingMode && {
-                  'data-directus': `collection:posts;item:${post.id};fields:title;mode:popover`
+                  'data-directus': setAttr({
+                    collection: 'posts',
+                    item: String(post.id),
+                    fields: 'title',
+                    mode: 'popover'
+                  })
                 })}
               >
                 {post.title}
@@ -317,14 +342,24 @@ export default function BlogPostPage() {
                     prose-img:rounded-lg prose-img:shadow-lg prose-img:max-w-full prose-img:h-auto
                     prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
                   {...(inVisualEditingMode && {
-                    'data-directus': `collection:posts;item:${post.id};fields:body_html;mode:drawer`
+                    'data-directus': setAttr({
+                      collection: 'posts',
+                      item: String(post.id),
+                      fields: 'body_html',
+                      mode: 'drawer'
+                    })
                   })}
                   dangerouslySetInnerHTML={{ __html: rewriteBodyImages(DOMPurify.sanitize(post.body_html)) }}
                 />
               ) : typeof post.content === 'object' && post.content.blocks ? (
                 <div
                   {...(inVisualEditingMode && {
-                    'data-directus': `collection:posts;item:${post.id};fields:content;mode:drawer`
+                    'data-directus': setAttr({
+                      collection: 'posts',
+                      item: String(post.id),
+                      fields: 'content',
+                      mode: 'drawer'
+                    })
                   })}
                 >
                   <BlockRenderer blocks={post.content.blocks} />
@@ -339,7 +374,12 @@ export default function BlogPostPage() {
                     prose-img:rounded-lg prose-img:shadow-lg
                     prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
                   {...(inVisualEditingMode && {
-                    'data-directus': `collection:posts;item:${post.id};fields:content;mode:drawer`
+                    'data-directus': setAttr({
+                      collection: 'posts',
+                      item: String(post.id),
+                      fields: 'content',
+                      mode: 'drawer'
+                    })
                   })}
                   dangerouslySetInnerHTML={{ __html: typeof post.content === 'string' ? post.content : '' }}
                 />
