@@ -1,3 +1,7 @@
+import DOMPurify from 'dompurify';
+import { setAttr } from '@directus/visual-editing';
+import { rewriteBodyImages } from '@/lib/imageUtils';
+
 interface PostBlocksProps {
   blocks: Array<{
     collection: string;
@@ -23,14 +27,48 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
             
             return (
               <Tag 
-                key={i}
+                key={`heading-${i}`}
                 data-testid={`block-heading-${i}`}
                 className={`${alignClass} ${sizeClass} font-['Playfair_Display'] text-[#2A4759] leading-tight text-balance`}
+                data-directus={setAttr({
+                  collection: "block_heading",
+                  item: b.item?.id,
+                  fields: "text,level,align",
+                  mode: "popover",
+                })}
               >
                 {text}
               </Tag>
             );
           }
+
+          case "block_richtext": {
+            const raw = b.item?.html || "";
+            const sanitized = DOMPurify.sanitize(raw);
+            const html = rewriteBodyImages(sanitized);
+
+            return (
+              <article
+                key={`richtext-${i}`}
+                data-testid={`block-richtext-${i}`}
+                className="prose prose-lg max-w-none
+                  prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759]
+                  prose-p:text-gray-700 prose-p:leading-relaxed
+                  prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
+                  prose-strong:text-[#2A4759]
+                  prose-img:rounded-lg prose-img:shadow-lg prose-img:max-w-full prose-img:h-auto
+                  prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
+                dangerouslySetInnerHTML={{ __html: html }}
+                data-directus={setAttr({
+                  collection: "block_richtext",
+                  item: b.item?.id,
+                  fields: "html",
+                  mode: "drawer",
+                })}
+              />
+            );
+          }
+
           default:
             return null;
         }
