@@ -116,12 +116,27 @@ export default function BlogPostPage() {
       
       // Debug: log all data-directus attributes found
       setTimeout(() => {
-        document.querySelectorAll('[data-directus]').forEach(el => {
-          console.log('📌 Found data-directus:', el.getAttribute('data-directus'));
+        const attrs = document.querySelectorAll('[data-directus]');
+        console.log('📊 Total data-directus attributes:', attrs.length);
+        attrs.forEach(el => {
+          console.log('📌 Found:', el.getAttribute('data-directus'));
         });
       }, 100);
     });
   }, [inVisualEditingMode, post]);
+
+  // Helper to create data-directus attribute
+  const getDirectusAttr = (fields: string, mode: 'popover' | 'drawer' = 'popover') => {
+    if (!inVisualEditingMode || !post) return {};
+    return {
+      'data-directus': setAttr({
+        collection: 'posts',
+        item: String(post.id),
+        fields,
+        mode
+      })
+    };
+  };
 
   const t = {
     'fr-FR': {
@@ -262,14 +277,7 @@ export default function BlogPostPage() {
               <div className="mx-auto max-w-screen-xl px-4">
                 <div 
                   className="relative w-full aspect-[16/9] max-h-[70vh] bg-gray-100 rounded-xl overflow-hidden"
-                  {...(inVisualEditingMode && {
-                    'data-directus': setAttr({
-                      collection: 'posts',
-                      item: String(post.id),
-                      fields: 'featured_image_url',
-                      mode: 'popover'
-                    })
-                  })}
+                  {...getDirectusAttr('featured_image_url', 'popover')}
                 >
                   <img
                     src={heroUrl}
@@ -291,14 +299,7 @@ export default function BlogPostPage() {
               <h1
                 className="text-4xl md:text-5xl font-['Playfair_Display'] text-[#2A4759] mb-4"
                 data-testid="text-post-title"
-                {...(inVisualEditingMode && {
-                  'data-directus': setAttr({
-                    collection: 'posts',
-                    item: String(post.id),
-                    fields: 'title',
-                    mode: 'popover'
-                  })
-                })}
+                {...getDirectusAttr('title', 'popover')}
               >
                 {post.title}
               </h1>
@@ -341,26 +342,12 @@ export default function BlogPostPage() {
                     prose-strong:text-[#2A4759]
                     prose-img:rounded-lg prose-img:shadow-lg prose-img:max-w-full prose-img:h-auto
                     prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
-                  {...(inVisualEditingMode && {
-                    'data-directus': setAttr({
-                      collection: 'posts',
-                      item: String(post.id),
-                      fields: 'body_html',
-                      mode: 'drawer'
-                    })
-                  })}
+                  {...getDirectusAttr('body_html', 'drawer')}
                   dangerouslySetInnerHTML={{ __html: rewriteBodyImages(DOMPurify.sanitize(post.body_html)) }}
                 />
               ) : typeof post.content === 'object' && post.content.blocks ? (
                 <div
-                  {...(inVisualEditingMode && {
-                    'data-directus': setAttr({
-                      collection: 'posts',
-                      item: String(post.id),
-                      fields: 'content',
-                      mode: 'drawer'
-                    })
-                  })}
+                  {...getDirectusAttr('content', 'drawer')}
                 >
                   <BlockRenderer blocks={post.content.blocks} />
                 </div>
@@ -373,14 +360,7 @@ export default function BlogPostPage() {
                     prose-strong:text-[#2A4759]
                     prose-img:rounded-lg prose-img:shadow-lg
                     prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
-                  {...(inVisualEditingMode && {
-                    'data-directus': setAttr({
-                      collection: 'posts',
-                      item: String(post.id),
-                      fields: 'content',
-                      mode: 'drawer'
-                    })
-                  })}
+                  {...getDirectusAttr('content', 'drawer')}
                   dangerouslySetInnerHTML={{ __html: typeof post.content === 'string' ? post.content : '' }}
                 />
               )}
