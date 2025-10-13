@@ -115,6 +115,13 @@ app.use(express.urlencoded({
 
 // Configure CSP headers to allow Google Analytics, Supabase, Directus CMS, and Google Fonts
 app.use((req, res, next) => {
+  const isDev = process.env.NODE_ENV !== 'production';
+  
+  // Build frame-ancestors directive for Directus Visual Editor
+  const frameAncestors = isDev 
+    ? "frame-ancestors 'self' https://cms.memopyk.org https://*.replit.dev" 
+    : "frame-ancestors 'self' https://cms.memopyk.org";
+  
   res.setHeader('Content-Security-Policy', 
     "default-src 'self'; " +
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://replit.com https://www.clarity.ms https://scripts.clarity.ms; " +
@@ -123,7 +130,8 @@ app.use((req, res, next) => {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src 'self' data: https://fonts.gstatic.com; " +
     "frame-src 'self' https://www.googletagmanager.com; " +
-    "media-src 'self' https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cms.memopyk.org;"
+    "media-src 'self' https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cms.memopyk.org; " +
+    frameAncestors + ";"
   );
   next();
 });
