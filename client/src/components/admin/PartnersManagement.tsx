@@ -47,14 +47,15 @@ export default function PartnersManagement() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Partenaires</h2>
           <p className="text-gray-600 dark:text-gray-700">Gestion des demandes de partenariat</p>
         </div>
-        <Button 
+        <button 
           onClick={handleDownload}
-          className="bg-[#D67C4A] hover:bg-[#B85A2A] text-white"
+          className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-sm font-semibold rounded-lg text-white cursor-pointer transition-all hover:scale-105 hover:opacity-90"
+          style={{ backgroundColor: '#D67C4A' }}
           data-testid="button-download-partners"
         >
           <Download className="h-4 w-4 mr-2" />
           Télécharger Excel
-        </Button>
+        </button>
       </div>
 
       {/* Summary Card */}
