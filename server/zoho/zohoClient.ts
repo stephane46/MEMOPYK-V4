@@ -25,6 +25,9 @@ async function getAccessToken(): Promise<string> {
     grant_type: "refresh_token",
   }).toString();
   
+  console.log("🔐 ZOHO AUTH: Requesting access token from:", authUrl);
+  console.log("🔐 ZOHO AUTH: Using client_id:", clientId.substring(0, 10) + "...");
+  
   const res = await fetch(authUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -33,7 +36,14 @@ async function getAccessToken(): Promise<string> {
   
   if (!res.ok) {
     const t = await res.text();
-    throw new Error(`Zoho token refresh failed: ${res.status} ${t}`);
+    console.error("❌ ZOHO AUTH FAILED:", {
+      status: res.status,
+      authUrl,
+      clientId: clientId.substring(0, 10) + "...",
+      hasRefreshToken: !!refreshToken,
+      response: t.substring(0, 200)
+    });
+    throw new Error(`Zoho token refresh failed: ${res.status} - Please check your ZOHO credentials in environment variables`);
   }
   
   const json: any = await res.json();

@@ -528,7 +528,7 @@ export default function PartnerIntakeFR() {
                 <Button
                   type="submit"
                   disabled={form.formState.isSubmitting}
-                  className="w-full bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white text-lg py-6"
+                  className="w-full !bg-[#D67C4A] hover:!bg-[#D67C4A]/90 !text-white text-lg py-6"
                   data-testid="button-submit"
                 >
                   {form.formState.isSubmitting ? (
