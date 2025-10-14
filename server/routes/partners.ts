@@ -86,15 +86,25 @@ router.get("/api/partners/summary", async (req, res) => {
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = XLSX.utils.sheet_to_json(worksheet);
 
+    // Import i18n-iso-countries for country name conversion
+    const countries = require("i18n-iso-countries");
+    const frLocale = require("i18n-iso-countries/langs/fr.json");
+    countries.registerLocale(frLocale);
+
     // Format for display (last 10 submissions)
-    const partners = data.slice(-10).reverse().map((row: any) => ({
-      name: row["Partner Name"] || "",
-      email: row["Email"] || "",
-      phone: row["Phone"] || "",
-      city: row["City"] || "",
-      country: row["Country"] || "",
-      submitted: row["Timestamp"] || ""
-    }));
+    const partners = data.slice(-10).reverse().map((row: any) => {
+      const countryCode = row["Country"] || "";
+      const countryName = countryCode ? countries.getName(countryCode, "fr") || countryCode : "";
+      
+      return {
+        name: row["Partner Name"] || "",
+        email: row["Email"] || "",
+        phone: row["Phone"] || "",
+        city: row["City"] || "",
+        country: countryName,
+        submitted: row["Timestamp"] || ""
+      };
+    });
 
     res.json({ partners, count: data.length });
   } catch (e: any) {
