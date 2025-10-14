@@ -83,15 +83,31 @@ export default function PartnersManagement() {
         </div>
         <button 
           onClick={handleDownload}
-          className="inline-flex items-center px-6 py-3 shadow-lg text-sm font-semibold rounded-lg cursor-pointer transition-all hover:scale-105 hover:shadow-xl"
           style={{ 
-            backgroundColor: '#D67C4A !important',
-            color: '#ffffff !important',
-            border: '2px solid #D67C4A !important'
+            display: 'inline-flex',
+            alignItems: 'center',
+            padding: '12px 24px',
+            backgroundColor: '#D67C4A',
+            color: '#ffffff',
+            border: '2px solid #D67C4A',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.boxShadow = '0 10px 15px rgba(0,0,0,0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
           }}
           data-testid="button-download-partners"
         >
-          <Download className="h-4 w-4 mr-2" style={{ color: '#ffffff !important' }} />
+          <Download className="h-4 w-4 mr-2" style={{ color: '#ffffff' }} />
           Télécharger Excel
         </button>
       </div>
