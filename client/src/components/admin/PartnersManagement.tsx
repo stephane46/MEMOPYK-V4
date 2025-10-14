@@ -83,11 +83,15 @@ export default function PartnersManagement() {
         </div>
         <button 
           onClick={handleDownload}
-          className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-sm font-semibold rounded-lg text-white cursor-pointer transition-all hover:scale-105 hover:opacity-90"
-          style={{ backgroundColor: '#D67C4A' }}
+          className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-sm font-semibold rounded-lg cursor-pointer transition-all hover:scale-105 hover:opacity-90"
+          style={{ 
+            backgroundColor: '#D67C4A !important',
+            color: '#ffffff !important',
+            border: '1px solid #D67C4A !important'
+          }}
           data-testid="button-download-partners"
         >
-          <Download className="h-4 w-4 mr-2" />
+          <Download className="h-4 w-4 mr-2" style={{ color: '#ffffff !important' }} />
           Télécharger Excel
         </button>
       </div>
@@ -159,16 +163,19 @@ export default function PartnersManagement() {
                         {formatDate(partner.submitted)}
                       </td>
                       <td className="py-3 px-4 text-sm">
-                        <Button
-                          variant="outline"
-                          size="sm"
+                        <button
                           onClick={() => handleDelete(partner.id, partner.name)}
                           disabled={deleteMutation.isPending}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg cursor-pointer transition-all hover:scale-105 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={{
+                            backgroundColor: '#dc2626 !important',
+                            color: '#ffffff !important',
+                            border: '1px solid #dc2626 !important'
+                          }}
                           data-testid={`button-delete-partner-${partner.id}`}
                         >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                          <Trash2 className="h-4 w-4" style={{ color: '#ffffff !important' }} />
+                        </button>
                       </td>
                     </tr>
                   ))}
