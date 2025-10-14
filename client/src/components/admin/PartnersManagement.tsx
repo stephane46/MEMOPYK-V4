@@ -159,14 +159,16 @@ export default function PartnersManagement() {
                         {formatDate(partner.submitted)}
                       </td>
                       <td className="py-3 px-4 text-sm">
-                        <button
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => handleDelete(partner.id, partner.name)}
                           disabled={deleteMutation.isPending}
-                          className="inline-flex items-center px-3 py-1.5 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors disabled:opacity-50"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                           data-testid={`button-delete-partner-${partner.id}`}
                         >
                           <Trash2 className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
