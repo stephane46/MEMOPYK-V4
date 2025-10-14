@@ -59,7 +59,7 @@ export default function PartnerIntakeFR() {
         line2: "",
         city: "",
         postal_code: "",
-        country: "",
+        country: "FR",
       },
       services: [],
       photo_formats: [],
