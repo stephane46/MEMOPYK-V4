@@ -16,41 +16,59 @@ let tokenState: ZohoTokenState | null = null;
 
 async function getAccessToken(): Promise<string> {
   const now = Date.now();
-  if (tokenState && now < tokenState.expiry - 10_000) return tokenState.accessToken;
+  // Refresh 5 minutes (300 seconds) before expiry, just like Python code
+  if (tokenState && now < tokenState.expiry - 300_000) return tokenState.accessToken;
   
-  const body = new URLSearchParams({
+  console.log("🔐 ZOHO: Token missing, expired or nearing expiry. Refreshing...");
+  
+  // Build query parameters (matching Python's requests.post with params=)
+  const params = new URLSearchParams({
     refresh_token: refreshToken,
     client_id: clientId,
     client_secret: clientSecret,
     grant_type: "refresh_token",
-  }).toString();
+  });
   
-  console.log("🔐 ZOHO AUTH: Requesting access token from:", authUrl);
-  console.log("🔐 ZOHO AUTH: Using client_id:", clientId.substring(0, 10) + "...");
+  const tokenUrl = `${authUrl}?${params.toString()}`;
   
-  const res = await fetch(authUrl, {
+  console.log("🔐 ZOHO: Requesting token from:", authUrl);
+  console.log("🔐 ZOHO: Using client_id:", clientId.substring(0, 10) + "...");
+  
+  const res = await fetch(tokenUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body,
   });
   
   if (!res.ok) {
-    const t = await res.text();
+    const text = await res.text();
     console.error("❌ ZOHO AUTH FAILED:", {
       status: res.status,
+      statusText: res.statusText,
       authUrl,
-      clientId: clientId.substring(0, 10) + "...",
+      hasClientId: !!clientId,
+      hasClientSecret: !!clientSecret,
       hasRefreshToken: !!refreshToken,
-      response: t.substring(0, 200)
+      response: text.substring(0, 300)
     });
-    throw new Error(`Zoho token refresh failed: ${res.status} - Please check your ZOHO credentials in environment variables`);
+    throw new Error(`Zoho token refresh failed: ${res.status} ${res.statusText}. Check your OAuth credentials.`);
   }
   
   const json: any = await res.json();
+  
+  if (!json.access_token) {
+    console.error("❌ ZOHO: No access_token in response:", json);
+    throw new Error(`Zoho token response missing access_token: ${json.error || 'Unknown error'}`);
+  }
+  
+  const expiresIn = json.expires_in || 3600;
+  const expirySeconds = expiresIn - 300; // 5-minute buffer
+  
   tokenState = {
     accessToken: json.access_token,
-    expiry: Date.now() + (json.expires_in * 1000 || 3300_000),
+    expiry: Date.now() + (expirySeconds * 1000),
   };
+  
+  console.log(`✅ ZOHO: Token refreshed successfully. Expires in ~${(expirySeconds / 60).toFixed(1)} minutes`);
   
   return tokenState.accessToken;
 }
