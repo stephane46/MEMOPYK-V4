@@ -75,6 +75,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Hybrid Storage Analytics Fix (v1.0.188)**: Fixed "Analytics (old)" dashboard failures by replacing direct PostgreSQL `pool.unsafe()` queries with proven hybrid storage pattern. Endpoints `/api/analytics/geo` and `/api/analytics/overview` now use `this.supabase.from()` with automatic JSON fallback, eliminating CONNECT_TIMEOUT errors when accessing Supabase VPS database.
 - **VideoOverlay Re-render Fix (v1.0.200)**: CRITICAL fix for VideoOverlay constant remounting during video playback. Completely rewritten with stable React patterns: memoized props/calculations, useCallback for all event handlers, eliminated resize listeners, disabled problematic state updates in parent components (GallerySection animation observers, storage listeners, mobile detection). This fix enables proper GA4 video progress tracking (25%, 50%, 75%, 100%) that was previously impossible due to component remounting.
 - **Debug Cleanup (v1.0.201)**: Comprehensive removal of debugging statements and GA debug HUD after successful VideoOverlay stabilization. Removed all console.log debugging emojis (🎬, 🚨, 💓, 🎯, 🔥) while preserving essential functionality. VideoOverlay backup retained as VideoOverlay_backup_20250905_131134.tsx.
+- **Partner Intake System**: Bilingual partner directory system with Zoho CRM integration. Partners register with full profiles (services, formats, capabilities) via French (/fr-FR/partenaires/devenir) and English (/en-US/partners/join) intake forms. Backend creates Account, Contact, and Partner records in Zoho CRM (EU) using OAuth refresh-token flow with automatic token rotation. Security layer includes rate limiting (30 req/min), CSRF double-submit cookie pattern, and reCAPTCHA stub. Complex validation via shared Zod schema with progressive disclosure UX for optimal user experience.
 
 ## External Dependencies
 
@@ -98,3 +99,18 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **DOMPurify**: HTML sanitization library.
 - **Crypto-js**: Client-side MD5 hashing.
 - **Multer**: Node.js middleware for file uploads.
+
+## Environment Variables
+
+### Zoho CRM Integration (Partner Intake System)
+- `ZOHO_BASE_URL`: Zoho CRM API base URL (EU: `https://www.zohoapis.eu`)
+- `ZOHO_AUTH_URL`: Zoho OAuth token URL (EU: `https://accounts.zoho.eu/oauth/v2/token`)
+- `ZOHO_CLIENT_ID`: Zoho OAuth client ID
+- `ZOHO_CLIENT_SECRET`: Zoho OAuth client secret
+- `ZOHO_REFRESH_TOKEN`: Zoho OAuth refresh token for automatic token rotation
+- `PARTNERS_MODULE_API` (optional): Zoho CRM module name (defaults to "Partners")
+
+### Configuration Notes
+- All Zoho credentials must be configured for the EU region (zohoapis.eu, accounts.zoho.eu)
+- OAuth refresh token flow enables automatic access token rotation without user intervention
+- Partner intake endpoints use rate limiting (30 requests/minute) and CSRF protection

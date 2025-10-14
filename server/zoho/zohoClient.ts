@@ -25,7 +25,7 @@ async function getAccessToken(): Promise<string> {
     grant_type: "refresh_token",
   }).toString();
   
-  const res = await fetch(`${authUrl}/oauth/v2/token`, {
+  const res = await fetch(authUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body,
