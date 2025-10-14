@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Clock, TrendingUp, Globe, Sparkles, Layers } from 'lucide-react';
+import { ArrowUp, ArrowDown, Play, RefreshCw, BarChart3, Video, HardDrive, Users, MessageSquare, FileText, LogOut, TestTube, Rocket, X, Type, Save, ChevronUp, ChevronDown, Trash2, Eye, EyeOff, Upload, FileVideo, Database, Check, Zap, Search, Clock, TrendingUp, Globe, Sparkles, Layers, UserCheck } from 'lucide-react';
 import { AnalyticsNewDashboard } from '@/admin/analyticsNew/AnalyticsNewDashboard';
 import { formatFrenchDateTime } from '@/utils/date-format';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +21,7 @@ import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { WhyMemopykManagement } from '@/components/admin/WhyMemopykManagement';
+import PartnersManagement from '@/components/admin/PartnersManagement';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import GA4AnalyticsDashboard from '@/components/admin/GA4AnalyticsDashboard';
 import CleanGA4Analytics from '@/components/admin/CleanGA4Analytics';
@@ -235,6 +236,7 @@ export default function AdminPage() {
     { id: 'seo', label: 'SEO Management', icon: Globe },
     { id: 'hero-management', label: 'Vidéos Hero', icon: Video },
     { id: 'gallery', label: 'Galerie Vidéos', icon: Play },
+    { id: 'partners', label: 'Partenaires', icon: UserCheck },
     { id: 'cache', label: 'Cache', icon: HardDrive },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
@@ -1491,7 +1493,10 @@ export default function AdminPage() {
             </div>
           )}
 
-
+          {/* Partners Management */}
+          {activeSection === 'partners' && (
+            <PartnersManagement />
+          )}
 
           {/* CTA Management */}
           {activeSection === 'cta' && (

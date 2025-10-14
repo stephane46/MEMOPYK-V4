@@ -46,6 +46,52 @@ router.post("/api/partners/intake", rateLimit(30), async (req, res) => {
   }
 });
 
+// Download Excel file
+router.get("/api/partners/download", async (req, res) => {
+  try {
+    if (!fs.existsSync(EXCEL_FILE)) {
+      return res.status(404).json({ error: "No partner submissions found" });
+    }
+
+    res.download(EXCEL_FILE, "partner-submissions.xlsx", (err) => {
+      if (err) {
+        console.error("Download error:", err);
+        res.status(500).json({ error: "Failed to download file" });
+      }
+    });
+  } catch (e: any) {
+    console.error("Download error:", e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get partner summary (for admin display)
+router.get("/api/partners/summary", async (req, res) => {
+  try {
+    if (!fs.existsSync(EXCEL_FILE)) {
+      return res.json({ partners: [], count: 0 });
+    }
+
+    const workbook = XLSX.readFile(EXCEL_FILE);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+
+    // Format for display (last 10 submissions)
+    const partners = data.slice(-10).reverse().map((row: any) => ({
+      name: row["Partner Name"] || "",
+      email: row["Email"] || "",
+      country: row["Country"] || "",
+      submitted: row["Submitted"] || "",
+      services: row["Services"] || ""
+    }));
+
+    res.json({ partners, count: data.length });
+  } catch (e: any) {
+    console.error("Summary error:", e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 async function saveToExcel(data: any) {
   let workbook: XLSX.WorkBook;
   let worksheet: XLSX.WorkSheet;
