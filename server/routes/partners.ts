@@ -139,16 +139,14 @@ router.delete("/api/partners/:id", async (req, res) => {
     // Recreate the Excel file with remaining data
     const newWorkbook = XLSX.utils.book_new();
     const headers = [
-      ["Timestamp", "Partner Name", "Contact Name", "Email", "Phone", "Website", 
+      ["Timestamp", "Partner Name", "Email", "Phone", "Website", 
        "Address", "City", "Postal Code", "Country", "Services", "Photo Formats", 
-       "Video Formats", "Film Formats", "Audio Formats", "Output Formats", 
-       "Turnaround", "Rush", "Languages", "Consent"]
+       "Film Formats", "Description", "Consent"]
     ];
     
     const rows = data.map((row: any) => [
       row["Timestamp"],
       row["Partner Name"],
-      row["Contact Name"],
       row["Email"],
       row["Phone"],
       row["Website"],
@@ -158,13 +156,8 @@ router.delete("/api/partners/:id", async (req, res) => {
       row["Country"],
       row["Services"],
       row["Photo Formats"],
-      row["Video Formats"],
       row["Film Formats"],
-      row["Audio Formats"],
-      row["Output Formats"],
-      row["Turnaround"],
-      row["Rush"],
-      row["Languages"],
+      row["Description"],
       row["Consent"]
     ]);
 
@@ -191,35 +184,39 @@ async function saveToExcel(data: any) {
   } else {
     workbook = XLSX.utils.book_new();
     worksheet = XLSX.utils.aoa_to_sheet([
-      ["Timestamp", "Partner Name", "Contact Name", "Email", "Phone", "Website", 
+      ["Timestamp", "Partner Name", "Email", "Phone", "Website", 
        "Address", "City", "Postal Code", "Country", "Services", "Photo Formats", 
-       "Video Formats", "Film Formats", "Audio Formats", "Output Formats", 
-       "Turnaround", "Rush", "Languages", "Consent"]
+       "Film Formats", "Description", "Consent"]
     ]);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Partners");
   }
+  
+  // Map country code to full name
+  const countryMap: Record<string, string> = {
+    'FR': 'France',
+    'BE': 'Belgium',
+    'CA': 'Canada',
+    'MC': 'Monaco',
+    'CH': 'Switzerland'
+  };
+  
+  const countryName = countryMap[data.address?.country] || data.address?.country || "";
   
   // Prepare row data
   const row = [
     new Date().toISOString(),
     data.partner_name,
-    data.contact_name,
     data.email,
     data.phone || "",
     data.website || "",
     data.address?.street || "",
     data.address?.city || "",
     data.address?.postal_code || "",
-    data.address?.country || "",
+    countryName,
     data.services?.join(", ") || "",
     data.photo_formats?.join(", ") || "",
-    data.video_formats?.join(", ") || "",
     data.film_formats?.join(", ") || "",
-    data.audio_formats?.join(", ") || "",
-    data.output_formats?.join(", ") || "",
-    data.turnaround_days || "",
-    data.rush_available ? "Yes" : "No",
-    data.languages?.join(", ") || "",
+    data.notes || "",
     data.consent_listed ? "Yes" : "No"
   ];
   
@@ -297,18 +294,14 @@ async function sendPartnerNotification(data: any) {
             <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.services?.join(', ') || 'Aucun'}</td>
           </tr>
           <tr>
-            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Délai (jours)</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.turnaround_days || 'Non spécifié'}</td>
+            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Formats Photos</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.photo_formats?.join(', ') || 'Non spécifié'}</td>
           </tr>
           <tr style="background: #F2EBDC;">
-            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Service Express</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.rush_available ? '✅ Oui' : '❌ Non'}</td>
+            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Formats Film</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.film_formats?.join(', ') || 'Non spécifié'}</td>
           </tr>
           <tr>
-            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Langues</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.languages?.join(', ') || 'Non spécifié'}</td>
-          </tr>
-          <tr style="background: #F2EBDC;">
             <td style="padding: 12px; font-weight: bold;">Date de Soumission</td>
             <td style="padding: 12px;">${formatDate(new Date().toISOString())}</td>
           </tr>
@@ -316,7 +309,7 @@ async function sendPartnerNotification(data: any) {
 
         ${data.notes ? `
           <div style="margin-top: 20px; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #D67C4A;">
-            <h3 style="color: #2A4759; margin-top: 0;">Notes Additionnelles</h3>
+            <h3 style="color: #2A4759; margin-top: 0;">Description</h3>
             <p style="color: #333; margin: 0;">${data.notes}</p>
           </div>
         ` : ''}
