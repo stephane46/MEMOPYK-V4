@@ -3,6 +3,7 @@ import { createServer } from "http";
 import path from "path";
 import { spawn } from "child_process";
 import { createProxyMiddleware } from "http-proxy-middleware";
+import cookieParser from "cookie-parser";
 
 import { registerRoutes } from "./routes";
 import { log } from "./vite";           
@@ -112,6 +113,7 @@ app.use(express.urlencoded({
   limit: '5000mb',
   parameterLimit: 50000
 }));
+app.use(cookieParser());
 
 // Configure CSP headers to allow Google Analytics, Supabase, Directus CMS, and Google Fonts
 app.use((req, res, next) => {

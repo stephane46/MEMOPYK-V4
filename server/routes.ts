@@ -46,6 +46,8 @@ import { getCache, setCache, k, getDbCache, setDbCache } from './cache';
 import { geoResolver } from './geoResolver';
 import ga4MpRouter from './routes/ga4Mp';
 import { getRealtimeTopVideos, getRealtimeVideoProgress } from './routes/ga4Realtime';
+import partnersRoute from './routes/partners';
+import crypto from 'crypto';
 
 // Paris timezone window computation function
 const PARIS_ZONE = "Europe/Paris";
@@ -262,6 +264,21 @@ export async function registerRoutes(app: Express): Promise<void> {
   // GA4 Realtime API endpoints for instant verification
   app.get("/api/ga4/realtime/topVideos", getRealtimeTopVideos);
   app.get("/api/ga4/realtime/videoProgress", getRealtimeVideoProgress);
+  
+  // CSRF token endpoint for partner intake forms
+  app.get("/api/csrf", (req, res) => {
+    const token = crypto.randomBytes(16).toString("hex");
+    res.cookie("csrfToken", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    });
+    res.json({ token });
+  });
+  
+  // Partner intake route
+  app.use(partnersRoute);
   
   // MEMOPYK Platform Content API Routes
   
