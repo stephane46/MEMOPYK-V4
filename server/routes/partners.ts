@@ -352,7 +352,7 @@ async function sendPartnerNotification(data: any) {
   `;
 
   await resend.emails.send({
-    from: 'MEMOPYK Partners <onboarding@resend.dev>',
+    from: 'MEMOPYK Partners <noreply@memopyk.com>',
     to: 'ngoc@memopyk.com',
     subject: `🤝 Nouveau Partenaire: ${data.partner_name}`,
     html: emailHtml,
