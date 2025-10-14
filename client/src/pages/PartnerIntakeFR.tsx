@@ -540,68 +540,13 @@ export default function PartnerIntakeFR() {
                   )}
                 </div>
 
-                {/* Optional Capabilities */}
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-semibold text-[#2A4759]">
-                    Capacités techniques (optionnel)
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="turnaround"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <Rocket className="w-4 h-4" />
-                            Délai de livraison
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="ex: 5-7 jours"
-                              {...field}
-                              data-testid="input-turnaround"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="rush"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border border-gray-300 p-4">
-                          <div className="space-y-0.5">
-                            <FormLabel className="text-base">
-                              Service express
-                            </FormLabel>
-                            <FormDescription>
-                              Livraison accélérée disponible
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              data-testid="checkbox-rush"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                {/* Notes */}
+                {/* Description */}
                 <FormField
                   control={form.control}
                   name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Notes additionnelles</FormLabel>
+                      <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Informations complémentaires sur vos services, équipements, certifications..."

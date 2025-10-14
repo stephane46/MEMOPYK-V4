@@ -12,7 +12,7 @@ export const PartnerIntakeSchema = z.object({
     postal_code: z.string().optional().default(""),
     country: z.string().min(2).max(2), // ISO-2
   }),
-  services: z.array(z.enum(["Photo", "Video", "Film", "Audio"])).min(1),
+  services: z.array(z.enum(["Photo", "Film"])).min(1),
   photo_formats: z.array(z.string()).optional().default([]),
   video_formats: z.array(z.string()).optional().default([]),
   film_formats: z.array(z.string()).optional().default([]),

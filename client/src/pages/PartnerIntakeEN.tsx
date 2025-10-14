@@ -30,15 +30,30 @@ import enLocale from "i18n-iso-countries/langs/en.json";
 
 countries.registerLocale(enLocale);
 
-const countryList = Object.entries(countries.getNames("en", { select: "official" }))
-  .map(([code, name]) => ({ code, name }))
-  .sort((a, b) => a.name.localeCompare(b.name));
+const restrictedCountries = [
+  { code: "FR", name: "France", storeName: "France" },
+  { code: "BE", name: "Belgium", storeName: "Belgium" },
+  { code: "CA", name: "Canada", storeName: "Canada" },
+  { code: "MC", name: "Monaco", storeName: "Monaco" },
+  { code: "CH", name: "Switzerland", storeName: "Switzerland" },
+];
 
 const serviceOptions = [
-  { value: "Photo" as const, label: "Photo", icon: FileImage },
-  { value: "Video" as const, label: "Video", icon: Film },
+  { value: "Photo" as const, label: "Photo Digitization", icon: FileImage },
   { value: "Film" as const, label: "Film", icon: Film },
-  { value: "Audio" as const, label: "Audio", icon: AudioLines },
+];
+
+const photoSubcategories = [
+  { value: "photo_imprimee", label: "Printed Photo" },
+  { value: "negatif", label: "Negative" },
+];
+
+const filmSubcategories = [
+  { value: "super8", label: "Super 8" },
+  { value: "8mm", label: "8 mm" },
+  { value: "16mm", label: "16 mm" },
+  { value: "9_5mm", label: "9.5 mm" },
+  { value: "vhs", label: "VHS" },
 ];
 
 export default function PartnerIntakeEN() {
@@ -144,7 +159,7 @@ export default function PartnerIntakeEN() {
           <div className="bg-gradient-to-r from-[#D67C4A] to-[#D67C4A]/80 p-8 md:p-12 text-white">
             <h1 className="text-4xl font-bold mb-4">MEMOPYK Partner Registration</h1>
             <p className="text-xl opacity-95">
-              Join our network of digitization and restoration professionals
+              Join our network of digitization professionals
             </p>
           </div>
 
@@ -337,7 +352,7 @@ export default function PartnerIntakeEN() {
                       control={form.control}
                       name="address.country"
                       render={({ field }) => (
-                        <FormItem className="md:col-span-2">
+                        <FormItem>
                           <FormLabel>Country *</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
@@ -345,17 +360,14 @@ export default function PartnerIntakeEN() {
                                 <SelectValue placeholder="Select a country" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent className="max-h-[300px]">
-                              {countryList.map((country) => (
+                            <SelectContent>
+                              {restrictedCountries.map((country) => (
                                 <SelectItem key={country.code} value={country.code}>
                                   {country.name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                          <FormDescription>
-                            ISO-2 country code (e.g., US for United States)
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -375,7 +387,7 @@ export default function PartnerIntakeEN() {
                     name="services"
                     render={() => (
                       <FormItem>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                           {serviceOptions.map((service) => (
                             <FormField
                               key={service.value}
@@ -420,70 +432,121 @@ export default function PartnerIntakeEN() {
                       </FormItem>
                     )}
                   />
+
+                  {/* Photo Subcategories */}
+                  {selectedServices.includes("Photo") && (
+                    <div className="ml-8 space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="photo_formats"
+                        render={() => (
+                          <FormItem className="space-y-3">
+                            <FormLabel className="text-base font-medium">Formats</FormLabel>
+                            <div className="space-y-3">
+                              {photoSubcategories.map((subcategory) => (
+                                <FormField
+                                  key={subcategory.value}
+                                  control={form.control}
+                                  name="photo_formats"
+                                  render={({ field }) => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(subcategory.value)}
+                                          onCheckedChange={(checked) => {
+                                            const newValue = checked
+                                              ? [...(field.value || []), subcategory.value]
+                                              : (field.value || []).filter((val) => val !== subcategory.value);
+                                            field.onChange(newValue);
+                                          }}
+                                          data-testid={`checkbox-photo-${subcategory.value}`}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="text-sm font-normal cursor-pointer">
+                                        {subcategory.label}
+                                      </FormLabel>
+                                    </FormItem>
+                                  )}
+                                />
+                              ))}
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormItem>
+                        <FormLabel>Other</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Specify other formats..."
+                            className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            data-testid="input-photo-other"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    </div>
+                  )}
+
+                  {/* Film Subcategories */}
+                  {selectedServices.includes("Film") && (
+                    <div className="ml-8 space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="film_formats"
+                        render={() => (
+                          <FormItem className="space-y-3">
+                            <FormLabel className="text-base font-medium">Formats</FormLabel>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                              {filmSubcategories.map((subcategory) => (
+                                <FormField
+                                  key={subcategory.value}
+                                  control={form.control}
+                                  name="film_formats"
+                                  render={({ field }) => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(subcategory.value)}
+                                          onCheckedChange={(checked) => {
+                                            const newValue = checked
+                                              ? [...(field.value || []), subcategory.value]
+                                              : (field.value || []).filter((val) => val !== subcategory.value);
+                                            field.onChange(newValue);
+                                          }}
+                                          data-testid={`checkbox-film-${subcategory.value}`}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="text-sm font-normal cursor-pointer">
+                                        {subcategory.label}
+                                      </FormLabel>
+                                    </FormItem>
+                                  )}
+                                />
+                              ))}
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormItem>
+                        <FormLabel>Other</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Specify other formats..."
+                            className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            data-testid="input-film-other"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    </div>
+                  )}
                 </div>
 
-                {/* Optional Capabilities */}
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-semibold text-[#2A4759]">
-                    Technical Capabilities (optional)
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="turnaround"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <Rocket className="w-4 h-4" />
-                            Delivery Timeframe
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="e.g., 5-7 days"
-                              {...field}
-                              data-testid="input-turnaround"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="rush"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border border-gray-300 p-4">
-                          <div className="space-y-0.5">
-                            <FormLabel className="text-base">
-                              Rush Service
-                            </FormLabel>
-                            <FormDescription>
-                              Expedited delivery available
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              data-testid="checkbox-rush"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                {/* Notes */}
+                {/* Description */}
                 <FormField
                   control={form.control}
                   name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Additional Notes</FormLabel>
+                      <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Additional information about your services, equipment, certifications..."
