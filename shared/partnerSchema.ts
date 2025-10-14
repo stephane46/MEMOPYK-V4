@@ -4,20 +4,7 @@ export const PartnerIntakeSchema = z.object({
   partner_name: z.string().min(2).max(120),
   email: z.string().email(),
   phone: z.string().optional().default(""),
-  website: z.string().optional().default("").refine(
-    (val) => {
-      if (!val || val === "") return true;
-      // Accept URLs with or without protocol
-      try {
-        const urlWithProtocol = val.startsWith('http') ? val : `https://${val}`;
-        new URL(urlWithProtocol);
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    { message: "Invalid website URL" }
-  ),
+  website: z.string().optional().default(""),
   address: z.object({
     street: z.string().optional().default(""),
     line2: z.string().optional().default(""),
