@@ -83,7 +83,7 @@ export default function PartnersManagement() {
         </div>
         <button 
           onClick={handleDownload}
-          className="bg-[#D67C4A] text-white border-2 border-[#D67C4A] px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
+          className="bg-[#D67C4A] text-black border-2 border-[#D67C4A] px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
           data-testid="button-download-partners"
         >
           <Download className="h-4 w-4" />
