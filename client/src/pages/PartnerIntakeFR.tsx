@@ -1,0 +1,554 @@
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PartnerIntakeSchema, type PartnerIntake } from "@shared/partnerSchema";
+import { apiRequest } from "@/lib/queryClient";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { CheckCircle2, Send, Building2, Globe, Mail, Phone, MapPin, Package, FileImage, Film, AudioLines, Rocket } from "lucide-react";
+import countries from "i18n-iso-countries";
+import frLocale from "i18n-iso-countries/langs/fr.json";
+
+countries.registerLocale(frLocale);
+
+const countryList = Object.entries(countries.getNames("fr", { select: "official" }))
+  .map(([code, name]) => ({ code, name }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const serviceOptions = [
+  { value: "Photo" as const, label: "Photo", icon: FileImage },
+  { value: "Video" as const, label: "Vidéo", icon: Film },
+  { value: "Film" as const, label: "Pellicule", icon: Film },
+  { value: "Audio" as const, label: "Audio", icon: AudioLines },
+];
+
+export default function PartnerIntakeFR() {
+  const [csrfToken, setCsrfToken] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const { toast } = useToast();
+
+  const form = useForm<PartnerIntake>({
+    resolver: zodResolver(PartnerIntakeSchema),
+    defaultValues: {
+      partner_name: "",
+      email: "",
+      phone: "",
+      website: "",
+      address: {
+        street: "",
+        line2: "",
+        city: "",
+        postal_code: "",
+        country: "",
+      },
+      services: [],
+      photo_formats: [],
+      video_formats: [],
+      film_formats: [],
+      audio_formats: [],
+      output: [],
+      turnaround: "",
+      rush: false,
+      languages: [],
+      consent_listed: false,
+      notes: "",
+      locale: "fr",
+      csrfToken: "",
+    },
+  });
+
+  useEffect(() => {
+    fetch("/api/csrf")
+      .then((res) => res.json())
+      .then((data) => {
+        setCsrfToken(data.token);
+        form.setValue("csrfToken", data.token);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch CSRF token:", err);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger le formulaire. Veuillez réessayer.",
+          variant: "destructive",
+        });
+      });
+  }, [toast, form]);
+
+  const onSubmit = async (data: PartnerIntake) => {
+    try {
+      await apiRequest("/api/partners/intake", "POST", data);
+
+      setIsSubmitted(true);
+      toast({
+        title: "Merci !",
+        description: "Votre profil partenaire a été soumis avec succès.",
+      });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Une erreur s'est produite";
+      toast({
+        title: "Erreur",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#2A4759] to-[#011526] flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
+          <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-6" />
+          <h1 className="text-3xl font-bold text-[#2A4759] mb-4">
+            Profil partenaire soumis !
+          </h1>
+          <p className="text-lg text-gray-700 mb-8">
+            Merci pour votre inscription. Notre équipe examinera votre profil et vous contactera sous 48 heures.
+          </p>
+          <Button
+            onClick={() => window.location.href = "/fr-FR"}
+            className="bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white"
+            data-testid="button-return-home"
+          >
+            Retour à l'accueil
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#2A4759] to-[#011526] py-12 px-4">
+      <div className="max-w-5xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-[#D67C4A] to-[#D67C4A]/80 p-8 md:p-12 text-white">
+            <h1 className="text-4xl font-bold mb-4">Inscription Partenaire MEMOPYK</h1>
+            <p className="text-xl opacity-95">
+              Rejoignez notre réseau de professionnels de la numérisation et de la restauration
+            </p>
+          </div>
+
+          {/* Form */}
+          <div className="p-8 md:p-12">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                
+                {/* Basic Information */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
+                    <Building2 className="w-6 h-6" />
+                    Informations de base
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="partner_name"
+                      render={({ field }) => (
+                        <FormItem className="md:col-span-2">
+                          <FormLabel>Nom de l'entreprise *</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Votre entreprise"
+                              {...field}
+                              data-testid="input-partner-name"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <Mail className="w-4 h-4" />
+                            Email *
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="contact@exemple.com"
+                              {...field}
+                              data-testid="input-email"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <Phone className="w-4 h-4" />
+                            Téléphone
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="+33 6 12 34 56 78"
+                              {...field}
+                              data-testid="input-phone"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="website"
+                      render={({ field }) => (
+                        <FormItem className="md:col-span-2">
+                          <FormLabel className="flex items-center gap-2">
+                            <Globe className="w-4 h-4" />
+                            Site Web
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="https://exemple.com"
+                              {...field}
+                              data-testid="input-website"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                {/* Address */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
+                    <MapPin className="w-6 h-6" />
+                    Adresse
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="address.street"
+                      render={({ field }) => (
+                        <FormItem className="md:col-span-2">
+                          <FormLabel>Rue</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="123 Rue de la République"
+                              {...field}
+                              data-testid="input-street"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="address.line2"
+                      render={({ field }) => (
+                        <FormItem className="md:col-span-2">
+                          <FormLabel>Complément d'adresse</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Bâtiment A, Étage 3"
+                              {...field}
+                              data-testid="input-line2"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="address.city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Ville</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Paris"
+                              {...field}
+                              data-testid="input-city"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="address.postal_code"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Code postal</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="75001"
+                              {...field}
+                              data-testid="input-postal-code"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="address.country"
+                      render={({ field }) => (
+                        <FormItem className="md:col-span-2">
+                          <FormLabel>Pays *</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger data-testid="select-country" className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]">
+                                <SelectValue placeholder="Sélectionnez un pays" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="max-h-[300px]">
+                              {countryList.map((country) => (
+                                <SelectItem key={country.code} value={country.code}>
+                                  {country.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            Code pays ISO-2 (ex: FR pour France)
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                {/* Services */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
+                    <Package className="w-6 h-6" />
+                    Services proposés *
+                  </h2>
+                  
+                  <FormField
+                    control={form.control}
+                    name="services"
+                    render={() => (
+                      <FormItem>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {serviceOptions.map((service) => (
+                            <FormField
+                              key={service.value}
+                              control={form.control}
+                              name="services"
+                              render={({ field }) => {
+                                const Icon = service.icon;
+                                return (
+                                  <FormItem
+                                    key={service.value}
+                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(service.value)}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), service.value]
+                                            : (field.value || []).filter((val) => val !== service.value);
+                                          field.onChange(newValue);
+                                          setSelectedServices(newValue);
+                                        }}
+                                        data-testid={`checkbox-service-${service.value}`}
+                                      />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                      <FormLabel className="text-sm font-normal flex items-center gap-2 cursor-pointer">
+                                        <Icon className="w-4 h-4" />
+                                        {service.label}
+                                      </FormLabel>
+                                    </div>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <FormDescription>
+                          Sélectionnez au moins un service
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Optional Capabilities */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-[#2A4759]">
+                    Capacités techniques (optionnel)
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="turnaround"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <Rocket className="w-4 h-4" />
+                            Délai de livraison
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="ex: 5-7 jours"
+                              {...field}
+                              data-testid="input-turnaround"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="rush"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border border-gray-300 p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">
+                              Service express
+                            </FormLabel>
+                            <FormDescription>
+                              Livraison accélérée disponible
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              data-testid="checkbox-rush"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                {/* Notes */}
+                <FormField
+                  control={form.control}
+                  name="notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Notes additionnelles</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Informations complémentaires sur vos services, équipements, certifications..."
+                          rows={5}
+                          {...field}
+                          data-testid="input-notes"
+                          className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] resize-none"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Consent */}
+                <FormField
+                  control={form.control}
+                  name="consent_listed"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-gray-300 p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          data-testid="checkbox-consent"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="cursor-pointer">
+                          J'accepte d'être répertorié dans l'annuaire des partenaires MEMOPYK *
+                        </FormLabel>
+                        <FormDescription>
+                          Votre profil sera visible par les clients cherchant des services de numérisation
+                        </FormDescription>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                  className="w-full bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white text-lg py-6"
+                  data-testid="button-submit"
+                >
+                  {form.formState.isSubmitting ? (
+                    "Envoi en cours..."
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5 mr-2" />
+                      Soumettre le profil partenaire
+                    </>
+                  )}
+                </Button>
+
+                <p className="text-sm text-gray-600 text-center">
+                  * Champs obligatoires
+                </p>
+              </form>
+            </Form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
