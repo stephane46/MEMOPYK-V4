@@ -83,15 +83,15 @@ export default function PartnersManagement() {
         </div>
         <button 
           onClick={handleDownload}
-          className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-sm font-semibold rounded-lg cursor-pointer transition-all hover:scale-105 hover:opacity-90"
+          className="inline-flex items-center px-6 py-3 shadow-lg text-sm font-semibold rounded-lg cursor-pointer transition-all hover:scale-105 hover:shadow-xl"
           style={{ 
-            backgroundColor: '#D67C4A !important',
-            color: '#ffffff !important',
-            border: '1px solid #D67C4A !important'
+            backgroundColor: '#D67C4A',
+            color: '#ffffff',
+            border: '2px solid #D67C4A'
           }}
           data-testid="button-download-partners"
         >
-          <Download className="h-4 w-4 mr-2" style={{ color: '#ffffff !important' }} />
+          <Download className="h-4 w-4 mr-2" style={{ color: '#ffffff' }} />
           Télécharger Excel
         </button>
       </div>
@@ -195,7 +195,6 @@ export default function PartnersManagement() {
           <p>• Les demandes sont sauvegardées automatiquement dans un fichier Excel</p>
           <p>• Cliquez sur "Télécharger Excel" pour obtenir le fichier complet avec tous les détails</p>
           <p>• Le tableau affiche les 10 dernières demandes reçues</p>
-          <p>• Les dates sont affichées au format français (Europe/Paris)</p>
           <p>• Une notification email est envoyée automatiquement à ngoc@memopyk.com</p>
         </CardContent>
       </Card>
