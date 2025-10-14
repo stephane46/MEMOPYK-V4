@@ -176,6 +176,11 @@ async function sendPartnerNotification(data: any) {
     }
   };
 
+  // Get base URL from environment
+  const baseUrl = process.env.REPLIT_DEV_DOMAIN 
+    ? `https://${process.env.REPLIT_DEV_DOMAIN}` 
+    : 'https://memopyk.com';
+
   const emailHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <div style="background: linear-gradient(135deg, #2A4759 0%, #011526 100%); padding: 30px; text-align: center;">
@@ -239,10 +244,25 @@ async function sendPartnerNotification(data: any) {
           </div>
         ` : ''}
 
-        <div style="margin-top: 30px; padding: 20px; background: #D67C4A; border-radius: 8px; text-align: center;">
-          <p style="color: white; margin: 0; font-size: 14px;">
-            📥 Téléchargez le fichier Excel complet depuis l'admin: <strong>Partenaires → Télécharger Excel</strong>
-          </p>
+        <div style="margin-top: 30px; text-align: center;">
+          <p style="color: #2A4759; font-weight: bold; margin-bottom: 20px;">Actions Rapides</p>
+          
+          <table style="width: 100%; border-spacing: 10px;">
+            <tr>
+              <td style="text-align: center;">
+                <a href="${baseUrl}/admin" 
+                   style="display: inline-block; padding: 14px 28px; background: #2A4759; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px;">
+                  📋 Voir Admin Partenaires
+                </a>
+              </td>
+              <td style="text-align: center;">
+                <a href="${baseUrl}/api/partners/download" 
+                   style="display: inline-block; padding: 14px 28px; background: #D67C4A; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px;">
+                  📥 Télécharger Excel
+                </a>
+              </td>
+            </tr>
+          </table>
         </div>
       </div>
       
