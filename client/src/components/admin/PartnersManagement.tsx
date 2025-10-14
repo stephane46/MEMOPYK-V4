@@ -8,9 +8,10 @@ import { DateTime } from 'luxon';
 interface PartnerSubmission {
   name: string;
   email: string;
+  phone: string;
+  city: string;
   country: string;
   submitted: string;
-  services: string;
 }
 
 interface PartnerSummaryData {
@@ -79,44 +80,46 @@ export default function PartnersManagement() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Partenaire</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Email</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Pays</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Services</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900">Date de soumission</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Partenaire</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Email</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Téléphone</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Ville</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Pays</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Date de soumission</th>
                   </tr>
                 </thead>
                 <tbody>
                   {summary.partners.map((partner, idx) => (
                     <tr 
                       key={idx} 
-                      className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                      className="border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                       data-testid={`partner-row-${idx}`}
                     >
-                      <td className="py-3 px-4 text-sm text-gray-900">
+                      <td className="py-3 px-4 text-sm text-gray-900 dark:text-white">
                         <div className="flex items-center gap-2">
                           <CheckCircle className="h-4 w-4 text-green-600" />
                           {partner.name}
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-600">
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300">
                         <div className="flex items-center gap-2">
                           <Mail className="h-4 w-4 text-gray-400" />
                           {partner.email}
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-600">
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300">
+                        {partner.phone || '-'}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300">
+                        {partner.city || '-'}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-300">
                         <div className="flex items-center gap-2">
                           <Globe className="h-4 w-4 text-gray-400" />
                           {partner.country}
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-600">
-                        <Badge variant="outline" className="text-xs">
-                          {partner.services.split(',').length} service{partner.services.split(',').length > 1 ? 's' : ''}
-                        </Badge>
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-500">
+                      <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(partner.submitted)}
                       </td>
                     </tr>
@@ -129,16 +132,16 @@ export default function PartnersManagement() {
       </Card>
 
       {/* Instructions Card */}
-      <Card className="border-2 border-blue-200 bg-blue-50">
+      <Card className="border-2 border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
         <CardHeader>
-          <CardTitle className="text-blue-900">Instructions</CardTitle>
+          <CardTitle className="text-blue-900 dark:text-blue-100">Instructions</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 text-sm text-blue-800">
+        <CardContent className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
           <p>• Les demandes sont sauvegardées automatiquement dans un fichier Excel</p>
-          <p>• Cliquez sur "Télécharger Excel" pour obtenir le fichier complet</p>
+          <p>• Cliquez sur "Télécharger Excel" pour obtenir le fichier complet avec tous les détails</p>
           <p>• Le tableau affiche les 10 dernières demandes reçues</p>
           <p>• Les dates sont affichées au format français (Europe/Paris)</p>
-          <p>• La notification email à ngoc@memopyk.com sera activée prochainement</p>
+          <p>• Une notification email est envoyée automatiquement à ngoc@memopyk.com</p>
         </CardContent>
       </Card>
     </div>

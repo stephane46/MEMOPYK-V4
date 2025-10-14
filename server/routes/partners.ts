@@ -90,9 +90,10 @@ router.get("/api/partners/summary", async (req, res) => {
     const partners = data.slice(-10).reverse().map((row: any) => ({
       name: row["Partner Name"] || "",
       email: row["Email"] || "",
+      phone: row["Phone"] || "",
+      city: row["City"] || "",
       country: row["Country"] || "",
-      submitted: row["Submitted"] || "",
-      services: row["Services"] || ""
+      submitted: row["Timestamp"] || ""
     }));
 
     res.json({ partners, count: data.length });
