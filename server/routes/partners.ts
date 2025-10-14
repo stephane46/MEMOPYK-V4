@@ -92,11 +92,12 @@ router.get("/api/partners/summary", async (req, res) => {
     countries.registerLocale(frLocale);
 
     // Format for display (last 10 submissions)
-    const partners = data.slice(-10).reverse().map((row: any) => {
+    const allPartners = data.map((row: any, index: number) => {
       const countryCode = row["Country"] || "";
       const countryName = countryCode ? countries.getName(countryCode, "fr") || countryCode : "";
       
       return {
+        id: index, // Use index as ID for deletion
         name: row["Partner Name"] || "",
         email: row["Email"] || "",
         phone: row["Phone"] || "",
@@ -106,9 +107,75 @@ router.get("/api/partners/summary", async (req, res) => {
       };
     });
 
+    const partners = allPartners.slice(-10).reverse();
+
     res.json({ partners, count: data.length });
   } catch (e: any) {
     console.error("Summary error:", e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Delete a partner submission
+router.delete("/api/partners/:id", async (req, res) => {
+  try {
+    const rowId = parseInt(req.params.id);
+    
+    if (!fs.existsSync(EXCEL_FILE)) {
+      return res.status(404).json({ error: "No partner submissions found" });
+    }
+
+    const workbook = XLSX.readFile(EXCEL_FILE);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+
+    if (rowId < 0 || rowId >= data.length) {
+      return res.status(404).json({ error: "Partner not found" });
+    }
+
+    // Remove the row at the specified index
+    data.splice(rowId, 1);
+
+    // Recreate the Excel file with remaining data
+    const newWorkbook = XLSX.utils.book_new();
+    const headers = [
+      ["Timestamp", "Partner Name", "Contact Name", "Email", "Phone", "Website", 
+       "Address", "City", "Postal Code", "Country", "Services", "Photo Formats", 
+       "Video Formats", "Film Formats", "Audio Formats", "Output Formats", 
+       "Turnaround", "Rush", "Languages", "Consent"]
+    ];
+    
+    const rows = data.map((row: any) => [
+      row["Timestamp"],
+      row["Partner Name"],
+      row["Contact Name"],
+      row["Email"],
+      row["Phone"],
+      row["Website"],
+      row["Address"],
+      row["City"],
+      row["Postal Code"],
+      row["Country"],
+      row["Services"],
+      row["Photo Formats"],
+      row["Video Formats"],
+      row["Film Formats"],
+      row["Audio Formats"],
+      row["Output Formats"],
+      row["Turnaround"],
+      row["Rush"],
+      row["Languages"],
+      row["Consent"]
+    ]);
+
+    const newWorksheet = XLSX.utils.aoa_to_sheet([...headers, ...rows]);
+    XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, "Partners");
+    XLSX.writeFile(newWorkbook, EXCEL_FILE);
+
+    console.log(`✅ Partner submission deleted: row ${rowId}`);
+    res.json({ ok: true, message: "Partner deleted successfully" });
+  } catch (e: any) {
+    console.error("Delete error:", e);
     res.status(500).json({ error: "Server error" });
   }
 });

@@ -1,11 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, UserCheck, Mail, Globe, CheckCircle } from 'lucide-react';
+import { Download, UserCheck, Mail, Globe, CheckCircle, Trash2 } from 'lucide-react';
 import { DateTime } from 'luxon';
+import { apiRequest, queryClient } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 interface PartnerSubmission {
+  id: number;
   name: string;
   email: string;
   phone: string;
@@ -20,13 +23,44 @@ interface PartnerSummaryData {
 }
 
 export default function PartnersManagement() {
+  const { toast } = useToast();
   const { data: summary, isLoading } = useQuery<PartnerSummaryData>({
     queryKey: ['/api/partners/summary'],
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (partnerId: number) => {
+      const response = await fetch(`/api/partners/${partnerId}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Delete failed');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/partners/summary'] });
+      toast({
+        title: "Partenaire supprimé",
+        description: "Le partenaire a été supprimé avec succès",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le partenaire",
+        variant: "destructive",
+      });
+    }
+  });
+
   const handleDownload = () => {
     window.open('/api/partners/download', '_blank');
+  };
+
+  const handleDelete = (partnerId: number, partnerName: string) => {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer ${partnerName} ?`)) {
+      deleteMutation.mutate(partnerId);
+    }
   };
 
   const formatDate = (dateStr: string): string => {
@@ -87,6 +121,7 @@ export default function PartnersManagement() {
                     <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Ville</th>
                     <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Pays</th>
                     <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Date de soumission</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -122,6 +157,16 @@ export default function PartnersManagement() {
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
                         {formatDate(partner.submitted)}
+                      </td>
+                      <td className="py-3 px-4 text-sm">
+                        <button
+                          onClick={() => handleDelete(partner.id, partner.name)}
+                          disabled={deleteMutation.isPending}
+                          className="inline-flex items-center px-3 py-1.5 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors disabled:opacity-50"
+                          data-testid={`button-delete-partner-${partner.id}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
