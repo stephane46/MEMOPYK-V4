@@ -15,6 +15,8 @@ import GV2Page from './pages/GV2Page';
 import NotFoundPage from './pages/not-found';
 import BlogIndexPage from './pages/BlogIndexPage';
 import BlogPostPage from './pages/BlogPostPage';
+import PartnerIntakeFR from './pages/PartnerIntakeFR';
+import PartnerIntakeEN from './pages/PartnerIntakeEN';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 import { CookieBanner } from '@/components/ui/CookieBanner';
@@ -81,6 +83,10 @@ function AnalyticsRouter() {
         <Route path="/en-US/blog/:slug" component={BlogPostPage} />
         <Route path="/fr-FR/blog" component={BlogIndexPage} />
         <Route path="/en-US/blog" component={BlogIndexPage} />
+        
+        {/* Partner Intake Routes */}
+        <Route path="/fr-FR/partenaires/devenir" component={PartnerIntakeFR} />
+        <Route path="/en-US/partners/join" component={PartnerIntakeEN} />
         
         {/* Catch-all routes temporarily removed to prevent FAQ section conflict */}
         {/* Will restore with proper configuration after identifying root cause */}
