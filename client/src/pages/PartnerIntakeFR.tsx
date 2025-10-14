@@ -30,15 +30,30 @@ import frLocale from "i18n-iso-countries/langs/fr.json";
 
 countries.registerLocale(frLocale);
 
-const countryList = Object.entries(countries.getNames("fr", { select: "official" }))
-  .map(([code, name]) => ({ code, name }))
-  .sort((a, b) => a.name.localeCompare(b.name));
+const restrictedCountries = [
+  { code: "FR", name: "France", storeName: "France" },
+  { code: "BE", name: "Belgique", storeName: "Belgium" },
+  { code: "CA", name: "Canada", storeName: "Canada" },
+  { code: "MC", name: "Monaco", storeName: "Monaco" },
+  { code: "CH", name: "Suisse", storeName: "Switzerland" },
+];
 
 const serviceOptions = [
-  { value: "Photo" as const, label: "Photo", icon: FileImage },
-  { value: "Video" as const, label: "Vidéo", icon: Film },
-  { value: "Film" as const, label: "Pellicule", icon: Film },
-  { value: "Audio" as const, label: "Audio", icon: AudioLines },
+  { value: "Photo" as const, label: "Numérisation de photo", icon: FileImage },
+  { value: "Film" as const, label: "Film", icon: Film },
+];
+
+const photoSubcategories = [
+  { value: "photo_imprimee", label: "Photo imprimée" },
+  { value: "negatif", label: "Négatif" },
+];
+
+const filmSubcategories = [
+  { value: "super8", label: "Super 8" },
+  { value: "8mm", label: "8 mm" },
+  { value: "16mm", label: "16 mm" },
+  { value: "9_5mm", label: "9,5 mm" },
+  { value: "vhs", label: "VHS" },
 ];
 
 export default function PartnerIntakeFR() {
@@ -144,7 +159,7 @@ export default function PartnerIntakeFR() {
           <div className="bg-gradient-to-r from-[#D67C4A] to-[#D67C4A]/80 p-8 md:p-12 text-white">
             <h1 className="text-4xl font-bold mb-4">Inscription Partenaire MEMOPYK</h1>
             <p className="text-xl opacity-95">
-              Rejoignez notre réseau de professionnels de la numérisation et de la restauration
+              Rejoignez notre réseau de professionnels de la numérisation
             </p>
           </div>
 
@@ -337,7 +352,7 @@ export default function PartnerIntakeFR() {
                       control={form.control}
                       name="address.country"
                       render={({ field }) => (
-                        <FormItem className="md:col-span-2">
+                        <FormItem>
                           <FormLabel>Pays *</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
@@ -345,17 +360,14 @@ export default function PartnerIntakeFR() {
                                 <SelectValue placeholder="Sélectionnez un pays" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent className="max-h-[300px]">
-                              {countryList.map((country) => (
+                            <SelectContent>
+                              {restrictedCountries.map((country) => (
                                 <SelectItem key={country.code} value={country.code}>
                                   {country.name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                          <FormDescription>
-                            Code pays ISO-2 (ex: FR pour France)
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -375,7 +387,7 @@ export default function PartnerIntakeFR() {
                     name="services"
                     render={() => (
                       <FormItem>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                           {serviceOptions.map((service) => (
                             <FormField
                               key={service.value}
@@ -420,6 +432,112 @@ export default function PartnerIntakeFR() {
                       </FormItem>
                     )}
                   />
+
+                  {/* Photo Subcategories */}
+                  {selectedServices.includes("Photo") && (
+                    <div className="ml-8 space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="photo_formats"
+                        render={() => (
+                          <FormItem className="space-y-3">
+                            <FormLabel className="text-base font-medium">Formats</FormLabel>
+                            <div className="space-y-3">
+                              {photoSubcategories.map((subcategory) => (
+                                <FormField
+                                  key={subcategory.value}
+                                  control={form.control}
+                                  name="photo_formats"
+                                  render={({ field }) => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(subcategory.value)}
+                                          onCheckedChange={(checked) => {
+                                            const newValue = checked
+                                              ? [...(field.value || []), subcategory.value]
+                                              : (field.value || []).filter((val) => val !== subcategory.value);
+                                            field.onChange(newValue);
+                                          }}
+                                          data-testid={`checkbox-photo-${subcategory.value}`}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="text-sm font-normal cursor-pointer">
+                                        {subcategory.label}
+                                      </FormLabel>
+                                    </FormItem>
+                                  )}
+                                />
+                              ))}
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormItem>
+                        <FormLabel>Autres</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Précisez d'autres formats..."
+                            className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            data-testid="input-photo-other"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    </div>
+                  )}
+
+                  {/* Film Subcategories */}
+                  {selectedServices.includes("Film") && (
+                    <div className="ml-8 space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="film_formats"
+                        render={() => (
+                          <FormItem className="space-y-3">
+                            <FormLabel className="text-base font-medium">Formats</FormLabel>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                              {filmSubcategories.map((subcategory) => (
+                                <FormField
+                                  key={subcategory.value}
+                                  control={form.control}
+                                  name="film_formats"
+                                  render={({ field }) => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(subcategory.value)}
+                                          onCheckedChange={(checked) => {
+                                            const newValue = checked
+                                              ? [...(field.value || []), subcategory.value]
+                                              : (field.value || []).filter((val) => val !== subcategory.value);
+                                            field.onChange(newValue);
+                                          }}
+                                          data-testid={`checkbox-film-${subcategory.value}`}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="text-sm font-normal cursor-pointer">
+                                        {subcategory.label}
+                                      </FormLabel>
+                                    </FormItem>
+                                  )}
+                                />
+                              ))}
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormItem>
+                        <FormLabel>Autres</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Précisez d'autres formats..."
+                            className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            data-testid="input-film-other"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    </div>
+                  )}
                 </div>
 
                 {/* Optional Capabilities */}
