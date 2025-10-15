@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import { MapPin, Phone, Mail, Globe, Filter, Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +34,7 @@ function MapBoundsTracker({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLn
 
 // Dynamic tile layer that properly updates when URL changes
 function DynamicTileLayer({ url, attribution }: { url: string; attribution: string }) {
-  const map = useMapEvents({});
+  const map = useMap();
   
   useEffect(() => {
     const tileLayer = L.tileLayer(url, {
