@@ -27,7 +27,7 @@ export const PartnerIntakeSchema = z.object({
   rush: z.boolean().optional().default(false),
   languages: z.array(z.string()).optional().default([]),
   consent_listed: z.boolean(),
-  notes: z.string().optional().default(""),
+  public_description: z.string().optional().default(""),
   locale: z.enum(["fr", "en"]).default("fr"),
   csrfToken: z.string().min(8),
 }).refine((data) => {

@@ -78,7 +78,7 @@ export default function PartnerIntakeFR() {
       rush: false,
       languages: [],
       consent_listed: false,
-      notes: "",
+      public_description: "",
       locale: "fr",
       csrfToken: "",
     },
@@ -619,16 +619,16 @@ export default function PartnerIntakeFR() {
                 {/* Description */}
                 <FormField
                   control={form.control}
-                  name="notes"
+                  name="public_description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>Description publique</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Informations complémentaires sur vos services, équipements, certifications..."
+                          placeholder="Ce texte sera affiché tel quel sur votre page partenaire MEMOPYK. Parlez de votre histoire, de vos services et de ce qui rend votre travail unique."
                           rows={5}
                           {...field}
-                          data-testid="input-notes"
+                          data-testid="input-public-description"
                           className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] resize-none"
                         />
                       </FormControl>

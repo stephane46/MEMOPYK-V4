@@ -141,7 +141,7 @@ router.delete("/api/partners/:id", async (req, res) => {
     const headers = [
       ["Timestamp", "Partner Name", "Email", "Phone", "Website", 
        "Address", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
-       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Description", "Consent"]
+       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Public Description", "Consent"]
     ];
     
     const rows = data.map((row: any) => [
@@ -161,7 +161,7 @@ router.delete("/api/partners/:id", async (req, res) => {
       row["Video Cassettes"],
       row["Other Video"],
       row["Delivery"],
-      row["Description"],
+      row["Public Description"],
       row["Consent"]
     ]);
 
@@ -190,7 +190,7 @@ async function saveToExcel(data: any) {
     worksheet = XLSX.utils.aoa_to_sheet([
       ["Timestamp", "Partner Name", "Email", "Phone", "Website", 
        "Address", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
-       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Description", "Consent"]
+       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Public Description", "Consent"]
     ]);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Partners");
   }
@@ -224,7 +224,7 @@ async function saveToExcel(data: any) {
     data.video_cassettes?.join(", ") || "",
     data.other_video_formats || "",
     data.delivery?.join(", ") || "",
-    data.notes || "",
+    data.public_description || "",
     data.consent_listed ? "Yes" : "No"
   ];
   
@@ -331,10 +331,10 @@ async function sendPartnerNotification(data: any) {
           </tr>
         </table>
 
-        ${data.notes ? `
+        ${data.public_description ? `
           <div style="margin-top: 20px; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #D67C4A;">
-            <h3 style="color: #2A4759; margin-top: 0;">Description</h3>
-            <p style="color: #333; margin: 0;">${data.notes}</p>
+            <h3 style="color: #2A4759; margin-top: 0;">Description Publique</h3>
+            <p style="color: #333; margin: 0;">${data.public_description}</p>
           </div>
         ` : ''}
 
