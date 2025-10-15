@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye, Camera, Film, Video, Plus, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye, Camera, Film, Video, Plus, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink } from 'lucide-react';
 import { queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES, DELIVERY } from '@/../../shared/partnerFormats';
@@ -278,6 +278,15 @@ export default function PartnersManagementEnhanced() {
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Partner
+            </Button>
+            <Button
+              onClick={() => window.open('/fr-FR/partenaires', '_blank')}
+              className="bg-white hover:bg-gray-100 text-gray-900 font-medium border border-gray-300"
+              size="sm"
+              data-testid="button-view-map"
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              View Map
             </Button>
             <Button
               onClick={() => window.open('/api/partners/download', '_blank')}
