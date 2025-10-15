@@ -227,7 +227,13 @@ app.use((req, res, next) => {
     app.use('/logo.svg', express.static(path.join(__dirname, '../public/logo.svg')));
     app.use('/flags', express.static(path.join(__dirname, '../public/flags')));
     
-    // Serve public folder for static assets (partners.json, etc.) in dev mode
+    // Serve public folder for static assets (partners.json, etc.) in dev mode  
+    app.use((req, res, next) => {
+      if (req.path === '/partners.json') {
+        console.log('🔍 REQUEST FOR /partners.json detected!');
+      }
+      next();
+    });
     app.use(express.static(path.resolve(process.cwd(), 'public')));
     
     // SEO middleware for development - intercepts HTML pages before proxy
