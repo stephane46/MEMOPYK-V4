@@ -169,7 +169,8 @@ export default function PartnerDirectoryFR() {
   const zoomToPartner = (partner: Partner) => {
     if (partner.lat && partner.lng) {
       setSelectedPartner(partner.slug);
-      setZoomTo({ lat: partner.lat, lng: partner.lng, zoom: 13 });
+      // Use zoom level 11 for better visibility and keep info panel in view
+      setZoomTo({ lat: partner.lat, lng: partner.lng, zoom: 11 });
     }
   };
 
