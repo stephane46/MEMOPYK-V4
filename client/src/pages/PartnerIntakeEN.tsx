@@ -54,7 +54,7 @@ export default function PartnerIntakeEN() {
     defaultValues: {
       partner_name: "",
       email: "",
-      email_public: false,
+      email_public: true,
       phone: "",
       website: "",
       address: {
@@ -129,7 +129,7 @@ export default function PartnerIntakeEN() {
             Partner Profile Submitted!
           </h1>
           <p className="text-lg text-gray-700 mb-8">
-            Thank you for registering. Our team will review your profile and contact you within 48 hours.
+            Thank you for registering.
           </p>
           <Button
             onClick={() => window.location.href = "/en-US"}
@@ -179,7 +179,7 @@ export default function PartnerIntakeEN() {
             
             <h1 className="text-4xl font-bold mb-4">MEMOPYK Partner Registration</h1>
             <p className="text-xl opacity-95">
-              Join our network of digitization professionals
+              Digitization Professionals
             </p>
           </div>
 
@@ -274,10 +274,10 @@ export default function PartnerIntakeEN() {
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>
-                              Show my email on the partner page
+                              Show my email in the directory
                             </FormLabel>
                             <FormDescription className="text-sm text-gray-600">
-                              If unchecked, your email won't appear on your public profile. Clients can still reach you through your website or phone.
+                              If unchecked, your email will not be displayed in the directory.
                             </FormDescription>
                           </div>
                         </FormItem>
@@ -470,10 +470,6 @@ export default function PartnerIntakeEN() {
                 {/* Technical Capabilities */}
                 {selectedServices && selectedServices.length > 0 && (
                   <div className="space-y-6">
-                    <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
-                      <Package className="w-6 h-6" />
-                      Technical Capabilities *
-                    </h2>
                     
                     {/* Photo Digitization Group */}
                     {selectedServices.includes("Photo") && (
@@ -547,7 +543,7 @@ export default function PartnerIntakeEN() {
                       <div className="space-y-4 border border-gray-200 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
                       <Film className="w-5 h-5" />
-                      Motion Picture Film
+                      Film Digitization
                     </h3>
                     <FormField
                       control={form.control}
@@ -733,7 +729,7 @@ export default function PartnerIntakeEN() {
                       <FormLabel>Public description</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="This text will be shown as-is on your MEMOPYK partner page. Share your story, your services, and what makes your work unique."
+                          placeholder="This text will be displayed as-is in the directory."
                           rows={5}
                           {...field}
                           data-testid="input-public-description"
@@ -760,7 +756,7 @@ export default function PartnerIntakeEN() {
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel className="cursor-pointer">
-                          I agree to be listed in the MEMOPYK partner directory *
+                          I agree to be listed in the MEMOPYK directory *
                         </FormLabel>
                         <FormDescription>
                           Your profile will be visible to clients seeking digitization services

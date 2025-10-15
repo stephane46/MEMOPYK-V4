@@ -57,7 +57,7 @@ export const PartnerIntakeSchema = z.object({
 }).refine((data) => {
   return data.consent_listed === true;
 }, {
-  message: "Vous devez accepter d'être répertorié dans l'annuaire pour soumettre le formulaire",
+  message: "You must agree to be listed in the directory to submit the form",
   path: ["consent_listed"],
 });
 
