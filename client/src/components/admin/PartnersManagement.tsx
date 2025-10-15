@@ -134,19 +134,32 @@ export default function PartnersManagement() {
 
   const handleSave = (partnerId: number) => {
     const data = editingData[partnerId];
-    if (data) {
+    if (data && Object.keys(data).length > 0) {
+      console.log('💾 Saving partner changes:', { partnerId, data });
       updateMutation.mutate({ id: partnerId, data });
+    } else {
+      console.log('⚠️ No changes to save for partner:', partnerId, 'editingData:', editingData);
+      toast({
+        title: "Aucune modification",
+        description: "Aucune modification à sauvegarder",
+        variant: "default",
+      });
     }
   };
 
   const updateEditingData = (partnerId: number, field: string, value: any) => {
-    setEditingData(prev => ({
-      ...prev,
-      [partnerId]: {
-        ...prev[partnerId],
-        [field]: value
-      }
-    }));
+    console.log('📝 Updating editing data:', { partnerId, field, value });
+    setEditingData(prev => {
+      const updated = {
+        ...prev,
+        [partnerId]: {
+          ...prev[partnerId],
+          [field]: value
+        }
+      };
+      console.log('📊 Updated editingData:', updated);
+      return updated;
+    });
   };
 
   const getEditValue = (partner: PartnerSubmission, field: keyof PartnerSubmission): string => {
