@@ -103,6 +103,58 @@ router.post("/api/partners/export-map", async (req, res) => {
   }
 });
 
+// Create new partner (manual entry)
+router.post("/api/partners/create", async (req, res) => {
+  try {
+    const partnerData = req.body;
+    
+    // Create new partner row with current timestamp
+    const newPartner = {
+      timestamp: new Date().toISOString(),
+      partner_type: partnerData.partner_type || 'digitization',
+      partner_name: partnerData.partner_name || '',
+      email: partnerData.email || '',
+      email_public: partnerData.email_public || 'FALSE',
+      phone: partnerData.phone || '',
+      phone_public: partnerData.phone_public || 'FALSE',
+      website: partnerData.website || '',
+      address: partnerData.address || '',
+      address_line2: partnerData.address_line2 || '',
+      city: partnerData.city || '',
+      postal_code: partnerData.postal_code || '',
+      country: partnerData.country || '',
+      photo_formats: partnerData.photo_formats || '',
+      other_photo: partnerData.other_photo || '',
+      film_formats: partnerData.film_formats || '',
+      other_film: partnerData.other_film || '',
+      video_cassettes: partnerData.video_cassettes || '',
+      other_video: partnerData.other_video || '',
+      delivery: partnerData.delivery || '',
+      other_delivery: partnerData.other_delivery || '',
+      public_description: partnerData.public_description || '',
+      consent: 'TRUE',
+      status: partnerData.status || 'Pending',
+      is_active: partnerData.is_active ? 'TRUE' : 'FALSE',
+      show_on_map: partnerData.show_on_map ? 'TRUE' : 'FALSE',
+      lat: partnerData.lat || '',
+      lng: partnerData.lng || '',
+      slug: partnerData.slug || ''
+    };
+
+    const success = partnerStore.create(newPartner);
+    
+    if (!success) {
+      return res.status(500).json({ error: "Failed to create partner" });
+    }
+
+    console.log(`✅ Partner created via store: ${newPartner.partner_name}`);
+    return res.json({ ok: true, message: "Partner created successfully" });
+  } catch (e: any) {
+    console.error("Create error:", e);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
 // Enhanced: Get all partners with pagination and filters
 router.get("/api/partners", async (req, res) => {
   try {

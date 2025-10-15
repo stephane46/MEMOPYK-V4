@@ -242,6 +242,15 @@ export class ExcelPartnerStore {
     return newPartner;
   }
 
+  create(partner: Omit<PartnerRow, 'id'>): boolean {
+    try {
+      this.add(partner);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   getMapData(): any[] {
     const partners = this.readExcel();
     

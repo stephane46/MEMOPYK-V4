@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye, Camera, Film, Video } from 'lucide-react';
+import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye, Camera, Film, Video, Plus, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES, DELIVERY } from '@/../../shared/partnerFormats';
@@ -62,9 +62,53 @@ export default function PartnersManagementEnhanced() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [sortBy, setSortBy] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [editingPartner, setEditingPartner] = useState<Partner | null>(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
   const [editData, setEditData] = useState<Partial<Partner>>({});
   const limit = 20;
+
+  const handleSort = (column: string) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const getSortedPartners = (partners: Partner[]) => {
+    if (!sortBy) return partners;
+    
+    return [...partners].sort((a, b) => {
+      let aVal = a[sortBy as keyof Partner];
+      let bVal = b[sortBy as keyof Partner];
+      
+      if (aVal === null || aVal === undefined) return 1;
+      if (bVal === null || bVal === undefined) return -1;
+      
+      if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+      if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+      
+      if (aVal < bVal) return sortOrder === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
+  const getStatusBadge = (status: string) => {
+    const styles = {
+      'Approved': 'bg-green-100 text-green-800 border-green-200',
+      'Pending': 'bg-orange-100 text-orange-800 border-orange-200',
+      'Rejected': 'bg-red-100 text-red-800 border-red-200',
+    };
+    return (
+      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-800 border-gray-200'}`}>
+        {status}
+      </span>
+    );
+  };
 
   const buildQueryKey = () => {
     const params = new URLSearchParams({ 
@@ -107,6 +151,27 @@ export default function PartnersManagementEnhanced() {
     }
   });
 
+  const createMutation = useMutation({
+    mutationFn: async (data: Partial<Partner>) => {
+      const response = await fetch('/api/partners/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Create failed');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['partners'] });
+      setIsAddingNew(false);
+      setEditData({});
+      toast({ title: "Partner created successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error creating partner", variant: "destructive" });
+    }
+  });
+
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       const response = await fetch(`/api/partners/${id}`, { method: 'DELETE' });
@@ -139,14 +204,6 @@ export default function PartnersManagementEnhanced() {
     }
   });
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive"> = {
-      'Approved': 'default',
-      'Pending': 'secondary',
-      'Rejected': 'destructive'
-    };
-    return <Badge variant={variants[status] || 'secondary'}>{status}</Badge>;
-  };
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
@@ -168,9 +225,25 @@ export default function PartnersManagementEnhanced() {
     setEditData(partner);
   };
 
+  const handleAddNew = () => {
+    setIsAddingNew(true);
+    setEditData({
+      partner_type: 'digitization',
+      status: 'Pending',
+      is_active: false,
+      show_on_map: false,
+      email_public: 'FALSE',
+      phone_public: 'FALSE',
+    });
+  };
+
   const handleSaveEdit = () => {
     if (!editingPartner) return;
     updateMutation.mutate({ id: editingPartner.id, data: editData });
+  };
+
+  const handleSaveNew = () => {
+    createMutation.mutate(editData);
   };
 
   return (
@@ -179,6 +252,15 @@ export default function PartnersManagementEnhanced() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-white">Partner Management</CardTitle>
           <div className="flex gap-2">
+            <Button
+              onClick={handleAddNew}
+              className="bg-[#D67C4A] hover:bg-[#c46d3f] text-black font-medium"
+              size="sm"
+              data-testid="button-add-partner"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Partner
+            </Button>
             <Button
               onClick={() => window.open('/api/partners/download', '_blank')}
               variant="outline"
@@ -246,11 +328,47 @@ export default function PartnersManagementEnhanced() {
           <Table>
             <TableHeader>
               <TableRow className="border-gray-200 hover:bg-gray-50">
-                <TableHead className="text-gray-700 font-semibold">Partner</TableHead>
-                <TableHead className="text-gray-700 font-semibold">Type</TableHead>
+                <TableHead 
+                  className="text-gray-700 font-semibold cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('partner_name')}
+                >
+                  <div className="flex items-center gap-1">
+                    Partner
+                    {sortBy === 'partner_name' && (sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
+                    {sortBy !== 'partner_name' && <ArrowUpDown className="h-3 w-3 opacity-30" />}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="text-gray-700 font-semibold cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('partner_type')}
+                >
+                  <div className="flex items-center gap-1">
+                    Type
+                    {sortBy === 'partner_type' && (sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
+                    {sortBy !== 'partner_type' && <ArrowUpDown className="h-3 w-3 opacity-30" />}
+                  </div>
+                </TableHead>
                 <TableHead className="text-gray-700 font-semibold">Contact</TableHead>
-                <TableHead className="text-gray-700 font-semibold">Location</TableHead>
-                <TableHead className="text-gray-700 font-semibold">Status</TableHead>
+                <TableHead 
+                  className="text-gray-700 font-semibold cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('city')}
+                >
+                  <div className="flex items-center gap-1">
+                    Location
+                    {sortBy === 'city' && (sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
+                    {sortBy !== 'city' && <ArrowUpDown className="h-3 w-3 opacity-30" />}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="text-gray-700 font-semibold cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('status')}
+                >
+                  <div className="flex items-center gap-1">
+                    Status
+                    {sortBy === 'status' && (sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
+                    {sortBy !== 'status' && <ArrowUpDown className="h-3 w-3 opacity-30" />}
+                  </div>
+                </TableHead>
                 <TableHead className="text-gray-700 font-semibold">Map</TableHead>
                 <TableHead className="text-gray-700 font-semibold text-right">Actions</TableHead>
               </TableRow>
@@ -269,7 +387,7 @@ export default function PartnersManagementEnhanced() {
                   </TableCell>
                 </TableRow>
               ) : (
-                data.partners.map((partner) => (
+                getSortedPartners(data.partners).map((partner) => (
                   <TableRow key={partner.id} className="border-gray-200 hover:bg-gray-50">
                     <TableCell className="text-gray-900 font-medium">
                       {partner.partner_name}
@@ -371,11 +489,19 @@ export default function PartnersManagementEnhanced() {
         )}
       </CardContent>
 
-      {/* Edit Partner Modal */}
-      <Dialog open={!!editingPartner} onOpenChange={(open) => !open && setEditingPartner(null)}>
+      {/* Edit/Add Partner Modal */}
+      <Dialog open={!!editingPartner || isAddingNew} onOpenChange={(open) => {
+        if (!open) {
+          setEditingPartner(null);
+          setIsAddingNew(false);
+          setEditData({});
+        }
+      }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
           <DialogHeader>
-            <DialogTitle className="text-gray-900 text-xl">Edit Partner: {editingPartner?.partner_name}</DialogTitle>
+            <DialogTitle className="text-gray-900 text-xl">
+              {isAddingNew ? 'Add New Partner' : `Edit Partner: ${editingPartner?.partner_name}`}
+            </DialogTitle>
           </DialogHeader>
           
           <Tabs defaultValue="basic" className="w-full">
@@ -813,19 +939,26 @@ export default function PartnersManagementEnhanced() {
           <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
             <Button
               variant="outline"
-              onClick={() => setEditingPartner(null)}
+              onClick={() => {
+                setEditingPartner(null);
+                setIsAddingNew(false);
+                setEditData({});
+              }}
               className="bg-white border-2 border-gray-400 text-gray-900 hover:bg-gray-100 font-medium"
             >
               <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
             <Button
-              onClick={handleSaveEdit}
-              disabled={updateMutation.isPending}
+              onClick={isAddingNew ? handleSaveNew : handleSaveEdit}
+              disabled={isAddingNew ? createMutation.isPending : updateMutation.isPending}
               className="bg-[#D67C4A] hover:bg-[#c46d3f] text-black font-medium border-2 border-[#D67C4A] disabled:opacity-50"
             >
               <Save className="h-4 w-4 mr-2" />
-              {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+              {isAddingNew 
+                ? (createMutation.isPending ? 'Creating...' : 'Create Partner')
+                : (updateMutation.isPending ? 'Saving...' : 'Save Changes')
+              }
             </Button>
           </div>
         </DialogContent>
