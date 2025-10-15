@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import { MapPin, Phone, Mail, Globe, Filter, Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +15,22 @@ L.Icon.Default.mergeOptions({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
+
+// Component to track map bounds changes
+function MapBoundsTracker({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLngBounds) => void }) {
+  const map = useMapEvents({
+    moveend: () => {
+      onBoundsChange(map.getBounds());
+    },
+    zoomend: () => {
+      onBoundsChange(map.getBounds());
+    },
+    load: () => {
+      onBoundsChange(map.getBounds());
+    }
+  });
+  return null;
+}
 
 interface Partner {
   name: string;
@@ -41,6 +57,7 @@ export default function PartnerDirectoryFR() {
   const [selectedFormats, setSelectedFormats] = useState<string[]>([]);
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<string[]>(['popular']);
+  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
 
   const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
     queryKey: ['/partners.json'],
@@ -95,9 +112,20 @@ export default function PartnerDirectoryFR() {
   // Partners with coordinates for map
   const mappablePartners = filteredPartners.filter(p => p.lat && p.lng);
   
+  // Partners visible in the current map viewport
+  const visiblePartners = useMemo(() => {
+    if (!mapBounds) {
+      return mappablePartners;
+    }
+    return mappablePartners.filter(partner => 
+      mapBounds.contains([partner.lat!, partner.lng!])
+    );
+  }, [mappablePartners, mapBounds]);
+  
   console.log('🗺️ Filtered partners:', filteredPartners);
   console.log('🗺️ Mappable partners (with coordinates):', mappablePartners);
   console.log('🗺️ Mappable count:', mappablePartners.length);
+  console.log('🗺️ Visible in viewport:', visiblePartners.length);
 
   // Service chips with counts (French labels)
   const allServices = [
@@ -395,6 +423,7 @@ export default function PartnerDirectoryFR() {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+                <MapBoundsTracker onBoundsChange={setMapBounds} />
                 {mappablePartners.map((partner, index) => (
                   partner.lat && partner.lng && (
                     <Marker
@@ -425,13 +454,13 @@ export default function PartnerDirectoryFR() {
           <div className="space-y-4 max-h-[600px] overflow-y-auto">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
-            ) : mappablePartners.length === 0 ? (
+            ) : visiblePartners.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <p className="text-lg font-semibold">Aucun résultat</p>
                 <p className="mt-2">Essayez d'élargir la zone ou de retirer des filtres.</p>
               </div>
             ) : (
-              mappablePartners.map((partner, index) => (
+              visiblePartners.map((partner, index) => (
                 <Card
                   key={index}
                   className={`transition-all ${
