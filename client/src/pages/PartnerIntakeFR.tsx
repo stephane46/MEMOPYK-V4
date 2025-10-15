@@ -109,6 +109,7 @@ export default function PartnerIntakeFR() {
       await apiRequest("/api/partners/intake", "POST", data);
 
       setIsSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Une erreur s'est produite";
       toast({
@@ -125,7 +126,7 @@ export default function PartnerIntakeFR() {
         <div className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center">
           <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-6" />
           <h1 className="text-3xl font-bold text-[#2A4759] mb-4">
-            Profil partenaire soumis !
+            Profil soumis !
           </h1>
           <p className="text-lg text-gray-700 mb-8">
             Merci pour votre inscription. Notre équipe examinera votre profil et vous contactera sous 48 heures.
@@ -147,7 +148,35 @@ export default function PartnerIntakeFR() {
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-[#D67C4A] to-[#D67C4A]/80 p-8 md:p-12 text-white">
+          <div className="bg-gradient-to-r from-[#D67C4A] to-[#D67C4A]/80 p-8 md:p-12 text-white relative">
+            {/* Language Selector */}
+            <div className="absolute top-4 right-4 md:top-8 md:right-8 flex gap-2">
+              <button
+                onClick={() => window.location.href = "/en-US/partners/join"}
+                className="p-2 rounded-md border-2 border-transparent hover:border-white/50 transition-all"
+                title="Switch to English"
+                data-testid="lang-switcher-en"
+              >
+                <img 
+                  src="https://flagcdn.com/w40/us.png" 
+                  alt="English"
+                  className="w-8 h-5 object-cover rounded"
+                />
+              </button>
+              <button
+                onClick={() => window.location.href = "/fr-FR/partenaires/devenir"}
+                className="p-2 rounded-md border-2 border-white bg-white/20 shadow-md"
+                title="Français"
+                data-testid="lang-switcher-fr"
+              >
+                <img 
+                  src="https://flagcdn.com/w40/fr.png" 
+                  alt="Français"
+                  className="w-8 h-5 object-cover rounded"
+                />
+              </button>
+            </div>
+            
             <h1 className="text-4xl font-bold mb-4">Inscription Annuaire MEMOPYK</h1>
             <p className="text-xl opacity-95">
               Rejoignez notre réseau de professionnels de la numérisation
