@@ -14,7 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye, Camera, Film, Video } from 'lucide-react';
 import { queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES } from '@/../../shared/partnerFormats';
+import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES, DELIVERY } from '@/../../shared/partnerFormats';
 
 interface Partner {
   id: number;
@@ -22,18 +22,30 @@ interface Partner {
   partner_name: string;
   contact_name: string;
   email: string;
+  email_public: string;
   phone: string;
+  phone_public: string;
+  website: string;
+  address: string;
+  address_line2: string;
   city: string;
+  postal_code: string;
   country: string;
+  photo_formats?: string;
+  other_photo?: string;
+  film_formats?: string;
+  other_film?: string;
+  video_cassettes?: string;
+  other_video?: string;
+  delivery?: string;
+  other_delivery?: string;
+  public_description?: string;
   status: string;
   is_active: boolean;
   show_on_map: boolean;
   lat: number | null;
   lng: number | null;
-  website: string;
-  photo_formats?: string;
-  film_formats?: string;
-  video_cassettes?: string;
+  slug?: string;
   submitted_at: string;
 }
 
@@ -464,6 +476,13 @@ export default function PartnersManagementEnhanced() {
                     onChange={(e) => setEditData({ ...editData, email: e.target.value })}
                     className="bg-white border-gray-300 text-gray-900"
                   />
+                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                    <Checkbox
+                      checked={editData.email_public === 'TRUE'}
+                      onCheckedChange={(checked) => setEditData({ ...editData, email_public: checked ? 'TRUE' : 'FALSE' })}
+                    />
+                    Show email publicly
+                  </label>
                 </div>
 
                 <div className="space-y-2">
@@ -473,6 +492,13 @@ export default function PartnersManagementEnhanced() {
                     onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
                     className="bg-white border-gray-300 text-gray-900"
                   />
+                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                    <Checkbox
+                      checked={editData.phone_public === 'TRUE'}
+                      onCheckedChange={(checked) => setEditData({ ...editData, phone_public: checked ? 'TRUE' : 'FALSE' })}
+                    />
+                    Show phone publicly
+                  </label>
                 </div>
               </div>
 
@@ -484,10 +510,40 @@ export default function PartnersManagementEnhanced() {
                   className="bg-white border-gray-300 text-gray-900"
                 />
               </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-700">Public Description</Label>
+                <Textarea
+                  value={editData.public_description || ''}
+                  onChange={(e) => setEditData({ ...editData, public_description: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900 min-h-[100px]"
+                  placeholder="Description visible on partner directory"
+                />
+              </div>
             </TabsContent>
 
             {/* Location Tab */}
             <TabsContent value="location" className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label className="text-gray-700">Address</Label>
+                <Input
+                  value={editData.address || ''}
+                  onChange={(e) => setEditData({ ...editData, address: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                  placeholder="Street address"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-700">Address Line 2</Label>
+                <Input
+                  value={editData.address_line2 || ''}
+                  onChange={(e) => setEditData({ ...editData, address_line2: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                  placeholder="Apartment, suite, etc."
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-gray-700">City</Label>
@@ -499,13 +555,22 @@ export default function PartnersManagementEnhanced() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-gray-700">Country</Label>
+                  <Label className="text-gray-700">Postal Code</Label>
                   <Input
-                    value={editData.country || ''}
-                    onChange={(e) => setEditData({ ...editData, country: e.target.value })}
+                    value={editData.postal_code || ''}
+                    onChange={(e) => setEditData({ ...editData, postal_code: e.target.value })}
                     className="bg-white border-gray-300 text-gray-900"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-700">Country</Label>
+                <Input
+                  value={editData.country || ''}
+                  onChange={(e) => setEditData({ ...editData, country: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -627,6 +692,79 @@ export default function PartnersManagementEnhanced() {
                   })}
                 </div>
               </div>
+
+              {/* Other Format Fields */}
+              <div className="space-y-3 pt-4 border-t border-gray-200">
+                <Label className="text-base font-semibold text-gray-900">Other Formats (Custom)</Label>
+                
+                <div className="space-y-2">
+                  <Label className="text-sm text-gray-700">Other Photo Formats</Label>
+                  <Input
+                    value={editData.other_photo || ''}
+                    onChange={(e) => setEditData({ ...editData, other_photo: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                    placeholder="Custom photo formats"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm text-gray-700">Other Film Formats</Label>
+                  <Input
+                    value={editData.other_film || ''}
+                    onChange={(e) => setEditData({ ...editData, other_film: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                    placeholder="Custom film formats"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm text-gray-700">Other Video Formats</Label>
+                  <Input
+                    value={editData.other_video || ''}
+                    onChange={(e) => setEditData({ ...editData, other_video: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                    placeholder="Custom video formats"
+                  />
+                </div>
+              </div>
+
+              {/* Delivery Methods */}
+              <div className="space-y-3 pt-4 border-t border-gray-200">
+                <Label className="text-base font-semibold text-gray-900">Delivery Methods</Label>
+                <div className="grid grid-cols-2 gap-3 pl-7">
+                  {DELIVERY.map((method) => {
+                    const selected = editData.delivery?.split(',').map(d => d.trim()).includes(method.v) || false;
+                    return (
+                      <div key={method.v} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`delivery-${method.v}`}
+                          checked={selected}
+                          onCheckedChange={(checked) => {
+                            const currentMethods = editData.delivery?.split(',').map(d => d.trim()).filter(d => d) || [];
+                            const newMethods = checked
+                              ? [...currentMethods, method.v]
+                              : currentMethods.filter(d => d !== method.v);
+                            setEditData({ ...editData, delivery: newMethods.join(', ') });
+                          }}
+                        />
+                        <label htmlFor={`delivery-${method.v}`} className="text-sm text-gray-800 cursor-pointer">
+                          {method.fr}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="space-y-2 pt-2">
+                  <Label className="text-sm text-gray-700">Other Delivery Methods</Label>
+                  <Input
+                    value={editData.other_delivery || ''}
+                    onChange={(e) => setEditData({ ...editData, other_delivery: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                    placeholder="Custom delivery methods"
+                  />
+                </div>
+              </div>
             </TabsContent>
 
             {/* Visibility Tab */}
@@ -657,6 +795,17 @@ export default function PartnersManagementEnhanced() {
                     <span className="text-sm text-gray-500">Display this partner on the public map</span>
                   </div>
                 </label>
+
+                <div className="space-y-2 pt-4">
+                  <Label className="text-gray-700">URL Slug</Label>
+                  <Input
+                    value={editData.slug || ''}
+                    onChange={(e) => setEditData({ ...editData, slug: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                    placeholder="partner-url-slug"
+                  />
+                  <p className="text-xs text-gray-500">Optional: Custom URL identifier for partner page</p>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
