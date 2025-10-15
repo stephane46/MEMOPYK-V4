@@ -688,6 +688,16 @@ export default function PartnerIntakeFR() {
                   )}
                 />
 
+                {/* DEBUG: Show form errors */}
+                {Object.keys(form.formState.errors).length > 0 && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h3 className="font-semibold text-red-800 mb-2">Erreurs de validation :</h3>
+                    <pre className="text-sm text-red-700 whitespace-pre-wrap">
+                      {JSON.stringify(form.formState.errors, null, 2)}
+                    </pre>
+                  </div>
+                )}
+
                 {/* Submit Button */}
                 <Button
                   type="submit"
