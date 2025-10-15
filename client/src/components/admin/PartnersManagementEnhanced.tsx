@@ -100,7 +100,7 @@ export default function PartnersManagementEnhanced() {
   const getStatusBadge = (status: string) => {
     const styles = {
       'Approved': 'bg-green-100 text-green-800 border-green-200',
-      'Pending': 'bg-orange-100 text-orange-800 border-orange-200',
+      'Pending': 'bg-[#FEF3E2] text-[#D67C4A] border-[#D67C4A]',
       'Rejected': 'bg-red-100 text-red-800 border-red-200',
     };
     return (
