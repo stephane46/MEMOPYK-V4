@@ -32,6 +32,26 @@ function MapBoundsTracker({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLn
   return null;
 }
 
+// Dynamic tile layer that properly updates when URL changes
+function DynamicTileLayer({ url, attribution }: { url: string; attribution: string }) {
+  const map = useMapEvents({});
+  
+  useEffect(() => {
+    const tileLayer = L.tileLayer(url, {
+      attribution,
+      maxZoom: 20
+    });
+    
+    tileLayer.addTo(map);
+    
+    return () => {
+      map.removeLayer(tileLayer);
+    };
+  }, [url, attribution, map]);
+  
+  return null;
+}
+
 interface Partner {
   name: string;
   city: string;
@@ -473,15 +493,14 @@ export default function PartnerDirectoryFR() {
 
             {mappablePartners.length > 0 ? (
               <MapContainer
-                key={mapStyle}
                 center={mapCenter}
                 zoom={6}
                 style={{ height: '100%', width: '100%' }}
                 data-testid="partner-map"
               >
-                <TileLayer
-                  attribution={MAP_STYLES[mapStyle].attribution}
+                <DynamicTileLayer
                   url={MAP_STYLES[mapStyle].url}
+                  attribution={MAP_STYLES[mapStyle].attribution}
                 />
                 <MapBoundsTracker onBoundsChange={setMapBounds} />
                 {mappablePartners.map((partner, index) => (
