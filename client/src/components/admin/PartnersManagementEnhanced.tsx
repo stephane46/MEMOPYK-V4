@@ -418,7 +418,7 @@ export default function PartnersManagementEnhanced() {
                 getSortedPartners(data.partners).map((partner) => (
                   <TableRow key={partner.id} className="border-gray-200 hover:bg-gray-50">
                     <TableCell className="text-gray-700 text-sm whitespace-nowrap">
-                      {formatFrenchDateTime(partner.submitted_at)}
+                      {formatFrenchDateTime(partner.timestamp)}
                     </TableCell>
                     <TableCell className="text-gray-900 font-medium">
                       {partner.partner_name}
