@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "name": "Eloit Inc",
+    "city": "Capdenac",
+    "country": "France",
+    "lat": 45.5186,
+    "lng": 1.9981,
+    "services": [
+      "Photo",
+      "Film",
+      "Video"
+    ],
+    "formats": {
+      "photo": [
+        "Prints",
+        "Negatives 35mm",
+        "Slides 35mm",
+        "Medium format 120/220"
+      ],
+      "film": [
+        "Super 8",
+        "8mm"
+      ],
+      "video": [
+        "Betamax",
+        "VHS",
+        "Digital8"
+      ]
+    },
+    "website": "photall.com",
+    "phone": "+33 6 51 33 45 12",
+    "email": "stephane@eloit.com",
+    "public_description": "La solution idéale pour sauvegarder vos souvenirs et les visionner facilement !\n\nUtilisation de scanners professionnels.\n\nCorrection colorimétrique des diapositives scannées afin d’améliorer le rendu des couleurs et minimiser les – dégâts du temps.\n\nOptimisation des contrastes et de l’exposition afin d’adapter les images à une consultation sur un écran d’ordinateur ou de TV (le contraste et l’exposition sont initialement prévus pour une projection sur écran avec une ampoule à forte intensité).",
+    "slug": "eloit-inc"
+  }
+]

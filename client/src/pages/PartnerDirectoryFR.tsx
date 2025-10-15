@@ -46,7 +46,9 @@ export default function PartnerDirectoryFR() {
     queryFn: async () => {
       const response = await fetch('/partners.json');
       if (!response.ok) return [];
-      return response.json();
+      const data = await response.json();
+      console.log('🗺️ Partners loaded from JSON:', data);
+      return data;
     },
   });
 
@@ -74,6 +76,10 @@ export default function PartnerDirectoryFR() {
 
   // Partners with coordinates for map
   const mappablePartners = filteredPartners.filter(p => p.lat && p.lng);
+  
+  console.log('🗺️ Filtered partners:', filteredPartners);
+  console.log('🗺️ Mappable partners (with coordinates):', mappablePartners);
+  console.log('🗺️ Mappable count:', mappablePartners.length);
 
   // Service chips with counts
   const allServices = ['Photo', 'Film', 'Video'];
