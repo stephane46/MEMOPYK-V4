@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import L from 'leaflet';
+import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES } from '@shared/partnerFormats';
 
 // Fix Leaflet default icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -109,20 +110,20 @@ export default function PartnerDirectoryFR() {
     count: partners.filter(p => p.services.includes(service.id)).length
   }));
 
-  // Popular format chips with counts (French labels)
-  const popularFormats = [
-    { id: 'Prints', label: 'Tirages' },
-    { id: 'Slides 35mm', label: 'Diapos 35mm' },
-    { id: 'VHS', label: 'VHS' },
-    { id: 'Super 8', label: 'Super 8' }
+  // Popular format chips with counts (using actual French labels from intake form)
+  const popularFormatOptions = [
+    ...PHOTO_FORMATS.filter(f => ['Prints', 'Slides 35mm'].includes(f.v)),
+    ...FILM_FORMATS.filter(f => f.v === 'Super 8'),
+    ...VIDEO_CASSETTES.filter(f => f.v === 'VHS')
   ];
-  const formatCounts = popularFormats.map(format => ({
-    id: format.id,
-    name: format.label,
+  
+  const formatCounts = popularFormatOptions.map(format => ({
+    id: format.v,
+    name: format.fr,
     count: partners.filter(p => 
-      p.formats.photo.includes(format.id) ||
-      p.formats.film.includes(format.id) ||
-      p.formats.video.includes(format.id)
+      p.formats.photo.includes(format.v) ||
+      p.formats.film.includes(format.v) ||
+      p.formats.video.includes(format.v)
     ).length
   }));
 
