@@ -227,6 +227,9 @@ app.use((req, res, next) => {
     app.use('/logo.svg', express.static(path.join(__dirname, '../public/logo.svg')));
     app.use('/flags', express.static(path.join(__dirname, '../public/flags')));
     
+    // Serve public folder for static assets (partners.json, etc.) in dev mode
+    app.use(express.static(path.resolve(process.cwd(), 'public')));
+    
     // SEO middleware for development - intercepts HTML pages before proxy
     app.use(async (req: Request, res: Response, next: NextFunction) => {
       // Only process HTML requests for specific routes that need SEO
@@ -307,6 +310,9 @@ app.use((req, res, next) => {
     
     // Serve flags from public directory in production
     app.use('/flags', express.static(path.resolve(process.cwd(), 'public/flags')));
+    
+    // Serve public folder for static assets (partners.json, etc.)
+    app.use(express.static(path.resolve(process.cwd(), 'public')));
     
     // Serve index.html for all non-API routes (SPA fallback) with SEO injection
     app.get("*", async (req: Request, res: Response, next) => {
