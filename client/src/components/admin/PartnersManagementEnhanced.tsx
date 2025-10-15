@@ -97,6 +97,24 @@ export default function PartnersManagementEnhanced() {
     });
   };
 
+  const formatFrenchDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('fr-FR', {
+        timeZone: 'Europe/Paris',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const styles = {
       'Approved': 'bg-green-100 text-green-800 border-green-200',
@@ -330,6 +348,16 @@ export default function PartnersManagementEnhanced() {
               <TableRow className="border-gray-200 hover:bg-gray-50">
                 <TableHead 
                   className="text-gray-700 font-semibold cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('submitted_at')}
+                >
+                  <div className="flex items-center gap-1">
+                    Date
+                    {sortBy === 'submitted_at' && (sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
+                    {sortBy !== 'submitted_at' && <ArrowUpDown className="h-3 w-3 opacity-30" />}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="text-gray-700 font-semibold cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('partner_name')}
                 >
                   <div className="flex items-center gap-1">
@@ -376,19 +404,22 @@ export default function PartnersManagementEnhanced() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-gray-500 py-8">
+                  <TableCell colSpan={8} className="text-center text-gray-500 py-8">
                     Loading partners...
                   </TableCell>
                 </TableRow>
               ) : !data?.partners.length ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-gray-500 py-8">
+                  <TableCell colSpan={8} className="text-center text-gray-500 py-8">
                     No partners found
                   </TableCell>
                 </TableRow>
               ) : (
                 getSortedPartners(data.partners).map((partner) => (
                   <TableRow key={partner.id} className="border-gray-200 hover:bg-gray-50">
+                    <TableCell className="text-gray-700 text-sm whitespace-nowrap">
+                      {formatFrenchDateTime(partner.submitted_at)}
+                    </TableCell>
                     <TableCell className="text-gray-900 font-medium">
                       {partner.partner_name}
                     </TableCell>
