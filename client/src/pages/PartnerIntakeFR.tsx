@@ -207,7 +207,7 @@ export default function PartnerIntakeFR() {
                               placeholder="Votre entreprise"
                               {...field}
                               data-testid="input-partner-name"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                             />
                           </FormControl>
                           <FormMessage />
@@ -229,7 +229,7 @@ export default function PartnerIntakeFR() {
                               placeholder="https://exemple.com"
                               {...field}
                               data-testid="input-website"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                             />
                           </FormControl>
                           <FormMessage />
@@ -252,7 +252,7 @@ export default function PartnerIntakeFR() {
                               placeholder="contact@exemple.com"
                               {...field}
                               data-testid="input-email"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                             />
                           </FormControl>
                           <FormMessage />
@@ -298,7 +298,7 @@ export default function PartnerIntakeFR() {
                               placeholder="+33 6 12 34 56 78"
                               {...field}
                               data-testid="input-phone"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                             />
                           </FormControl>
                           <FormMessage />
@@ -327,7 +327,7 @@ export default function PartnerIntakeFR() {
                               placeholder="123 Rue de la République"
                               {...field}
                               data-testid="input-street"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                             />
                           </FormControl>
                           <FormMessage />
@@ -346,7 +346,7 @@ export default function PartnerIntakeFR() {
                               placeholder="Bâtiment A, Étage 3"
                               {...field}
                               data-testid="input-line2"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                             />
                           </FormControl>
                           <FormMessage />
@@ -365,7 +365,7 @@ export default function PartnerIntakeFR() {
                               placeholder="Paris"
                               {...field}
                               data-testid="input-city"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                             />
                           </FormControl>
                           <FormMessage />
@@ -384,7 +384,7 @@ export default function PartnerIntakeFR() {
                               placeholder="75001"
                               {...field}
                               data-testid="input-postal-code"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                             />
                           </FormControl>
                           <FormMessage />
@@ -527,7 +527,7 @@ export default function PartnerIntakeFR() {
                                   placeholder="Précisez..."
                                   {...field}
                                   maxLength={120}
-                                  className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                                  className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                                   data-testid="input-photo-other"
                                 />
                               </FormControl>
@@ -594,7 +594,7 @@ export default function PartnerIntakeFR() {
                                   placeholder="Précisez..."
                                   {...field}
                                   maxLength={120}
-                                  className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                                  className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                                   data-testid="input-film-other"
                                 />
                               </FormControl>
@@ -661,7 +661,7 @@ export default function PartnerIntakeFR() {
                                   placeholder="Précisez..."
                                   {...field}
                                   maxLength={120}
-                                  className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                                  className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
                                   data-testid="input-video-other"
                                 />
                               </FormControl>
@@ -728,14 +728,14 @@ export default function PartnerIntakeFR() {
                   name="public_description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description publique</FormLabel>
+                      <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Ce texte sera affiché tel quel dans l'annuaire."
                           rows={5}
                           {...field}
                           data-testid="input-public-description"
-                          className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] resize-none"
+                          className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] resize-none placeholder:text-gray-400"
                         />
                       </FormControl>
                       <FormMessage />

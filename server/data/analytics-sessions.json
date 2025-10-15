@@ -1934,9 +1934,9 @@
   {
     "id": "session_1755263689487_s8tcmaaup",
     "session_id": "ip_session_127_0_0_1",
-    "duration": 2,
+    "duration": 3,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-10-15T07:08:34.270Z",
+    "updated_at": "2025-10-15T07:56:25.384Z",
     "is_test_data": false
   },
   {
@@ -76129,5 +76129,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-10-15T07:08:32.598Z"
+  },
+  {
+    "id": "dce9f2ab-84a7-47a6-89e2-7fac5e513a17",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-10-15T07:56:23.098Z"
   }
 ]
