@@ -17,10 +17,10 @@ export const FILM_FORMATS = [
 
 export const VIDEO_CASSETTES = [
   { v: "VHS", fr: "VHS", en: "VHS" },
-  { v: "VHS-C", fr: "VHS-C", en: "VHS-C" },
-  { v: "Betamax", fr: "Betamax", en: "Betamax" },
   { v: "Video8/Hi8", fr: "Video8 / Hi8", en: "Video8 / Hi8" },
+  { v: "VHS-C", fr: "VHS-C", en: "VHS-C" },
   { v: "Digital8", fr: "Digital8", en: "Digital8" },
+  { v: "Betamax", fr: "Betamax", en: "Betamax" },
   { v: "MiniDV", fr: "MiniDV", en: "MiniDV" },
   { v: "DVCAM", fr: "DVCAM", en: "DVCAM" },
   { v: "U-Matic", fr: "U-Matic", en: "U-Matic" },
