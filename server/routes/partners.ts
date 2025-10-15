@@ -141,7 +141,8 @@ router.delete("/api/partners/:id", async (req, res) => {
     const headers = [
       ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
        "Address", "Complément d'adresse", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
-       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Other Delivery", "Public Description", "Consent"]
+       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Other Delivery", "Public Description", "Consent",
+       "Status", "Is_Active", "Show_On_Map", "lat", "lng", "slug"]
     ];
     
     const rows = data.map((row: any) => [
@@ -165,7 +166,13 @@ router.delete("/api/partners/:id", async (req, res) => {
       row["Delivery"],
       row["Other Delivery"],
       row["Public Description"],
-      row["Consent"]
+      row["Consent"],
+      row["Status"] || "Pending",
+      row["Is_Active"] || "FALSE",
+      row["Show_On_Map"] || "FALSE",
+      row["lat"] || "",
+      row["lng"] || "",
+      row["slug"] || ""
     ]);
 
     const newWorksheet = XLSX.utils.aoa_to_sheet([...headers, ...rows]);
@@ -193,7 +200,8 @@ async function saveToExcel(data: any) {
     worksheet = XLSX.utils.aoa_to_sheet([
       ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
        "Address", "Complément d'adresse", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
-       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Other Delivery", "Public Description", "Consent"]
+       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Other Delivery", "Public Description", "Consent",
+       "Status", "Is_Active", "Show_On_Map", "lat", "lng", "slug"]
     ]);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Partners");
   }
@@ -208,6 +216,15 @@ async function saveToExcel(data: any) {
   };
   
   const countryName = countryMap[data.address?.country] || data.address?.country || "";
+  
+  // Generate slug from partner name
+  const generateSlug = (name: string): string => {
+    return name
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove accents
+      .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with hyphens
+      .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+  };
   
   // Prepare row data
   const row = [
@@ -231,7 +248,13 @@ async function saveToExcel(data: any) {
     data.delivery?.join(", ") || "",
     data.other_delivery || "",
     data.public_description || "",
-    data.consent_listed ? "Yes" : "No"
+    data.consent_listed ? "Yes" : "No",
+    "Pending",
+    "FALSE",
+    "FALSE",
+    "",
+    "",
+    generateSlug(data.partner_name)
   ];
   
   // Append row
