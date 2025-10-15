@@ -5,7 +5,6 @@ import { MapPin, Phone, Mail, Globe, Filter, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 // Fix Leaflet default icon issue
