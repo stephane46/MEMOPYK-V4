@@ -18,6 +18,7 @@ import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES, DELIVERY } from '@/../../
 
 interface Partner {
   id: number;
+  timestamp: string;
   partner_type: string;
   partner_name: string;
   contact_name: string;
