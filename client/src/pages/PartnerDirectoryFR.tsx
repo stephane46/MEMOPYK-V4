@@ -41,10 +41,13 @@ export default function PartnerDirectoryFR() {
   const [selectedFormats, setSelectedFormats] = useState<string[]>([]);
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
 
-  const { data: partners = [], isLoading } = useQuery<Partner[]>({
-    queryKey: ['/partners.json', Date.now()], // Cache-busting in query key
+  const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
+    queryKey: ['/partners.json'],
     queryFn: async () => {
-      const response = await fetch(`/partners.json?t=${Date.now()}`);
+      const response = await fetch('/partners.json', {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' }
+      });
       if (!response.ok) {
         console.error('❌ Failed to fetch partners.json:', response.status);
         return [];
@@ -53,9 +56,14 @@ export default function PartnerDirectoryFR() {
       console.log('🗺️ Partners loaded from JSON:', data);
       return data;
     },
-    staleTime: 0,
-    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
+  
+  // Force refetch on mount
+  useEffect(() => {
+    refetch();
+  }, []);
 
   // Filter partners
   const filteredPartners = partners.filter(partner => {
