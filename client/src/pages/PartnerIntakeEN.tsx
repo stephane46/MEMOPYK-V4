@@ -608,7 +608,7 @@ export default function PartnerIntakeEN() {
                                       />
                                     </FormControl>
                                     <FormLabel className="text-sm font-normal cursor-pointer">
-                                      Medium format negatives (120 / 220: 6×4.5, 6×6, 6×7, 6×9…)
+                                      Medium format negatives <span className="text-xs">(120 / 220: 6×4.5, 6×6, 6×7, 6×9…)</span>
                                     </FormLabel>
                                   </FormItem>
                                 )}
@@ -631,7 +631,7 @@ export default function PartnerIntakeEN() {
                                       />
                                     </FormControl>
                                     <FormLabel className="text-sm font-normal cursor-pointer">
-                                      Large format negatives (4×5", 8×10"…)
+                                      Large format negatives <span className="text-xs">(4×5", 8×10"…)</span>
                                     </FormLabel>
                                   </FormItem>
                                 )}
