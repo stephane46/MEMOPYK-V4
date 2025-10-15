@@ -490,26 +490,29 @@ export default function PartnersManagementEnhanced() {
                   className="bg-white border-gray-300 text-gray-900"
                 />
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label className="text-gray-700 flex items-center gap-2">
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <Label className="text-gray-700 font-semibold mb-3 block">Visibility Settings</Label>
+              <div className="space-y-3">
+                <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={editData.is_active || false}
                     onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
-                    className="w-4 h-4"
+                    className="w-5 h-5 rounded border-gray-300"
                   />
-                  Active
-                </Label>
-                <Label className="text-gray-700 flex items-center gap-2">
+                  <span className="text-gray-900 font-medium">Active</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={editData.show_on_map || false}
                     onChange={(e) => setEditData({ ...editData, show_on_map: e.target.checked })}
-                    className="w-4 h-4"
+                    className="w-5 h-5 rounded border-gray-300"
                   />
-                  Show on Map
-                </Label>
+                  <span className="text-gray-900 font-medium">Show on Map</span>
+                </label>
               </div>
             </div>
           </div>
