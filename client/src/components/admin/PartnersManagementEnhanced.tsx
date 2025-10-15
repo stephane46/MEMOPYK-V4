@@ -6,7 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X } from 'lucide-react';
 import { queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -41,6 +44,8 @@ export default function PartnersManagementEnhanced() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [editingPartner, setEditingPartner] = useState<Partner | null>(null);
+  const [editData, setEditData] = useState<Partial<Partner>>({});
   const limit = 20;
 
   const buildQueryKey = () => {
@@ -60,6 +65,27 @@ export default function PartnersManagementEnhanced() {
       const response = await fetch(buildQueryKey());
       if (!response.ok) throw new Error('Failed to fetch');
       return response.json();
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: Partial<Partner> }) => {
+      const response = await fetch(`/api/partners/${id}/update`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Update failed');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['partners'] });
+      setEditingPartner(null);
+      setEditData({});
+      toast({ title: "Partner updated successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error updating partner", variant: "destructive" });
     }
   });
 
@@ -117,6 +143,16 @@ export default function PartnersManagementEnhanced() {
   const handleTypeChange = (value: string) => {
     setTypeFilter(value);
     setPage(1);
+  };
+
+  const handleEdit = (partner: Partner) => {
+    setEditingPartner(partner);
+    setEditData(partner);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingPartner) return;
+    updateMutation.mutate({ id: editingPartner.id, data: editData });
   };
 
   return (
@@ -255,6 +291,7 @@ export default function PartnersManagementEnhanced() {
                         <Button
                           variant="ghost"
                           size="sm"
+                          onClick={() => handleEdit(partner)}
                           className="h-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                           data-testid={`button-edit-${partner.id}`}
                         >
@@ -315,6 +352,188 @@ export default function PartnersManagementEnhanced() {
           </div>
         )}
       </CardContent>
+
+      {/* Edit Partner Modal */}
+      <Dialog open={!!editingPartner} onOpenChange={(open) => !open && setEditingPartner(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-gray-900">Edit Partner: {editingPartner?.partner_name}</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-gray-700">Partner Type</Label>
+                <Select 
+                  value={editData.partner_type || ''} 
+                  onValueChange={(val) => setEditData({ ...editData, partner_type: val })}
+                >
+                  <SelectTrigger className="bg-white border-gray-300 text-gray-900">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="digitization">Digitization</SelectItem>
+                    <SelectItem value="restoration">Restoration</SelectItem>
+                    <SelectItem value="transfer">Transfer</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-700">Status</Label>
+                <Select 
+                  value={editData.status || ''} 
+                  onValueChange={(val) => setEditData({ ...editData, status: val })}
+                >
+                  <SelectTrigger className="bg-white border-gray-300 text-gray-900">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Approved">Approved</SelectItem>
+                    <SelectItem value="Rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-gray-700">Partner Name</Label>
+                <Input
+                  value={editData.partner_name || ''}
+                  onChange={(e) => setEditData({ ...editData, partner_name: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-700">Contact Name</Label>
+                <Input
+                  value={editData.contact_name || ''}
+                  onChange={(e) => setEditData({ ...editData, contact_name: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-gray-700">Email</Label>
+                <Input
+                  value={editData.email || ''}
+                  onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-700">Phone</Label>
+                <Input
+                  value={editData.phone || ''}
+                  onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-gray-700">City</Label>
+                <Input
+                  value={editData.city || ''}
+                  onChange={(e) => setEditData({ ...editData, city: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-700">Country</Label>
+                <Input
+                  value={editData.country || ''}
+                  onChange={(e) => setEditData({ ...editData, country: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-gray-700">Website</Label>
+                <Input
+                  value={editData.website || ''}
+                  onChange={(e) => setEditData({ ...editData, website: e.target.value })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-700">Latitude</Label>
+                <Input
+                  type="number"
+                  step="any"
+                  value={editData.lat || ''}
+                  onChange={(e) => setEditData({ ...editData, lat: parseFloat(e.target.value) || null })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-gray-700">Longitude</Label>
+                <Input
+                  type="number"
+                  step="any"
+                  value={editData.lng || ''}
+                  onChange={(e) => setEditData({ ...editData, lng: parseFloat(e.target.value) || null })}
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-700 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={editData.is_active || false}
+                    onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  Active
+                </Label>
+                <Label className="text-gray-700 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={editData.show_on_map || false}
+                    onChange={(e) => setEditData({ ...editData, show_on_map: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  Show on Map
+                </Label>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => setEditingPartner(null)}
+              className="bg-white border-gray-300 text-gray-700"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveEdit}
+              disabled={updateMutation.isPending}
+              className="bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
