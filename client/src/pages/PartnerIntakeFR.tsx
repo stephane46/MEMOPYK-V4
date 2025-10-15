@@ -103,8 +103,6 @@ export default function PartnerIntakeFR() {
   }, [toast, form]);
 
   const onSubmit = async (data: PartnerIntake) => {
-    console.log("Form submitted with data:", data);
-    console.log("Form errors:", form.formState.errors);
     try {
       await apiRequest("/api/partners/intake", "POST", data);
 
@@ -114,7 +112,6 @@ export default function PartnerIntakeFR() {
         description: "Votre profil partenaire a été soumis avec succès.",
       });
     } catch (error: unknown) {
-      console.error("Submission error:", error);
       const errorMessage = error instanceof Error ? error.message : "Une erreur s'est produite";
       toast({
         title: "Erreur",
@@ -697,7 +694,6 @@ export default function PartnerIntakeFR() {
                   disabled={form.formState.isSubmitting}
                   className="w-full !bg-[#D67C4A] hover:!bg-[#D67C4A]/90 !text-white text-lg py-6"
                   data-testid="button-submit"
-                  onClick={() => console.log("Button clicked!", form.formState.errors)}
                 >
                   {form.formState.isSubmitting ? (
                     "Envoi en cours..."
