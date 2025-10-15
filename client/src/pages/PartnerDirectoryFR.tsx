@@ -448,17 +448,21 @@ export default function PartnerDirectoryFR() {
           {/* Map */}
           <div className="relative h-[600px] rounded-lg overflow-hidden shadow-lg">
             {/* Map Style Selector */}
-            <div className="absolute top-4 right-4 z-[1000] bg-white rounded-lg shadow-lg p-2">
-              <div className="text-xs font-semibold text-gray-700 mb-2 px-2">Style de carte:</div>
-              <div className="flex flex-col gap-1">
+            <div className="absolute top-4 right-4 z-[1000] bg-white rounded-lg shadow-lg p-3">
+              <div className="text-xs font-semibold text-gray-700 mb-2">Style de carte:</div>
+              <div className="flex flex-col gap-1.5">
                 {Object.entries(MAP_STYLES).map(([key, style]) => (
                   <button
                     key={key}
                     onClick={() => setMapStyle(key as keyof typeof MAP_STYLES)}
-                    className={`px-3 py-1.5 text-xs rounded transition-colors text-left ${
+                    style={{
+                      backgroundColor: mapStyle === key ? '#D67C4A' : '#f3f4f6',
+                      color: mapStyle === key ? '#ffffff' : '#374151'
+                    }}
+                    className={`px-3 py-2 text-xs rounded transition-all text-left ${
                       mapStyle === key
-                        ? 'bg-[#D67C4A] text-white font-semibold'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'font-bold shadow-md'
+                        : 'font-normal hover:bg-gray-200'
                     }`}
                   >
                     {style.name}
@@ -469,13 +473,13 @@ export default function PartnerDirectoryFR() {
 
             {mappablePartners.length > 0 ? (
               <MapContainer
+                key={mapStyle}
                 center={mapCenter}
                 zoom={6}
                 style={{ height: '100%', width: '100%' }}
                 data-testid="partner-map"
               >
                 <TileLayer
-                  key={mapStyle}
                   attribution={MAP_STYLES[mapStyle].attribution}
                   url={MAP_STYLES[mapStyle].url}
                 />
