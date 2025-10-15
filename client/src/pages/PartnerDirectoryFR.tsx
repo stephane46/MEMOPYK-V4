@@ -44,26 +44,30 @@ export default function PartnerDirectoryFR() {
   const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
     queryKey: ['/partners.json'],
     queryFn: async () => {
-      const response = await fetch('/partners.json', {
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
-      });
-      if (!response.ok) {
-        console.error('❌ Failed to fetch partners.json:', response.status);
+      console.log('🚀 QUERY FUNCTION EXECUTING...');
+      try {
+        const response = await fetch('/partners.json', {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+        console.log('📡 Response status:', response.status);
+        if (!response.ok) {
+          console.error('❌ Failed to fetch partners.json:', response.status);
+          return [];
+        }
+        const data = await response.json();
+        console.log('🗺️ Partners loaded from JSON:', data);
+        return data;
+      } catch (error) {
+        console.error('💥 Fetch error:', error);
         return [];
       }
-      const data = await response.json();
-      console.log('🗺️ Partners loaded from JSON:', data);
-      return data;
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
   
-  // Force refetch on mount
-  useEffect(() => {
-    refetch();
-  }, []);
+  console.log('📊 Query state - isLoading:', isLoading, 'data:', partners);
 
   // Filter partners
   const filteredPartners = partners.filter(partner => {
