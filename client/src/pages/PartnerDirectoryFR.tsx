@@ -1,10 +1,17 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
-import { MapPin, Phone, Mail, Globe, Filter, Search, Package } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Filter, Search, Package, X, Navigation } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import L from 'leaflet';
 import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES } from '@shared/partnerFormats';
 
@@ -72,6 +79,7 @@ export default function PartnerDirectoryFR() {
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [zoomTo, setZoomTo] = useState<{ lat: number; lng: number; zoom: number } | null>(null);
+  const [modalPartner, setModalPartner] = useState<Partner | null>(null);
 
   const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
     queryKey: ['/partners.json'],
@@ -344,19 +352,36 @@ export default function PartnerDirectoryFR() {
                       ? 'ring-2 ring-[#D67C4A] shadow-xl'
                       : 'hover:shadow-md'
                   }`}
-                  onClick={() => zoomToPartner(partner)}
+                  onClick={() => setModalPartner(partner)}
                   data-testid={`partner-card-${partner.slug}`}
                 >
                   <CardContent className="p-0">
                     {/* Header Section with colored background */}
                     <div className="bg-gradient-to-r from-[#2A4759] to-[#1f3646] p-5">
-                      <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-                        {partner.name}
-                        <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded">Cliquez pour localiser</span>
-                      </h3>
-                      <div className="flex items-center gap-2 text-[#F2EBDC]">
-                        <MapPin className="h-4 w-4" />
-                        <span className="text-sm">{partner.city}, {partner.country}</span>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-white mb-2">
+                            {partner.name}
+                          </h3>
+                          <div className="flex items-center gap-2 text-[#F2EBDC]">
+                            <MapPin className="h-4 w-4" />
+                            <span className="text-sm">{partner.city}, {partner.country}</span>
+                          </div>
+                        </div>
+                        {partner.lat && partner.lng && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-white hover:bg-white/20 shrink-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              zoomToPartner(partner);
+                            }}
+                            data-testid={`button-zoom-${partner.slug}`}
+                          >
+                            <Navigation className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     </div>
 
@@ -446,6 +471,122 @@ export default function PartnerDirectoryFR() {
           {filteredPartners.length} partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''}
         </div>
       </div>
+
+      {/* Partner Detail Modal */}
+      <Dialog open={!!modalPartner} onOpenChange={(open) => !open && setModalPartner(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {modalPartner && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-[#2A4759] pr-8">
+                  {modalPartner.name}
+                </DialogTitle>
+                <div className="flex items-center gap-2 text-gray-600 mt-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>{modalPartner.city}, {modalPartner.country}</span>
+                </div>
+              </DialogHeader>
+
+              <div className="space-y-6 mt-4">
+                {/* Description */}
+                {modalPartner.public_description && (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {modalPartner.public_description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Services and Formats */}
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Services proposés</h3>
+                  <div className="space-y-3">
+                    {modalPartner.services.sort((a, b) => {
+                      const order = ['Photo', 'Film', 'Video'];
+                      return order.indexOf(a) - order.indexOf(b);
+                    }).map(service => {
+                      const formats = service === 'Photo' ? modalPartner.formats.photo :
+                                    service === 'Film' ? modalPartner.formats.film :
+                                    modalPartner.formats.video;
+                      
+                      if (formats.length === 0) return null;
+
+                      return (
+                        <div key={service}>
+                          <Badge className="bg-[#D67C4A] text-white mb-2 px-3 py-1">
+                            {service === 'Video' ? 'Vidéo' : service}
+                          </Badge>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {formats.map(formatId => (
+                              <span
+                                key={formatId}
+                                className="inline-block text-sm bg-gray-100 text-gray-700 px-3 py-1.5 rounded-md"
+                              >
+                                {getFormatLabel(formatId)}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Contact</h3>
+                  <div className="space-y-3">
+                    {modalPartner.website && (
+                      <a
+                        href={modalPartner.website.startsWith('http') ? modalPartner.website : `https://${modalPartner.website}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 text-[#D67C4A] hover:text-[#c5703e] transition-colors group"
+                      >
+                        <Globe className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                        <span className="font-medium">Visiter le site web</span>
+                      </a>
+                    )}
+                    {modalPartner.phone && (
+                      <a
+                        href={`tel:${modalPartner.phone}`}
+                        className="flex items-center gap-3 text-[#2A4759] hover:text-[#1f3646] transition-colors"
+                      >
+                        <Phone className="h-5 w-5" />
+                        <span>{modalPartner.phone}</span>
+                      </a>
+                    )}
+                    {modalPartner.email && (
+                      <a
+                        href={`mailto:${modalPartner.email}`}
+                        className="flex items-center gap-3 text-[#2A4759] hover:text-[#1f3646] transition-colors"
+                      >
+                        <Mail className="h-5 w-5" />
+                        <span>{modalPartner.email}</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                {/* Locate on Map Button */}
+                {modalPartner.lat && modalPartner.lng && (
+                  <Button
+                    onClick={() => {
+                      zoomToPartner(modalPartner);
+                      setModalPartner(null);
+                    }}
+                    className="w-full bg-[#2A4759] hover:bg-[#1f3646] text-white"
+                  >
+                    <Navigation className="h-4 w-4 mr-2" />
+                    Localiser sur la carte
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
