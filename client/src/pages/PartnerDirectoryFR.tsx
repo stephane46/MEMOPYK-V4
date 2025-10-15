@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import { MapPin, Phone, Mail, Globe, Filter, Search } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Filter, Search, Package } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -133,6 +133,20 @@ export default function PartnerDirectoryFR() {
     setSelectedServices(prev =>
       prev.includes(serviceId) ? prev.filter(s => s !== serviceId) : [...prev, serviceId]
     );
+  };
+
+  // Helper function to get French format labels
+  const getFormatLabel = (formatId: string): string => {
+    const photoFormat = PHOTO_FORMATS.find(f => f.v === formatId);
+    if (photoFormat) return photoFormat.fr;
+    
+    const filmFormat = FILM_FORMATS.find(f => f.v === formatId);
+    if (filmFormat) return filmFormat.fr;
+    
+    const videoFormat = VIDEO_CASSETTES.find(f => f.v === formatId);
+    if (videoFormat) return videoFormat.fr;
+    
+    return formatId;
   };
 
   // Default map center (France)
@@ -270,27 +284,46 @@ export default function PartnerDirectoryFR() {
 
                     {/* Content Section */}
                     <div className="p-5 space-y-4">
-                      {/* Services Badges */}
-                      <div className="flex flex-wrap gap-2">
-                        {partner.services.sort((a, b) => {
-                          const order = ['Photo', 'Film', 'Video'];
-                          return order.indexOf(a) - order.indexOf(b);
-                        }).map(service => (
-                          <Badge 
-                            key={service} 
-                            className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1"
-                          >
-                            {service === 'Video' ? 'Vidéo' : service}
-                          </Badge>
-                        ))}
-                      </div>
-
                       {/* Description */}
                       {partner.public_description && (
-                        <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">
+                        <p className="text-sm text-gray-700 leading-relaxed line-clamp-2">
                           {partner.public_description}
                         </p>
                       )}
+
+                      {/* Services and Formats */}
+                      <div className="space-y-3">
+                        {partner.services.sort((a, b) => {
+                          const order = ['Photo', 'Film', 'Video'];
+                          return order.indexOf(a) - order.indexOf(b);
+                        }).map(service => {
+                          const formats = service === 'Photo' ? partner.formats.photo :
+                                        service === 'Film' ? partner.formats.film :
+                                        partner.formats.video;
+                          
+                          if (formats.length === 0) return null;
+
+                          return (
+                            <div key={service} className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1">
+                                  {service === 'Video' ? 'Vidéo' : service}
+                                </Badge>
+                              </div>
+                              <div className="pl-4 flex flex-wrap gap-1.5">
+                                {formats.map(formatId => (
+                                  <span
+                                    key={formatId}
+                                    className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md"
+                                  >
+                                    {getFormatLabel(formatId)}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
 
                       {/* Contact Section */}
                       <div className="pt-3 border-t border-gray-100 space-y-2">
