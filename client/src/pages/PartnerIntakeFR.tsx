@@ -150,7 +150,7 @@ export default function PartnerIntakeFR() {
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-[#D67C4A] to-[#D67C4A]/80 p-8 md:p-12 text-white">
-            <h1 className="text-4xl font-bold mb-4">Inscription Partenaire MEMOPYK</h1>
+            <h1 className="text-4xl font-bold mb-4">Inscription Annuaire MEMOPYK</h1>
             <p className="text-xl opacity-95">
               Rejoignez notre réseau de professionnels de la numérisation
             </p>
