@@ -910,10 +910,14 @@ export default function PartnerIntakeFR() {
                           placeholder="Ce texte sera affiché tel quel dans l'annuaire."
                           rows={5}
                           {...field}
+                          maxLength={500}
                           data-testid="input-public-description"
                           className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] resize-none placeholder:text-gray-400"
                         />
                       </FormControl>
+                      <div className="text-sm text-gray-500 text-right mt-1">
+                        {500 - (field.value?.length || 0)} caractères restants
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
