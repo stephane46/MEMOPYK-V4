@@ -128,9 +128,9 @@ app.use((req, res, next) => {
     "default-src 'self'; " +
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://replit.com https://www.clarity.ms https://scripts.clarity.ms; " +
     "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://stats.g.doubleclick.net https://cdn.jsdelivr.net https://supabase.memopyk.org wss://supabase.memopyk.org https://api.ipapi.co https://cms.memopyk.org wss: ws:; " +
-    "img-src 'self' data: blob: https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cdn.jsdelivr.net https://flagcdn.com https://cms.memopyk.org; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "font-src 'self' data: https://fonts.gstatic.com; " +
+    "img-src 'self' data: blob: https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cdn.jsdelivr.net https://flagcdn.com https://cms.memopyk.org https://*.tile.openstreetmap.org https://unpkg.com; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; " +
+    "font-src 'self' data: https://fonts.gstatic.com https://unpkg.com; " +
     "frame-src 'self' https://www.googletagmanager.com; " +
     "media-src 'self' https://supabase.memopyk.org http://supabase.memopyk.org:8001 https://cms.memopyk.org; " +
     frameAncestors + ";"
@@ -227,13 +227,7 @@ app.use((req, res, next) => {
     app.use('/logo.svg', express.static(path.join(__dirname, '../public/logo.svg')));
     app.use('/flags', express.static(path.join(__dirname, '../public/flags')));
     
-    // Serve public folder for static assets (partners.json, etc.) in dev mode  
-    app.use((req, res, next) => {
-      if (req.path === '/partners.json') {
-        console.log('🔍 REQUEST FOR /partners.json detected!');
-      }
-      next();
-    });
+    // Serve public folder for static assets (partners.json, etc.) in dev mode
     app.use(express.static(path.resolve(process.cwd(), 'public')));
     
     // SEO middleware for development - intercepts HTML pages before proxy
