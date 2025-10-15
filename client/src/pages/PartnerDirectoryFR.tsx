@@ -42,14 +42,19 @@ export default function PartnerDirectoryFR() {
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
 
   const { data: partners = [], isLoading } = useQuery<Partner[]>({
-    queryKey: ['/partners.json'],
+    queryKey: ['/partners.json', Date.now()], // Cache-busting in query key
     queryFn: async () => {
-      const response = await fetch('/partners.json');
-      if (!response.ok) return [];
+      const response = await fetch(`/partners.json?t=${Date.now()}`);
+      if (!response.ok) {
+        console.error('❌ Failed to fetch partners.json:', response.status);
+        return [];
+      }
       const data = await response.json();
       console.log('🗺️ Partners loaded from JSON:', data);
       return data;
     },
+    staleTime: 0,
+    gcTime: 0,
   });
 
   // Filter partners
