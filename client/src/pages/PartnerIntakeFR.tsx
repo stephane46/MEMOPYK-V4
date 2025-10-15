@@ -40,8 +40,8 @@ const restrictedCountries = [
 ];
 
 const serviceOptions = [
-  { value: "Photo" as const, label: "Photo", icon: FileImage },
-  { value: "Film" as const, label: "Film", icon: Film },
+  { value: "Photo" as const, label: "Numérisation de photos", icon: FileImage },
+  { value: "Film" as const, label: "Numérisation de films et cassettes vidéo", icon: Film },
 ];
 
 export default function PartnerIntakeFR() {
@@ -882,7 +882,7 @@ export default function PartnerIntakeFR() {
                         name="other_delivery"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Autres types de livraison / Sortie</FormLabel>
+                            <FormLabel>Autres types de Livraison / Sortie</FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="Précisez..."
