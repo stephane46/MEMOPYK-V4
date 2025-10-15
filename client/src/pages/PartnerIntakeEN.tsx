@@ -180,13 +180,35 @@ export default function PartnerIntakeEN() {
                       control={form.control}
                       name="partner_name"
                       render={({ field }) => (
-                        <FormItem className="md:col-span-2">
+                        <FormItem>
                           <FormLabel>Company Name *</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Your company"
                               {...field}
                               data-testid="input-partner-name"
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="website"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <Globe className="w-4 h-4" />
+                            Website
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="https://example.com"
+                              {...field}
+                              data-testid="input-website"
                               className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
                             />
                           </FormControl>
@@ -239,28 +261,6 @@ export default function PartnerIntakeEN() {
                         </FormItem>
                       )}
                     />
-
-                    <FormField
-                      control={form.control}
-                      name="website"
-                      render={({ field }) => (
-                        <FormItem className="md:col-span-2">
-                          <FormLabel className="flex items-center gap-2">
-                            <Globe className="w-4 h-4" />
-                            Website
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="https://example.com"
-                              {...field}
-                              data-testid="input-website"
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                   </div>
                 </div>
 
@@ -276,7 +276,7 @@ export default function PartnerIntakeEN() {
                       control={form.control}
                       name="address.street"
                       render={({ field }) => (
-                        <FormItem className="md:col-span-2">
+                        <FormItem>
                           <FormLabel>Street</FormLabel>
                           <FormControl>
                             <Input
@@ -295,7 +295,7 @@ export default function PartnerIntakeEN() {
                       control={form.control}
                       name="address.line2"
                       render={({ field }) => (
-                        <FormItem className="md:col-span-2">
+                        <FormItem>
                           <FormLabel>Address Line 2</FormLabel>
                           <FormControl>
                             <Input
