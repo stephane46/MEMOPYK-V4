@@ -447,7 +447,7 @@ export default function PartnersManagementEnhanced() {
                             Visible
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-xs text-gray-500 border-gray-300">
+                          <Badge variant="outline" className="text-xs bg-red-100 text-red-800 border-red-200">
                             Hidden
                           </Badge>
                         )}
