@@ -51,14 +51,18 @@ export const PartnerIntakeSchema = z.object({
     (data.film_formats && data.film_formats.length > 0) ||
     (data.video_cassettes && data.video_cassettes.length > 0);
   return hasFormats;
-}, {
-  message: "Au moins un format doit être sélectionné (photo, film, ou cassette vidéo)",
+}, (data) => ({
+  message: data.locale === "fr" 
+    ? "Au moins un format doit être sélectionné (photo, film, ou cassette vidéo)"
+    : "At least one format must be selected (photo, film, or video cassette)",
   path: ["photo_formats"],
-}).refine((data) => {
+})).refine((data) => {
   return data.consent_listed === true;
-}, {
-  message: "You must agree to be listed in the directory to submit the form",
+}, (data) => ({
+  message: data.locale === "fr"
+    ? "Veuillez accepter d'être répertorié dans l'annuaire pour soumettre le formulaire"
+    : "Please agree to be listed in the directory to submit the form",
   path: ["consent_listed"],
-});
+}));
 
 export type PartnerIntake = z.infer<typeof PartnerIntakeSchema>;
