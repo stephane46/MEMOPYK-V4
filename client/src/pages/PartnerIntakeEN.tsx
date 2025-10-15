@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PartnerIntakeSchema, type PartnerIntake } from "@shared/partnerSchema";
+import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES, DELIVERY } from "@shared/partnerFormats";
 import { apiRequest } from "@/lib/queryClient";
 import {
   Form,
@@ -24,7 +25,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Send, Building2, Globe, Mail, Phone, MapPin, Package, FileImage, Film, AudioLines, Rocket } from "lucide-react";
+import { CheckCircle2, Send, Building2, Globe, Mail, Phone, MapPin, Package, FileImage, Film, Video, Truck } from "lucide-react";
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 
@@ -43,23 +44,9 @@ const serviceOptions = [
   { value: "Film" as const, label: "Film", icon: Film },
 ];
 
-const photoSubcategories = [
-  { value: "photo_imprimee", label: "Printed Photo" },
-  { value: "negatif", label: "Negative" },
-];
-
-const filmSubcategories = [
-  { value: "super8", label: "Super 8" },
-  { value: "8mm", label: "8 mm" },
-  { value: "16mm", label: "16 mm" },
-  { value: "9_5mm", label: "9.5 mm" },
-  { value: "vhs", label: "VHS" },
-];
-
 export default function PartnerIntakeEN() {
   const [csrfToken, setCsrfToken] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const { toast } = useToast();
 
   const form = useForm<PartnerIntake>({
@@ -81,6 +68,11 @@ export default function PartnerIntakeEN() {
       video_formats: [],
       film_formats: [],
       audio_formats: [],
+      video_cassettes: [],
+      other_photo_formats: "",
+      other_film_formats: "",
+      other_video_formats: "",
+      delivery: [],
       output: [],
       turnaround: "",
       rush: false,
@@ -375,169 +367,253 @@ export default function PartnerIntakeEN() {
                   </div>
                 </div>
 
-                {/* Services */}
+                {/* Technical Capabilities */}
                 <div className="space-y-6">
                   <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
                     <Package className="w-6 h-6" />
-                    Services Offered *
+                    Technical Capabilities *
                   </h2>
                   
-                  <FormField
-                    control={form.control}
-                    name="services"
-                    render={() => (
-                      <FormItem>
-                        <div className="grid grid-cols-2 gap-4">
-                          {serviceOptions.map((service) => (
-                            <FormField
-                              key={service.value}
-                              control={form.control}
-                              name="services"
-                              render={({ field }) => {
-                                const Icon = service.icon;
-                                return (
-                                  <FormItem
-                                    key={service.value}
-                                    className="flex flex-row items-start space-x-3 space-y-0"
-                                  >
+                  {/* Photo Digitization Group */}
+                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
+                      <FileImage className="w-5 h-5" />
+                      Photo Digitization
+                    </h3>
+                    <FormField
+                      control={form.control}
+                      name="photo_formats"
+                      render={() => (
+                        <FormItem className="space-y-3">
+                          <FormDescription>Select everything you support.</FormDescription>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {PHOTO_FORMATS.map((format) => (
+                              <FormField
+                                key={format.v}
+                                control={form.control}
+                                name="photo_formats"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                                     <FormControl>
                                       <Checkbox
-                                        checked={field.value?.includes(service.value)}
+                                        checked={field.value?.includes(format.v)}
                                         onCheckedChange={(checked) => {
                                           const newValue = checked
-                                            ? [...(field.value || []), service.value]
-                                            : (field.value || []).filter((val) => val !== service.value);
+                                            ? [...(field.value || []), format.v]
+                                            : (field.value || []).filter((val) => val !== format.v);
                                           field.onChange(newValue);
-                                          setSelectedServices(newValue);
                                         }}
-                                        data-testid={`checkbox-service-${service.value}`}
+                                        data-testid={`checkbox-photo-${format.v}`}
                                       />
                                     </FormControl>
-                                    <div className="space-y-1 leading-none">
-                                      <FormLabel className="text-sm font-normal flex items-center gap-2 cursor-pointer">
-                                        <Icon className="w-4 h-4" />
-                                        {service.label}
-                                      </FormLabel>
-                                    </div>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      {format.en}
+                                    </FormLabel>
                                   </FormItem>
-                                );
-                              }}
+                                )}
+                              />
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="other_photo_formats"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Other supported formats</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Please specify..."
+                              {...field}
+                              maxLength={120}
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              data-testid="input-photo-other"
                             />
-                          ))}
-                        </div>
-                        <FormDescription>
-                          Select at least one service
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-                  {/* Photo Subcategories */}
-                  {selectedServices.includes("Photo") && (
-                    <div className="ml-8 space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="photo_formats"
-                        render={() => (
-                          <FormItem className="space-y-3">
-                            <FormLabel className="text-base font-medium">Formats</FormLabel>
-                            <div className="space-y-3">
-                              {photoSubcategories.map((subcategory) => (
-                                <FormField
-                                  key={subcategory.value}
-                                  control={form.control}
-                                  name="photo_formats"
-                                  render={({ field }) => (
-                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                                      <FormControl>
-                                        <Checkbox
-                                          checked={field.value?.includes(subcategory.value)}
-                                          onCheckedChange={(checked) => {
-                                            const newValue = checked
-                                              ? [...(field.value || []), subcategory.value]
-                                              : (field.value || []).filter((val) => val !== subcategory.value);
-                                            field.onChange(newValue);
-                                          }}
-                                          data-testid={`checkbox-photo-${subcategory.value}`}
-                                        />
-                                      </FormControl>
-                                      <FormLabel className="text-sm font-normal cursor-pointer">
-                                        {subcategory.label}
-                                      </FormLabel>
-                                    </FormItem>
-                                  )}
-                                />
-                              ))}
-                            </div>
-                          </FormItem>
-                        )}
-                      />
-                      <FormItem>
-                        <FormLabel>Other</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Specify other formats..."
-                            className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
-                            data-testid="input-photo-other"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    </div>
-                  )}
+                  {/* Motion Picture Film Group */}
+                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
+                      <Film className="w-5 h-5" />
+                      Motion Picture Film
+                    </h3>
+                    <FormField
+                      control={form.control}
+                      name="film_formats"
+                      render={() => (
+                        <FormItem className="space-y-3">
+                          <FormDescription>Select everything you support.</FormDescription>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {FILM_FORMATS.map((format) => (
+                              <FormField
+                                key={format.v}
+                                control={form.control}
+                                name="film_formats"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(format.v)}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), format.v]
+                                            : (field.value || []).filter((val) => val !== format.v);
+                                          field.onChange(newValue);
+                                        }}
+                                        data-testid={`checkbox-film-${format.v}`}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      {format.en}
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="other_film_formats"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Other supported formats</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Please specify..."
+                              {...field}
+                              maxLength={120}
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              data-testid="input-film-other"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-                  {/* Film Subcategories */}
-                  {selectedServices.includes("Film") && (
-                    <div className="ml-8 space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="film_formats"
-                        render={() => (
-                          <FormItem className="space-y-3">
-                            <FormLabel className="text-base font-medium">Formats</FormLabel>
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                              {filmSubcategories.map((subcategory) => (
-                                <FormField
-                                  key={subcategory.value}
-                                  control={form.control}
-                                  name="film_formats"
-                                  render={({ field }) => (
-                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                                      <FormControl>
-                                        <Checkbox
-                                          checked={field.value?.includes(subcategory.value)}
-                                          onCheckedChange={(checked) => {
-                                            const newValue = checked
-                                              ? [...(field.value || []), subcategory.value]
-                                              : (field.value || []).filter((val) => val !== subcategory.value);
-                                            field.onChange(newValue);
-                                          }}
-                                          data-testid={`checkbox-film-${subcategory.value}`}
-                                        />
-                                      </FormControl>
-                                      <FormLabel className="text-sm font-normal cursor-pointer">
-                                        {subcategory.label}
-                                      </FormLabel>
-                                    </FormItem>
-                                  )}
-                                />
-                              ))}
-                            </div>
-                          </FormItem>
-                        )}
-                      />
-                      <FormItem>
-                        <FormLabel>Other</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Specify other formats..."
-                            className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
-                            data-testid="input-film-other"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    </div>
-                  )}
+                  {/* Video Cassettes Group */}
+                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
+                      <Video className="w-5 h-5" />
+                      Video Cassettes
+                    </h3>
+                    <FormField
+                      control={form.control}
+                      name="video_cassettes"
+                      render={() => (
+                        <FormItem className="space-y-3">
+                          <FormDescription>Select everything you support.</FormDescription>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {VIDEO_CASSETTES.map((format) => (
+                              <FormField
+                                key={format.v}
+                                control={form.control}
+                                name="video_cassettes"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(format.v)}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), format.v]
+                                            : (field.value || []).filter((val) => val !== format.v);
+                                          field.onChange(newValue);
+                                        }}
+                                        data-testid={`checkbox-video-${format.v}`}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      {format.en}
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="other_video_formats"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Other supported formats</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Please specify..."
+                              {...field}
+                              maxLength={120}
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                              data-testid="input-video-other"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Delivery Section */}
+                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
+                      <Truck className="w-5 h-5" />
+                      Delivery / Output
+                    </h3>
+                    <FormField
+                      control={form.control}
+                      name="delivery"
+                      render={() => (
+                        <FormItem className="space-y-3">
+                          <FormDescription>Available delivery options.</FormDescription>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {DELIVERY.map((option) => (
+                              <FormField
+                                key={option.v}
+                                control={form.control}
+                                name="delivery"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(option.v)}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), option.v]
+                                            : (field.value || []).filter((val) => val !== option.v);
+                                          field.onChange(newValue);
+                                        }}
+                                        data-testid={`checkbox-delivery-${option.v}`}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      {option.en}
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
 
                 {/* Description */}
