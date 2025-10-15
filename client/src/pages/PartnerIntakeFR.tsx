@@ -789,7 +789,7 @@ export default function PartnerIntakeFR() {
                           </FormDescription>
                         </div>
                       </div>
-                      <FormMessage />
+                      <FormMessage className="text-[#D67C4A] font-medium" />
                     </FormItem>
                   )}
                 />
