@@ -235,7 +235,22 @@ router.patch("/api/partners/:id/update", async (req, res) => {
     const rowId = parseInt(req.params.id);
     const updates = req.body;
 
-    const success = partnerStore.update(rowId, updates);
+    // Convert boolean values to "TRUE"/"FALSE" strings for Excel compatibility
+    const normalizedUpdates = { ...updates };
+    if ('is_active' in normalizedUpdates) {
+      normalizedUpdates.is_active = normalizedUpdates.is_active ? 'TRUE' : 'FALSE';
+    }
+    if ('show_on_map' in normalizedUpdates) {
+      normalizedUpdates.show_on_map = normalizedUpdates.show_on_map ? 'TRUE' : 'FALSE';
+    }
+    if ('email_public' in normalizedUpdates) {
+      normalizedUpdates.email_public = normalizedUpdates.email_public ? 'TRUE' : 'FALSE';
+    }
+    if ('phone_public' in normalizedUpdates) {
+      normalizedUpdates.phone_public = normalizedUpdates.phone_public ? 'TRUE' : 'FALSE';
+    }
+
+    const success = partnerStore.update(rowId, normalizedUpdates);
     
     if (!success) {
       return res.status(404).json({ error: "Partner not found" });
