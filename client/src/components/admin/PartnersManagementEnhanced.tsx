@@ -526,7 +526,7 @@ export default function PartnersManagementEnhanced() {
             <Button
               onClick={handleSaveEdit}
               disabled={updateMutation.isPending}
-              className="bg-[#D67C4A] hover:bg-[#c46d3f] text-white font-medium border-2 border-[#D67C4A] disabled:opacity-50"
+              className="bg-[#D67C4A] hover:bg-[#c46d3f] text-black font-medium border-2 border-[#D67C4A] disabled:opacity-50"
             >
               <Save className="h-4 w-4 mr-2" />
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
