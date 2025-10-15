@@ -97,33 +97,44 @@ export default function PartnerDirectoryFR() {
   console.log('🗺️ Mappable partners (with coordinates):', mappablePartners);
   console.log('🗺️ Mappable count:', mappablePartners.length);
 
-  // Service chips with counts
-  const allServices = ['Photo', 'Film', 'Video'];
+  // Service chips with counts (French labels)
+  const allServices = [
+    { id: 'Photo', label: 'Photo' },
+    { id: 'Film', label: 'Film' },
+    { id: 'Video', label: 'Vidéo' }
+  ];
   const serviceCounts = allServices.map(service => ({
-    name: service,
-    count: partners.filter(p => p.services.includes(service)).length
+    id: service.id,
+    name: service.label,
+    count: partners.filter(p => p.services.includes(service.id)).length
   }));
 
-  // Popular format chips with counts
-  const popularFormats = ['Prints', 'Slides 35mm', 'VHS', 'Super 8'];
+  // Popular format chips with counts (French labels)
+  const popularFormats = [
+    { id: 'Prints', label: 'Tirages' },
+    { id: 'Slides 35mm', label: 'Diapos 35mm' },
+    { id: 'VHS', label: 'VHS' },
+    { id: 'Super 8', label: 'Super 8' }
+  ];
   const formatCounts = popularFormats.map(format => ({
-    name: format,
+    id: format.id,
+    name: format.label,
     count: partners.filter(p => 
-      p.formats.photo.includes(format) ||
-      p.formats.film.includes(format) ||
-      p.formats.video.includes(format)
+      p.formats.photo.includes(format.id) ||
+      p.formats.film.includes(format.id) ||
+      p.formats.video.includes(format.id)
     ).length
   }));
 
-  const toggleService = (service: string) => {
+  const toggleService = (serviceId: string) => {
     setSelectedServices(prev =>
-      prev.includes(service) ? prev.filter(s => s !== service) : [...prev, service]
+      prev.includes(serviceId) ? prev.filter(s => s !== serviceId) : [...prev, serviceId]
     );
   };
 
-  const toggleFormat = (format: string) => {
+  const toggleFormat = (formatId: string) => {
     setSelectedFormats(prev =>
-      prev.includes(format) ? prev.filter(f => f !== format) : [...prev, format]
+      prev.includes(formatId) ? prev.filter(f => f !== formatId) : [...prev, formatId]
     );
   };
 
