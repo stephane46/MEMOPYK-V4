@@ -1936,7 +1936,7 @@
     "session_id": "ip_session_127_0_0_1",
     "duration": 2,
     "created_at": "2025-08-15T13:14:49.487Z",
-    "updated_at": "2025-10-15T14:44:37.028Z",
+    "updated_at": "2025-10-15T15:48:49.941Z",
     "is_test_data": false
   },
   {
@@ -76185,5 +76185,13 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-10-15T14:44:35.289Z"
+  },
+  {
+    "id": "34446f48-5759-4b59-a839-28804ec2df79",
+    "referrer": "",
+    "language": "en-US",
+    "country": "Unknown",
+    "city": "Unknown",
+    "updated_at": "2025-10-15T15:48:48.103Z"
   }
 ]
