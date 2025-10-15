@@ -9,7 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye } from 'lucide-react';
 import { queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -355,109 +357,109 @@ export default function PartnersManagementEnhanced() {
 
       {/* Edit Partner Modal */}
       <Dialog open={!!editingPartner} onOpenChange={(open) => !open && setEditingPartner(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
           <DialogHeader>
-            <DialogTitle className="text-gray-900">Edit Partner: {editingPartner?.partner_name}</DialogTitle>
+            <DialogTitle className="text-gray-900 text-xl">Edit Partner: {editingPartner?.partner_name}</DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-gray-700">Partner Type</Label>
-                <Select 
-                  value={editData.partner_type || ''} 
-                  onValueChange={(val) => setEditData({ ...editData, partner_type: val })}
-                >
-                  <SelectTrigger className="bg-white border-gray-300 text-gray-900">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="digitization">Digitization</SelectItem>
-                    <SelectItem value="restoration">Restoration</SelectItem>
-                    <SelectItem value="transfer">Transfer</SelectItem>
-                  </SelectContent>
-                </Select>
+          <Tabs defaultValue="basic" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-4">
+              <TabsTrigger value="basic" className="text-sm">
+                <Building2 className="w-4 h-4 mr-2" />
+                Basic Info
+              </TabsTrigger>
+              <TabsTrigger value="location" className="text-sm">
+                <MapPin className="w-4 h-4 mr-2" />
+                Location
+              </TabsTrigger>
+              <TabsTrigger value="services" className="text-sm">
+                <Package className="w-4 h-4 mr-2" />
+                Services
+              </TabsTrigger>
+              <TabsTrigger value="visibility" className="text-sm">
+                <Eye className="w-4 h-4 mr-2" />
+                Visibility
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Basic Information Tab */}
+            <TabsContent value="basic" className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Partner Type</Label>
+                  <Select 
+                    value={editData.partner_type || ''} 
+                    onValueChange={(val) => setEditData({ ...editData, partner_type: val })}
+                  >
+                    <SelectTrigger className="bg-white border-gray-300 text-gray-900">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="digitization">Digitization</SelectItem>
+                      <SelectItem value="restoration">Restoration</SelectItem>
+                      <SelectItem value="transfer">Transfer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Status</Label>
+                  <Select 
+                    value={editData.status || ''} 
+                    onValueChange={(val) => setEditData({ ...editData, status: val })}
+                  >
+                    <SelectTrigger className="bg-white border-gray-300 text-gray-900">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Pending">Pending</SelectItem>
+                      <SelectItem value="Approved">Approved</SelectItem>
+                      <SelectItem value="Rejected">Rejected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-gray-700">Status</Label>
-                <Select 
-                  value={editData.status || ''} 
-                  onValueChange={(val) => setEditData({ ...editData, status: val })}
-                >
-                  <SelectTrigger className="bg-white border-gray-300 text-gray-900">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Pending">Pending</SelectItem>
-                    <SelectItem value="Approved">Approved</SelectItem>
-                    <SelectItem value="Rejected">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Partner Name</Label>
+                  <Input
+                    value={editData.partner_name || ''}
+                    onChange={(e) => setEditData({ ...editData, partner_name: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                  />
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-gray-700">Partner Name</Label>
-                <Input
-                  value={editData.partner_name || ''}
-                  onChange={(e) => setEditData({ ...editData, partner_name: e.target.value })}
-                  className="bg-white border-gray-300 text-gray-900"
-                />
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Contact Name</Label>
+                  <Input
+                    value={editData.contact_name || ''}
+                    onChange={(e) => setEditData({ ...editData, contact_name: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-gray-700">Contact Name</Label>
-                <Input
-                  value={editData.contact_name || ''}
-                  onChange={(e) => setEditData({ ...editData, contact_name: e.target.value })}
-                  className="bg-white border-gray-300 text-gray-900"
-                />
-              </div>
-            </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Email</Label>
+                  <Input
+                    value={editData.email || ''}
+                    onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                  />
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-gray-700">Email</Label>
-                <Input
-                  value={editData.email || ''}
-                  onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                  className="bg-white border-gray-300 text-gray-900"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-gray-700">Phone</Label>
-                <Input
-                  value={editData.phone || ''}
-                  onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
-                  className="bg-white border-gray-300 text-gray-900"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-gray-700">City</Label>
-                <Input
-                  value={editData.city || ''}
-                  onChange={(e) => setEditData({ ...editData, city: e.target.value })}
-                  className="bg-white border-gray-300 text-gray-900"
-                />
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Phone</Label>
+                  <Input
+                    value={editData.phone || ''}
+                    onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-gray-700">Country</Label>
-                <Input
-                  value={editData.country || ''}
-                  onChange={(e) => setEditData({ ...editData, country: e.target.value })}
-                  className="bg-white border-gray-300 text-gray-900"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-gray-700">Website</Label>
                 <Input
@@ -466,56 +468,93 @@ export default function PartnersManagementEnhanced() {
                   className="bg-white border-gray-300 text-gray-900"
                 />
               </div>
+            </TabsContent>
 
-              <div className="space-y-2">
-                <Label className="text-gray-700">Latitude</Label>
-                <Input
-                  type="number"
-                  step="any"
-                  value={editData.lat || ''}
-                  onChange={(e) => setEditData({ ...editData, lat: parseFloat(e.target.value) || null })}
-                  className="bg-white border-gray-300 text-gray-900"
-                />
+            {/* Location Tab */}
+            <TabsContent value="location" className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-gray-700">City</Label>
+                  <Input
+                    value={editData.city || ''}
+                    onChange={(e) => setEditData({ ...editData, city: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Country</Label>
+                  <Input
+                    value={editData.country || ''}
+                    onChange={(e) => setEditData({ ...editData, country: e.target.value })}
+                    className="bg-white border-gray-300 text-gray-900"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-gray-700">Longitude</Label>
-                <Input
-                  type="number"
-                  step="any"
-                  value={editData.lng || ''}
-                  onChange={(e) => setEditData({ ...editData, lng: parseFloat(e.target.value) || null })}
-                  className="bg-white border-gray-300 text-gray-900"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Latitude</Label>
+                  <Input
+                    type="number"
+                    step="any"
+                    value={editData.lat || ''}
+                    onChange={(e) => setEditData({ ...editData, lat: parseFloat(e.target.value) || null })}
+                    className="bg-white border-gray-300 text-gray-900"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Longitude</Label>
+                  <Input
+                    type="number"
+                    step="any"
+                    value={editData.lng || ''}
+                    onChange={(e) => setEditData({ ...editData, lng: parseFloat(e.target.value) || null })}
+                    className="bg-white border-gray-300 text-gray-900"
+                  />
+                </div>
               </div>
-            </div>
+            </TabsContent>
 
-            <div className="border-t border-gray-200 pt-4 mt-4">
-              <Label className="text-gray-700 font-semibold mb-3 block">Visibility Settings</Label>
-              <div className="space-y-3">
-                <label className="flex items-center gap-3 cursor-pointer">
+            {/* Services Tab */}
+            <TabsContent value="services" className="space-y-4 py-4">
+              <div className="text-center text-gray-600 py-8">
+                Service format editing coming soon...
+              </div>
+            </TabsContent>
+
+            {/* Visibility Tab */}
+            <TabsContent value="visibility" className="space-y-4 py-4">
+              <div className="space-y-4">
+                <label className="flex items-center gap-3 cursor-pointer p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
                   <input
                     type="checkbox"
                     checked={editData.is_active || false}
                     onChange={(e) => setEditData({ ...editData, is_active: e.target.checked })}
                     className="w-5 h-5 rounded border-gray-300"
                   />
-                  <span className="text-gray-900 font-medium">Active</span>
+                  <div>
+                    <span className="text-gray-900 font-medium block">Active</span>
+                    <span className="text-sm text-gray-500">Partner is active in the directory</span>
+                  </div>
                 </label>
-                <label className="flex items-center gap-3 cursor-pointer">
+                
+                <label className="flex items-center gap-3 cursor-pointer p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
                   <input
                     type="checkbox"
                     checked={editData.show_on_map || false}
                     onChange={(e) => setEditData({ ...editData, show_on_map: e.target.checked })}
                     className="w-5 h-5 rounded border-gray-300"
                   />
-                  <span className="text-gray-900 font-medium">Show on Map</span>
+                  <div>
+                    <span className="text-gray-900 font-medium block">Show on Map</span>
+                    <span className="text-sm text-gray-500">Display this partner on the public map</span>
+                  </div>
                 </label>
               </div>
-            </div>
-          </div>
+            </TabsContent>
+          </Tabs>
 
           <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
             <Button
