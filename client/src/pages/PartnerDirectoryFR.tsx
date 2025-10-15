@@ -369,8 +369,8 @@ export default function PartnerDirectoryFR() {
                         </p>
                       )}
 
-                      {/* Services and Formats */}
-                      <div className="space-y-3">
+                      {/* Services and Formats - Horizontal Layout */}
+                      <div className="space-y-2">
                         {partner.services.sort((a, b) => {
                           const order = ['Photo', 'Film', 'Video'];
                           return order.indexOf(a) - order.indexOf(b);
@@ -382,13 +382,11 @@ export default function PartnerDirectoryFR() {
                           if (formats.length === 0) return null;
 
                           return (
-                            <div key={service} className="space-y-2">
-                              <div className="flex items-center gap-2">
-                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1">
-                                  {service === 'Video' ? 'Vidéo' : service}
-                                </Badge>
-                              </div>
-                              <div className="pl-4 flex flex-wrap gap-1.5">
+                            <div key={service} className="flex items-start gap-3">
+                              <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1 shrink-0">
+                                {service === 'Video' ? 'Vidéo' : service}
+                              </Badge>
+                              <div className="flex flex-wrap gap-1.5">
                                 {formats.map(formatId => (
                                   <span
                                     key={formatId}
@@ -403,8 +401,8 @@ export default function PartnerDirectoryFR() {
                         })}
                       </div>
 
-                      {/* Contact Section */}
-                      <div className="pt-3 border-t border-gray-100 space-y-2">
+                      {/* Contact Section - Horizontal Layout */}
+                      <div className="pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-6 gap-y-2">
                         {partner.website && (
                           <a
                             href={partner.website.startsWith('http') ? partner.website : `https://${partner.website}`}
@@ -413,29 +411,27 @@ export default function PartnerDirectoryFR() {
                             className="flex items-center gap-2 text-[#D67C4A] hover:text-[#c5703e] transition-colors group"
                           >
                             <Globe className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                            <span className="text-sm font-medium">Visiter le site web</span>
+                            <span className="text-sm font-medium">Site web</span>
                           </a>
                         )}
-                        <div className="flex flex-wrap gap-4">
-                          {partner.phone && (
-                            <a
-                              href={`tel:${partner.phone}`}
-                              className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
-                            >
-                              <Phone className="h-4 w-4" />
-                              <span className="text-sm">{partner.phone}</span>
-                            </a>
-                          )}
-                          {partner.email && (
-                            <a
-                              href={`mailto:${partner.email}`}
-                              className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
-                            >
-                              <Mail className="h-4 w-4" />
-                              <span className="text-sm">Email</span>
-                            </a>
-                          )}
-                        </div>
+                        {partner.phone && (
+                          <a
+                            href={`tel:${partner.phone}`}
+                            className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
+                          >
+                            <Phone className="h-4 w-4" />
+                            <span className="text-sm">{partner.phone}</span>
+                          </a>
+                        )}
+                        {partner.email && (
+                          <a
+                            href={`mailto:${partner.email}`}
+                            className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
+                          >
+                            <Mail className="h-4 w-4" />
+                            <span className="text-sm">Email</span>
+                          </a>
+                        )}
                       </div>
                     </div>
                   </CardContent>
