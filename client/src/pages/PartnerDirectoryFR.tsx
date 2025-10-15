@@ -425,13 +425,13 @@ export default function PartnerDirectoryFR() {
           <div className="space-y-4 max-h-[600px] overflow-y-auto">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
-            ) : filteredPartners.length === 0 ? (
+            ) : mappablePartners.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <p className="text-lg font-semibold">Aucun résultat</p>
                 <p className="mt-2">Essayez d'élargir la zone ou de retirer des filtres.</p>
               </div>
             ) : (
-              filteredPartners.map((partner, index) => (
+              mappablePartners.map((partner, index) => (
                 <Card
                   key={index}
                   className={`transition-all ${

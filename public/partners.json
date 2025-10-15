@@ -32,5 +32,37 @@
     "email": "stephane@eloit.com",
     "public_description": "La solution idéale pour sauvegarder vos souvenirs et les visionner facilement !\n\nUtilisation de scanners professionnels.\n\nCorrection colorimétrique des diapositives scannées afin d’améliorer le rendu des couleurs et minimiser les – dégâts du temps.\n\nOptimisation des contrastes et de l’exposition afin d’adapter les images à une consultation sur un écran d’ordinateur ou de TV (le contraste et l’exposition sont initialement prévus pour une projection sur écran avec une ampoule à forte intensité).",
     "slug": "eloit-inc"
+  },
+  {
+    "name": "NGOC TEST",
+    "city": "Souillac",
+    "country": "France",
+    "lat": 44.9046780724082,
+    "lng": 1.4671430115554622,
+    "services": [
+      "Photo",
+      "Film",
+      "Video"
+    ],
+    "formats": {
+      "photo": [
+        "Prints",
+        "Negatives 35mm"
+      ],
+      "film": [
+        "8mm",
+        "Super 8"
+      ],
+      "video": [
+        "VHS",
+        "MiniDV",
+        "Digital8"
+      ]
+    },
+    "website": "test.com",
+    "phone": "12 65 25 15 45",
+    "email": "ngoc@test.com",
+    "public_description": "description test",
+    "slug": "ngoc-test"
   }
 ]
