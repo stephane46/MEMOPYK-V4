@@ -392,6 +392,54 @@ export default function PartnerIntakeEN() {
                   </div>
                 </div>
 
+                {/* Services Offered */}
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
+                    <Package className="w-6 h-6" />
+                    Services Offered *
+                  </h2>
+                  
+                  <FormField
+                    control={form.control}
+                    name="services"
+                    render={() => (
+                      <FormItem className="space-y-3">
+                        <FormDescription>Select at least one type of service you offer.</FormDescription>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {serviceOptions.map((service) => (
+                            <FormField
+                              key={service.value}
+                              control={form.control}
+                              name="services"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(service.value)}
+                                      onCheckedChange={(checked) => {
+                                        const newValue = checked
+                                          ? [...(field.value || []), service.value]
+                                          : (field.value || []).filter((val) => val !== service.value);
+                                        field.onChange(newValue);
+                                      }}
+                                      data-testid={`checkbox-service-${service.value.toLowerCase()}`}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal cursor-pointer flex items-center gap-2">
+                                    <service.icon className="w-4 h-4" />
+                                    {service.label}
+                                  </FormLabel>
+                                </FormItem>
+                              )}
+                            />
+                          ))}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 {/* Technical Capabilities */}
                 <div className="space-y-6">
                   <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
