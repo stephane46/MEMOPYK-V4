@@ -193,7 +193,7 @@ export default function PartnerIntakeFR() {
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
                             <Globe className="w-4 h-4" />
-                            Site Web
+                            Site Web *
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -262,7 +262,7 @@ export default function PartnerIntakeFR() {
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
                             <Phone className="w-4 h-4" />
-                            Téléphone
+                            Téléphone *
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -283,7 +283,7 @@ export default function PartnerIntakeFR() {
                 <div className="space-y-6">
                   <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
                     <MapPin className="w-6 h-6" />
-                    Adresse
+                    Adresse de la boutique
                   </h2>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

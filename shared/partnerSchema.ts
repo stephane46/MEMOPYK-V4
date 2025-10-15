@@ -4,8 +4,8 @@ export const PartnerIntakeSchema = z.object({
   partner_name: z.string().min(2).max(120),
   email: z.string().email(),
   email_public: z.boolean().optional().default(false),
-  phone: z.string().optional().default(""),
-  website: z.string().optional().default(""),
+  phone: z.string().min(1, "Téléphone requis"),
+  website: z.string().url("URL invalide").min(1, "Site web requis"),
   address: z.object({
     street: z.string().optional().default(""),
     line2: z.string().optional().default(""),
