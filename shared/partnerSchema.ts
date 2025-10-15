@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const PartnerIntakeSchema = z.object({
   partner_name: z.string().min(2).max(120),
-  email: z.string().email(),
+  email: z.string().min(1),
   email_public: z.boolean().optional().default(true),
   phone: z.string().min(1, "Téléphone requis"),
   website: z.string()
@@ -47,6 +47,15 @@ export const PartnerIntakeSchema = z.object({
   locale: z.enum(["fr", "en"]).default("fr"),
   csrfToken: z.string().min(8),
 }).refine((data) => {
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(data.email);
+}, (data) => ({
+  message: data.locale === "fr"
+    ? "Veuillez entrer une adresse e-mail valide"
+    : "Please enter a valid email address",
+  path: ["email"],
+})).refine((data) => {
   const hasFormats = 
     (data.photo_formats && data.photo_formats.length > 0) ||
     (data.film_formats && data.film_formats.length > 0) ||
