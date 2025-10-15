@@ -11,9 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye } from 'lucide-react';
+import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye, Camera, Film, Video } from 'lucide-react';
 import { queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES } from '@/../../shared/partnerFormats';
 
 interface Partner {
   id: number;
@@ -30,6 +31,9 @@ interface Partner {
   lat: number | null;
   lng: number | null;
   website: string;
+  photo_formats?: string;
+  film_formats?: string;
+  video_cassettes?: string;
   submitted_at: string;
 }
 
@@ -530,9 +534,98 @@ export default function PartnersManagementEnhanced() {
             </TabsContent>
 
             {/* Services Tab */}
-            <TabsContent value="services" className="space-y-4 py-4">
-              <div className="text-center text-gray-600 py-8">
-                Service format editing coming soon...
+            <TabsContent value="services" className="space-y-6 py-4">
+              {/* Photo Formats */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-[#D67C4A]" />
+                  <Label className="text-base font-semibold text-gray-900">Photo Formats</Label>
+                </div>
+                <div className="grid grid-cols-2 gap-3 pl-7">
+                  {PHOTO_FORMATS.map((format) => {
+                    const selected = editData.photo_formats?.split(',').map(f => f.trim()).includes(format.v) || false;
+                    return (
+                      <div key={format.v} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`photo-${format.v}`}
+                          checked={selected}
+                          onCheckedChange={(checked) => {
+                            const currentFormats = editData.photo_formats?.split(',').map(f => f.trim()).filter(f => f) || [];
+                            const newFormats = checked
+                              ? [...currentFormats, format.v]
+                              : currentFormats.filter(f => f !== format.v);
+                            setEditData({ ...editData, photo_formats: newFormats.join(', ') });
+                          }}
+                        />
+                        <label htmlFor={`photo-${format.v}`} className="text-sm text-gray-800 cursor-pointer">
+                          {format.fr}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Film Formats */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Film className="w-5 h-5 text-[#D67C4A]" />
+                  <Label className="text-base font-semibold text-gray-900">Film Formats</Label>
+                </div>
+                <div className="grid grid-cols-2 gap-3 pl-7">
+                  {FILM_FORMATS.map((format) => {
+                    const selected = editData.film_formats?.split(',').map(f => f.trim()).includes(format.v) || false;
+                    return (
+                      <div key={format.v} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`film-${format.v}`}
+                          checked={selected}
+                          onCheckedChange={(checked) => {
+                            const currentFormats = editData.film_formats?.split(',').map(f => f.trim()).filter(f => f) || [];
+                            const newFormats = checked
+                              ? [...currentFormats, format.v]
+                              : currentFormats.filter(f => f !== format.v);
+                            setEditData({ ...editData, film_formats: newFormats.join(', ') });
+                          }}
+                        />
+                        <label htmlFor={`film-${format.v}`} className="text-sm text-gray-800 cursor-pointer">
+                          {format.fr}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Video Cassettes */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Video className="w-5 h-5 text-[#D67C4A]" />
+                  <Label className="text-base font-semibold text-gray-900">Video Cassettes</Label>
+                </div>
+                <div className="grid grid-cols-2 gap-3 pl-7">
+                  {VIDEO_CASSETTES.map((format) => {
+                    const selected = editData.video_cassettes?.split(',').map(f => f.trim()).includes(format.v) || false;
+                    return (
+                      <div key={format.v} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`video-${format.v}`}
+                          checked={selected}
+                          onCheckedChange={(checked) => {
+                            const currentFormats = editData.video_cassettes?.split(',').map(f => f.trim()).filter(f => f) || [];
+                            const newFormats = checked
+                              ? [...currentFormats, format.v]
+                              : currentFormats.filter(f => f !== format.v);
+                            setEditData({ ...editData, video_cassettes: newFormats.join(', ') });
+                          }}
+                        />
+                        <label htmlFor={`video-${format.v}`} className="text-sm text-gray-800 cursor-pointer">
+                          {format.fr}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </TabsContent>
 
