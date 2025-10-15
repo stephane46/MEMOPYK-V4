@@ -484,36 +484,191 @@ export default function PartnerIntakeEN() {
                       control={form.control}
                       name="photo_formats"
                       render={() => (
-                        <FormItem className="space-y-3">
-                          <FormDescription>Select everything you support.</FormDescription>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {PHOTO_FORMATS.map((format) => (
+                        <FormItem className="space-y-4">
+                          <FormDescription>Select everything you support:</FormDescription>
+                          
+                          {/* Prints and albums */}
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-semibold text-[#2A4759]">📷 Prints and albums</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-6">
                               <FormField
-                                key={format.v}
                                 control={form.control}
                                 name="photo_formats"
                                 render={({ field }) => (
                                   <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                                     <FormControl>
                                       <Checkbox
-                                        checked={field.value?.includes(format.v)}
+                                        checked={field.value?.includes("Prints")}
                                         onCheckedChange={(checked) => {
                                           const newValue = checked
-                                            ? [...(field.value || []), format.v]
-                                            : (field.value || []).filter((val) => val !== format.v);
+                                            ? [...(field.value || []), "Prints"]
+                                            : (field.value || []).filter((val) => val !== "Prints");
                                           field.onChange(newValue);
                                         }}
-                                        data-testid={`checkbox-photo-${format.v}`}
+                                        data-testid="checkbox-photo-Prints"
                                       />
                                     </FormControl>
                                     <FormLabel className="text-sm font-normal cursor-pointer">
-                                      {format.en}
+                                      Prints
                                     </FormLabel>
                                   </FormItem>
                                 )}
                               />
-                            ))}
+                              <FormField
+                                control={form.control}
+                                name="photo_formats"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes("Albums")}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), "Albums"]
+                                            : (field.value || []).filter((val) => val !== "Albums");
+                                          field.onChange(newValue);
+                                        }}
+                                        data-testid="checkbox-photo-Albums"
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      Albums (disassembly possible)
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
                           </div>
+
+                          {/* Film and negatives */}
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-semibold text-[#2A4759]">🎞️ Film and negatives</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-6">
+                              <FormField
+                                control={form.control}
+                                name="photo_formats"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes("Negatives 35mm")}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), "Negatives 35mm"]
+                                            : (field.value || []).filter((val) => val !== "Negatives 35mm");
+                                          field.onChange(newValue);
+                                        }}
+                                        data-testid="checkbox-photo-Negatives 35mm"
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      35mm negatives
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name="photo_formats"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes("Slides 35mm")}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), "Slides 35mm"]
+                                            : (field.value || []).filter((val) => val !== "Slides 35mm");
+                                          field.onChange(newValue);
+                                        }}
+                                        data-testid="checkbox-photo-Slides 35mm"
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      35mm slides
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name="photo_formats"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes("Medium format 120/220")}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), "Medium format 120/220"]
+                                            : (field.value || []).filter((val) => val !== "Medium format 120/220");
+                                          field.onChange(newValue);
+                                        }}
+                                        data-testid="checkbox-photo-Medium format 120/220"
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      Medium format negatives (120 / 220: 6×4.5, 6×6, 6×7, 6×9…)
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name="photo_formats"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes("Large format")}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), "Large format"]
+                                            : (field.value || []).filter((val) => val !== "Large format");
+                                          field.onChange(newValue);
+                                        }}
+                                        data-testid="checkbox-photo-Large format"
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      Large format negatives (4×5", 8×10"…)
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Other formats */}
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-semibold text-[#2A4759]">🧾 Other formats</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-6">
+                              <FormField
+                                control={form.control}
+                                name="photo_formats"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes("Polaroid/Instax")}
+                                        onCheckedChange={(checked) => {
+                                          const newValue = checked
+                                            ? [...(field.value || []), "Polaroid/Instax"]
+                                            : (field.value || []).filter((val) => val !== "Polaroid/Instax");
+                                          field.onChange(newValue);
+                                        }}
+                                        data-testid="checkbox-photo-Polaroid/Instax"
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal cursor-pointer">
+                                      Polaroid / Instax
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          </div>
+                          
                           <FormMessage />
                         </FormItem>
                       )}
