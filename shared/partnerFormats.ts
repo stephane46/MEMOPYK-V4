@@ -31,5 +31,4 @@ export const DELIVERY = [
   { v: "Download link", fr: "Lien de téléchargement", en: "Download link" },
   { v: "External drive", fr: "Disque dur / SSD", en: "External HDD / SSD" },
   { v: "DVD/Blu-ray", fr: "DVD / Blu-ray", en: "DVD / Blu-ray" },
-  { v: "Other", fr: "Autres", en: "Other" },
 ];

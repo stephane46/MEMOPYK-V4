@@ -873,27 +873,25 @@ export default function PartnerIntakeEN() {
                         </FormItem>
                       )}
                     />
-                    {selectedDelivery?.includes("Other") && (
-                      <FormField
-                        control={form.control}
-                        name="other_delivery"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Other delivery / Output types</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Please specify..."
-                                {...field}
-                                maxLength={120}
-                                className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
-                                data-testid="input-delivery-other"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
+                    <FormField
+                      control={form.control}
+                      name="other_delivery"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Other delivery / Output types</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Please specify..."
+                              {...field}
+                              maxLength={120}
+                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
+                              data-testid="input-delivery-other"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                   </div>
                 )}
