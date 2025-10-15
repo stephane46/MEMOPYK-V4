@@ -86,35 +86,53 @@ router.post("/api/partners/export-map", async (req, res) => {
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = XLSX.utils.sheet_to_json(worksheet);
 
-    // Filter for approved partners with map visibility
+    // Filter for approved partners with map visibility AND valid coordinates
     const mapPartners = data
-      .filter((row: any) => 
-        row["Status"] === "Approved" && 
-        row["Is_Active"] === "TRUE" && 
-        row["Show_On_Map"] === "TRUE"
-      )
-      .map((row: any) => ({
-        name: row["Partner Name"] || "",
-        city: row["City"] || "",
-        country: row["Country"] || "",
-        lat: row["lat"] ? parseFloat(row["lat"]) : null,
-        lng: row["lng"] ? parseFloat(row["lng"]) : null,
-        services: [
-          ...(row["Photo Formats"] ? ["Photo"] : []),
-          ...(row["Film Formats"] ? ["Film"] : []),
-          ...(row["Video Cassettes"] ? ["Video"] : [])
-        ],
-        formats: {
-          photo: row["Photo Formats"] ? row["Photo Formats"].split(", ") : [],
-          film: row["Film Formats"] ? row["Film Formats"].split(", ") : [],
-          video: row["Video Cassettes"] ? row["Video Cassettes"].split(", ") : []
-        },
-        website: row["Website"] || "",
-        phone: row["Phone"] || "",
-        email: row["Email_Public"] === "TRUE" ? row["Email"] : "",
-        public_description: row["Public Description"] || "",
-        slug: row["slug"] || ""
-      }));
+      .filter((row: any) => {
+        // Ensure lat/lng cells have actual values (not null/undefined/empty string)
+        const hasLat = row["lat"] != null && String(row["lat"]).trim() !== "";
+        const hasLng = row["lng"] != null && String(row["lng"]).trim() !== "";
+        
+        if (!hasLat || !hasLng) return false;
+        
+        const lat = Number(row["lat"]);
+        const lng = Number(row["lng"]);
+        
+        return (
+          row["Status"] === "Approved" && 
+          row["Is_Active"] === "TRUE" && 
+          row["Show_On_Map"] === "TRUE" &&
+          Number.isFinite(lat) &&
+          Number.isFinite(lng)
+        );
+      })
+      .map((row: any) => {
+        const lat = Number(row["lat"]);
+        const lng = Number(row["lng"]);
+        
+        return {
+          name: row["Partner Name"] || "",
+          city: row["City"] || "",
+          country: row["Country"] || "",
+          lat,
+          lng,
+          services: [
+            ...(row["Photo Formats"] ? ["Photo"] : []),
+            ...(row["Film Formats"] ? ["Film"] : []),
+            ...(row["Video Cassettes"] ? ["Video"] : [])
+          ],
+          formats: {
+            photo: row["Photo Formats"] ? row["Photo Formats"].split(", ") : [],
+            film: row["Film Formats"] ? row["Film Formats"].split(", ") : [],
+            video: row["Video Cassettes"] ? row["Video Cassettes"].split(", ") : []
+          },
+          website: row["Website"] || "",
+          phone: row["Phone"] || "",
+          email: row["Email_Public"] === "TRUE" ? row["Email"] : "",
+          public_description: row["Public Description"] || "",
+          slug: row["slug"] || ""
+        };
+      });
 
     // Save to public JSON file
     const publicDir = path.join(process.cwd(), "public");
