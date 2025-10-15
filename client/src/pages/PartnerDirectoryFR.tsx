@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { MapPin, Phone, Mail, Globe, Filter, Search } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Filter, Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -40,6 +40,7 @@ export default function PartnerDirectoryFR() {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [selectedFormats, setSelectedFormats] = useState<string[]>([]);
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['popular']);
 
   const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
     queryKey: ['/partners.json'],
@@ -110,14 +111,12 @@ export default function PartnerDirectoryFR() {
     count: partners.filter(p => p.services.includes(service.id)).length
   }));
 
-  // Popular format chips with counts (using actual French labels from intake form)
-  const popularFormatOptions = [
+  // Popular formats (most searched)
+  const popularFormats = [
     ...PHOTO_FORMATS.filter(f => ['Prints', 'Slides 35mm'].includes(f.v)),
     ...FILM_FORMATS.filter(f => f.v === 'Super 8'),
     ...VIDEO_CASSETTES.filter(f => f.v === 'VHS')
-  ];
-  
-  const formatCounts = popularFormatOptions.map(format => ({
+  ].map(format => ({
     id: format.v,
     name: format.fr,
     count: partners.filter(p => 
@@ -126,6 +125,32 @@ export default function PartnerDirectoryFR() {
       p.formats.video.includes(format.v)
     ).length
   }));
+
+  // Photo formats with counts
+  const photoFormats = PHOTO_FORMATS.map(format => ({
+    id: format.v,
+    name: format.fr,
+    count: partners.filter(p => p.formats.photo.includes(format.v)).length
+  }));
+
+  // Film formats with counts
+  const filmFormats = FILM_FORMATS.map(format => ({
+    id: format.v,
+    name: format.fr,
+    count: partners.filter(p => p.formats.film.includes(format.v)).length
+  }));
+
+  // Video cassette formats with counts
+  const videoFormats = VIDEO_CASSETTES.map(format => ({
+    id: format.v,
+    name: format.fr,
+    count: partners.filter(p => p.formats.video.includes(format.v)).length
+  }));
+
+  // Determine which format sections to show based on selected services
+  const showPhotoFormats = selectedServices.length === 0 || selectedServices.includes('Photo');
+  const showFilmFormats = selectedServices.length === 0 || selectedServices.includes('Film');
+  const showVideoFormats = selectedServices.length === 0 || selectedServices.includes('Video');
 
   const toggleService = (serviceId: string) => {
     setSelectedServices(prev =>
@@ -136,6 +161,12 @@ export default function PartnerDirectoryFR() {
   const toggleFormat = (formatId: string) => {
     setSelectedFormats(prev =>
       prev.includes(formatId) ? prev.filter(f => f !== formatId) : [...prev, formatId]
+    );
+  };
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev =>
+      prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]
     );
   };
 
@@ -174,23 +205,23 @@ export default function PartnerDirectoryFR() {
             </div>
 
             {/* Service Filters */}
-            <div className="mb-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <div className="mb-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
                 <Filter className="h-4 w-4" />
                 Services
               </h3>
               <div className="flex flex-wrap gap-2">
-                {serviceCounts.map(({ name, count }) => (
+                {serviceCounts.map(({ id, name, count }) => (
                   <Badge
-                    key={name}
-                    variant={selectedServices.includes(name) ? "default" : "outline"}
-                    className={`cursor-pointer ${
-                      selectedServices.includes(name)
-                        ? 'bg-[#D67C4A] text-white'
+                    key={id}
+                    variant={selectedServices.includes(id) ? "default" : "outline"}
+                    className={`cursor-pointer transition-colors ${
+                      selectedServices.includes(id)
+                        ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
                         : 'hover:bg-gray-100'
                     }`}
-                    onClick={() => toggleService(name)}
-                    data-testid={`filter-service-${name.toLowerCase()}`}
+                    onClick={() => toggleService(id)}
+                    data-testid={`filter-service-${id.toLowerCase()}`}
                   >
                     {name} ({count})
                   </Badge>
@@ -199,25 +230,152 @@ export default function PartnerDirectoryFR() {
             </div>
 
             {/* Format Filters */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Formats populaires</h3>
-              <div className="flex flex-wrap gap-2">
-                {formatCounts.map(({ name, count }) => (
-                  <Badge
-                    key={name}
-                    variant={selectedFormats.includes(name) ? "default" : "outline"}
-                    className={`cursor-pointer ${
-                      selectedFormats.includes(name)
-                        ? 'bg-[#2A4759] text-white'
-                        : 'hover:bg-gray-100'
-                    }`}
-                    onClick={() => toggleFormat(name)}
-                    data-testid={`filter-format-${name.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    {name} ({count})
-                  </Badge>
-                ))}
+            <div className="space-y-3">
+              {/* Popular Formats */}
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => toggleSection('popular')}
+                  className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
+                >
+                  <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    ⭐ Formats populaires
+                  </span>
+                  {expandedSections.includes('popular') ? 
+                    <ChevronDown className="h-4 w-4 text-gray-500" /> : 
+                    <ChevronRight className="h-4 w-4 text-gray-500" />
+                  }
+                </button>
+                {expandedSections.includes('popular') && (
+                  <div className="p-4 flex flex-wrap gap-2">
+                    {popularFormats.filter(f => f.count > 0).map(({ id, name, count }) => (
+                      <Badge
+                        key={id}
+                        variant={selectedFormats.includes(id) ? "default" : "outline"}
+                        className={`cursor-pointer transition-colors ${
+                          selectedFormats.includes(id)
+                            ? 'bg-[#2A4759] text-white hover:bg-[#1f3646]'
+                            : 'hover:bg-gray-100'
+                        }`}
+                        onClick={() => toggleFormat(id)}
+                        data-testid={`filter-format-${id.toLowerCase().replace(/\s+/g, '-')}`}
+                      >
+                        {name} ({count})
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
+
+              {/* Photo Formats */}
+              {showPhotoFormats && (
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => toggleSection('photo')}
+                    className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
+                  >
+                    <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                      📷 Formats Photo
+                    </span>
+                    {expandedSections.includes('photo') ? 
+                      <ChevronDown className="h-4 w-4 text-gray-500" /> : 
+                      <ChevronRight className="h-4 w-4 text-gray-500" />
+                    }
+                  </button>
+                  {expandedSections.includes('photo') && (
+                    <div className="p-4 flex flex-wrap gap-2">
+                      {photoFormats.filter(f => f.count > 0).map(({ id, name, count }) => (
+                        <Badge
+                          key={id}
+                          variant={selectedFormats.includes(id) ? "default" : "outline"}
+                          className={`cursor-pointer transition-colors ${
+                            selectedFormats.includes(id)
+                              ? 'bg-[#2A4759] text-white hover:bg-[#1f3646]'
+                              : 'hover:bg-gray-100'
+                          }`}
+                          onClick={() => toggleFormat(id)}
+                          data-testid={`filter-format-photo-${id.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
+                          {name} ({count})
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Film Formats */}
+              {showFilmFormats && (
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => toggleSection('film')}
+                    className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
+                  >
+                    <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                      🎞️ Formats Film
+                    </span>
+                    {expandedSections.includes('film') ? 
+                      <ChevronDown className="h-4 w-4 text-gray-500" /> : 
+                      <ChevronRight className="h-4 w-4 text-gray-500" />
+                    }
+                  </button>
+                  {expandedSections.includes('film') && (
+                    <div className="p-4 flex flex-wrap gap-2">
+                      {filmFormats.filter(f => f.count > 0).map(({ id, name, count }) => (
+                        <Badge
+                          key={id}
+                          variant={selectedFormats.includes(id) ? "default" : "outline"}
+                          className={`cursor-pointer transition-colors ${
+                            selectedFormats.includes(id)
+                              ? 'bg-[#2A4759] text-white hover:bg-[#1f3646]'
+                              : 'hover:bg-gray-100'
+                          }`}
+                          onClick={() => toggleFormat(id)}
+                          data-testid={`filter-format-film-${id.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
+                          {name} ({count})
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Video Formats */}
+              {showVideoFormats && (
+                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => toggleSection('video')}
+                    className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
+                  >
+                    <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                      📹 Formats Vidéo
+                    </span>
+                    {expandedSections.includes('video') ? 
+                      <ChevronDown className="h-4 w-4 text-gray-500" /> : 
+                      <ChevronRight className="h-4 w-4 text-gray-500" />
+                    }
+                  </button>
+                  {expandedSections.includes('video') && (
+                    <div className="p-4 flex flex-wrap gap-2">
+                      {videoFormats.filter(f => f.count > 0).map(({ id, name, count }) => (
+                        <Badge
+                          key={id}
+                          variant={selectedFormats.includes(id) ? "default" : "outline"}
+                          className={`cursor-pointer transition-colors ${
+                            selectedFormats.includes(id)
+                              ? 'bg-[#2A4759] text-white hover:bg-[#1f3646]'
+                              : 'hover:bg-gray-100'
+                          }`}
+                          onClick={() => toggleFormat(id)}
+                          data-testid={`filter-format-video-${id.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
+                          {name} ({count})
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

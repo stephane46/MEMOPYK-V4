@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, UserCheck, Mail, Globe, CheckCircle, Trash2, Map, ChevronDown, ChevronRight, Copy, Save, MapPin } from 'lucide-react';
+import { Download, UserCheck, Mail, Globe, CheckCircle, Trash2, Map, ChevronDown, ChevronRight, Copy, Save, MapPin, ExternalLink } from 'lucide-react';
 import { DateTime } from 'luxon';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -210,6 +210,16 @@ export default function PartnersManagement() {
           <p className="text-gray-600 dark:text-gray-400">Gestion des demandes de partenariat</p>
         </div>
         <div className="flex gap-3">
+          <a
+            href="/fr-FR/partenaires"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-green-600 text-white border-2 border-green-600 px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-green-700 transition-colors"
+            data-testid="link-view-directory"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Voir l'annuaire
+          </a>
           <button 
             onClick={handleExportMap}
             disabled={exportMapMutation.isPending}
