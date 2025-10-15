@@ -17,6 +17,7 @@ import BlogIndexPage from './pages/BlogIndexPage';
 import BlogPostPage from './pages/BlogPostPage';
 import PartnerIntakeFR from './pages/PartnerIntakeFR';
 import PartnerIntakeEN from './pages/PartnerIntakeEN';
+import PartnerDirectoryFR from './pages/PartnerDirectoryFR';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 import { CookieBanner } from '@/components/ui/CookieBanner';
@@ -84,7 +85,8 @@ function AnalyticsRouter() {
         <Route path="/fr-FR/blog" component={BlogIndexPage} />
         <Route path="/en-US/blog" component={BlogIndexPage} />
         
-        {/* Partner Intake Routes */}
+        {/* Partner Routes */}
+        <Route path="/fr-FR/partenaires" component={PartnerDirectoryFR} />
         <Route path="/fr-FR/partenaires/devenir" component={PartnerIntakeFR} />
         <Route path="/en-US/partners/join" component={PartnerIntakeEN} />
         
