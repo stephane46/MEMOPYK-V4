@@ -274,7 +274,7 @@ app.use((req, res, next) => {
 
     // Proxy non-API requests to Vite dev server with error handling  
     app.use((req, res, next) => {
-      if (req.path.startsWith("/api") || req.path.startsWith("/images") || req.path === "/logo.svg" || req.path.startsWith("/flags")) {
+      if (req.path.startsWith("/api") || req.path.startsWith("/images") || req.path === "/logo.svg" || req.path.startsWith("/flags") || req.path === "/partners.json") {
         return next(); // Skip proxy for API routes and static assets
       }
       
