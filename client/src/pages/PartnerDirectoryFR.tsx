@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import { MapPin, Phone, Mail, Globe, Filter, Search, Package } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +32,21 @@ function MapBoundsTracker({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLn
   return null;
 }
 
+// Component to handle zooming to a specific location
+function MapZoomController({ zoomTo }: { zoomTo: { lat: number; lng: number; zoom: number } | null }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (zoomTo) {
+      map.flyTo([zoomTo.lat, zoomTo.lng], zoomTo.zoom, {
+        duration: 1.5
+      });
+    }
+  }, [zoomTo, map]);
+  
+  return null;
+}
+
 interface Partner {
   name: string;
   city: string;
@@ -56,6 +71,7 @@ export default function PartnerDirectoryFR() {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
+  const [zoomTo, setZoomTo] = useState<{ lat: number; lng: number; zoom: number } | null>(null);
 
   const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
     queryKey: ['/partners.json'],
@@ -149,6 +165,14 @@ export default function PartnerDirectoryFR() {
     return formatId;
   };
 
+  // Function to zoom to a partner location
+  const zoomToPartner = (partner: Partner) => {
+    if (partner.lat && partner.lng) {
+      setSelectedPartner(partner.slug);
+      setZoomTo({ lat: partner.lat, lng: partner.lng, zoom: 13 });
+    }
+  };
+
   // Default map center (France)
   const mapCenter: [number, number] = [46.603354, 1.888334];
 
@@ -226,6 +250,7 @@ export default function PartnerDirectoryFR() {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <MapBoundsTracker onBoundsChange={setMapBounds} />
+                <MapZoomController zoomTo={zoomTo} />
                 {mappablePartners.map((partner, index) => (
                   partner.lat && partner.lng && (
                     <Marker
@@ -235,10 +260,58 @@ export default function PartnerDirectoryFR() {
                         click: () => setSelectedPartner(partner.slug)
                       }}
                     >
-                      <Popup>
+                      <Popup maxWidth={300}>
                         <div className="p-2">
-                          <h4 className="font-bold text-[#2A4759]">{partner.name}</h4>
-                          <p className="text-sm text-gray-600">{partner.city}</p>
+                          <h4 className="font-bold text-[#2A4759] mb-2">{partner.name}</h4>
+                          <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
+                            <MapPin className="h-3 w-3" />
+                            <span>{partner.city}, {partner.country}</span>
+                          </div>
+                          
+                          {/* Services in popup */}
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {partner.services.sort((a, b) => {
+                              const order = ['Photo', 'Film', 'Video'];
+                              return order.indexOf(a) - order.indexOf(b);
+                            }).map(service => (
+                              <span key={service} className="inline-block text-xs bg-[#D67C4A] text-white px-2 py-0.5 rounded">
+                                {service === 'Video' ? 'Vidéo' : service}
+                              </span>
+                            ))}
+                          </div>
+
+                          {/* Contact links in popup */}
+                          <div className="space-y-1 text-xs">
+                            {partner.website && (
+                              <a
+                                href={partner.website.startsWith('http') ? partner.website : `https://${partner.website}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1 text-[#D67C4A] hover:underline"
+                              >
+                                <Globe className="h-3 w-3" />
+                                <span>Visiter le site</span>
+                              </a>
+                            )}
+                            {partner.phone && (
+                              <a
+                                href={`tel:${partner.phone}`}
+                                className="flex items-center gap-1 text-[#2A4759] hover:underline"
+                              >
+                                <Phone className="h-3 w-3" />
+                                <span>{partner.phone}</span>
+                              </a>
+                            )}
+                            {partner.email && (
+                              <a
+                                href={`mailto:${partner.email}`}
+                                className="flex items-center gap-1 text-[#2A4759] hover:underline"
+                              >
+                                <Mail className="h-3 w-3" />
+                                <span>Email</span>
+                              </a>
+                            )}
+                          </div>
                         </div>
                       </Popup>
                     </Marker>
@@ -265,17 +338,21 @@ export default function PartnerDirectoryFR() {
               visiblePartners.map((partner, index) => (
                 <Card
                   key={index}
-                  className={`transition-all overflow-hidden ${
+                  className={`transition-all overflow-hidden cursor-pointer ${
                     selectedPartner === partner.slug
                       ? 'ring-2 ring-[#D67C4A] shadow-xl'
                       : 'hover:shadow-md'
                   }`}
+                  onClick={() => zoomToPartner(partner)}
                   data-testid={`partner-card-${partner.slug}`}
                 >
                   <CardContent className="p-0">
                     {/* Header Section with colored background */}
                     <div className="bg-gradient-to-r from-[#2A4759] to-[#1f3646] p-5">
-                      <h3 className="text-xl font-bold text-white mb-2">{partner.name}</h3>
+                      <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                        {partner.name}
+                        <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded">Cliquez pour localiser</span>
+                      </h3>
                       <div className="flex items-center gap-2 text-[#F2EBDC]">
                         <MapPin className="h-4 w-4" />
                         <span className="text-sm">{partner.city}, {partner.country}</span>
