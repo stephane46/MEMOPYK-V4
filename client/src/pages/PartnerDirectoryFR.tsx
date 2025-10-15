@@ -179,9 +179,9 @@ export default function PartnerDirectoryFR() {
   return (
     <div className="min-h-screen bg-[#F2EBDC]">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#2A4759] to-[#011526] text-white py-16">
+      <div className="bg-gradient-to-r from-[#2A4759] to-[#011526] text-white py-6">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">Annuaire des Partenaires</h1>
+          <h1 className="text-4xl font-bold mb-2">Annuaire des Partenaires</h1>
           <p className="text-xl text-gray-300">
             Trouvez un professionnel de la numérisation près de chez vous
           </p>
