@@ -152,18 +152,18 @@ export default function PartnersManagementEnhanced() {
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
           <div className="relative md:col-span-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search by name or city..."
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-9 bg-[#2A4759]/30 border-white/10 text-white placeholder:text-white/50"
+              className="pl-9 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
               data-testid="input-search-partners"
             />
           </div>
           
           <Select value={statusFilter} onValueChange={handleStatusChange}>
-            <SelectTrigger className="bg-[#2A4759]/30 border-white/10 text-white" data-testid="select-status-filter">
+            <SelectTrigger className="bg-white border-gray-300 text-gray-900" data-testid="select-status-filter">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -175,7 +175,7 @@ export default function PartnersManagementEnhanced() {
           </Select>
 
           <Select value={typeFilter} onValueChange={handleTypeChange}>
-            <SelectTrigger className="bg-[#2A4759]/30 border-white/10 text-white" data-testid="select-type-filter">
+            <SelectTrigger className="bg-white border-gray-300 text-gray-900" data-testid="select-type-filter">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -188,50 +188,50 @@ export default function PartnersManagementEnhanced() {
         </div>
 
         {/* Partners Table */}
-        <div className="rounded-md border border-white/10 bg-[#2A4759]/20">
+        <div className="rounded-md border border-gray-300 bg-white">
           <Table>
             <TableHeader>
-              <TableRow className="border-white/10 hover:bg-[#2A4759]/20">
-                <TableHead className="text-white/70">Partner</TableHead>
-                <TableHead className="text-white/70">Type</TableHead>
-                <TableHead className="text-white/70">Contact</TableHead>
-                <TableHead className="text-white/70">Location</TableHead>
-                <TableHead className="text-white/70">Status</TableHead>
-                <TableHead className="text-white/70">Map</TableHead>
-                <TableHead className="text-white/70 text-right">Actions</TableHead>
+              <TableRow className="border-gray-200 hover:bg-gray-50">
+                <TableHead className="text-gray-700 font-semibold">Partner</TableHead>
+                <TableHead className="text-gray-700 font-semibold">Type</TableHead>
+                <TableHead className="text-gray-700 font-semibold">Contact</TableHead>
+                <TableHead className="text-gray-700 font-semibold">Location</TableHead>
+                <TableHead className="text-gray-700 font-semibold">Status</TableHead>
+                <TableHead className="text-gray-700 font-semibold">Map</TableHead>
+                <TableHead className="text-gray-700 font-semibold text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-white/50 py-8">
+                  <TableCell colSpan={7} className="text-center text-gray-500 py-8">
                     Loading partners...
                   </TableCell>
                 </TableRow>
               ) : !data?.partners.length ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-white/50 py-8">
+                  <TableCell colSpan={7} className="text-center text-gray-500 py-8">
                     No partners found
                   </TableCell>
                 </TableRow>
               ) : (
                 data.partners.map((partner) => (
-                  <TableRow key={partner.id} className="border-white/10 hover:bg-[#2A4759]/20">
-                    <TableCell className="text-white font-medium">
+                  <TableRow key={partner.id} className="border-gray-200 hover:bg-gray-50">
+                    <TableCell className="text-gray-900 font-medium">
                       {partner.partner_name}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-xs text-white/70 border-white/20">
+                      <Badge variant="outline" className="text-xs text-gray-700 border-gray-300">
                         {partner.partner_type}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-white/70 text-sm">
+                    <TableCell className="text-gray-700 text-sm">
                       <div>{partner.contact_name}</div>
-                      <div className="text-xs text-white/50">{partner.email}</div>
+                      <div className="text-xs text-gray-500">{partner.email}</div>
                     </TableCell>
-                    <TableCell className="text-white/70 text-sm">
+                    <TableCell className="text-gray-700 text-sm">
                       <div>{partner.city}</div>
-                      <div className="text-xs text-white/50">{partner.country}</div>
+                      <div className="text-xs text-gray-500">{partner.country}</div>
                     </TableCell>
                     <TableCell>
                       {getStatusBadge(partner.status)}
@@ -239,12 +239,12 @@ export default function PartnersManagementEnhanced() {
                     <TableCell>
                       <div className="flex items-center gap-1">
                         {partner.show_on_map && partner.lat && partner.lng ? (
-                          <Badge variant="default" className="text-xs bg-green-500/20 text-green-300 border-green-500/30">
+                          <Badge variant="default" className="text-xs bg-green-100 text-green-700 border-green-300">
                             <MapPin className="h-3 w-3 mr-1" />
                             Visible
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-xs text-white/40 border-white/20">
+                          <Badge variant="outline" className="text-xs text-gray-500 border-gray-300">
                             Hidden
                           </Badge>
                         )}
@@ -255,7 +255,7 @@ export default function PartnersManagementEnhanced() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 text-white/70 hover:text-white hover:bg-[#2A4759]/30"
+                          className="h-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                           data-testid={`button-edit-${partner.id}`}
                         >
                           <Pencil className="h-4 w-4" />
@@ -265,7 +265,7 @@ export default function PartnersManagementEnhanced() {
                           size="sm"
                           onClick={() => deleteMutation.mutate(partner.id)}
                           disabled={deleteMutation.isPending}
-                          className="h-8 text-red-400/70 hover:text-red-400 hover:bg-red-500/10"
+                          className="h-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                           data-testid={`button-delete-${partner.id}`}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -282,7 +282,7 @@ export default function PartnersManagementEnhanced() {
         {/* Pagination */}
         {data && data.totalPages > 1 && (
           <div className="flex items-center justify-between mt-4">
-            <div className="text-sm text-white/50">
+            <div className="text-sm text-gray-600">
               Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, data.total)} of {data.total} partners
             </div>
             <div className="flex items-center gap-2">
@@ -291,13 +291,13 @@ export default function PartnersManagementEnhanced() {
                 size="sm"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="bg-[#2A4759]/30 border-white/10 text-white disabled:opacity-50"
+                className="bg-white border-gray-300 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 data-testid="button-prev-page"
               >
                 <ChevronLeft className="h-4 w-4" />
                 Previous
               </Button>
-              <div className="text-sm text-white/70 px-3">
+              <div className="text-sm text-gray-700 px-3">
                 Page {page} of {data.totalPages}
               </div>
               <Button
@@ -305,7 +305,7 @@ export default function PartnersManagementEnhanced() {
                 size="sm"
                 onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
                 disabled={page === data.totalPages}
-                className="bg-[#2A4759]/30 border-white/10 text-white disabled:opacity-50"
+                className="bg-white border-gray-300 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 data-testid="button-next-page"
               >
                 Next
