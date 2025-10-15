@@ -416,7 +416,7 @@ export default function PartnersManagement() {
                           <Button
                             onClick={() => handleSave(partner.id)}
                             disabled={!hasChanges || updateMutation.isPending}
-                            className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
+                            className="bg-green-500 hover:bg-green-600 text-black font-semibold flex items-center gap-2 disabled:bg-gray-300 disabled:text-gray-500"
                           >
                             <Save className="h-4 w-4" />
                             {updateMutation.isPending ? 'Sauvegarde...' : 'Sauvegarder les modifications'}
