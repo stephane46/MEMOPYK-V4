@@ -139,7 +139,7 @@ router.delete("/api/partners/:id", async (req, res) => {
     // Recreate the Excel file with remaining data
     const newWorkbook = XLSX.utils.book_new();
     const headers = [
-      ["Timestamp", "Partner Name", "Email", "Phone", "Website", 
+      ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
        "Address", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
        "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Public Description", "Consent"]
     ];
@@ -148,6 +148,7 @@ router.delete("/api/partners/:id", async (req, res) => {
       row["Timestamp"],
       row["Partner Name"],
       row["Email"],
+      row["Email_Public"],
       row["Phone"],
       row["Website"],
       row["Address"],
@@ -188,7 +189,7 @@ async function saveToExcel(data: any) {
   } else {
     workbook = XLSX.utils.book_new();
     worksheet = XLSX.utils.aoa_to_sheet([
-      ["Timestamp", "Partner Name", "Email", "Phone", "Website", 
+      ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
        "Address", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
        "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Public Description", "Consent"]
     ]);
@@ -211,6 +212,7 @@ async function saveToExcel(data: any) {
     new Date().toISOString(),
     data.partner_name,
     data.email,
+    data.email_public ? "TRUE" : "FALSE",
     data.phone || "",
     data.website || "",
     data.address?.street || "",

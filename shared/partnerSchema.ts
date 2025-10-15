@@ -3,6 +3,7 @@ import { z } from "zod";
 export const PartnerIntakeSchema = z.object({
   partner_name: z.string().min(2).max(120),
   email: z.string().email(),
+  email_public: z.boolean().optional().default(false),
   phone: z.string().optional().default(""),
   website: z.string().optional().default(""),
   address: z.object({

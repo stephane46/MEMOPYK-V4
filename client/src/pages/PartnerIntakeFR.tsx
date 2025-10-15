@@ -54,6 +54,7 @@ export default function PartnerIntakeFR() {
     defaultValues: {
       partner_name: "",
       email: "",
+      email_public: false,
       phone: "",
       website: "",
       address: {
@@ -228,6 +229,30 @@ export default function PartnerIntakeFR() {
                             />
                           </FormControl>
                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email_public"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-gray-300 p-4">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              data-testid="checkbox-email-public"
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>
+                              Afficher mon e-mail sur la page partenaire
+                            </FormLabel>
+                            <FormDescription className="text-sm text-gray-600">
+                              Si décoché, votre e-mail ne sera pas affiché sur votre fiche publique. Les clients pourront vous contacter par d'autres moyens (site web, téléphone, etc.).
+                            </FormDescription>
+                          </div>
                         </FormItem>
                       )}
                     />

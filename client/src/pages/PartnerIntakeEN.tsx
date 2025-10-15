@@ -54,6 +54,7 @@ export default function PartnerIntakeEN() {
     defaultValues: {
       partner_name: "",
       email: "",
+      email_public: false,
       phone: "",
       website: "",
       address: {
@@ -228,6 +229,30 @@ export default function PartnerIntakeEN() {
                             />
                           </FormControl>
                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email_public"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-gray-300 p-4">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              data-testid="checkbox-email-public"
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>
+                              Show my email on the partner page
+                            </FormLabel>
+                            <FormDescription className="text-sm text-gray-600">
+                              If unchecked, your email won't appear on your public profile. Clients can still reach you through your website or phone.
+                            </FormDescription>
+                          </div>
                         </FormItem>
                       )}
                     />
