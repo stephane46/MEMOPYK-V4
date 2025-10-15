@@ -1,0 +1,36 @@
+export const PHOTO_FORMATS = [
+  { v: "Prints", fr: "Tirages (loose)", en: "Loose prints" },
+  { v: "Albums", fr: "Albums (démontage possible)", en: "Albums (disassembly possible)" },
+  { v: "Slides 35mm", fr: "Diapositives 35 mm", en: "Slides 35mm" },
+  { v: "Negatives 35mm", fr: "Négatifs 35 mm", en: "Negatives 35mm" },
+  { v: "Medium format 120/220", fr: "Négatif moyen format (120/220)", en: "Medium format (120/220)" },
+  { v: "Large format", fr: "Grand format (4x5, etc.)", en: "Large format (4x5, etc.)" },
+  { v: "Polaroid/Instax", fr: "Polaroid / Instax", en: "Polaroid / Instax" },
+];
+
+export const FILM_FORMATS = [
+  { v: "8mm (silent)", fr: "8 mm (muet)", en: "8mm (silent)" },
+  { v: "Super 8 (silent)", fr: "Super 8 (muet)", en: "Super 8 (silent)" },
+  { v: "Super 8 (sound)", fr: "Super 8 (son)", en: "Super 8 (sound)" },
+  { v: "9.5mm Pathé", fr: "9,5 mm Pathé", en: "9.5mm Pathé" },
+  { v: "16mm (silent)", fr: "16 mm (muet)", en: "16mm (silent)" },
+  { v: "16mm (mag/optical sound)", fr: "16 mm (son magnétique/optique)", en: "16mm (mag/optical sound)" },
+];
+
+export const VIDEO_CASSETTES = [
+  { v: "VHS", fr: "VHS", en: "VHS" },
+  { v: "VHS-C", fr: "VHS-C", en: "VHS-C" },
+  { v: "Video8/Hi8", fr: "Video8 / Hi8", en: "Video8 / Hi8" },
+  { v: "Digital8", fr: "Digital8", en: "Digital8" },
+  { v: "MiniDV", fr: "MiniDV", en: "MiniDV" },
+  { v: "Betamax", fr: "Betamax", en: "Betamax" },
+  { v: "DVCAM", fr: "DVCAM", en: "DVCAM" },
+  { v: "U-Matic", fr: "U-Matic", en: "U-Matic" },
+];
+
+export const DELIVERY = [
+  { v: "USB", fr: "Clé USB", en: "USB drive" },
+  { v: "Download link", fr: "Lien de téléchargement", en: "Download link" },
+  { v: "External drive", fr: "Disque dur/SSD", en: "External HDD/SSD" },
+  { v: "DVD/Blu-ray", fr: "DVD / Blu-ray", en: "DVD / Blu-ray" },
+];
