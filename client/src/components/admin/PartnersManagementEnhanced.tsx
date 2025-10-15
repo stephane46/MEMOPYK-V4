@@ -683,9 +683,13 @@ export default function PartnersManagementEnhanced() {
                 <Textarea
                   value={editData.public_description || ''}
                   onChange={(e) => setEditData({ ...editData, public_description: e.target.value })}
+                  maxLength={500}
                   className="bg-white border-gray-300 text-gray-900 min-h-[100px]"
                   placeholder="Description visible on partner directory"
                 />
+                <div className="text-sm text-gray-500 text-right">
+                  {500 - (editData.public_description?.length || 0)} caractères restants
+                </div>
               </div>
             </TabsContent>
 
