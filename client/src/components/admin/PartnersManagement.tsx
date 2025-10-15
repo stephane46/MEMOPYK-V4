@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, UserCheck, Mail, Globe, CheckCircle, Trash2 } from 'lucide-react';
+import { Download, UserCheck, Mail, Globe, CheckCircle, Trash2, Map } from 'lucide-react';
 import { DateTime } from 'luxon';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -53,8 +53,35 @@ export default function PartnersManagement() {
     }
   });
 
+  const exportMapMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/partners/export-map', {
+        method: 'POST'
+      });
+      if (!response.ok) throw new Error('Export failed');
+      return response.json();
+    },
+    onSuccess: (data: any) => {
+      toast({
+        title: "Données carte mises à jour",
+        description: `${data.count} partenaire(s) exporté(s) vers /partners.json`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour les données de la carte",
+        variant: "destructive",
+      });
+    }
+  });
+
   const handleDownload = () => {
     window.open('/api/partners/download', '_blank');
+  };
+
+  const handleExportMap = () => {
+    exportMapMutation.mutate();
   };
 
   const handleDelete = (partnerId: number, partnerName: string) => {
@@ -81,14 +108,25 @@ export default function PartnersManagement() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Partenaires</h2>
           <p className="text-gray-600 dark:text-gray-700">Gestion des demandes de partenariat</p>
         </div>
-        <button 
-          onClick={handleDownload}
-          className="bg-[#D67C4A] text-black border-2 border-[#D67C4A] px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
-          data-testid="button-download-partners"
-        >
-          <Download className="h-4 w-4" />
-          Télécharger Excel
-        </button>
+        <div className="flex gap-3">
+          <button 
+            onClick={handleExportMap}
+            disabled={exportMapMutation.isPending}
+            className="bg-[#2A4759] text-white border-2 border-[#2A4759] px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
+            data-testid="button-export-map"
+          >
+            <Map className="h-4 w-4" />
+            {exportMapMutation.isPending ? 'Export...' : 'Mettre à jour la carte'}
+          </button>
+          <button 
+            onClick={handleDownload}
+            className="bg-[#D67C4A] text-black border-2 border-[#D67C4A] px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
+            data-testid="button-download-partners"
+          >
+            <Download className="h-4 w-4" />
+            Télécharger Excel
+          </button>
+        </div>
       </div>
 
       {/* Summary Card */}

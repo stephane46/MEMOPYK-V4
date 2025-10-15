@@ -75,6 +75,69 @@ router.get("/api/partners/download", async (req, res) => {
   }
 });
 
+// Export map data JSON (approved partners only)
+router.post("/api/partners/export-map", async (req, res) => {
+  try {
+    if (!fs.existsSync(EXCEL_FILE)) {
+      return res.status(404).json({ error: "No partner submissions found" });
+    }
+
+    const workbook = XLSX.readFile(EXCEL_FILE);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+
+    // Filter for approved partners with map visibility
+    const mapPartners = data
+      .filter((row: any) => 
+        row["Status"] === "Approved" && 
+        row["Is_Active"] === "TRUE" && 
+        row["Show_On_Map"] === "TRUE"
+      )
+      .map((row: any) => ({
+        name: row["Partner Name"] || "",
+        city: row["City"] || "",
+        country: row["Country"] || "",
+        lat: row["lat"] ? parseFloat(row["lat"]) : null,
+        lng: row["lng"] ? parseFloat(row["lng"]) : null,
+        services: [
+          ...(row["Photo Formats"] ? ["Photo"] : []),
+          ...(row["Film Formats"] ? ["Film"] : []),
+          ...(row["Video Cassettes"] ? ["Video"] : [])
+        ],
+        formats: {
+          photo: row["Photo Formats"] ? row["Photo Formats"].split(", ") : [],
+          film: row["Film Formats"] ? row["Film Formats"].split(", ") : [],
+          video: row["Video Cassettes"] ? row["Video Cassettes"].split(", ") : []
+        },
+        website: row["Website"] || "",
+        phone: row["Phone"] || "",
+        email: row["Email_Public"] === "TRUE" ? row["Email"] : "",
+        public_description: row["Public Description"] || "",
+        slug: row["slug"] || ""
+      }));
+
+    // Save to public JSON file
+    const publicDir = path.join(process.cwd(), "public");
+    if (!fs.existsSync(publicDir)) {
+      fs.mkdirSync(publicDir, { recursive: true });
+    }
+    
+    const jsonPath = path.join(publicDir, "partners.json");
+    fs.writeFileSync(jsonPath, JSON.stringify(mapPartners, null, 2));
+
+    console.log(`✅ Map data exported: ${mapPartners.length} partners`);
+    res.json({ 
+      ok: true, 
+      count: mapPartners.length, 
+      file: "/partners.json",
+      partners: mapPartners.slice(0, 5) // Preview first 5
+    });
+  } catch (e: any) {
+    console.error("Export error:", e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // Get partner summary (for admin display)
 router.get("/api/partners/summary", async (req, res) => {
   try {
