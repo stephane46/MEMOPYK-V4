@@ -74,6 +74,7 @@ export default function PartnerIntakeFR() {
       other_film_formats: "",
       other_video_formats: "",
       delivery: [],
+      other_delivery: "",
       output: [],
       turnaround: "",
       rush: false,
@@ -86,6 +87,7 @@ export default function PartnerIntakeFR() {
   });
 
   const selectedServices = form.watch("services");
+  const selectedDelivery = form.watch("delivery");
 
   useEffect(() => {
     fetch("/api/csrf")
@@ -719,6 +721,27 @@ export default function PartnerIntakeFR() {
                         </FormItem>
                       )}
                     />
+                    {selectedDelivery?.includes("Other") && (
+                      <FormField
+                        control={form.control}
+                        name="other_delivery"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Autres types de livraison / Sortie</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Précisez..."
+                                {...field}
+                                maxLength={120}
+                                className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A] placeholder:text-gray-400"
+                                data-testid="input-delivery-other"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </div>
                 )}
 

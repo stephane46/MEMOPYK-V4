@@ -141,7 +141,7 @@ router.delete("/api/partners/:id", async (req, res) => {
     const headers = [
       ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
        "Address", "Complément d'adresse", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
-       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Public Description", "Consent"]
+       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Other Delivery", "Public Description", "Consent"]
     ];
     
     const rows = data.map((row: any) => [
@@ -163,6 +163,7 @@ router.delete("/api/partners/:id", async (req, res) => {
       row["Video Cassettes"],
       row["Other Video"],
       row["Delivery"],
+      row["Other Delivery"],
       row["Public Description"],
       row["Consent"]
     ]);
@@ -192,7 +193,7 @@ async function saveToExcel(data: any) {
     worksheet = XLSX.utils.aoa_to_sheet([
       ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
        "Address", "Complément d'adresse", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
-       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Public Description", "Consent"]
+       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Other Delivery", "Public Description", "Consent"]
     ]);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Partners");
   }
@@ -228,6 +229,7 @@ async function saveToExcel(data: any) {
     data.video_cassettes?.join(", ") || "",
     data.other_video_formats || "",
     data.delivery?.join(", ") || "",
+    data.other_delivery || "",
     data.public_description || "",
     data.consent_listed ? "Yes" : "No"
   ];

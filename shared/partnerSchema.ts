@@ -37,6 +37,7 @@ export const PartnerIntakeSchema = z.object({
   other_film_formats: z.string().max(120).optional().default(""),
   other_video_formats: z.string().max(120).optional().default(""),
   delivery: z.array(z.string()).optional().default([]),
+  other_delivery: z.string().max(120).optional().default(""),
   output: z.array(z.string()).optional().default([]),
   turnaround: z.string().optional().default(""),
   rush: z.boolean().optional().default(false),
