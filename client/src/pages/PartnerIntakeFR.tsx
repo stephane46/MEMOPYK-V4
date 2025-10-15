@@ -40,7 +40,7 @@ const restrictedCountries = [
 ];
 
 const serviceOptions = [
-  { value: "Photo" as const, label: "Numérisation de photo", icon: FileImage },
+  { value: "Photo" as const, label: "Photo", icon: FileImage },
   { value: "Film" as const, label: "Film", icon: Film },
 ];
 
@@ -109,10 +109,6 @@ export default function PartnerIntakeFR() {
       await apiRequest("/api/partners/intake", "POST", data);
 
       setIsSubmitted(true);
-      toast({
-        title: "Merci !",
-        description: "Votre profil partenaire a été soumis avec succès.",
-      });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Une erreur s'est produite";
       toast({

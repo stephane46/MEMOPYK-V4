@@ -1,5 +1,5 @@
 export const PHOTO_FORMATS = [
-  { v: "Prints", fr: "Tirages (loose)", en: "Loose prints" },
+  { v: "Prints", fr: "Tirages", en: "Prints" },
   { v: "Albums", fr: "Albums (démontage possible)", en: "Albums (disassembly possible)" },
   { v: "Slides 35mm", fr: "Diapositives 35 mm", en: "Slides 35mm" },
   { v: "Negatives 35mm", fr: "Négatifs 35 mm", en: "Negatives 35mm" },

@@ -109,10 +109,6 @@ export default function PartnerIntakeEN() {
       await apiRequest("/api/partners/intake", "POST", data);
 
       setIsSubmitted(true);
-      toast({
-        title: "Thank You!",
-        description: "Your partner profile has been successfully submitted.",
-      });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "An error occurred";
       toast({
