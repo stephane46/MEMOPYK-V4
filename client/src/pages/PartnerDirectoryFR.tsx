@@ -382,7 +382,7 @@ export default function PartnerDirectoryFR() {
                           if (formats.length === 0) return null;
 
                           return (
-                            <div key={service} className="flex items-start gap-3">
+                            <div key={service} className="flex items-center gap-3">
                               <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1 shrink-0 min-w-[70px]">
                                 {service === 'Video' ? 'Vidéo' : service}
                               </Badge>
