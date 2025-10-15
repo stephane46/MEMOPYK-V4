@@ -172,19 +172,29 @@ router.get("/api/partners/summary", async (req, res) => {
     const frLocale = require("i18n-iso-countries/langs/fr.json");
     countries.registerLocale(frLocale);
 
-    // Format for display (last 10 submissions)
+    // Format for display (last 10 submissions) with FULL data for editing
     const allPartners = data.map((row: any, index: number) => {
       const countryCode = row["Country"] || "";
       const countryName = countryCode ? countries.getName(countryCode, "fr") || countryCode : "";
       
       return {
-        id: index, // Use index as ID for deletion
+        id: index,
         name: row["Partner Name"] || "",
         email: row["Email"] || "",
         phone: row["Phone"] || "",
         city: row["City"] || "",
         country: countryName,
-        submitted: row["Timestamp"] || ""
+        submitted: row["Timestamp"] || "",
+        // Additional fields for editing
+        status: row["Status"] || "Pending",
+        is_active: row["Is_Active"] || "FALSE",
+        show_on_map: row["Show_On_Map"] || "FALSE",
+        lat: row["lat"] || "",
+        lng: row["lng"] || "",
+        address: row["Address"] || "",
+        address_line2: row["Complément d'adresse"] || "",
+        postal_code: row["Postal Code"] || "",
+        website: row["Website"] || ""
       };
     });
 
@@ -193,6 +203,83 @@ router.get("/api/partners/summary", async (req, res) => {
     res.json({ partners, count: data.length });
   } catch (e: any) {
     console.error("Summary error:", e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Update partner details (Status, Is_Active, Show_On_Map, lat, lng)
+router.patch("/api/partners/:id/update", async (req, res) => {
+  try {
+    const rowId = parseInt(req.params.id);
+    const { status, is_active, show_on_map, lat, lng } = req.body;
+    
+    if (!fs.existsSync(EXCEL_FILE)) {
+      return res.status(404).json({ error: "No partner submissions found" });
+    }
+
+    const workbook = XLSX.readFile(EXCEL_FILE);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(worksheet);
+
+    if (rowId < 0 || rowId >= data.length) {
+      return res.status(404).json({ error: "Partner not found" });
+    }
+
+    // Update the row
+    const row = data[rowId] as any;
+    if (status !== undefined) row["Status"] = status;
+    if (is_active !== undefined) row["Is_Active"] = is_active;
+    if (show_on_map !== undefined) row["Show_On_Map"] = show_on_map;
+    if (lat !== undefined) row["lat"] = lat;
+    if (lng !== undefined) row["lng"] = lng;
+
+    // Recreate the Excel file with updated data
+    const newWorkbook = XLSX.utils.book_new();
+    const headers = [
+      ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
+       "Address", "Complément d'adresse", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
+       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Other Delivery", "Public Description", "Consent",
+       "Status", "Is_Active", "Show_On_Map", "lat", "lng", "slug"]
+    ];
+    
+    const rows = data.map((r: any) => [
+      r["Timestamp"],
+      r["Partner Name"],
+      r["Email"],
+      r["Email_Public"],
+      r["Phone"],
+      r["Website"],
+      r["Address"],
+      r["Complément d'adresse"],
+      r["City"],
+      r["Postal Code"],
+      r["Country"],
+      r["Photo Formats"],
+      r["Other Photo"],
+      r["Film Formats"],
+      r["Other Film"],
+      r["Video Cassettes"],
+      r["Other Video"],
+      r["Delivery"],
+      r["Other Delivery"],
+      r["Public Description"],
+      r["Consent"],
+      r["Status"] || "Pending",
+      r["Is_Active"] || "FALSE",
+      r["Show_On_Map"] || "FALSE",
+      r["lat"] || "",
+      r["lng"] || "",
+      r["slug"] || ""
+    ]);
+
+    const newWorksheet = XLSX.utils.aoa_to_sheet([...headers, ...rows]);
+    XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, "Partners");
+    XLSX.writeFile(newWorkbook, EXCEL_FILE);
+
+    console.log(`✅ Partner updated: ${row["Partner Name"]}`);
+    res.json({ ok: true, message: "Partner updated successfully" });
+  } catch (e: any) {
+    console.error("Update error:", e);
     res.status(500).json({ error: "Server error" });
   }
 });
