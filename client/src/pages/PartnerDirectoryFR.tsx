@@ -51,6 +51,40 @@ interface Partner {
   slug: string;
 }
 
+// Map style configurations
+const MAP_STYLES = {
+  default: {
+    name: 'OpenStreetMap',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  },
+  toner: {
+    name: 'Toner (B&W)',
+    url: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://stamen.com/">Stamen Design</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a>'
+  },
+  tonerLite: {
+    name: 'Toner Lite',
+    url: 'https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://stamen.com/">Stamen Design</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a>'
+  },
+  positron: {
+    name: 'Positron (Light)',
+    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  },
+  darkMatter: {
+    name: 'Dark Matter',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  },
+  voyager: {
+    name: 'Voyager (Urban)',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  }
+};
+
 export default function PartnerDirectoryFR() {
   const [searchText, setSearchText] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -58,6 +92,7 @@ export default function PartnerDirectoryFR() {
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<string[]>(['popular']);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
+  const [mapStyle, setMapStyle] = useState<keyof typeof MAP_STYLES>('default');
 
   const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
     queryKey: ['/partners.json'],
@@ -411,7 +446,27 @@ export default function PartnerDirectoryFR() {
         {/* Map & List Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Map */}
-          <div className="h-[600px] rounded-lg overflow-hidden shadow-lg">
+          <div className="relative h-[600px] rounded-lg overflow-hidden shadow-lg">
+            {/* Map Style Selector */}
+            <div className="absolute top-4 right-4 z-[1000] bg-white rounded-lg shadow-lg p-2">
+              <div className="text-xs font-semibold text-gray-700 mb-2 px-2">Style de carte:</div>
+              <div className="flex flex-col gap-1">
+                {Object.entries(MAP_STYLES).map(([key, style]) => (
+                  <button
+                    key={key}
+                    onClick={() => setMapStyle(key as keyof typeof MAP_STYLES)}
+                    className={`px-3 py-1.5 text-xs rounded transition-colors text-left ${
+                      mapStyle === key
+                        ? 'bg-[#D67C4A] text-white font-semibold'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {style.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {mappablePartners.length > 0 ? (
               <MapContainer
                 center={mapCenter}
@@ -420,8 +475,9 @@ export default function PartnerDirectoryFR() {
                 data-testid="partner-map"
               >
                 <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  key={mapStyle}
+                  attribution={MAP_STYLES[mapStyle].attribution}
+                  url={MAP_STYLES[mapStyle].url}
                 />
                 <MapBoundsTracker onBoundsChange={setMapBounds} />
                 {mappablePartners.map((partner, index) => (
