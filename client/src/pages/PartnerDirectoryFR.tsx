@@ -383,10 +383,10 @@ export default function PartnerDirectoryFR() {
 
                           return (
                             <div key={service} className="flex items-start gap-3">
-                              <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1 shrink-0 w-[70px] justify-center">
+                              <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1 shrink-0 min-w-[70px]">
                                 {service === 'Video' ? 'Vidéo' : service}
                               </Badge>
-                              <div className="flex flex-wrap gap-1.5">
+                              <div className="flex flex-wrap gap-1.5 flex-1">
                                 {formats.map(formatId => (
                                   <span
                                     key={formatId}
