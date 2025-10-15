@@ -363,31 +363,31 @@ export default function PartnersManagementEnhanced() {
           </DialogHeader>
           
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-4 bg-gray-100">
+            <TabsList className="grid w-full grid-cols-4 mb-4 bg-gray-200">
               <TabsTrigger 
                 value="basic" 
-                className="text-sm data-[state=active]:bg-[#D67C4A] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
+                className="text-sm data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold data-[state=inactive]:text-gray-600"
               >
                 <Building2 className="w-4 h-4 mr-2" />
                 Basic Info
               </TabsTrigger>
               <TabsTrigger 
                 value="location" 
-                className="text-sm data-[state=active]:bg-[#D67C4A] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
+                className="text-sm data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold data-[state=inactive]:text-gray-600"
               >
                 <MapPin className="w-4 h-4 mr-2" />
                 Location
               </TabsTrigger>
               <TabsTrigger 
                 value="services" 
-                className="text-sm data-[state=active]:bg-[#D67C4A] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
+                className="text-sm data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold data-[state=inactive]:text-gray-600"
               >
                 <Package className="w-4 h-4 mr-2" />
                 Services
               </TabsTrigger>
               <TabsTrigger 
                 value="visibility" 
-                className="text-sm data-[state=active]:bg-[#D67C4A] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
+                className="text-sm data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold data-[state=inactive]:text-gray-600"
               >
                 <Eye className="w-4 h-4 mr-2" />
                 Visibility
