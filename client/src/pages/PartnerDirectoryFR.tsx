@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import { MapPin, Phone, Mail, Globe, Filter, Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -32,26 +32,6 @@ function MapBoundsTracker({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLn
   return null;
 }
 
-// Dynamic tile layer that properly updates when URL changes
-function DynamicTileLayer({ url, attribution }: { url: string; attribution: string }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    const tileLayer = L.tileLayer(url, {
-      attribution,
-      maxZoom: 20
-    });
-    
-    tileLayer.addTo(map);
-    
-    return () => {
-      map.removeLayer(tileLayer);
-    };
-  }, [url, attribution, map]);
-  
-  return null;
-}
-
 interface Partner {
   name: string;
   city: string;
@@ -71,30 +51,6 @@ interface Partner {
   slug: string;
 }
 
-// Map style configurations
-const MAP_STYLES = {
-  default: {
-    name: 'OpenStreetMap',
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  },
-  humanitarian: {
-    name: 'Humanitarian',
-    url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by Humanitarian OpenStreetMap Team'
-  },
-  openTopoMap: {
-    name: 'OpenTopoMap',
-    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
-  },
-  cycleMap: {
-    name: 'CyclOSM',
-    url: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by CyclOSM'
-  }
-};
-
 export default function PartnerDirectoryFR() {
   const [searchText, setSearchText] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -102,7 +58,6 @@ export default function PartnerDirectoryFR() {
   const [selectedPartner, setSelectedPartner] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<string[]>(['popular']);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
-  const [mapStyle, setMapStyle] = useState<keyof typeof MAP_STYLES>('default');
 
   const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
     queryKey: ['/partners.json'],
@@ -456,31 +411,7 @@ export default function PartnerDirectoryFR() {
         {/* Map & List Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Map */}
-          <div className="relative h-[600px] rounded-lg overflow-hidden shadow-lg">
-            {/* Map Style Selector */}
-            <div className="absolute top-4 right-4 z-[1000] bg-white rounded-lg shadow-lg p-3">
-              <div className="text-xs font-semibold text-gray-700 mb-2">Style de carte:</div>
-              <div className="flex flex-col gap-1.5">
-                {Object.entries(MAP_STYLES).map(([key, style]) => (
-                  <button
-                    key={key}
-                    onClick={() => setMapStyle(key as keyof typeof MAP_STYLES)}
-                    style={{
-                      backgroundColor: mapStyle === key ? '#D67C4A' : '#f3f4f6',
-                      color: mapStyle === key ? '#ffffff' : '#374151'
-                    }}
-                    className={`px-3 py-2 text-xs rounded transition-all text-left ${
-                      mapStyle === key
-                        ? 'font-bold shadow-md'
-                        : 'font-normal hover:bg-gray-200'
-                    }`}
-                  >
-                    {style.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
+          <div className="h-[600px] rounded-lg overflow-hidden shadow-lg">
             {mappablePartners.length > 0 ? (
               <MapContainer
                 center={mapCenter}
@@ -488,9 +419,9 @@ export default function PartnerDirectoryFR() {
                 style={{ height: '100%', width: '100%' }}
                 data-testid="partner-map"
               >
-                <DynamicTileLayer
-                  url={MAP_STYLES[mapStyle].url}
-                  attribution={MAP_STYLES[mapStyle].attribution}
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <MapBoundsTracker onBoundsChange={setMapBounds} />
                 {mappablePartners.map((partner, index) => (
