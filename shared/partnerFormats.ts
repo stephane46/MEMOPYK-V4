@@ -3,18 +3,16 @@ export const PHOTO_FORMATS = [
   { v: "Albums", fr: "Albums (démontage possible)", en: "Albums (disassembly possible)" },
   { v: "Slides 35mm", fr: "Diapositives 35 mm", en: "Slides 35mm" },
   { v: "Negatives 35mm", fr: "Négatifs 35 mm", en: "Negatives 35mm" },
-  { v: "Medium format 120/220", fr: "Négatif moyen format (120/220)", en: "Medium format (120/220)" },
-  { v: "Large format", fr: "Grand format (4x5, etc.)", en: "Large format (4x5, etc.)" },
+  { v: "Medium format 120/220", fr: "Négatifs moyen format (120/220)", en: "Medium format negatives (120/220)" },
+  { v: "Large format", fr: "Négatifs Grand format (4x5, 6x6, etc.)", en: "Large format negatives (4x5, 6x6, etc.)" },
   { v: "Polaroid/Instax", fr: "Polaroid / Instax", en: "Polaroid / Instax" },
 ];
 
 export const FILM_FORMATS = [
-  { v: "8mm (silent)", fr: "8 mm (muet)", en: "8mm (silent)" },
-  { v: "Super 8 (silent)", fr: "Super 8 (muet)", en: "Super 8 (silent)" },
-  { v: "Super 8 (sound)", fr: "Super 8 (son)", en: "Super 8 (sound)" },
+  { v: "8mm", fr: "8 mm", en: "8mm" },
+  { v: "Super 8", fr: "Super 8", en: "Super 8" },
   { v: "9.5mm Pathé", fr: "9,5 mm Pathé", en: "9.5mm Pathé" },
-  { v: "16mm (silent)", fr: "16 mm (muet)", en: "16mm (silent)" },
-  { v: "16mm (mag/optical sound)", fr: "16 mm (son magnétique/optique)", en: "16mm (mag/optical sound)" },
+  { v: "16mm", fr: "16 mm", en: "16mm" },
 ];
 
 export const VIDEO_CASSETTES = [
@@ -31,6 +29,7 @@ export const VIDEO_CASSETTES = [
 export const DELIVERY = [
   { v: "USB", fr: "Clé USB", en: "USB drive" },
   { v: "Download link", fr: "Lien de téléchargement", en: "Download link" },
-  { v: "External drive", fr: "Disque dur/SSD", en: "External HDD/SSD" },
+  { v: "External drive", fr: "Disque dur / SSD", en: "External HDD / SSD" },
   { v: "DVD/Blu-ray", fr: "DVD / Blu-ray", en: "DVD / Blu-ray" },
+  { v: "Other", fr: "Autres", en: "Other" },
 ];

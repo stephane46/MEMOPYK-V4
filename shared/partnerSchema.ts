@@ -3,9 +3,23 @@ import { z } from "zod";
 export const PartnerIntakeSchema = z.object({
   partner_name: z.string().min(2).max(120),
   email: z.string().email(),
-  email_public: z.boolean().optional().default(false),
+  email_public: z.boolean().optional().default(true),
   phone: z.string().min(1, "Téléphone requis"),
-  website: z.string().url("URL invalide").min(1, "Site web requis"),
+  website: z.string()
+    .min(1, "Site web requis")
+    .refine((url) => {
+      // Accept URLs with or without protocol
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        try {
+          new URL(url);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+      // Accept domain-like strings (www.example.com or example.com)
+      return /^[a-zA-Z0-9][a-zA-Z0-9-_.]+\.[a-zA-Z]{2,}/.test(url);
+    }, "URL invalide"),
   address: z.object({
     street: z.string().optional().default(""),
     line2: z.string().optional().default(""),
@@ -40,6 +54,11 @@ export const PartnerIntakeSchema = z.object({
 }, {
   message: "Au moins un format doit être sélectionné (photo, film, ou cassette vidéo)",
   path: ["photo_formats"],
+}).refine((data) => {
+  return data.consent_listed === true;
+}, {
+  message: "Vous devez accepter d'être répertorié dans l'annuaire pour soumettre le formulaire",
+  path: ["consent_listed"],
 });
 
 export type PartnerIntake = z.infer<typeof PartnerIntakeSchema>;

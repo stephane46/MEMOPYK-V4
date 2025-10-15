@@ -140,7 +140,7 @@ router.delete("/api/partners/:id", async (req, res) => {
     const newWorkbook = XLSX.utils.book_new();
     const headers = [
       ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
-       "Address", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
+       "Address", "Complément d'adresse", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
        "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Public Description", "Consent"]
     ];
     
@@ -152,6 +152,7 @@ router.delete("/api/partners/:id", async (req, res) => {
       row["Phone"],
       row["Website"],
       row["Address"],
+      row["Complément d'adresse"],
       row["City"],
       row["Postal Code"],
       row["Country"],
@@ -190,7 +191,7 @@ async function saveToExcel(data: any) {
     workbook = XLSX.utils.book_new();
     worksheet = XLSX.utils.aoa_to_sheet([
       ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
-       "Address", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
+       "Address", "Complément d'adresse", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
        "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Public Description", "Consent"]
     ]);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Partners");
@@ -216,6 +217,7 @@ async function saveToExcel(data: any) {
     data.phone || "",
     data.website || "",
     data.address?.street || "",
+    data.address?.line2 || "",
     data.address?.city || "",
     data.address?.postal_code || "",
     countryName,

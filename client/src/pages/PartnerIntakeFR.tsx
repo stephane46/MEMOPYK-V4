@@ -54,7 +54,7 @@ export default function PartnerIntakeFR() {
     defaultValues: {
       partner_name: "",
       email: "",
-      email_public: false,
+      email_public: true,
       phone: "",
       website: "",
       address: {
@@ -129,7 +129,7 @@ export default function PartnerIntakeFR() {
             Profil soumis !
           </h1>
           <p className="text-lg text-gray-700 mb-8">
-            Merci pour votre inscription. Notre équipe examinera votre profil et vous contactera sous 48 heures.
+            Merci pour votre inscription.
           </p>
           <Button
             onClick={() => window.location.href = "/fr-FR"}
@@ -179,7 +179,7 @@ export default function PartnerIntakeFR() {
             
             <h1 className="text-4xl font-bold mb-4">Inscription Annuaire MEMOPYK</h1>
             <p className="text-xl opacity-95">
-              Rejoignez notre réseau de professionnels de la numérisation
+              Professionnels de la numérisation
             </p>
           </div>
 
@@ -274,10 +274,10 @@ export default function PartnerIntakeFR() {
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>
-                              Afficher mon e-mail sur la page partenaire
+                              Afficher mon e-mail dans l'annuaire
                             </FormLabel>
                             <FormDescription className="text-sm text-gray-600">
-                              Si décoché, votre e-mail ne sera pas affiché sur votre fiche publique. Les clients pourront vous contacter par d'autres moyens (site web, téléphone, etc.).
+                              Si cette case est décochée, votre e-mail ne sera pas affiché dans l'annuaire.
                             </FormDescription>
                           </div>
                         </FormItem>
@@ -470,17 +470,13 @@ export default function PartnerIntakeFR() {
                 {/* Technical Capabilities */}
                 {selectedServices && selectedServices.length > 0 && (
                   <div className="space-y-6">
-                    <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
-                      <Package className="w-6 h-6" />
-                      Capacités techniques *
-                    </h2>
                     
                     {/* Photo Digitization Group */}
                     {selectedServices.includes("Photo") && (
                       <div className="space-y-4 border border-gray-200 rounded-lg p-6">
                         <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
                           <FileImage className="w-5 h-5" />
-                          Numérisation photo
+                          Numérisation de photos
                         </h3>
                         <FormField
                           control={form.control}
@@ -547,7 +543,7 @@ export default function PartnerIntakeFR() {
                       <div className="space-y-4 border border-gray-200 rounded-lg p-6">
                         <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
                           <Film className="w-5 h-5" />
-                          Films argentiques
+                          Numérisation de films
                         </h3>
                         <FormField
                           control={form.control}
@@ -733,7 +729,7 @@ export default function PartnerIntakeFR() {
                       <FormLabel>Description publique</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Ce texte sera affiché tel quel sur votre page partenaire MEMOPYK. Parlez de votre histoire, de vos services et de ce qui rend votre travail unique."
+                          placeholder="Ce texte sera affiché tel quel dans l'annuaire."
                           rows={5}
                           {...field}
                           data-testid="input-public-description"
@@ -760,7 +756,7 @@ export default function PartnerIntakeFR() {
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel className="cursor-pointer">
-                          J'accepte d'être répertorié dans l'annuaire des partenaires MEMOPYK *
+                          J'accepte d'être répertorié dans l'annuaire MEMOPYK *
                         </FormLabel>
                         <FormDescription>
                           Votre profil sera visible par les clients cherchant des services de numérisation
