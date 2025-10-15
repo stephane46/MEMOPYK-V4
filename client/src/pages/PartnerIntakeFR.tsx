@@ -700,7 +700,7 @@ export default function PartnerIntakeFR() {
                   ) : (
                     <>
                       <Send className="w-5 h-5 mr-2" />
-                      Soumettre le profil partenaire
+                      Soumettre
                     </>
                   )}
                 </Button>

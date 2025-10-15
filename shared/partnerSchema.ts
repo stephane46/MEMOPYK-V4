@@ -27,7 +27,9 @@ export const PartnerIntakeSchema = z.object({
   turnaround: z.string().optional().default(""),
   rush: z.boolean().optional().default(false),
   languages: z.array(z.string()).optional().default([]),
-  consent_listed: z.boolean(),
+  consent_listed: z.boolean().refine((val) => val === true, {
+    message: "Vous devez accepter d'être répertorié dans l'annuaire"
+  }),
   public_description: z.string().optional().default(""),
   locale: z.enum(["fr", "en"]).default("fr"),
   csrfToken: z.string().min(8),
