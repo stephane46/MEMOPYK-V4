@@ -363,20 +363,32 @@ export default function PartnersManagementEnhanced() {
           </DialogHeader>
           
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-4">
-              <TabsTrigger value="basic" className="text-sm">
+            <TabsList className="grid w-full grid-cols-4 mb-4 bg-gray-100">
+              <TabsTrigger 
+                value="basic" 
+                className="text-sm data-[state=active]:bg-[#D67C4A] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
+              >
                 <Building2 className="w-4 h-4 mr-2" />
                 Basic Info
               </TabsTrigger>
-              <TabsTrigger value="location" className="text-sm">
+              <TabsTrigger 
+                value="location" 
+                className="text-sm data-[state=active]:bg-[#D67C4A] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
+              >
                 <MapPin className="w-4 h-4 mr-2" />
                 Location
               </TabsTrigger>
-              <TabsTrigger value="services" className="text-sm">
+              <TabsTrigger 
+                value="services" 
+                className="text-sm data-[state=active]:bg-[#D67C4A] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
+              >
                 <Package className="w-4 h-4 mr-2" />
                 Services
               </TabsTrigger>
-              <TabsTrigger value="visibility" className="text-sm">
+              <TabsTrigger 
+                value="visibility" 
+                className="text-sm data-[state=active]:bg-[#D67C4A] data-[state=active]:text-white data-[state=inactive]:text-gray-700"
+              >
                 <Eye className="w-4 h-4 mr-2" />
                 Visibility
               </TabsTrigger>
