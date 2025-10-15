@@ -85,6 +85,8 @@ export default function PartnerIntakeFR() {
     },
   });
 
+  const selectedServices = form.watch("services");
+
   useEffect(() => {
     fetch("/api/csrf")
       .then((res) => res.json())
@@ -441,208 +443,216 @@ export default function PartnerIntakeFR() {
                 </div>
 
                 {/* Technical Capabilities */}
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
-                    <Package className="w-6 h-6" />
-                    Capacités techniques *
-                  </h2>
-                  
-                  {/* Photo Digitization Group */}
-                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
-                      <FileImage className="w-5 h-5" />
-                      Numérisation photo
-                    </h3>
-                    <FormField
-                      control={form.control}
-                      name="photo_formats"
-                      render={() => (
-                        <FormItem className="space-y-3">
-                          <FormDescription>Cochez tout ce que vous prenez en charge.</FormDescription>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {PHOTO_FORMATS.map((format) => (
-                              <FormField
-                                key={format.v}
-                                control={form.control}
-                                name="photo_formats"
-                                render={({ field }) => (
-                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.includes(format.v)}
-                                        onCheckedChange={(checked) => {
-                                          const newValue = checked
-                                            ? [...(field.value || []), format.v]
-                                            : (field.value || []).filter((val) => val !== format.v);
-                                          field.onChange(newValue);
-                                        }}
-                                        data-testid={`checkbox-photo-${format.v}`}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="text-sm font-normal cursor-pointer">
-                                      {format.fr}
-                                    </FormLabel>
-                                  </FormItem>
-                                )}
-                              />
-                            ))}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="other_photo_formats"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Autres formats pris en charge</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Précisez..."
-                              {...field}
-                              maxLength={120}
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
-                              data-testid="input-photo-other"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                {selectedServices && selectedServices.length > 0 && (
+                  <div className="space-y-6">
+                    <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
+                      <Package className="w-6 h-6" />
+                      Capacités techniques *
+                    </h2>
+                    
+                    {/* Photo Digitization Group */}
+                    {selectedServices.includes("Photo") && (
+                      <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                        <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
+                          <FileImage className="w-5 h-5" />
+                          Numérisation photo
+                        </h3>
+                        <FormField
+                          control={form.control}
+                          name="photo_formats"
+                          render={() => (
+                            <FormItem className="space-y-3">
+                              <FormDescription>Cochez tout ce que vous prenez en charge.</FormDescription>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {PHOTO_FORMATS.map((format) => (
+                                  <FormField
+                                    key={format.v}
+                                    control={form.control}
+                                    name="photo_formats"
+                                    render={({ field }) => (
+                                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value?.includes(format.v)}
+                                            onCheckedChange={(checked) => {
+                                              const newValue = checked
+                                                ? [...(field.value || []), format.v]
+                                                : (field.value || []).filter((val) => val !== format.v);
+                                              field.onChange(newValue);
+                                            }}
+                                            data-testid={`checkbox-photo-${format.v}`}
+                                          />
+                                        </FormControl>
+                                        <FormLabel className="text-sm font-normal cursor-pointer">
+                                          {format.fr}
+                                        </FormLabel>
+                                      </FormItem>
+                                    )}
+                                  />
+                                ))}
+                              </div>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="other_photo_formats"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Autres formats pris en charge</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Précisez..."
+                                  {...field}
+                                  maxLength={120}
+                                  className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                                  data-testid="input-photo-other"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
 
-                  {/* Motion Picture Film Group */}
-                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
-                      <Film className="w-5 h-5" />
-                      Films argentiques
-                    </h3>
-                    <FormField
-                      control={form.control}
-                      name="film_formats"
-                      render={() => (
-                        <FormItem className="space-y-3">
-                          <FormDescription>Cochez tout ce que vous prenez en charge.</FormDescription>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {FILM_FORMATS.map((format) => (
-                              <FormField
-                                key={format.v}
-                                control={form.control}
-                                name="film_formats"
-                                render={({ field }) => (
-                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.includes(format.v)}
-                                        onCheckedChange={(checked) => {
-                                          const newValue = checked
-                                            ? [...(field.value || []), format.v]
-                                            : (field.value || []).filter((val) => val !== format.v);
-                                          field.onChange(newValue);
-                                        }}
-                                        data-testid={`checkbox-film-${format.v}`}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="text-sm font-normal cursor-pointer">
-                                      {format.fr}
-                                    </FormLabel>
-                                  </FormItem>
-                                )}
-                              />
-                            ))}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="other_film_formats"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Autres formats pris en charge</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Précisez..."
-                              {...field}
-                              maxLength={120}
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
-                              data-testid="input-film-other"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                    {/* Motion Picture Film Group */}
+                    {selectedServices.includes("Film") && (
+                      <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                        <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
+                          <Film className="w-5 h-5" />
+                          Films argentiques
+                        </h3>
+                        <FormField
+                          control={form.control}
+                          name="film_formats"
+                          render={() => (
+                            <FormItem className="space-y-3">
+                              <FormDescription>Cochez tout ce que vous prenez en charge.</FormDescription>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {FILM_FORMATS.map((format) => (
+                                  <FormField
+                                    key={format.v}
+                                    control={form.control}
+                                    name="film_formats"
+                                    render={({ field }) => (
+                                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value?.includes(format.v)}
+                                            onCheckedChange={(checked) => {
+                                              const newValue = checked
+                                                ? [...(field.value || []), format.v]
+                                                : (field.value || []).filter((val) => val !== format.v);
+                                              field.onChange(newValue);
+                                            }}
+                                            data-testid={`checkbox-film-${format.v}`}
+                                          />
+                                        </FormControl>
+                                        <FormLabel className="text-sm font-normal cursor-pointer">
+                                          {format.fr}
+                                        </FormLabel>
+                                      </FormItem>
+                                    )}
+                                  />
+                                ))}
+                              </div>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="other_film_formats"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Autres formats pris en charge</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Précisez..."
+                                  {...field}
+                                  maxLength={120}
+                                  className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                                  data-testid="input-film-other"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                  {/* Video Cassettes Group */}
-                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
-                      <Video className="w-5 h-5" />
-                      Cassettes vidéo
-                    </h3>
-                    <FormField
-                      control={form.control}
-                      name="video_cassettes"
-                      render={() => (
-                        <FormItem className="space-y-3">
-                          <FormDescription>Cochez tout ce que vous prenez en charge.</FormDescription>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {VIDEO_CASSETTES.map((format) => (
-                              <FormField
-                                key={format.v}
-                                control={form.control}
-                                name="video_cassettes"
-                                render={({ field }) => (
-                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.includes(format.v)}
-                                        onCheckedChange={(checked) => {
-                                          const newValue = checked
-                                            ? [...(field.value || []), format.v]
-                                            : (field.value || []).filter((val) => val !== format.v);
-                                          field.onChange(newValue);
-                                        }}
-                                        data-testid={`checkbox-video-${format.v}`}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="text-sm font-normal cursor-pointer">
-                                      {format.fr}
-                                    </FormLabel>
-                                  </FormItem>
-                                )}
-                              />
-                            ))}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="other_video_formats"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Autres formats pris en charge</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Précisez..."
-                              {...field}
-                              maxLength={120}
-                              className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
-                              data-testid="input-video-other"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        {/* Video Cassettes Group */}
+                        <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                          <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
+                            <Video className="w-5 h-5" />
+                            Cassettes vidéo
+                          </h3>
+                          <FormField
+                            control={form.control}
+                            name="video_cassettes"
+                            render={() => (
+                              <FormItem className="space-y-3">
+                                <FormDescription>Cochez tout ce que vous prenez en charge.</FormDescription>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  {VIDEO_CASSETTES.map((format) => (
+                                    <FormField
+                                      key={format.v}
+                                      control={form.control}
+                                      name="video_cassettes"
+                                      render={({ field }) => (
+                                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                          <FormControl>
+                                            <Checkbox
+                                              checked={field.value?.includes(format.v)}
+                                              onCheckedChange={(checked) => {
+                                                const newValue = checked
+                                                  ? [...(field.value || []), format.v]
+                                                  : (field.value || []).filter((val) => val !== format.v);
+                                                field.onChange(newValue);
+                                              }}
+                                              data-testid={`checkbox-video-${format.v}`}
+                                            />
+                                          </FormControl>
+                                          <FormLabel className="text-sm font-normal cursor-pointer">
+                                            {format.fr}
+                                          </FormLabel>
+                                        </FormItem>
+                                      )}
+                                    />
+                                  ))}
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="other_video_formats"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Autres formats pris en charge</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Précisez..."
+                                    {...field}
+                                    maxLength={120}
+                                    className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                                    data-testid="input-video-other"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
+                )}
 
-                  {/* Delivery Section */}
+                {/* Delivery Section */}
+                {selectedServices && selectedServices.length > 0 && (
                   <div className="space-y-4 border border-gray-200 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
                       <Truck className="w-5 h-5" />
@@ -687,7 +697,7 @@ export default function PartnerIntakeFR() {
                       )}
                     />
                   </div>
-                </div>
+                )}
 
                 {/* Description */}
                 <FormField
@@ -735,16 +745,6 @@ export default function PartnerIntakeFR() {
                     </FormItem>
                   )}
                 />
-
-                {/* DEBUG: Show form errors */}
-                {Object.keys(form.formState.errors).length > 0 && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <h3 className="font-semibold text-red-800 mb-2">Erreurs de validation :</h3>
-                    <pre className="text-sm text-red-700 whitespace-pre-wrap">
-                      {JSON.stringify(form.formState.errors, null, 2)}
-                    </pre>
-                  </div>
-                )}
 
                 {/* Submit Button */}
                 <Button

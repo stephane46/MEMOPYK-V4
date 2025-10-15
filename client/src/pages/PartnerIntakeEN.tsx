@@ -85,6 +85,8 @@ export default function PartnerIntakeEN() {
     },
   });
 
+  const selectedServices = form.watch("services");
+
   useEffect(() => {
     fetch("/api/csrf")
       .then((res) => res.json())
@@ -441,14 +443,16 @@ export default function PartnerIntakeEN() {
                 </div>
 
                 {/* Technical Capabilities */}
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
-                    <Package className="w-6 h-6" />
-                    Technical Capabilities *
-                  </h2>
-                  
-                  {/* Photo Digitization Group */}
-                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                {selectedServices && selectedServices.length > 0 && (
+                  <div className="space-y-6">
+                    <h2 className="text-2xl font-semibold text-[#2A4759] flex items-center gap-2">
+                      <Package className="w-6 h-6" />
+                      Technical Capabilities *
+                    </h2>
+                    
+                    {/* Photo Digitization Group */}
+                    {selectedServices.includes("Photo") && (
+                      <div className="space-y-4 border border-gray-200 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
                       <FileImage className="w-5 h-5" />
                       Photo Digitization
@@ -510,10 +514,12 @@ export default function PartnerIntakeEN() {
                         </FormItem>
                       )}
                     />
-                  </div>
+                      </div>
+                    )}
 
-                  {/* Motion Picture Film Group */}
-                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                    {/* Motion Picture Film Group */}
+                    {selectedServices.includes("Film") && (
+                      <div className="space-y-4 border border-gray-200 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
                       <Film className="w-5 h-5" />
                       Motion Picture Film
@@ -575,10 +581,12 @@ export default function PartnerIntakeEN() {
                         </FormItem>
                       )}
                     />
-                  </div>
+                      </div>
+                    )}
 
-                  {/* Video Cassettes Group */}
-                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                    {/* Video Cassettes Group */}
+                    {selectedServices.includes("Film") && (
+                      <div className="space-y-4 border border-gray-200 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
                       <Video className="w-5 h-5" />
                       Video Cassettes
@@ -640,10 +648,11 @@ export default function PartnerIntakeEN() {
                         </FormItem>
                       )}
                     />
-                  </div>
+                      </div>
+                    )}
 
-                  {/* Delivery Section */}
-                  <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                    {/* Delivery Section */}
+                    <div className="space-y-4 border border-gray-200 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
                       <Truck className="w-5 h-5" />
                       Delivery / Output
@@ -687,7 +696,8 @@ export default function PartnerIntakeEN() {
                       )}
                     />
                   </div>
-                </div>
+                  </div>
+                )}
 
                 {/* Description */}
                 <FormField
