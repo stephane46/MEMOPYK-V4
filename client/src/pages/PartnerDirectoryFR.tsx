@@ -327,7 +327,7 @@ export default function PartnerDirectoryFR() {
           </div>
 
           {/* Partner List */}
-          <div className="space-y-4 max-h-[600px] overflow-y-auto">
+          <div className="space-y-4 h-[600px] overflow-y-auto snap-y snap-mandatory">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
             ) : visiblePartners.length === 0 ? (
@@ -339,7 +339,7 @@ export default function PartnerDirectoryFR() {
               visiblePartners.map((partner, index) => (
                 <Card
                   key={index}
-                  className={`transition-all overflow-hidden cursor-pointer ${
+                  className={`h-[292px] snap-start transition-all overflow-hidden cursor-pointer ${
                     selectedPartner === partner.slug
                       ? 'ring-2 ring-[#D67C4A] shadow-xl'
                       : 'hover:shadow-md'
