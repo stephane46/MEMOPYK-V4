@@ -748,23 +748,25 @@ export default function PartnerIntakeFR() {
                   control={form.control}
                   name="consent_listed"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-gray-300 p-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          data-testid="checkbox-consent"
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel className="cursor-pointer">
-                          J'accepte d'être répertorié dans l'annuaire MEMOPYK *
-                        </FormLabel>
-                        <FormDescription>
-                          Votre profil sera visible par les clients cherchant des services de numérisation
-                        </FormDescription>
-                        <FormMessage />
+                    <FormItem>
+                      <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-gray-300 p-4">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            data-testid="checkbox-consent"
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel className="cursor-pointer">
+                            J'accepte d'être répertorié dans l'annuaire MEMOPYK *
+                          </FormLabel>
+                          <FormDescription>
+                            Votre profil sera visible par les clients cherchant des services de numérisation
+                          </FormDescription>
+                        </div>
                       </div>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -788,7 +790,7 @@ export default function PartnerIntakeFR() {
 
                 <div className="text-sm text-gray-600 text-center space-y-2">
                   <p>
-                    Questions ? N'hésitez pas à nous contacter à <a href="mailto:partner@memopyk.com" className="text-[#D67C4A] hover:underline">partner@memopyk.com</a>
+                    Questions ? N'hésitez pas à nous contacter à <a href="mailto:contact@memopyk.com" className="text-[#D67C4A] hover:underline">contact@memopyk.com</a>
                   </p>
                   <p>* Champs obligatoires</p>
                 </div>

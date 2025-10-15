@@ -746,23 +746,25 @@ export default function PartnerIntakeEN() {
                   control={form.control}
                   name="consent_listed"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-gray-300 p-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          data-testid="checkbox-consent"
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel className="cursor-pointer">
-                          I agree to be listed in the MEMOPYK directory *
-                        </FormLabel>
-                        <FormDescription>
-                          Your profile will be visible to clients seeking digitization services
-                        </FormDescription>
-                        <FormMessage />
+                    <FormItem>
+                      <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-gray-300 p-4">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            data-testid="checkbox-consent"
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel className="cursor-pointer">
+                            I agree to be listed in the MEMOPYK directory *
+                          </FormLabel>
+                          <FormDescription>
+                            Your profile will be visible to clients seeking digitization services
+                          </FormDescription>
+                        </div>
                       </div>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -786,7 +788,7 @@ export default function PartnerIntakeEN() {
 
                 <div className="text-sm text-gray-600 text-center space-y-2">
                   <p>
-                    Questions? Feel free to contact us at <a href="mailto:partner@memopyk.com" className="text-[#D67C4A] hover:underline">partner@memopyk.com</a>
+                    Questions? Feel free to contact us at <a href="mailto:contact@memopyk.com" className="text-[#D67C4A] hover:underline">contact@memopyk.com</a>
                   </p>
                   <p>* Required fields</p>
                 </div>
