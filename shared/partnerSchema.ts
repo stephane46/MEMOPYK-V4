@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const PartnerIntakeSchema = z.object({
+  partner_type: z.string().optional().default("digitization"),
   partner_name: z.string().min(2).max(120),
   email: z.string().min(1, "E-mail requis"),
   email_public: z.boolean().optional().default(true),

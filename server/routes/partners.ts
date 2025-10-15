@@ -6,6 +6,7 @@ import * as XLSX from "xlsx";
 import fs from "fs";
 import path from "path";
 import { Resend } from "resend";
+import { partnerStore } from "../stores/ExcelPartnerStore";
 
 const router = Router();
 const EXCEL_FILE = path.join(process.cwd(), "partner-submissions.xlsx");
@@ -78,61 +79,7 @@ router.get("/api/partners/download", async (req, res) => {
 // Export map data JSON (approved partners only)
 router.post("/api/partners/export-map", async (req, res) => {
   try {
-    if (!fs.existsSync(EXCEL_FILE)) {
-      return res.status(404).json({ error: "No partner submissions found" });
-    }
-
-    const workbook = XLSX.readFile(EXCEL_FILE);
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json(worksheet);
-
-    // Filter for approved partners with map visibility AND valid coordinates
-    const mapPartners = data
-      .filter((row: any) => {
-        // Ensure lat/lng cells have actual values (not null/undefined/empty string)
-        const hasLat = row["lat"] != null && String(row["lat"]).trim() !== "";
-        const hasLng = row["lng"] != null && String(row["lng"]).trim() !== "";
-        
-        if (!hasLat || !hasLng) return false;
-        
-        const lat = Number(row["lat"]);
-        const lng = Number(row["lng"]);
-        
-        return (
-          row["Status"] === "Approved" && 
-          row["Is_Active"] === "TRUE" && 
-          row["Show_On_Map"] === "TRUE" &&
-          Number.isFinite(lat) &&
-          Number.isFinite(lng)
-        );
-      })
-      .map((row: any) => {
-        const lat = Number(row["lat"]);
-        const lng = Number(row["lng"]);
-        
-        return {
-          name: row["Partner Name"] || "",
-          city: row["City"] || "",
-          country: row["Country"] || "",
-          lat,
-          lng,
-          services: [
-            ...(row["Photo Formats"] ? ["Photo"] : []),
-            ...(row["Film Formats"] ? ["Film"] : []),
-            ...(row["Video Cassettes"] ? ["Video"] : [])
-          ],
-          formats: {
-            photo: row["Photo Formats"] ? row["Photo Formats"].split(", ") : [],
-            film: row["Film Formats"] ? row["Film Formats"].split(", ") : [],
-            video: row["Video Cassettes"] ? row["Video Cassettes"].split(", ") : []
-          },
-          website: row["Website"] || "",
-          phone: row["Phone"] || "",
-          email: row["Email_Public"] === "TRUE" ? row["Email"] : "",
-          public_description: row["Public Description"] || "",
-          slug: row["slug"] || ""
-        };
-      });
+    const mapPartners = partnerStore.getMapData();
 
     // Save to public JSON file
     const publicDir = path.join(process.cwd(), "public");
@@ -143,7 +90,7 @@ router.post("/api/partners/export-map", async (req, res) => {
     const jsonPath = path.join(publicDir, "partners.json");
     fs.writeFileSync(jsonPath, JSON.stringify(mapPartners, null, 2));
 
-    console.log(`✅ Map data exported: ${mapPartners.length} partners`);
+    console.log(`✅ Map data exported via store: ${mapPartners.length} partners`);
     res.json({ 
       ok: true, 
       count: mapPartners.length, 
@@ -156,7 +103,30 @@ router.post("/api/partners/export-map", async (req, res) => {
   }
 });
 
-// Get partner summary (for admin display)
+// Enhanced: Get all partners with pagination and filters
+router.get("/api/partners", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = req.query.search as string;
+    const status = req.query.status as string;
+    const partner_type = req.query.partner_type as string;
+    const services = req.query.services ? (req.query.services as string).split(',') : undefined;
+
+    const result = partnerStore.getAll(
+      { search, status, partner_type, services },
+      page,
+      limit
+    );
+
+    res.json(result);
+  } catch (e: any) {
+    console.error("Get partners error:", e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get partner summary (for admin display) - backwards compatibility
 router.get("/api/partners/summary", async (req, res) => {
   try {
     if (!fs.existsSync(EXCEL_FILE)) {
@@ -209,6 +179,26 @@ router.get("/api/partners/summary", async (req, res) => {
 
 // Update partner details (Status, Is_Active, Show_On_Map, lat, lng)
 router.patch("/api/partners/:id/update", async (req, res) => {
+  try {
+    const rowId = parseInt(req.params.id);
+    const updates = req.body;
+
+    const success = partnerStore.update(rowId, updates);
+    
+    if (!success) {
+      return res.status(404).json({ error: "Partner not found" });
+    }
+
+    console.log(`✅ Partner updated via store: row ${rowId}`);
+    return res.json({ ok: true, message: "Partner updated successfully" });
+  } catch (e: any) {
+    console.error("Update error:", e);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Legacy update using Excel directly (backup)
+router.patch("/api/partners/:id/update-legacy", async (req, res) => {
   try {
     const rowId = parseInt(req.params.id);
     const { status, is_active, show_on_map, lat, lng } = req.body;
@@ -286,6 +276,25 @@ router.patch("/api/partners/:id/update", async (req, res) => {
 
 // Delete a partner submission
 router.delete("/api/partners/:id", async (req, res) => {
+  try {
+    const rowId = parseInt(req.params.id);
+
+    const success = partnerStore.delete(rowId);
+    
+    if (!success) {
+      return res.status(404).json({ error: "Partner not found" });
+    }
+
+    console.log(`✅ Partner deleted via store: row ${rowId}`);
+    return res.json({ ok: true, message: "Partner deleted successfully" });
+  } catch (e: any) {
+    console.error("Delete error:", e);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Legacy delete using Excel directly (backup)
+router.delete("/api/partners/:id/legacy", async (req, res) => {
   try {
     const rowId = parseInt(req.params.id);
     

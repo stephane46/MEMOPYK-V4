@@ -492,6 +492,62 @@ export type ConversionFunnel = typeof conversionFunnel.$inferSelect;
 export type WhyMemopykCards = typeof whyMemopykCards.$inferSelect;
 export type AnalyticsExclusion = typeof analyticsExclusions.$inferSelect;
 
+// Partner Submissions table - Partner directory and intake system
+export const partnerSubmissions = pgTable("partner_submissions", {
+  id: serial("id").primaryKey(),
+  partnerType: varchar("partner_type", { length: 50 }).notNull().default("digitization"),
+  partnerName: text("partner_name").notNull(),
+  contactName: text("contact_name").notNull(),
+  email: text("email").notNull(),
+  emailPublic: boolean("email_public").default(false),
+  phone: text("phone"),
+  phonePublic: boolean("phone_public").default(false),
+  website: text("website"),
+  
+  // Address fields
+  address: text("address"),
+  addressLine2: text("address_line2"),
+  city: text("city").notNull(),
+  postalCode: text("postal_code"),
+  country: text("country").notNull(),
+  
+  // Geolocation
+  lat: decimal("lat", { precision: 10, scale: 7 }),
+  lng: decimal("lng", { precision: 10, scale: 7 }),
+  
+  // Service offerings - stored as comma-separated for Excel compatibility
+  photoFormats: text("photo_formats"),
+  filmFormats: text("film_formats"),
+  videoCassettes: text("video_cassettes"),
+  
+  // Public directory fields
+  publicDescription: text("public_description"),
+  slug: text("slug").notNull(),
+  
+  // Status and visibility
+  status: varchar("status", { length: 20 }).notNull().default("Pending"),
+  isActive: boolean("is_active").default(false),
+  showOnMap: boolean("show_on_map").default(false),
+  
+  // Additional information
+  specialties: text("specialties"),
+  yearsExperience: integer("years_experience"),
+  notes: text("notes"),
+  
+  // Timestamps
+  submittedAt: timestamp("submitted_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertPartnerSubmissionSchema = createInsertSchema(partnerSubmissions).omit({
+  id: true,
+  submittedAt: true,
+  updatedAt: true,
+});
+
+export type PartnerSubmission = typeof partnerSubmissions.$inferSelect;
+export type InsertPartnerSubmission = z.infer<typeof insertPartnerSubmissionSchema>;
+
 // Insert types for all tables
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertHeroVideo = z.infer<typeof insertHeroVideoSchema>;
