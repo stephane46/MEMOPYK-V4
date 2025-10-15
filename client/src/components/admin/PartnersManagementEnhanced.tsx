@@ -514,11 +514,11 @@ export default function PartnersManagementEnhanced() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t">
+          <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
             <Button
               variant="outline"
               onClick={() => setEditingPartner(null)}
-              className="bg-white border-gray-300 text-gray-700"
+              className="bg-white border-2 border-gray-400 text-gray-900 hover:bg-gray-100 font-medium"
             >
               <X className="h-4 w-4 mr-2" />
               Cancel
@@ -526,7 +526,7 @@ export default function PartnersManagementEnhanced() {
             <Button
               onClick={handleSaveEdit}
               disabled={updateMutation.isPending}
-              className="bg-[#D67C4A] hover:bg-[#D67C4A]/90 text-white"
+              className="bg-[#D67C4A] hover:bg-[#c46d3f] text-white font-medium border-2 border-[#D67C4A] disabled:opacity-50"
             >
               <Save className="h-4 w-4 mr-2" />
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
