@@ -140,8 +140,8 @@ router.delete("/api/partners/:id", async (req, res) => {
     const newWorkbook = XLSX.utils.book_new();
     const headers = [
       ["Timestamp", "Partner Name", "Email", "Phone", "Website", 
-       "Address", "City", "Postal Code", "Country", "Services", "Photo Formats", 
-       "Film Formats", "Description", "Consent"]
+       "Address", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
+       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Description", "Consent"]
     ];
     
     const rows = data.map((row: any) => [
@@ -154,9 +154,13 @@ router.delete("/api/partners/:id", async (req, res) => {
       row["City"],
       row["Postal Code"],
       row["Country"],
-      row["Services"],
       row["Photo Formats"],
+      row["Other Photo"],
       row["Film Formats"],
+      row["Other Film"],
+      row["Video Cassettes"],
+      row["Other Video"],
+      row["Delivery"],
       row["Description"],
       row["Consent"]
     ]);
@@ -185,8 +189,8 @@ async function saveToExcel(data: any) {
     workbook = XLSX.utils.book_new();
     worksheet = XLSX.utils.aoa_to_sheet([
       ["Timestamp", "Partner Name", "Email", "Phone", "Website", 
-       "Address", "City", "Postal Code", "Country", "Services", "Photo Formats", 
-       "Film Formats", "Description", "Consent"]
+       "Address", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
+       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Description", "Consent"]
     ]);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Partners");
   }
@@ -213,9 +217,13 @@ async function saveToExcel(data: any) {
     data.address?.city || "",
     data.address?.postal_code || "",
     countryName,
-    data.services?.join(", ") || "",
     data.photo_formats?.join(", ") || "",
+    data.other_photo_formats || "",
     data.film_formats?.join(", ") || "",
+    data.other_film_formats || "",
+    data.video_cassettes?.join(", ") || "",
+    data.other_video_formats || "",
+    data.delivery?.join(", ") || "",
     data.notes || "",
     data.consent_listed ? "Yes" : "No"
   ];
@@ -290,16 +298,32 @@ async function sendPartnerNotification(data: any) {
             <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.address?.city || 'Non fourni'}</td>
           </tr>
           <tr style="background: #F2EBDC;">
-            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Services</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.services?.join(', ') || 'Aucun'}</td>
-          </tr>
-          <tr>
             <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Formats Photos</td>
             <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.photo_formats?.join(', ') || 'Non spécifié'}</td>
           </tr>
-          <tr style="background: #F2EBDC;">
+          ${data.other_photo_formats ? `<tr>
+            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Autres Formats Photos</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.other_photo_formats}</td>
+          </tr>` : ''}
+          <tr${data.other_photo_formats ? ' style="background: #F2EBDC;"' : ''}>
             <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Formats Film</td>
             <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.film_formats?.join(', ') || 'Non spécifié'}</td>
+          </tr>
+          ${data.other_film_formats ? `<tr${!data.other_photo_formats ? ' style="background: #F2EBDC;"' : ''}>
+            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Autres Formats Film</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.other_film_formats}</td>
+          </tr>` : ''}
+          <tr${((data.other_photo_formats && !data.other_film_formats) || (!data.other_photo_formats && data.other_film_formats)) ? ' style="background: #F2EBDC;"' : ''}>
+            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Cassettes Vidéo</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.video_cassettes?.join(', ') || 'Non spécifié'}</td>
+          </tr>
+          ${data.other_video_formats ? `<tr>
+            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Autres Formats Vidéo</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.other_video_formats}</td>
+          </tr>` : ''}
+          <tr style="background: #F2EBDC;">
+            <td style="padding: 12px; font-weight: bold; border-bottom: 1px solid #ddd;">Livraison</td>
+            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${data.delivery?.join(', ') || 'Non spécifié'}</td>
           </tr>
           <tr>
             <td style="padding: 12px; font-weight: bold;">Date de Soumission</td>
