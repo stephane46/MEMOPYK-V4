@@ -21,7 +21,7 @@ import FAQManagementWorking from '@/components/admin/FAQManagementWorking';
 import { LegalDocumentManagement } from '@/components/admin/LegalDocumentManagement';
 import { CtaManagement } from '@/components/admin/CtaManagement';
 import { WhyMemopykManagement } from '@/components/admin/WhyMemopykManagement';
-import PartnersManagement from '@/components/admin/PartnersManagement';
+import PartnersManagementEnhanced from '@/components/admin/PartnersManagementEnhanced';
 import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import GA4AnalyticsDashboard from '@/components/admin/GA4AnalyticsDashboard';
 import CleanGA4Analytics from '@/components/admin/CleanGA4Analytics';
@@ -1495,7 +1495,7 @@ export default function AdminPage() {
 
           {/* Partners Management */}
           {activeSection === 'partners' && (
-            <PartnersManagement />
+            <PartnersManagementEnhanced />
           )}
 
           {/* CTA Management */}
