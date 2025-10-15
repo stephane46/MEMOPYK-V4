@@ -264,10 +264,8 @@ async function sendPartnerNotification(data: any) {
     }
   };
 
-  // Get base URL from environment
-  const baseUrl = process.env.REPLIT_DEV_DOMAIN 
-    ? `https://${process.env.REPLIT_DEV_DOMAIN}` 
-    : 'https://memopyk.com';
+  // Get base URL - use production domain in deployed environment
+  const baseUrl = 'https://memopyk.com';
 
   const emailHtml = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
