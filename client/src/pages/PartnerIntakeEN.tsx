@@ -431,7 +431,7 @@ export default function PartnerIntakeEN() {
                     name="services"
                     render={() => (
                       <FormItem className="space-y-3">
-                        <FormDescription>Select at least one type of service you offer.</FormDescription>
+                        <FormDescription>Select at least one type of service.</FormDescription>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {serviceOptions.map((service) => (
                             <FormField
@@ -784,9 +784,12 @@ export default function PartnerIntakeEN() {
                   )}
                 </Button>
 
-                <p className="text-sm text-gray-600 text-center">
-                  * Required fields
-                </p>
+                <div className="text-sm text-gray-600 text-center space-y-2">
+                  <p>
+                    Questions? Feel free to contact us at <a href="mailto:partner@memopyk.com" className="text-[#D67C4A] hover:underline">partner@memopyk.com</a>
+                  </p>
+                  <p>* Required fields</p>
+                </div>
               </form>
             </Form>
           </div>

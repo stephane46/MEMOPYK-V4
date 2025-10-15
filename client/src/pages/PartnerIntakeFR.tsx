@@ -431,7 +431,7 @@ export default function PartnerIntakeFR() {
                     name="services"
                     render={() => (
                       <FormItem className="space-y-3">
-                        <FormDescription>Sélectionnez au moins un type de service que vous proposez.</FormDescription>
+                        <FormDescription>Sélectionnez au moins un type de service.</FormDescription>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {serviceOptions.map((service) => (
                             <FormField
@@ -602,71 +602,73 @@ export default function PartnerIntakeFR() {
                             </FormItem>
                           )}
                         />
+                      </div>
+                    )}
 
-                        {/* Video Cassettes Group */}
-                        <div className="space-y-4 border border-gray-200 rounded-lg p-6">
-                          <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
-                            <Video className="w-5 h-5" />
-                            Cassettes vidéo
-                          </h3>
-                          <FormField
-                            control={form.control}
-                            name="video_cassettes"
-                            render={() => (
-                              <FormItem className="space-y-3">
-                                <FormDescription>Cochez tout ce que vous prenez en charge.</FormDescription>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                  {VIDEO_CASSETTES.map((format) => (
-                                    <FormField
-                                      key={format.v}
-                                      control={form.control}
-                                      name="video_cassettes"
-                                      render={({ field }) => (
-                                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                                          <FormControl>
-                                            <Checkbox
-                                              checked={field.value?.includes(format.v)}
-                                              onCheckedChange={(checked) => {
-                                                const newValue = checked
-                                                  ? [...(field.value || []), format.v]
-                                                  : (field.value || []).filter((val) => val !== format.v);
-                                                field.onChange(newValue);
-                                              }}
-                                              data-testid={`checkbox-video-${format.v}`}
-                                            />
-                                          </FormControl>
-                                          <FormLabel className="text-sm font-normal cursor-pointer">
-                                            {format.fr}
-                                          </FormLabel>
-                                        </FormItem>
-                                      )}
-                                    />
-                                  ))}
-                                </div>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="other_video_formats"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Autres formats pris en charge</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="Précisez..."
-                                    {...field}
-                                    maxLength={120}
-                                    className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
-                                    data-testid="input-video-other"
+                    {/* Video Cassettes Group */}
+                    {selectedServices.includes("Film") && (
+                      <div className="space-y-4 border border-gray-200 rounded-lg p-6">
+                        <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
+                          <Video className="w-5 h-5" />
+                          Cassettes vidéo
+                        </h3>
+                        <FormField
+                          control={form.control}
+                          name="video_cassettes"
+                          render={() => (
+                            <FormItem className="space-y-3">
+                              <FormDescription>Cochez tout ce que vous prenez en charge.</FormDescription>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {VIDEO_CASSETTES.map((format) => (
+                                  <FormField
+                                    key={format.v}
+                                    control={form.control}
+                                    name="video_cassettes"
+                                    render={({ field }) => (
+                                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value?.includes(format.v)}
+                                            onCheckedChange={(checked) => {
+                                              const newValue = checked
+                                                ? [...(field.value || []), format.v]
+                                                : (field.value || []).filter((val) => val !== format.v);
+                                              field.onChange(newValue);
+                                            }}
+                                            data-testid={`checkbox-video-${format.v}`}
+                                          />
+                                        </FormControl>
+                                        <FormLabel className="text-sm font-normal cursor-pointer">
+                                          {format.fr}
+                                        </FormLabel>
+                                      </FormItem>
+                                    )}
                                   />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
+                                ))}
+                              </div>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="other_video_formats"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Autres formats pris en charge</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Précisez..."
+                                  {...field}
+                                  maxLength={120}
+                                  className="border-gray-300 focus:border-[#D67C4A] focus:ring-[#D67C4A]"
+                                  data-testid="input-video-other"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                       </div>
                     )}
                   </div>
@@ -784,9 +786,12 @@ export default function PartnerIntakeFR() {
                   )}
                 </Button>
 
-                <p className="text-sm text-gray-600 text-center">
-                  * Champs obligatoires
-                </p>
+                <div className="text-sm text-gray-600 text-center space-y-2">
+                  <p>
+                    Questions ? N'hésitez pas à nous contacter à <a href="mailto:partner@memopyk.com" className="text-[#D67C4A] hover:underline">partner@memopyk.com</a>
+                  </p>
+                  <p>* Champs obligatoires</p>
+                </div>
               </form>
             </Form>
           </div>
