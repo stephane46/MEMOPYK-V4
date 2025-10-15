@@ -1,10 +1,10 @@
 export const PHOTO_FORMATS = [
   { v: "Prints", fr: "Tirages", en: "Prints" },
-  { v: "Albums", fr: "Albums (démontage possible)", en: "Albums (disassembly possible)" },
-  { v: "Slides 35mm", fr: "Diapositives 35 mm", en: "Slides 35mm" },
   { v: "Negatives 35mm", fr: "Négatifs 35 mm", en: "Negatives 35mm" },
   { v: "Medium format 120/220", fr: "Négatifs moyen format (120/220)", en: "Medium format negatives (120/220)" },
   { v: "Large format", fr: "Négatifs Grand format (4x5, 6x6, etc.)", en: "Large format negatives (4x5, 6x6, etc.)" },
+  { v: "Albums", fr: "Albums (démontage possible)", en: "Albums (disassembly possible)" },
+  { v: "Slides 35mm", fr: "Diapositives 35 mm", en: "Slides 35mm" },
   { v: "Polaroid/Instax", fr: "Polaroid / Instax", en: "Polaroid / Instax" },
 ];
 
