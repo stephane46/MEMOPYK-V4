@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
-import { MapPin, Phone, Mail, Globe, Filter, Search, Package, X, Navigation } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { MapPin, Phone, Mail, Globe, Filter, Search, Package, X, Navigation, ChevronDown, ChevronUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import L from 'leaflet';
-import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES } from '@shared/partnerFormats';
+import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES, DELIVERY } from '@shared/partnerFormats';
 
 // Fix Leaflet default icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -68,9 +68,19 @@ interface Partner {
   };
   website: string;
   phone: string;
+  phone_public: boolean;
   email: string;
+  email_public: boolean;
   public_description: string;
   slug: string;
+  address: string;
+  address_line2: string;
+  postal_code: string;
+  delivery: string[];
+  other_photo: string;
+  other_film: string;
+  other_video: string;
+  other_delivery: string;
 }
 
 export default function PartnerDirectoryFR() {
@@ -80,6 +90,7 @@ export default function PartnerDirectoryFR() {
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [zoomTo, setZoomTo] = useState<{ lat: number; lng: number; zoom: number } | null>(null);
   const [modalPartner, setModalPartner] = useState<Partner | null>(null);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
     queryKey: ['/partners.json'],
@@ -173,12 +184,18 @@ export default function PartnerDirectoryFR() {
     return formatId;
   };
 
+  // Helper function to get French delivery labels
+  const getDeliveryLabel = (deliveryId: string): string => {
+    const delivery = DELIVERY.find(d => d.v === deliveryId);
+    return delivery ? delivery.fr : deliveryId;
+  };
+
   // Function to zoom to a partner location
   const zoomToPartner = (partner: Partner) => {
     if (partner.lat && partner.lng) {
       setSelectedPartner(partner.slug);
-      // Use zoom level 11 for better visibility and keep info panel in view
-      setZoomTo({ lat: partner.lat, lng: partner.lng, zoom: 11 });
+      setExpandedCard(partner.slug);
+      setZoomTo({ lat: partner.lat, lng: partner.lng, zoom: 13 });
     }
   };
 
@@ -266,64 +283,13 @@ export default function PartnerDirectoryFR() {
                       key={index}
                       position={[partner.lat, partner.lng]}
                       eventHandlers={{
-                        click: () => setSelectedPartner(partner.slug)
+                        click: () => {
+                          setSelectedPartner(partner.slug);
+                          setExpandedCard(partner.slug);
+                          setZoomTo({ lat: partner.lat!, lng: partner.lng!, zoom: 13 });
+                        }
                       }}
-                    >
-                      <Popup maxWidth={300}>
-                        <div className="p-2">
-                          <h4 className="font-bold text-[#2A4759] mb-2">{partner.name}</h4>
-                          <div className="flex items-center gap-1 text-sm text-gray-600 mb-3">
-                            <MapPin className="h-3 w-3" />
-                            <span>{partner.city}, {partner.country}</span>
-                          </div>
-                          
-                          {/* Services in popup */}
-                          <div className="flex flex-wrap gap-1 mb-3">
-                            {partner.services.sort((a, b) => {
-                              const order = ['Photo', 'Film', 'Video'];
-                              return order.indexOf(a) - order.indexOf(b);
-                            }).map(service => (
-                              <span key={service} className="inline-block text-xs bg-[#D67C4A] text-white px-2 py-0.5 rounded">
-                                {service === 'Video' ? 'Vidéo' : service}
-                              </span>
-                            ))}
-                          </div>
-
-                          {/* Contact links in popup */}
-                          <div className="space-y-1 text-xs">
-                            {partner.website && (
-                              <a
-                                href={partner.website.startsWith('http') ? partner.website : `https://${partner.website}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1 text-[#D67C4A] hover:underline"
-                              >
-                                <Globe className="h-3 w-3" />
-                                <span>Visiter le site</span>
-                              </a>
-                            )}
-                            {partner.phone && (
-                              <a
-                                href={`tel:${partner.phone}`}
-                                className="flex items-center gap-1 text-[#2A4759] hover:underline"
-                              >
-                                <Phone className="h-3 w-3" />
-                                <span>{partner.phone}</span>
-                              </a>
-                            )}
-                            {partner.email && (
-                              <a
-                                href={`mailto:${partner.email}`}
-                                className="flex items-center gap-1 text-[#2A4759] hover:underline"
-                              >
-                                <Mail className="h-3 w-3" />
-                                <span>Email</span>
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                      </Popup>
-                    </Marker>
+                    />
                   )
                 ))}
               </MapContainer>
@@ -344,124 +310,199 @@ export default function PartnerDirectoryFR() {
                 <p className="mt-2">Essayez d'élargir la zone ou de retirer des filtres.</p>
               </div>
             ) : (
-              visiblePartners.map((partner, index) => (
-                <Card
-                  key={index}
-                  className={`h-[292px] snap-start transition-all overflow-hidden cursor-pointer ${
-                    selectedPartner === partner.slug
-                      ? 'ring-2 ring-[#D67C4A] shadow-xl'
-                      : 'hover:shadow-md'
-                  }`}
-                  onClick={() => setModalPartner(partner)}
-                  data-testid={`partner-card-${partner.slug}`}
-                >
-                  <CardContent className="p-0">
-                    {/* Header Section with colored background */}
-                    <div className="bg-gradient-to-r from-[#2A4759] to-[#1f3646] p-5">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1">
-                          <h3 className="text-xl font-bold text-white mb-2">
-                            {partner.name}
-                          </h3>
-                          <div className="flex items-center gap-2 text-[#F2EBDC]">
-                            <MapPin className="h-4 w-4" />
-                            <span className="text-sm">{partner.city}, {partner.country}</span>
-                          </div>
-                        </div>
-                        {partner.lat && partner.lng && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-white hover:bg-white/20 shrink-0"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              zoomToPartner(partner);
-                            }}
-                            data-testid={`button-zoom-${partner.slug}`}
-                          >
-                            <Navigation className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="p-5 space-y-4">
-                      {/* Description */}
-                      {partner.public_description && (
-                        <p className="text-sm text-gray-700 leading-relaxed line-clamp-2">
-                          {partner.public_description}
-                        </p>
-                      )}
-
-                      {/* Services and Formats - Horizontal Layout */}
-                      <div className="space-y-2">
-                        {partner.services.sort((a, b) => {
-                          const order = ['Photo', 'Film', 'Video'];
-                          return order.indexOf(a) - order.indexOf(b);
-                        }).map(service => {
-                          const formats = service === 'Photo' ? partner.formats.photo :
-                                        service === 'Film' ? partner.formats.film :
-                                        partner.formats.video;
-                          
-                          if (formats.length === 0) return null;
-
-                          return (
-                            <div key={service} className="flex items-center gap-3">
-                              <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1 shrink-0 min-w-[70px]">
-                                {service === 'Video' ? 'Vidéo' : service}
-                              </Badge>
-                              <div className="flex flex-wrap gap-1.5 flex-1">
-                                {formats.map(formatId => (
-                                  <span
-                                    key={formatId}
-                                    className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md"
-                                  >
-                                    {getFormatLabel(formatId)}
-                                  </span>
-                                ))}
-                              </div>
+              <>
+                {visiblePartners.map((partner, index) => {
+                  const isExpanded = expandedCard === partner.slug;
+                  
+                  return (
+                    <Card
+                    key={index}
+                    className={`${isExpanded ? 'h-[600px]' : 'h-[292px]'} snap-start transition-all overflow-y-auto cursor-pointer ${
+                      selectedPartner === partner.slug
+                        ? 'ring-2 ring-[#D67C4A] shadow-xl'
+                        : 'hover:shadow-md'
+                    }`}
+                    onClick={() => setExpandedCard(isExpanded ? null : partner.slug)}
+                    data-testid={`partner-card-${partner.slug}`}
+                  >
+                    <CardContent className="p-0">
+                      {/* Header Section with colored background */}
+                      <div className="bg-gradient-to-r from-[#2A4759] to-[#1f3646] p-5 sticky top-0 z-10">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-white mb-2">
+                              {partner.name}
+                            </h3>
+                            <div className="flex items-center gap-2 text-[#F2EBDC]">
+                              <MapPin className="h-4 w-4" />
+                              <span className="text-sm">{partner.city}, {partner.country}</span>
                             </div>
-                          );
-                        })}
+                          </div>
+                          {partner.lat && partner.lng && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-white hover:bg-white/20 shrink-0"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedPartner(partner.slug);
+                                setExpandedCard(partner.slug);
+                                setZoomTo({ lat: partner.lat!, lng: partner.lng!, zoom: 13 });
+                              }}
+                              data-testid={`button-zoom-${partner.slug}`}
+                            >
+                              <Navigation className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
                       </div>
 
-                      {/* Contact Section - Horizontal Layout */}
-                      <div className="pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-6 gap-y-2">
-                        {partner.website && (
-                          <a
-                            href={partner.website.startsWith('http') ? partner.website : `https://${partner.website}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-[#D67C4A] hover:text-[#c5703e] transition-colors group"
-                          >
-                            <Globe className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                            <span className="text-sm font-medium">Site web</span>
-                          </a>
+                      {/* Content Section */}
+                      <div className="p-5 space-y-4">
+                        {/* Description with expand indicator */}
+                        {partner.public_description && (
+                          <div>
+                            <p className={`text-sm text-gray-700 leading-relaxed ${!isExpanded ? 'line-clamp-2' : ''}`}>
+                              {partner.public_description}
+                            </p>
+                            {!isExpanded && partner.public_description.length > 100 && (
+                              <button
+                                onClick={() => setExpandedCard(partner.slug)}
+                                className="text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium mt-1 flex items-center gap-1"
+                              >
+                                Lire plus <ChevronDown className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
                         )}
-                        {partner.phone && (
-                          <a
-                            href={`tel:${partner.phone}`}
-                            className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
-                          >
-                            <Phone className="h-4 w-4" />
-                            <span className="text-sm">{partner.phone}</span>
-                          </a>
+
+                        {/* Expanded Address Section */}
+                        {isExpanded && (partner.address || partner.postal_code) && (
+                          <div className="border-t pt-4">
+                            <h4 className="font-semibold text-gray-900 mb-2">Adresse</h4>
+                            <div className="text-sm text-gray-700 space-y-1">
+                              {partner.address && <p>{partner.address}</p>}
+                              {partner.address_line2 && <p>{partner.address_line2}</p>}
+                              <p>{partner.postal_code} {partner.city}</p>
+                              <p>{partner.country}</p>
+                            </div>
+                          </div>
                         )}
-                        {partner.email && (
-                          <a
-                            href={`mailto:${partner.email}`}
-                            className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
+
+                        {/* Services and Formats */}
+                        <div className={`space-y-2 ${isExpanded ? 'border-t pt-4' : ''}`}>
+                          {isExpanded && <h4 className="font-semibold text-gray-900 mb-2">Services et formats</h4>}
+                          {partner.services.sort((a, b) => {
+                            const order = ['Photo', 'Film', 'Video'];
+                            return order.indexOf(a) - order.indexOf(b);
+                          }).map(service => {
+                            const formats = service === 'Photo' ? partner.formats.photo :
+                                          service === 'Film' ? partner.formats.film :
+                                          partner.formats.video;
+                            const otherField = service === 'Photo' ? partner.other_photo :
+                                             service === 'Film' ? partner.other_film :
+                                             partner.other_video;
+                            
+                            if (formats.length === 0 && !otherField) return null;
+
+                            return (
+                              <div key={service} className={isExpanded ? 'mb-3' : 'flex items-center gap-3'}>
+                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1 shrink-0 min-w-[70px]">
+                                  {service === 'Video' ? 'Vidéo' : service}
+                                </Badge>
+                                <div className={`flex flex-wrap gap-1.5 ${isExpanded ? 'mt-2' : 'flex-1'}`}>
+                                  {formats.map(formatId => (
+                                    <span
+                                      key={formatId}
+                                      className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md"
+                                    >
+                                      {getFormatLabel(formatId)}
+                                    </span>
+                                  ))}
+                                  {isExpanded && otherField && (
+                                    <span className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md">
+                                      Autre: {otherField}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Delivery Methods (Expanded Only) */}
+                        {isExpanded && partner.delivery.length > 0 && (
+                          <div className="border-t pt-4">
+                            <h4 className="font-semibold text-gray-900 mb-2">Modes de livraison</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {partner.delivery.map(deliveryId => (
+                                <span
+                                  key={deliveryId}
+                                  className="inline-block text-sm bg-[#89BAD9] text-white px-3 py-1 rounded-md"
+                                >
+                                  {getDeliveryLabel(deliveryId)}
+                                </span>
+                              ))}
+                              {partner.other_delivery && (
+                                <span className="inline-block text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-md">
+                                  Autre: {partner.other_delivery}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Contact Section */}
+                        <div className={`pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-6 gap-y-2 ${isExpanded ? 'border-t pt-4' : ''}`}>
+                          {partner.website && (
+                            <a
+                              href={partner.website.startsWith('http') ? partner.website : `https://${partner.website}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-[#D67C4A] hover:text-[#c5703e] transition-colors group"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Globe className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                              <span className="text-sm font-medium">Site web</span>
+                            </a>
+                          )}
+                          {partner.phone && partner.phone_public && (
+                            <a
+                              href={`tel:${partner.phone}`}
+                              className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Phone className="h-4 w-4" />
+                              <span className="text-sm">{partner.phone}</span>
+                            </a>
+                          )}
+                          {partner.email && partner.email_public && (
+                            <a
+                              href={`mailto:${partner.email}`}
+                              className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Mail className="h-4 w-4" />
+                              <span className="text-sm">Email</span>
+                            </a>
+                          )}
+                        </div>
+
+                        {/* Collapse Button (Expanded Only) */}
+                        {isExpanded && (
+                          <button
+                            onClick={() => setExpandedCard(null)}
+                            className="w-full text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium py-2 flex items-center justify-center gap-1 border-t mt-4 pt-4"
                           >
-                            <Mail className="h-4 w-4" />
-                            <span className="text-sm">Email</span>
-                          </a>
+                            Réduire <ChevronUp className="h-4 w-4" />
+                          </button>
                         )}
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                    </CardContent>
+                    </Card>
+                  );
+                })}
+              </>
             )}
           </div>
         </div>

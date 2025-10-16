@@ -289,9 +289,19 @@ export class ExcelPartnerStore {
         },
         website: p.website,
         phone: p.phone,
+        phone_public: p.phone_public === "TRUE",
         email: p.email_public === "TRUE" ? p.email : "",
+        email_public: p.email_public === "TRUE",
         public_description: p.public_description,
-        slug: p.slug
+        slug: p.slug,
+        address: p.address || "",
+        address_line2: p.address_line2 || "",
+        postal_code: p.postal_code || "",
+        delivery: p.delivery ? p.delivery.split(", ") : [],
+        other_photo: p.other_photo || "",
+        other_film: p.other_film || "",
+        other_video: p.other_video || "",
+        other_delivery: p.other_delivery || ""
       }));
   }
 }
