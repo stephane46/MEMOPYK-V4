@@ -356,7 +356,7 @@ export default function PartnerDirectoryFR() {
                     <Card
                     key={index}
                     id={`card-${partner.slug}`}
-                    className={`${isExpanded ? 'h-[600px]' : 'min-h-fit'} snap-start transition-all overflow-hidden cursor-pointer w-full ${
+                    className={`${isExpanded ? 'h-[600px]' : 'h-[310px]'} snap-start transition-all overflow-hidden cursor-pointer w-full ${
                       selectedPartner === partner.slug
                         ? 'ring-2 ring-[#D67C4A] shadow-xl'
                         : 'hover:shadow-md'
@@ -466,13 +466,11 @@ export default function PartnerDirectoryFR() {
                           </div>
                         )}
 
-                        {/* Services and Formats - more compact */}
+                        {/* Services and Formats - Always show all 3 services */}
                         <div className={`space-y-1.5 ${isExpanded ? 'border-t pt-2' : ''}`}>
                           {isExpanded && <h4 className="font-semibold text-gray-900 text-xs mb-1">Services</h4>}
-                          {partner.services.sort((a, b) => {
-                            const order = ['Photo', 'Film', 'Video'];
-                            return order.indexOf(a) - order.indexOf(b);
-                          }).map(service => {
+                          {['Photo', 'Film', 'Video'].map(service => {
+                            const hasService = partner.services.includes(service);
                             const formats = service === 'Photo' ? partner.formats.photo :
                                           service === 'Film' ? partner.formats.film :
                                           partner.formats.video;
@@ -480,28 +478,32 @@ export default function PartnerDirectoryFR() {
                                              service === 'Film' ? partner.other_film :
                                              partner.other_video;
                             
-                            if (formats.length === 0 && !otherField) return null;
-
                             const Icon = getServiceIcon(service);
                             return (
                               <div key={service} className={isExpanded ? 'mb-1.5' : 'flex items-center gap-3'}>
-                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-2 py-0.5 shrink-0 w-[90px] text-xs flex items-center justify-center gap-1">
+                                <Badge className={`${hasService ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]' : 'bg-gray-300 text-gray-500 opacity-50'} px-2 py-0.5 shrink-0 w-[90px] text-xs flex items-center justify-center gap-1`}>
                                   <Icon className="h-3 w-3" />
                                   {service === 'Video' ? 'Vidéo' : service}
                                 </Badge>
                                 <div className={`flex flex-wrap gap-1 ${isExpanded ? 'mt-1' : 'flex-1'}`}>
-                                  {formats.map(formatId => (
-                                    <span
-                                      key={formatId}
-                                      className="inline-block text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded"
-                                    >
-                                      {getFormatLabel(formatId)}
-                                    </span>
-                                  ))}
-                                  {isExpanded && otherField && (
-                                    <span className="inline-block text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">
-                                      Autre: {otherField}
-                                    </span>
+                                  {hasService ? (
+                                    <>
+                                      {formats.map(formatId => (
+                                        <span
+                                          key={formatId}
+                                          className="inline-block text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded"
+                                        >
+                                          {getFormatLabel(formatId)}
+                                        </span>
+                                      ))}
+                                      {isExpanded && otherField && (
+                                        <span className="inline-block text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">
+                                          Autre: {otherField}
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <span className="text-xs text-gray-400 italic">Non disponible</span>
                                   )}
                                 </div>
                               </div>
