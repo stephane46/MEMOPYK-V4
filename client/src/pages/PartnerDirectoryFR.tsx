@@ -396,14 +396,6 @@ export default function PartnerDirectoryFR() {
                               <span className="text-sm">{partner.city}, {partner.country}</span>
                             </div>
                           </div>
-                          {/* Address on the right */}
-                          {(partner.address || partner.postal_code) && (
-                            <div className="text-right text-[#F2EBDC] text-xs max-w-[200px]">
-                              {partner.address && <p className="truncate">{partner.address}</p>}
-                              {partner.address_line2 && <p className="truncate">{partner.address_line2}</p>}
-                              <p className="truncate">{partner.postal_code} {partner.city}</p>
-                            </div>
-                          )}
                         </div>
                       </div>
 
@@ -550,6 +542,15 @@ export default function PartnerDirectoryFR() {
                               <Mail className="h-3.5 w-3.5" />
                               <span className="text-xs">Email</span>
                             </a>
+                          )}
+                          {(partner.address || partner.postal_code) && (
+                            <div className="flex items-center gap-1.5 text-gray-600">
+                              <MapPin className="h-3.5 w-3.5" />
+                              <span className="text-xs">
+                                {partner.address && `${partner.address}, `}
+                                {partner.postal_code} {partner.city}
+                              </span>
+                            </div>
                           )}
                         </div>
 
