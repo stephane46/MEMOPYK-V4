@@ -400,7 +400,7 @@ export default function PartnerDirectoryFR() {
                       </div>
 
                       {/* Content Section */}
-                      <div className={isExpanded ? "p-3 space-y-2" : "p-5 space-y-4"}>
+                      <div className={isExpanded ? "p-3 space-y-2" : "p-4 space-y-3"}>
                         {/* Description with expand indicator */}
                         {partner.public_description && (
                           <div>
@@ -510,7 +510,7 @@ export default function PartnerDirectoryFR() {
                         </div>
 
                         {/* Contact Section - more compact */}
-                        <div className={`border-t flex flex-wrap items-center gap-x-4 gap-y-1 ${isExpanded ? 'pt-2' : 'pt-3'}`}>
+                        <div className={`border-t flex flex-wrap items-center gap-x-4 gap-y-1 ${isExpanded ? 'pt-2' : 'pt-2'}`}>
                           {partner.website && (
                             <a
                               href={partner.website.startsWith('http') ? partner.website : `https://${partner.website}`}
