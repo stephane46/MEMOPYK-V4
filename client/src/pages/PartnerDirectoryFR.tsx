@@ -219,55 +219,57 @@ export default function PartnerDirectoryFR() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column: Search, Filters & Map */}
           <div className="space-y-6">
-            {/* Search & Filters - constrained to map width */}
-            <Card>
+            {/* Search & Filters - side by side, each 50% of map width */}
+            <Card id="filters-section">
               <CardContent className="p-6">
-                {/* Text Search */}
-                <div className="mb-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <Input
-                      type="text"
-                      placeholder="Rechercher par nom ou ville..."
-                      value={searchText}
-                      onChange={(e) => setSearchText(e.target.value)}
-                      className="pl-10 pr-10"
-                      data-testid="input-search-partners"
-                    />
-                    {searchText && (
-                      <button
-                        onClick={() => setSearchText('')}
-                        className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                        data-testid="button-clear-search"
-                      >
-                        <X className="h-5 w-5" />
-                      </button>
-                    )}
+                <div className="flex gap-4">
+                  {/* Text Search - Half Width */}
+                  <div className="flex-1">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                      <Input
+                        type="text"
+                        placeholder="Rechercher par nom ou ville..."
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        className="pl-10 pr-10"
+                        data-testid="input-search-partners"
+                      />
+                      {searchText && (
+                        <button
+                          onClick={() => setSearchText('')}
+                          className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                          data-testid="button-clear-search"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Service Filters */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                    <Filter className="h-4 w-4" />
-                    Services de numérisation:
-                  </h3>
-                  <div className="flex gap-2">
-                    {serviceCounts.map(({ id, name, count }) => (
-                      <Badge
-                        key={id}
-                        variant={selectedServices.includes(id) ? "default" : "outline"}
-                        className={`cursor-pointer transition-colors ${
-                          selectedServices.includes(id)
-                            ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
-                            : 'hover:bg-gray-100'
-                        }`}
-                        onClick={() => toggleService(id)}
-                        data-testid={`filter-service-${id.toLowerCase()}`}
-                      >
-                        {name} ({count})
-                      </Badge>
-                    ))}
+                  {/* Service Filters - Half Width */}
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                      <Filter className="h-4 w-4" />
+                      Services de numérisation:
+                    </h3>
+                    <div className="flex gap-2">
+                      {serviceCounts.map(({ id, name, count }) => (
+                        <Badge
+                          key={id}
+                          variant={selectedServices.includes(id) ? "default" : "outline"}
+                          className={`cursor-pointer transition-colors ${
+                            selectedServices.includes(id)
+                              ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
+                              : 'hover:bg-gray-100'
+                          }`}
+                          onClick={() => toggleService(id)}
+                          data-testid={`filter-service-${id.toLowerCase()}`}
+                        >
+                          {name} ({count})
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -332,15 +334,21 @@ export default function PartnerDirectoryFR() {
                     onClick={() => {
                       if (!isExpanded) {
                         setExpandedCard(partner.slug);
-                        // Scroll card to top of list container after a brief delay for animation
+                        // Scroll to filters section after a brief delay for animation
                         setTimeout(() => {
-                          document.getElementById(`card-${partner.slug}`)?.scrollIntoView({ 
+                          document.getElementById('filters-section')?.scrollIntoView({ 
                             behavior: 'smooth', 
                             block: 'start' 
                           });
                         }, 100);
                       } else {
                         setExpandedCard(null);
+                        setTimeout(() => {
+                          document.getElementById('filters-section')?.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                          });
+                        }, 100);
                       }
                     }}
                     data-testid={`partner-card-${partner.slug}`}
@@ -383,7 +391,7 @@ export default function PartnerDirectoryFR() {
                                   e.stopPropagation();
                                   setExpandedCard(partner.slug);
                                   setTimeout(() => {
-                                    document.getElementById(`card-${partner.slug}`)?.scrollIntoView({ 
+                                    document.getElementById('filters-section')?.scrollIntoView({ 
                                       behavior: 'smooth', 
                                       block: 'start' 
                                     });
@@ -399,6 +407,12 @@ export default function PartnerDirectoryFR() {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setExpandedCard(null);
+                                  setTimeout(() => {
+                                    document.getElementById('filters-section')?.scrollIntoView({ 
+                                      behavior: 'smooth', 
+                                      block: 'start' 
+                                    });
+                                  }, 100);
                                 }}
                                 className="text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium mt-1 flex items-center gap-1"
                               >
