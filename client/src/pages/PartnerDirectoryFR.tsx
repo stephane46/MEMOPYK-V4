@@ -207,9 +207,9 @@ export default function PartnerDirectoryFR() {
       {/* Header */}
       <div className="bg-gradient-to-r from-[#2A4759] to-[#011526] text-white py-6">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-2">Annuaire des Partenaires</h1>
+          <h1 className="text-4xl font-bold mb-2">Annuaire des Services de Numérisation</h1>
           <p className="text-xl text-gray-300">
-            Trouvez un professionnel de la numérisation près de chez vous
+            Trouvez un professionnel près de chez vous
           </p>
         </div>
       </div>
@@ -218,43 +218,55 @@ export default function PartnerDirectoryFR() {
         {/* Search & Filters */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            {/* Text Search */}
-            <div className="mb-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Rechercher par nom ou ville..."
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  className="pl-10"
-                  data-testid="input-search-partners"
-                />
+            {/* Search and Service Filters on Same Line */}
+            <div className="flex gap-4 items-start">
+              {/* Text Search - Half Width */}
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Rechercher par nom ou ville..."
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    className="pl-10 pr-10"
+                    data-testid="input-search-partners"
+                  />
+                  {searchText && (
+                    <button
+                      onClick={() => setSearchText('')}
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                      data-testid="button-clear-search"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Service Filters */}
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                Services
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {serviceCounts.map(({ id, name, count }) => (
-                  <Badge
-                    key={id}
-                    variant={selectedServices.includes(id) ? "default" : "outline"}
-                    className={`cursor-pointer transition-colors ${
-                      selectedServices.includes(id)
-                        ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
-                        : 'hover:bg-gray-100'
-                    }`}
-                    onClick={() => toggleService(id)}
-                    data-testid={`filter-service-${id.toLowerCase()}`}
-                  >
-                    {name} ({count})
-                  </Badge>
-                ))}
+              {/* Service Filters - Half Width */}
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  Services de numérisation
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {serviceCounts.map(({ id, name, count }) => (
+                    <Badge
+                      key={id}
+                      variant={selectedServices.includes(id) ? "default" : "outline"}
+                      className={`cursor-pointer transition-colors ${
+                        selectedServices.includes(id)
+                          ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
+                          : 'hover:bg-gray-100'
+                      }`}
+                      onClick={() => toggleService(id)}
+                      data-testid={`filter-service-${id.toLowerCase()}`}
+                    >
+                      {name} ({count})
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -264,40 +276,34 @@ export default function PartnerDirectoryFR() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Map */}
           <div className="h-[600px] rounded-lg overflow-hidden shadow-lg">
-            {mappablePartners.length > 0 ? (
-              <MapContainer
-                center={mapCenter}
-                zoom={6}
-                style={{ height: '100%', width: '100%' }}
-                data-testid="partner-map"
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <MapBoundsTracker onBoundsChange={setMapBounds} />
-                <MapZoomController zoomTo={zoomTo} />
-                {mappablePartners.map((partner, index) => (
-                  partner.lat && partner.lng && (
-                    <Marker
-                      key={index}
-                      position={[partner.lat, partner.lng]}
-                      eventHandlers={{
-                        click: () => {
-                          setSelectedPartner(partner.slug);
-                          setExpandedCard(partner.slug);
-                          setZoomTo({ lat: partner.lat!, lng: partner.lng!, zoom: 13 });
-                        }
-                      }}
-                    />
-                  )
-                ))}
-              </MapContainer>
-            ) : (
-              <div className="h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                Aucun partenaire à afficher sur la carte
-              </div>
-            )}
+            <MapContainer
+              center={mapCenter}
+              zoom={6}
+              style={{ height: '100%', width: '100%' }}
+              data-testid="partner-map"
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <MapBoundsTracker onBoundsChange={setMapBounds} />
+              <MapZoomController zoomTo={zoomTo} />
+              {mappablePartners.map((partner, index) => (
+                partner.lat && partner.lng && (
+                  <Marker
+                    key={index}
+                    position={[partner.lat, partner.lng]}
+                    eventHandlers={{
+                      click: () => {
+                        setSelectedPartner(partner.slug);
+                        setExpandedCard(partner.slug);
+                        setZoomTo({ lat: partner.lat!, lng: partner.lng!, zoom: 13 });
+                      }
+                    }}
+                  />
+                )
+              ))}
+            </MapContainer>
           </div>
 
           {/* Partner List */}
