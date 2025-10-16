@@ -339,7 +339,7 @@ export default function PartnerDirectoryFR() {
           </div>
 
           {/* Partner List - Aligned with Map Top */}
-          <div className="space-y-0 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar">
+          <div className="space-y-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
             ) : visiblePartners.length === 0 ? (
@@ -356,7 +356,7 @@ export default function PartnerDirectoryFR() {
                     <Card
                     key={index}
                     id={`card-${partner.slug}`}
-                    className={`${isExpanded ? 'h-[588px]' : 'h-[294px]'} snap-start transition-all overflow-hidden cursor-pointer w-full ${
+                    className={`${isExpanded ? 'h-[588px]' : 'h-[282px]'} snap-start transition-all overflow-hidden cursor-pointer w-full ${
                       selectedPartner === partner.slug
                         ? 'ring-2 ring-[#D67C4A] shadow-xl'
                         : 'hover:shadow-md'
@@ -385,10 +385,10 @@ export default function PartnerDirectoryFR() {
                   >
                     <CardContent className="p-0">
                       {/* Header Section with colored background */}
-                      <div className="bg-gradient-to-r from-[#2A4759] to-[#1f3646] p-3 sticky top-0 z-10">
+                      <div className="bg-gradient-to-r from-[#2A4759] to-[#1f3646] px-4 py-2 sticky top-0 z-10">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
-                            <h3 className="text-xl font-bold text-white mb-2">
+                            <h3 className="text-xl font-bold text-white mb-1">
                               {partner.name}
                             </h3>
                             <div className="flex items-center gap-2 text-[#F2EBDC]">
