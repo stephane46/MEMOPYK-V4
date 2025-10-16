@@ -215,66 +215,66 @@ export default function PartnerDirectoryFR() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Search & Filters - Static across full width */}
+        <Card id="filters-section" className="mb-6 sticky top-0 z-20 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex gap-4">
+              {/* Text Search - Half Width */}
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Rechercher par nom ou ville..."
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    className="pl-10 pr-10"
+                    data-testid="input-search-partners"
+                  />
+                  {searchText && (
+                    <button
+                      onClick={() => setSearchText('')}
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                      data-testid="button-clear-search"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Service Filters - Half Width */}
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  Services de numérisation:
+                </h3>
+                <div className="flex gap-2">
+                  {serviceCounts.map(({ id, name, count }) => (
+                    <Badge
+                      key={id}
+                      variant={selectedServices.includes(id) ? "default" : "outline"}
+                      className={`cursor-pointer transition-colors ${
+                        selectedServices.includes(id)
+                          ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
+                          : 'hover:bg-gray-100'
+                      }`}
+                      onClick={() => toggleService(id)}
+                      data-testid={`filter-service-${id.toLowerCase()}`}
+                    >
+                      {name} ({count})
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Map & List Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column: Search, Filters & Map */}
-          <div className="space-y-6">
-            {/* Search & Filters - side by side, each 50% of map width */}
-            <Card id="filters-section">
-              <CardContent className="p-6">
-                <div className="flex gap-4">
-                  {/* Text Search - Half Width */}
-                  <div className="flex-1">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <Input
-                        type="text"
-                        placeholder="Rechercher par nom ou ville..."
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        className="pl-10 pr-10"
-                        data-testid="input-search-partners"
-                      />
-                      {searchText && (
-                        <button
-                          onClick={() => setSearchText('')}
-                          className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                          data-testid="button-clear-search"
-                        >
-                          <X className="h-5 w-5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Service Filters - Half Width */}
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                      <Filter className="h-4 w-4" />
-                      Services de numérisation:
-                    </h3>
-                    <div className="flex gap-2">
-                      {serviceCounts.map(({ id, name, count }) => (
-                        <Badge
-                          key={id}
-                          variant={selectedServices.includes(id) ? "default" : "outline"}
-                          className={`cursor-pointer transition-colors ${
-                            selectedServices.includes(id)
-                              ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
-                              : 'hover:bg-gray-100'
-                          }`}
-                          onClick={() => toggleService(id)}
-                          data-testid={`filter-service-${id.toLowerCase()}`}
-                        >
-                          {name} ({count})
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
+          {/* Left Column: Map */}
+          <div>
             {/* Map */}
             <div className="h-[600px] rounded-lg overflow-hidden shadow-lg">
               <MapContainer
@@ -308,7 +308,7 @@ export default function PartnerDirectoryFR() {
             </div>
           </div>
 
-          {/* Partner List */}
+          {/* Partner List - Aligned with Map Top */}
           <div className="space-y-4 h-[600px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
