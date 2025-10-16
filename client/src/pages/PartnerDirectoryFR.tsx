@@ -317,7 +317,7 @@ export default function PartnerDirectoryFR() {
                   return (
                     <Card
                     key={index}
-                    className={`${isExpanded ? 'h-[600px]' : 'h-[292px]'} snap-start transition-all overflow-y-auto cursor-pointer ${
+                    className={`${isExpanded ? 'h-[600px]' : 'h-[292px]'} snap-start transition-all overflow-hidden cursor-pointer ${
                       selectedPartner === partner.slug
                         ? 'ring-2 ring-[#D67C4A] shadow-xl'
                         : 'hover:shadow-md'
@@ -328,7 +328,7 @@ export default function PartnerDirectoryFR() {
                     <CardContent className="p-0">
                       {/* Header Section with colored background */}
                       <div className="bg-gradient-to-r from-[#2A4759] to-[#1f3646] p-5 sticky top-0 z-10">
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
                             <h3 className="text-xl font-bold text-white mb-2">
                               {partner.name}
@@ -338,31 +338,23 @@ export default function PartnerDirectoryFR() {
                               <span className="text-sm">{partner.city}, {partner.country}</span>
                             </div>
                           </div>
-                          {partner.lat && partner.lng && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="text-white hover:bg-white/20 shrink-0"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedPartner(partner.slug);
-                                setExpandedCard(partner.slug);
-                                setZoomTo({ lat: partner.lat!, lng: partner.lng!, zoom: 13 });
-                              }}
-                              data-testid={`button-zoom-${partner.slug}`}
-                            >
-                              <Navigation className="h-4 w-4" />
-                            </Button>
+                          {/* Address on the right */}
+                          {(partner.address || partner.postal_code) && (
+                            <div className="text-right text-[#F2EBDC] text-xs max-w-[200px]">
+                              {partner.address && <p className="truncate">{partner.address}</p>}
+                              {partner.address_line2 && <p className="truncate">{partner.address_line2}</p>}
+                              <p className="truncate">{partner.postal_code} {partner.city}</p>
+                            </div>
                           )}
                         </div>
                       </div>
 
                       {/* Content Section */}
-                      <div className="p-5 space-y-4">
+                      <div className={isExpanded ? "p-3 space-y-2" : "p-5 space-y-4"}>
                         {/* Description with expand indicator */}
                         {partner.public_description && (
                           <div>
-                            <p className={`text-sm text-gray-700 leading-relaxed ${!isExpanded ? 'line-clamp-2' : ''}`}>
+                            <p className={`text-gray-700 leading-snug ${!isExpanded ? 'line-clamp-2 text-sm' : 'text-xs'}`}>
                               {partner.public_description}
                             </p>
                             {!isExpanded && partner.public_description.length > 100 && (
@@ -376,22 +368,31 @@ export default function PartnerDirectoryFR() {
                           </div>
                         )}
 
-                        {/* Expanded Address Section */}
-                        {isExpanded && (partner.address || partner.postal_code) && (
-                          <div className="border-t pt-4">
-                            <h4 className="font-semibold text-gray-900 mb-2">Adresse</h4>
-                            <div className="text-sm text-gray-700 space-y-1">
-                              {partner.address && <p>{partner.address}</p>}
-                              {partner.address_line2 && <p>{partner.address_line2}</p>}
-                              <p>{partner.postal_code} {partner.city}</p>
-                              <p>{partner.country}</p>
+                        {/* Delivery Methods (Expanded Only) */}
+                        {isExpanded && partner.delivery.length > 0 && (
+                          <div className="border-t pt-2">
+                            <h4 className="font-semibold text-gray-900 text-xs mb-1">Modes de livraison</h4>
+                            <div className="flex flex-wrap gap-1">
+                              {partner.delivery.map(deliveryId => (
+                                <span
+                                  key={deliveryId}
+                                  className="inline-block text-xs bg-[#89BAD9] text-white px-2 py-0.5 rounded"
+                                >
+                                  {getDeliveryLabel(deliveryId)}
+                                </span>
+                              ))}
+                              {partner.other_delivery && (
+                                <span className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">
+                                  Autre: {partner.other_delivery}
+                                </span>
+                              )}
                             </div>
                           </div>
                         )}
 
-                        {/* Services and Formats */}
-                        <div className={`space-y-2 ${isExpanded ? 'border-t pt-4' : ''}`}>
-                          {isExpanded && <h4 className="font-semibold text-gray-900 mb-2">Services et formats</h4>}
+                        {/* Services and Formats - more compact */}
+                        <div className={`space-y-1.5 ${isExpanded ? 'border-t pt-2' : ''}`}>
+                          {isExpanded && <h4 className="font-semibold text-gray-900 text-xs mb-1">Services</h4>}
                           {partner.services.sort((a, b) => {
                             const order = ['Photo', 'Film', 'Video'];
                             return order.indexOf(a) - order.indexOf(b);
@@ -406,21 +407,21 @@ export default function PartnerDirectoryFR() {
                             if (formats.length === 0 && !otherField) return null;
 
                             return (
-                              <div key={service} className={isExpanded ? 'mb-3' : 'flex items-center gap-3'}>
-                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-3 py-1 shrink-0 min-w-[70px]">
+                              <div key={service} className={isExpanded ? 'mb-1.5' : 'flex items-center gap-3'}>
+                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-2 py-0.5 shrink-0 min-w-[60px] text-xs">
                                   {service === 'Video' ? 'Vidéo' : service}
                                 </Badge>
-                                <div className={`flex flex-wrap gap-1.5 ${isExpanded ? 'mt-2' : 'flex-1'}`}>
+                                <div className={`flex flex-wrap gap-1 ${isExpanded ? 'mt-1' : 'flex-1'}`}>
                                   {formats.map(formatId => (
                                     <span
                                       key={formatId}
-                                      className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md"
+                                      className="inline-block text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded"
                                     >
                                       {getFormatLabel(formatId)}
                                     </span>
                                   ))}
                                   {isExpanded && otherField && (
-                                    <span className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md">
+                                    <span className="inline-block text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">
                                       Autre: {otherField}
                                     </span>
                                   )}
@@ -430,71 +431,49 @@ export default function PartnerDirectoryFR() {
                           })}
                         </div>
 
-                        {/* Delivery Methods (Expanded Only) */}
-                        {isExpanded && partner.delivery.length > 0 && (
-                          <div className="border-t pt-4">
-                            <h4 className="font-semibold text-gray-900 mb-2">Modes de livraison</h4>
-                            <div className="flex flex-wrap gap-2">
-                              {partner.delivery.map(deliveryId => (
-                                <span
-                                  key={deliveryId}
-                                  className="inline-block text-sm bg-[#89BAD9] text-white px-3 py-1 rounded-md"
-                                >
-                                  {getDeliveryLabel(deliveryId)}
-                                </span>
-                              ))}
-                              {partner.other_delivery && (
-                                <span className="inline-block text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-md">
-                                  Autre: {partner.other_delivery}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Contact Section */}
-                        <div className={`pt-3 border-t border-gray-100 flex flex-wrap items-center gap-x-6 gap-y-2 ${isExpanded ? 'border-t pt-4' : ''}`}>
+                        {/* Contact Section - more compact */}
+                        <div className={`border-t flex flex-wrap items-center gap-x-4 gap-y-1 ${isExpanded ? 'pt-2' : 'pt-3'}`}>
                           {partner.website && (
                             <a
                               href={partner.website.startsWith('http') ? partner.website : `https://${partner.website}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 text-[#D67C4A] hover:text-[#c5703e] transition-colors group"
+                              className="flex items-center gap-1.5 text-[#D67C4A] hover:text-[#c5703e] transition-colors group"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Globe className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                              <span className="text-sm font-medium">Site web</span>
+                              <Globe className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
+                              <span className="text-xs font-medium">Site web</span>
                             </a>
                           )}
                           {partner.phone && partner.phone_public && (
                             <a
                               href={`tel:${partner.phone}`}
-                              className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
+                              className="flex items-center gap-1.5 text-[#2A4759] hover:text-[#1f3646] transition-colors"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Phone className="h-4 w-4" />
-                              <span className="text-sm">{partner.phone}</span>
+                              <Phone className="h-3.5 w-3.5" />
+                              <span className="text-xs">{partner.phone}</span>
                             </a>
                           )}
                           {partner.email && partner.email_public && (
                             <a
                               href={`mailto:${partner.email}`}
-                              className="flex items-center gap-2 text-[#2A4759] hover:text-[#1f3646] transition-colors"
+                              className="flex items-center gap-1.5 text-[#2A4759] hover:text-[#1f3646] transition-colors"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Mail className="h-4 w-4" />
-                              <span className="text-sm">Email</span>
+                              <Mail className="h-3.5 w-3.5" />
+                              <span className="text-xs">Email</span>
                             </a>
                           )}
                         </div>
 
-                        {/* Collapse Button (Expanded Only) */}
+                        {/* Collapse Button (Expanded Only) - more compact */}
                         {isExpanded && (
                           <button
                             onClick={() => setExpandedCard(null)}
-                            className="w-full text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium py-2 flex items-center justify-center gap-1 border-t mt-4 pt-4"
+                            className="w-full text-[#D67C4A] hover:text-[#c5703e] text-xs font-medium py-1.5 flex items-center justify-center gap-1 border-t mt-2 pt-2"
                           >
-                            Réduire <ChevronUp className="h-4 w-4" />
+                            Réduire <ChevronUp className="h-3.5 w-3.5" />
                           </button>
                         )}
                       </div>
