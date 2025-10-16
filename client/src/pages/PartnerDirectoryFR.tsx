@@ -317,12 +317,26 @@ export default function PartnerDirectoryFR() {
                   return (
                     <Card
                     key={index}
+                    id={`card-${partner.slug}`}
                     className={`${isExpanded ? 'h-[600px]' : 'h-[292px]'} snap-start transition-all overflow-hidden cursor-pointer ${
                       selectedPartner === partner.slug
                         ? 'ring-2 ring-[#D67C4A] shadow-xl'
                         : 'hover:shadow-md'
                     }`}
-                    onClick={() => setExpandedCard(isExpanded ? null : partner.slug)}
+                    onClick={() => {
+                      if (!isExpanded) {
+                        setExpandedCard(partner.slug);
+                        // Scroll card to top of list container after a brief delay for animation
+                        setTimeout(() => {
+                          document.getElementById(`card-${partner.slug}`)?.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                          });
+                        }, 100);
+                      } else {
+                        setExpandedCard(null);
+                      }
+                    }}
                     data-testid={`partner-card-${partner.slug}`}
                   >
                     <CardContent className="p-0">
@@ -354,12 +368,21 @@ export default function PartnerDirectoryFR() {
                         {/* Description with expand indicator */}
                         {partner.public_description && (
                           <div>
-                            <p className={`text-gray-700 leading-snug ${!isExpanded ? 'line-clamp-2 text-sm' : 'text-xs'}`}>
+                            <p className={`text-sm text-gray-700 leading-snug ${!isExpanded ? 'line-clamp-2' : ''}`}>
                               {partner.public_description}
                             </p>
                             {!isExpanded && partner.public_description.length > 100 && (
                               <button
-                                onClick={() => setExpandedCard(partner.slug)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedCard(partner.slug);
+                                  setTimeout(() => {
+                                    document.getElementById(`card-${partner.slug}`)?.scrollIntoView({ 
+                                      behavior: 'smooth', 
+                                      block: 'start' 
+                                    });
+                                  }, 100);
+                                }}
                                 className="text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium mt-1 flex items-center gap-1"
                               >
                                 Lire plus <ChevronDown className="h-4 w-4" />
