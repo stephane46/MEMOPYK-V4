@@ -245,26 +245,28 @@ export default function PartnerDirectoryFR() {
 
               {/* Service Filters - Half Width */}
               <div className="flex-1">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
-                  Services de numérisation:
-                </h3>
-                <div className="flex gap-2">
-                  {serviceCounts.map(({ id, name, count }) => (
-                    <Badge
-                      key={id}
-                      variant={selectedServices.includes(id) ? "default" : "outline"}
-                      className={`cursor-pointer transition-colors ${
-                        selectedServices.includes(id)
-                          ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
-                          : 'hover:bg-gray-100'
-                      }`}
-                      onClick={() => toggleService(id)}
-                      data-testid={`filter-service-${id.toLowerCase()}`}
-                    >
-                      {name} ({count})
-                    </Badge>
-                  ))}
+                <div className="flex items-center gap-3">
+                  <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                    <Filter className="h-4 w-4" />
+                    Services:
+                  </h3>
+                  <div className="flex gap-2">
+                    {serviceCounts.map(({ id, name, count }) => (
+                      <Badge
+                        key={id}
+                        variant={selectedServices.includes(id) ? "default" : "outline"}
+                        className={`cursor-pointer transition-colors ${
+                          selectedServices.includes(id)
+                            ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
+                            : 'hover:bg-gray-100'
+                        }`}
+                        onClick={() => toggleService(id)}
+                        data-testid={`filter-service-${id.toLowerCase()}`}
+                      >
+                        {name} ({count})
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
