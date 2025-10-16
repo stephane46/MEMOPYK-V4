@@ -299,10 +299,10 @@ export default function PartnerDirectoryFR() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 pt-4">
 
         {/* Map & List Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column: Map */}
           <div>
             {/* Map */}
