@@ -228,8 +228,8 @@ export default function PartnerDirectoryFR() {
         </div>
       </div>
 
-      {/* Search & Filters - Fixed at top */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg">
+      {/* Search & Filters - Sticky below header */}
+      <div className="sticky top-0 z-50 bg-white shadow-lg">
         <div className="container mx-auto px-4">
           <Card id="filters-section" className="border-0 shadow-none">
             <CardContent className="p-3">
@@ -299,7 +299,7 @@ export default function PartnerDirectoryFR() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pt-20">
+      <div className="container mx-auto px-4">
 
         {/* Map & List Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">

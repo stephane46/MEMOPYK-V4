@@ -33858,9 +33858,9 @@
   {
     "id": "session_1756814906549_m56c3zfev",
     "session_id": "ip_session_109_17_150_48",
-    "duration": 336,
+    "duration": 451,
     "created_at": "2025-09-02T12:08:26.549Z",
-    "updated_at": "2025-10-16T14:04:09.514Z",
+    "updated_at": "2025-10-16T14:06:04.510Z",
     "is_test_data": false
   },
   {
@@ -76585,5 +76585,125 @@
     "country": "Unknown",
     "city": "Unknown",
     "updated_at": "2025-10-16T13:58:33.840Z"
+  },
+  {
+    "id": "location_cache_1760623551913_qpd5gydul",
+    "ip_address": "88.138.149.198",
+    "server_detected_ip": "88.138.149.198",
+    "country": "France",
+    "region": "Normandy",
+    "city": "Brionne",
+    "country_code": null,
+    "created_at": "2025-10-16T14:05:51.913Z",
+    "updated_at": "2025-10-16T14:05:51.913Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760623555032_tjcbvf6uu",
+    "ip_address": "45.80.32.228",
+    "server_detected_ip": "45.80.32.228",
+    "country": "France",
+    "region": "Île-de-France",
+    "city": "Paris",
+    "country_code": null,
+    "created_at": "2025-10-16T14:05:55.032Z",
+    "updated_at": "2025-10-16T14:05:55.032Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760623558177_cps0njpv1",
+    "ip_address": "66.249.74.96",
+    "server_detected_ip": "66.249.74.96",
+    "country": "United States",
+    "region": "California",
+    "city": "Mountain View",
+    "country_code": null,
+    "created_at": "2025-10-16T14:05:58.177Z",
+    "updated_at": "2025-10-16T14:05:58.177Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760623558365_xcaqn3jpm",
+    "ip_address": "66.249.74.109",
+    "server_detected_ip": "66.249.74.109",
+    "country": "United States",
+    "region": "California",
+    "city": "Mountain View",
+    "country_code": null,
+    "created_at": "2025-10-16T14:05:58.365Z",
+    "updated_at": "2025-10-16T14:05:58.365Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760623561537_arertzuy8",
+    "ip_address": "213.44.27.133",
+    "server_detected_ip": "213.44.27.133",
+    "country": "France",
+    "region": "Île-de-France",
+    "city": "Aulnay-sous-Bois",
+    "country_code": null,
+    "created_at": "2025-10-16T14:06:01.537Z",
+    "updated_at": "2025-10-16T14:06:01.537Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760623561730_aoye5nb61",
+    "ip_address": "213.44.27.137",
+    "server_detected_ip": "213.44.27.137",
+    "country": "France",
+    "region": "Île-de-France",
+    "city": "Aulnay-sous-Bois",
+    "country_code": null,
+    "created_at": "2025-10-16T14:06:01.730Z",
+    "updated_at": "2025-10-16T14:06:01.730Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760623564894_jo9c0xjma",
+    "ip_address": "213.44.27.201",
+    "server_detected_ip": "213.44.27.201",
+    "country": "France",
+    "region": "Île-de-France",
+    "city": "Aulnay-sous-Bois",
+    "country_code": null,
+    "created_at": "2025-10-16T14:06:04.895Z",
+    "updated_at": "2025-10-16T14:06:04.895Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760623568021_jmi7a4adu",
+    "ip_address": "81.250.130.82",
+    "server_detected_ip": "81.250.130.82",
+    "country": "France",
+    "region": "Ile-de-France",
+    "city": "Neuilly-sur-Seine",
+    "country_code": null,
+    "created_at": "2025-10-16T14:06:08.021Z",
+    "updated_at": "2025-10-16T14:06:08.021Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760623571105_r8m8rnxhg",
+    "ip_address": "217.128.72.158",
+    "server_detected_ip": "217.128.72.158",
+    "country": "France",
+    "region": "Île-de-France",
+    "city": "Issy-les-Moulineaux",
+    "country_code": null,
+    "created_at": "2025-10-16T14:06:11.105Z",
+    "updated_at": "2025-10-16T14:06:11.105Z",
+    "is_location_cache": true
+  },
+  {
+    "id": "location_cache_1760623574158_ool6qf7se",
+    "ip_address": "40.77.179.96",
+    "server_detected_ip": "40.77.179.96",
+    "country": "United States",
+    "region": "Washington",
+    "city": "Quincy",
+    "country_code": null,
+    "created_at": "2025-10-16T14:06:14.158Z",
+    "updated_at": "2025-10-16T14:06:14.158Z",
+    "is_location_cache": true
   }
 ]
