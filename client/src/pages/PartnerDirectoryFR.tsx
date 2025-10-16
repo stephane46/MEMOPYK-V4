@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
-import { MapPin, Phone, Mail, Globe, Filter, Search, Package, X, Navigation, ChevronDown, ChevronUp } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Filter, Search, Package, X, Navigation, ChevronDown, ChevronUp, Camera, Film as FilmIcon, Video } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -190,6 +190,20 @@ export default function PartnerDirectoryFR() {
     return delivery ? delivery.fr : deliveryId;
   };
 
+  // Helper function to get icon for service type
+  const getServiceIcon = (service: string) => {
+    switch (service) {
+      case 'Photo':
+        return Camera;
+      case 'Film':
+        return FilmIcon;
+      case 'Video':
+        return Video;
+      default:
+        return Package;
+    }
+  };
+
   // Function to zoom to a partner location
   const zoomToPartner = (partner: Partner) => {
     if (partner.lat && partner.lng) {
@@ -214,69 +228,78 @@ export default function PartnerDirectoryFR() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4">
-        {/* Search & Filters - Static across full width */}
-        <Card id="filters-section" className="sticky top-0 z-20 shadow-lg bg-white">
-          <CardContent className="p-3">
-            <div className="flex items-center gap-4">
-              {/* Text Search - Half Width */}
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Rechercher par nom ou ville..."
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    className="pl-10 pr-10"
-                    data-testid="input-search-partners"
-                  />
-                  {searchText && (
-                    <button
-                      onClick={() => setSearchText('')}
-                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                      data-testid="button-clear-search"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Service Filters - Half Width */}
-              <div className="flex-1">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                    <Filter className="h-4 w-4" />
-                    Services:
-                  </h3>
-                  <div className="flex gap-2">
-                    {serviceCounts.map(({ id, name, count }) => (
-                      <Badge
-                        key={id}
-                        variant={selectedServices.includes(id) ? "default" : "outline"}
-                        className={`cursor-pointer transition-colors ${
-                          selectedServices.includes(id)
-                            ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
-                            : 'hover:bg-gray-100'
-                        }`}
-                        onClick={() => toggleService(id)}
-                        data-testid={`filter-service-${id.toLowerCase()}`}
+      {/* Search & Filters - Fixed at top */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg">
+        <div className="container mx-auto px-4">
+          <Card id="filters-section" className="border-0 shadow-none">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-4">
+                {/* Text Search - Half Width */}
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <Input
+                      type="text"
+                      placeholder="Rechercher par nom ou ville..."
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
+                      className="pl-10 pr-10"
+                      data-testid="input-search-partners"
+                    />
+                    {searchText && (
+                      <button
+                        onClick={() => setSearchText('')}
+                        className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                        data-testid="button-clear-search"
                       >
-                        {name} ({count})
-                      </Badge>
-                    ))}
+                        <X className="h-5 w-5" />
+                      </button>
+                    )}
                   </div>
                 </div>
-              </div>
 
-              {/* Results Count */}
-              <div className="text-sm text-gray-600 whitespace-nowrap">
-                {filteredPartners.length} partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''} • {visiblePartners.length} visible{visiblePartners.length !== 1 ? 's' : ''} sur la carte
+                {/* Service Filters - Half Width */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                      <Filter className="h-4 w-4" />
+                      Services:
+                    </h3>
+                    <div className="flex gap-2">
+                      {serviceCounts.map(({ id, name, count }) => {
+                        const Icon = getServiceIcon(id);
+                        return (
+                          <Badge
+                            key={id}
+                            variant={selectedServices.includes(id) ? "default" : "outline"}
+                            className={`cursor-pointer transition-colors flex items-center gap-1 ${
+                              selectedServices.includes(id)
+                                ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
+                                : 'hover:bg-gray-100'
+                            }`}
+                            onClick={() => toggleService(id)}
+                            data-testid={`filter-service-${id.toLowerCase()}`}
+                          >
+                            <Icon className="h-3 w-3" />
+                            {name} ({count})
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Results Count */}
+                <div className="text-sm text-gray-600 whitespace-nowrap">
+                  {filteredPartners.length} partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''} • {visiblePartners.length} visible{visiblePartners.length !== 1 ? 's' : ''} sur la carte
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 pt-20">
 
         {/* Map & List Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
@@ -467,9 +490,11 @@ export default function PartnerDirectoryFR() {
                             
                             if (formats.length === 0 && !otherField) return null;
 
+                            const Icon = getServiceIcon(service);
                             return (
                               <div key={service} className={isExpanded ? 'mb-1.5' : 'flex items-center gap-3'}>
-                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-2 py-0.5 shrink-0 min-w-[60px] text-xs">
+                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-2 py-0.5 shrink-0 min-w-[60px] text-xs flex items-center justify-center gap-1">
+                                  <Icon className="h-3 w-3" />
                                   {service === 'Video' ? 'Vidéo' : service}
                                 </Badge>
                                 <div className={`flex flex-wrap gap-1 ${isExpanded ? 'mt-1' : 'flex-1'}`}>
@@ -588,9 +613,11 @@ export default function PartnerDirectoryFR() {
                       
                       if (formats.length === 0) return null;
 
+                      const Icon = getServiceIcon(service);
                       return (
                         <div key={service}>
-                          <Badge className="bg-[#D67C4A] text-white mb-2 px-3 py-1">
+                          <Badge className="bg-[#D67C4A] text-white mb-2 px-3 py-1 flex items-center justify-center gap-1 inline-flex">
+                            <Icon className="h-3.5 w-3.5" />
                             {service === 'Video' ? 'Vidéo' : service}
                           </Badge>
                           <div className="flex flex-wrap gap-2 mt-2">
