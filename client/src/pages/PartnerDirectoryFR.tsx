@@ -214,11 +214,11 @@ export default function PartnerDirectoryFR() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4">
         {/* Search & Filters - Static across full width */}
-        <Card id="filters-section" className="mb-6 sticky top-0 z-20 shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex gap-4">
+        <Card id="filters-section" className="sticky top-0 z-20 shadow-lg bg-white">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-4">
               {/* Text Search - Half Width */}
               <div className="flex-1">
                 <div className="relative">
@@ -269,12 +269,17 @@ export default function PartnerDirectoryFR() {
                   </div>
                 </div>
               </div>
+
+              {/* Results Count */}
+              <div className="text-sm text-gray-600 whitespace-nowrap">
+                {filteredPartners.length} partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''} • {visiblePartners.length} visible{visiblePartners.length !== 1 ? 's' : ''} sur la carte
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Map & List Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
           {/* Left Column: Map */}
           <div>
             {/* Map */}
@@ -540,11 +545,6 @@ export default function PartnerDirectoryFR() {
               </>
             )}
           </div>
-        </div>
-
-        {/* Results Count */}
-        <div className="mt-6 text-center text-gray-600">
-          {filteredPartners.length} partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''} • {visiblePartners.length} visible{visiblePartners.length !== 1 ? 's' : ''} sur la carte
         </div>
       </div>
 
