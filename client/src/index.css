@@ -1169,3 +1169,29 @@ button[role="switch"]:focus-visible {
   border-radius: 0.5rem;
 }
 
+/* Partner Directory List - Custom Scrollbar */
+.partner-list-scrollbar {
+  scrollbar-width: auto; /* Firefox */
+  scrollbar-color: #D67C4A #f3f4f6; /* Firefox: thumb and track colors */
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+.partner-list-scrollbar::-webkit-scrollbar {
+  width: 14px; /* Make scrollbar wider */
+}
+
+.partner-list-scrollbar::-webkit-scrollbar-track {
+  background: #f3f4f6; /* Light gray track */
+  border-radius: 10px;
+}
+
+.partner-list-scrollbar::-webkit-scrollbar-thumb {
+  background: #D67C4A; /* MEMOPYK orange */
+  border-radius: 10px;
+  border: 3px solid #f3f4f6; /* Add padding around thumb */
+}
+
+.partner-list-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #c5703e; /* Darker orange on hover */
+}
+

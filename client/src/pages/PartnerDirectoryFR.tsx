@@ -301,7 +301,7 @@ export default function PartnerDirectoryFR() {
           </div>
 
           {/* Partner List */}
-          <div className="space-y-4 h-[600px] overflow-y-auto snap-y snap-mandatory">
+          <div className="space-y-4 h-[600px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
             ) : visiblePartners.length === 0 ? (
@@ -318,7 +318,7 @@ export default function PartnerDirectoryFR() {
                     <Card
                     key={index}
                     id={`card-${partner.slug}`}
-                    className={`${isExpanded ? 'h-[600px]' : 'h-[292px]'} snap-start transition-all overflow-hidden cursor-pointer ${
+                    className={`${isExpanded ? 'h-[600px]' : 'h-[292px]'} snap-start transition-all overflow-hidden cursor-pointer w-full ${
                       selectedPartner === partner.slug
                         ? 'ring-2 ring-[#D67C4A] shadow-xl'
                         : 'hover:shadow-md'
@@ -511,7 +511,7 @@ export default function PartnerDirectoryFR() {
 
         {/* Results Count */}
         <div className="mt-6 text-center text-gray-600">
-          {filteredPartners.length} partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''}
+          {filteredPartners.length} partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''} • {visiblePartners.length} visible{visiblePartners.length !== 1 ? 's' : ''} sur la carte
         </div>
       </div>
 
