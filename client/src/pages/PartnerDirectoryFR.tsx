@@ -272,7 +272,7 @@ export default function PartnerDirectoryFR() {
                           <Badge
                             key={id}
                             variant={selectedServices.includes(id) ? "default" : "outline"}
-                            className={`cursor-pointer transition-colors flex items-center gap-1 ${
+                            className={`cursor-pointer transition-colors flex items-center justify-center gap-1 w-[90px] ${
                               selectedServices.includes(id)
                                 ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
                                 : 'hover:bg-gray-100'
@@ -493,7 +493,7 @@ export default function PartnerDirectoryFR() {
                             const Icon = getServiceIcon(service);
                             return (
                               <div key={service} className={isExpanded ? 'mb-1.5' : 'flex items-center gap-3'}>
-                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-2 py-0.5 shrink-0 min-w-[60px] text-xs flex items-center justify-center gap-1">
+                                <Badge className="bg-[#D67C4A] text-white hover:bg-[#c5703e] px-2 py-0.5 shrink-0 w-[90px] text-xs flex items-center justify-center gap-1">
                                   <Icon className="h-3 w-3" />
                                   {service === 'Video' ? 'Vidéo' : service}
                                 </Badge>
@@ -616,7 +616,7 @@ export default function PartnerDirectoryFR() {
                       const Icon = getServiceIcon(service);
                       return (
                         <div key={service}>
-                          <Badge className="bg-[#D67C4A] text-white mb-2 px-3 py-1 flex items-center justify-center gap-1 inline-flex">
+                          <Badge className="bg-[#D67C4A] text-white mb-2 px-3 py-1 w-[90px] flex items-center justify-center gap-1 inline-flex">
                             <Icon className="h-3.5 w-3.5" />
                             {service === 'Video' ? 'Vidéo' : service}
                           </Badge>
