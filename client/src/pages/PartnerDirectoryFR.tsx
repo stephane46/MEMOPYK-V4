@@ -356,7 +356,7 @@ export default function PartnerDirectoryFR() {
                     <Card
                     key={index}
                     id={`card-${partner.slug}`}
-                    className={`${isExpanded ? 'h-[588px]' : 'h-[294px]'} snap-start transition-all overflow-hidden cursor-pointer w-full ${
+                    className={`${isExpanded ? 'h-[588px]' : 'h-[310px]'} snap-start transition-all overflow-hidden cursor-pointer w-full ${
                       selectedPartner === partner.slug
                         ? 'ring-2 ring-[#D67C4A] shadow-xl'
                         : 'hover:shadow-md'
