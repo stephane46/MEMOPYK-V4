@@ -15,14 +15,12 @@ import { Button } from '@/components/ui/button';
 import L from 'leaflet';
 import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES, DELIVERY } from '@shared/partnerFormats';
 
-// Fix Leaflet default icon issue with custom orange marker
-const customIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+// Fix Leaflet default icon issue
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
 });
 
 // Component to track map bounds changes
@@ -383,7 +381,6 @@ export default function PartnerDirectoryFR() {
                     <Marker
                       key={index}
                       position={[partner.lat, partner.lng]}
-                      icon={customIcon}
                       eventHandlers={{
                         click: () => {
                           setSelectedPartner(partner.slug);
