@@ -38,54 +38,6 @@
     "show_on_map": true
   },
   {
-    "name": "NGOC TEST",
-    "city": "Bordeaux",
-    "country": "France",
-    "lat": 44.83179963473438,
-    "lng": -0.5680008374633064,
-    "services": [
-      "Photo",
-      "Film",
-      "Video"
-    ],
-    "formats": {
-      "photo": [
-        "Prints",
-        "Negatives 35mm"
-      ],
-      "film": [
-        "8mm",
-        "Super 8"
-      ],
-      "video": [
-        "VHS",
-        "MiniDV",
-        "Digital8"
-      ]
-    },
-    "website": "test.com",
-    "phone": "12 65 25 15 45",
-    "phone_public": true,
-    "email": "ngoc@test.com",
-    "email_public": true,
-    "public_description": "description test",
-    "slug": "ngoc-test",
-    "address": "39 Rue Bergeret",
-    "address_line2": "",
-    "postal_code": "",
-    "delivery": [
-      "USB",
-      "DVD/Blu-ray"
-    ],
-    "other_photo": "",
-    "other_film": "",
-    "other_video": "",
-    "other_delivery": "",
-    "status": "Approved",
-    "is_active": true,
-    "show_on_map": true
-  },
-  {
     "name": "Swiss Memory Lab",
     "city": "Geneva",
     "country": "Switzerland",
