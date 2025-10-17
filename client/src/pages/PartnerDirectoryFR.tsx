@@ -319,13 +319,13 @@ export default function PartnerDirectoryFR() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pt-4">
+      <div className="container mx-auto px-4 py-4">
 
         {/* Map & List Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Search Bar - Above Map Column Only */}
           <div>
-            <div className="mb-3">
+            <div className="mb-4">
               <div className="relative" style={{ width: '50%' }}>
                 <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <Input
@@ -351,7 +351,7 @@ export default function PartnerDirectoryFR() {
 
           {/* Service Filters - Above Cards Column Only */}
           <div>
-            <div className="mb-3 space-y-2">
+            <div className="mb-4 space-y-2">
               <div className="flex items-center gap-3 flex-wrap">
                 <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
                   <Filter className="h-4 w-4" />
@@ -379,7 +379,7 @@ export default function PartnerDirectoryFR() {
                   })}
                 </div>
               </div>
-              <div className="text-sm text-gray-600 text-right">
+              <div className="text-sm text-gray-600">
                 <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> partenaire{visiblePartners.length !== 1 ? 's' : ''} visible{visiblePartners.length !== 1 ? 's' : ''}
               </div>
             </div>
