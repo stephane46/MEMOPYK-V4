@@ -41,7 +41,7 @@ const restrictedCountries = [
 
 const serviceOptions = [
   { value: "Photo" as const, label: "Numérisation de photos", icon: FileImage },
-  { value: "Film" as const, label: "Numérisation de films et cassettes vidéo", icon: Film },
+  { value: "Film" as const, label: "Numérisation de films et vidéos", icon: Film },
 ];
 
 export default function PartnerIntakeFR() {
@@ -767,7 +767,7 @@ export default function PartnerIntakeFR() {
                       <div className="space-y-4 border border-gray-200 rounded-lg p-6">
                         <h3 className="text-lg font-semibold text-[#2A4759] flex items-center gap-2">
                           <Video className="w-5 h-5" />
-                          Cassettes vidéo
+                          Numérisation de vidéos
                         </h3>
                         <FormField
                           control={form.control}
