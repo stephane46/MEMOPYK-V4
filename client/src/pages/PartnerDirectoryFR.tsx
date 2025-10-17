@@ -379,7 +379,6 @@ export default function PartnerDirectoryFR() {
                 <MarkerClusterGroup
                   chunkedLoading
                   maxClusterRadius={50}
-                  disableClusteringAtZoom={13}
                   iconCreateFunction={(cluster: any) => {
                     const count = cluster.getChildCount();
                     return L.divIcon({
@@ -399,9 +398,10 @@ export default function PartnerDirectoryFR() {
                       iconAnchor: [12.5, 41]
                     });
                   }}
-                  spiderfyOnMaxZoom={false}
+                  spiderfyOnMaxZoom={true}
                   showCoverageOnHover={false}
                   zoomToBoundsOnClick={true}
+                  maxZoom={18}
                 >
                   {mappablePartners.map((partner, index) => (
                     partner.lat && partner.lng && (
