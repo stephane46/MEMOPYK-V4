@@ -350,8 +350,8 @@ export default function PartnerDirectoryEN() {
           </div>
 
           {/* Service Filters - Above Cards Column Only */}
-          <div className="pr-6">
-            <div className="mb-4 space-y-2">
+          <div>
+            <div className="mb-4 space-y-2 pr-6">
               <div className="flex items-center gap-3 flex-wrap">
                 <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
                   <Filter className="h-4 w-4" />
