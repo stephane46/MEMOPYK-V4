@@ -1177,19 +1177,18 @@ button[role="switch"]:focus-visible {
 
 /* WebKit browsers (Chrome, Safari, Edge) */
 .partner-list-scrollbar::-webkit-scrollbar {
-  width: 80px; /* Double width scrollbar */
+  width: 64px; /* Double width scrollbar (was 32px visible, now 64px) */
 }
 
 .partner-list-scrollbar::-webkit-scrollbar-track {
-  background: #f3f4f6; /* Light gray track */
+  background: #F2EBDC; /* Cream track to match page background */
   border-radius: 10px;
-  margin-left: 8px; /* Space to the left of scrollbar */
 }
 
 .partner-list-scrollbar::-webkit-scrollbar-thumb {
   background: #D67C4A; /* MEMOPYK orange */
   border-radius: 10px;
-  border: 4px solid #f3f4f6; /* Add padding around thumb */
+  border: none; /* No border - full width orange thumb */
 }
 
 .partner-list-scrollbar::-webkit-scrollbar-thumb:hover {
