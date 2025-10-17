@@ -223,7 +223,7 @@ export default function PartnerDirectoryFR() {
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-2">Numérisation de films et vidéos</h1>
           <p className="text-xl text-gray-300">
-            Trouvez un professionnel près de chez vous
+            Numérisation de vidéos
           </p>
         </div>
       </div>
