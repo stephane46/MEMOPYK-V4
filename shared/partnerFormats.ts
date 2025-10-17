@@ -29,7 +29,7 @@ export const VIDEO_CASSETTES = [
 export const DELIVERY = [
   { v: "In-person", fr: "En personne", en: "In-person" },
   { v: "Mail", fr: "Par courrier", en: "Mail" },
-  { v: "Digital download", fr: "Téléchargement numérique", en: "Digital download" },
+  { v: "Digital download", fr: "Téléchargement", en: "Download" },
   { v: "USB", fr: "Clé USB", en: "USB drive" },
   { v: "Download link", fr: "Lien de téléchargement", en: "Download link" },
   { v: "External drive", fr: "Disque dur / SSD", en: "External HDD / SSD" },
