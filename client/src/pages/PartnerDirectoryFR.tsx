@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Tooltip, useMapEvents, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import { MapPin, Phone, Mail, Globe, Filter, Search, Package, X, Navigation, ChevronDown, ChevronUp, Camera, Film as FilmIcon, Video } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -136,6 +136,9 @@ interface Partner {
   other_film: string;
   other_video: string;
   other_delivery: string;
+  status?: string;
+  is_active?: boolean;
+  show_on_map?: boolean;
 }
 
 export default function PartnerDirectoryFR() {
@@ -177,6 +180,14 @@ export default function PartnerDirectoryFR() {
 
   // Filter partners
   const filteredPartners = partners.filter(partner => {
+    // CRITICAL: Only show approved, active partners with show_on_map enabled
+    const isVisible = 
+      partner.status === 'Approved' && 
+      partner.is_active === true && 
+      partner.show_on_map === true;
+    
+    if (!isVisible) return false;
+
     // Text search (name or city)
     const matchesSearch = !searchText || 
       partner.name.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -380,6 +391,17 @@ export default function PartnerDirectoryFR() {
                 <MarkerClusterGroup
                   chunkedLoading
                   maxClusterRadius={50}
+                  iconCreateFunction={(cluster: any) => {
+                    const count = cluster.getChildCount();
+                    return L.divIcon({
+                      html: `<div style="background: #2A4759; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${count}</div>`,
+                      className: 'custom-cluster-icon',
+                      iconSize: [40, 40]
+                    });
+                  }}
+                  spiderfyOnMaxZoom={true}
+                  showCoverageOnHover={false}
+                  zoomToBoundsOnClick={true}
                 >
                   {mappablePartners.map((partner, index) => (
                     partner.lat && partner.lng && (
@@ -393,7 +415,12 @@ export default function PartnerDirectoryFR() {
                             setZoomTo({ lat: partner.lat!, lng: partner.lng!, zoom: 13 });
                           }
                         }}
-                      />
+                      >
+                        <Tooltip direction="top" offset={[0, -20]} opacity={0.9}>
+                          <div className="font-semibold">{partner.name}</div>
+                          <div className="text-xs text-gray-600">{partner.city}</div>
+                        </Tooltip>
+                      </Marker>
                     )
                   ))}
                 </MarkerClusterGroup>
