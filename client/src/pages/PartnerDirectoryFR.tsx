@@ -418,7 +418,7 @@ export default function PartnerDirectoryFR() {
                       </div>
 
                       {/* Content Section */}
-                      <div className={isExpanded ? "p-3 space-y-2" : "p-4 space-y-3"}>
+                      <div className={isExpanded ? "p-3 space-y-2 overflow-y-auto" : "p-4 space-y-3"} style={isExpanded ? { maxHeight: 'calc(588px - 60px)' } : {}}>
                         {/* Description with expand indicator */}
                         {partner.public_description && (
                           <div>
@@ -442,17 +442,6 @@ export default function PartnerDirectoryFR() {
                                 className="text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium mt-1 flex items-center gap-1"
                               >
                                 Lire plus <ChevronDown className="h-4 w-4" />
-                              </button>
-                            )}
-                            {isExpanded && partner.public_description.length > 100 && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setExpandedCard(null);
-                                }}
-                                className="text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium mt-1 flex items-center gap-1"
-                              >
-                                Lire moins <ChevronUp className="h-4 w-4" />
                               </button>
                             )}
                           </div>
@@ -570,16 +559,17 @@ export default function PartnerDirectoryFR() {
                           )}
                         </div>
 
-                        {/* Collapse Button (Expanded Only) - more compact */}
-                        {isExpanded && (
-                          <button
-                            onClick={() => setExpandedCard(null)}
-                            className="w-full text-[#D67C4A] hover:text-[#c5703e] text-xs font-medium py-1.5 flex items-center justify-center gap-1 border-t mt-2 pt-2"
-                          >
-                            Réduire <ChevronUp className="h-3.5 w-3.5" />
-                          </button>
-                        )}
                       </div>
+                      
+                      {/* Collapse Button at Bottom (Expanded Only) */}
+                      {isExpanded && (
+                        <button
+                          onClick={() => setExpandedCard(null)}
+                          className="w-full text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium py-2 flex items-center justify-center gap-1 border-t bg-white sticky bottom-0"
+                        >
+                          Réduire <ChevronUp className="h-4 w-4" />
+                        </button>
+                      )}
                     </CardContent>
                     </Card>
                   );
