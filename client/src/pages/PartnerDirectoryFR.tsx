@@ -379,6 +379,7 @@ export default function PartnerDirectoryFR() {
                 <MarkerClusterGroup
                   chunkedLoading
                   maxClusterRadius={50}
+                  disableClusteringAtZoom={13}
                   iconCreateFunction={(cluster: any) => {
                     const count = cluster.getChildCount();
                     return L.divIcon({
@@ -388,7 +389,7 @@ export default function PartnerDirectoryFR() {
                             <path d="M12.5 0C5.59644 0 0 5.59644 0 12.5C0 21.875 12.5 41 12.5 41C12.5 41 25 21.875 25 12.5C25 5.59644 19.4036 0 12.5 0Z" fill="#2A4759"/>
                             <circle cx="12.5" cy="12.5" r="8" fill="white"/>
                           </svg>
-                          <div style="position: absolute; top: 5px; left: 0; right: 0; text-align: center; color: #2A4759; font-weight: bold; font-size: 12px; pointer-events: none;">
+                          <div style="position: absolute; top: 4.5px; left: 50%; transform: translateX(-50%); color: #2A4759; font-weight: bold; font-size: 13px; line-height: 1; pointer-events: none; font-family: Arial, sans-serif;">
                             ${count}
                           </div>
                         </div>
@@ -398,7 +399,7 @@ export default function PartnerDirectoryFR() {
                       iconAnchor: [12.5, 41]
                     });
                   }}
-                  spiderfyOnMaxZoom={true}
+                  spiderfyOnMaxZoom={false}
                   showCoverageOnHover={false}
                   zoomToBoundsOnClick={true}
                 >
