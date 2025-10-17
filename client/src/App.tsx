@@ -18,6 +18,7 @@ import BlogPostPage from './pages/BlogPostPage';
 import PartnerIntakeFR from './pages/PartnerIntakeFR';
 import PartnerIntakeEN from './pages/PartnerIntakeEN';
 import PartnerDirectoryFR from './pages/PartnerDirectoryFR';
+import PartnerDirectoryEN from './pages/PartnerDirectoryEN';
 import { queryClient } from './lib/queryClient';
 import { Toaster } from '@/components/ui/toaster';
 import { CookieBanner } from '@/components/ui/CookieBanner';
@@ -88,6 +89,7 @@ function AnalyticsRouter() {
         {/* Partner Routes */}
         <Route path="/fr-FR/partenaires" component={PartnerDirectoryFR} />
         <Route path="/fr-FR/partenaires/devenir" component={PartnerIntakeFR} />
+        <Route path="/en-US/partners" component={PartnerDirectoryEN} />
         <Route path="/en-US/partners/join" component={PartnerIntakeEN} />
         
         {/* Catch-all routes temporarily removed to prevent FAQ section conflict */}
