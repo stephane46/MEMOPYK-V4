@@ -315,7 +315,7 @@ export default function PartnersManagementEnhanced() {
             </Button>
             <Button
               onClick={() => setShowImportDialog(true)}
-              className="bg-[#89BAD9] hover:bg-[#7aa8c7] text-black font-medium"
+              className="!bg-[#89BAD9] hover:!bg-[#7aa8c7] !text-black font-medium !border-[#89BAD9]"
               size="sm"
               data-testid="button-import-tsv"
             >
