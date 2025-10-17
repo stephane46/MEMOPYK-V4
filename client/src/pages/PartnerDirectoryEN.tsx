@@ -351,7 +351,7 @@ export default function PartnerDirectoryEN() {
 
           {/* Service Filters - Above Cards Column Only */}
           <div>
-            <div className="mb-3">
+            <div className="mb-3 space-y-2">
               <div className="flex items-center gap-3 flex-wrap">
                 <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
                   <Filter className="h-4 w-4" />
@@ -378,9 +378,9 @@ export default function PartnerDirectoryEN() {
                     );
                   })}
                 </div>
-                <div className="text-sm text-gray-600 whitespace-nowrap ml-auto">
-                  <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> visible partner{visiblePartners.length !== 1 ? 's' : ''}
-                </div>
+              </div>
+              <div className="text-sm text-gray-600 text-right">
+                <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> visible partner{visiblePartners.length !== 1 ? 's' : ''}
               </div>
             </div>
           </div>
