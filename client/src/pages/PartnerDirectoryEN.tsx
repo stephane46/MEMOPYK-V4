@@ -350,8 +350,8 @@ export default function PartnerDirectoryEN() {
           </div>
 
           {/* Service Filters - Above Cards Column Only */}
-          <div>
-            <div className="mb-4 space-y-2 pr-6">
+          <div className="pr-6">
+            <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3 flex-wrap">
                 <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
                   <Filter className="h-4 w-4" />
@@ -379,7 +379,7 @@ export default function PartnerDirectoryEN() {
                   })}
                 </div>
               </div>
-              <div className="text-sm text-gray-600 text-right">
+              <div className="text-sm text-gray-600 whitespace-nowrap" style={{ marginRight: '10px' }}>
                 <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> visible partner{visiblePartners.length !== 1 ? 's' : ''}
               </div>
             </div>
