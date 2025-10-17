@@ -207,7 +207,7 @@ export default function PartnerDirectoryFR() {
   }, [mappablePartners, mapBounds]);
 
   // Service chips with counts (French labels) - ORDERED: Photo, Film, Video
-  // Counts based on ALL filtered partners (global search results)
+  // Counts based on VISIBLE partners in the current viewport
   const allServices = [
     { id: 'Photo', label: 'Photo' },
     { id: 'Film', label: 'Film' },
@@ -216,7 +216,7 @@ export default function PartnerDirectoryFR() {
   const serviceCounts = allServices.map(service => ({
     id: service.id,
     name: service.label,
-    count: filteredPartners.filter(p => p.services.includes(service.id)).length
+    count: visiblePartners.filter(p => p.services.includes(service.id)).length
   }));
 
   const toggleService = (serviceId: string) => {
@@ -346,7 +346,7 @@ export default function PartnerDirectoryFR() {
 
                 {/* Results Count */}
                 <div className="text-sm text-gray-600 whitespace-nowrap">
-                  <span className="font-bold text-[#D67C4A]">{filteredPartners.length}</span> partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''}
+                  <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> partenaire{visiblePartners.length !== 1 ? 's' : ''} visible{visiblePartners.length !== 1 ? 's' : ''}
                 </div>
               </div>
             </CardContent>
@@ -420,14 +420,14 @@ export default function PartnerDirectoryFR() {
           <div id="partner-list-container" className="flex flex-col gap-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar p-0 pr-6" style={{ background: 'linear-gradient(to right, transparent calc(100% - 24px), #F2EBDC calc(100% - 24px))', scrollSnapStop: 'always' }}>
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
-            ) : filteredPartners.length === 0 ? (
+            ) : visiblePartners.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <p className="text-lg font-semibold">Aucun résultat</p>
-                <p className="mt-2">Essayez de modifier votre recherche ou de retirer des filtres.</p>
+                <p className="mt-2">Zoomez ou déplacez la carte pour voir plus de partenaires.</p>
               </div>
             ) : (
               <>
-                {filteredPartners.map((partner, index) => {
+                {visiblePartners.map((partner, index) => {
                   const isExpanded = expandedCard === partner.slug;
                   
                   return (
