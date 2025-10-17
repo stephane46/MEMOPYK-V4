@@ -55,6 +55,41 @@ function MapZoomController({ zoomTo }: { zoomTo: { lat: number; lng: number; zoo
   return null;
 }
 
+// Component to handle custom cluster clicks with tighter zoom
+function ClusterClickHandler({ clusterRef }: { clusterRef: any }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (clusterRef.current) {
+      const group = clusterRef.current;
+      
+      group.on('clusterclick', (e: any) => {
+        e.originalEvent.stopPropagation();
+        const cluster = e.layer;
+        const childMarkers = cluster.getAllChildMarkers();
+        
+        // Calculate center of cluster markers
+        const bounds = L.latLngBounds(childMarkers.map((m: any) => m.getLatLng()));
+        
+        // Zoom to level 16 at the center to show only these markers
+        map.flyToBounds(bounds, {
+          padding: [100, 100],
+          maxZoom: 16,
+          duration: 1.0
+        });
+      });
+    }
+    
+    return () => {
+      if (clusterRef.current) {
+        clusterRef.current.off('clusterclick');
+      }
+    };
+  }, [clusterRef, map]);
+  
+  return null;
+}
+
 // Component to fit map bounds to all partners on initial load
 function MapFitBounds({ partners }: { partners: Array<{ lat: number | null; lng: number | null }> }) {
   const map = useMap();
@@ -149,6 +184,7 @@ export default function PartnerDirectoryFR() {
   const [zoomTo, setZoomTo] = useState<{ lat: number; lng: number; zoom: number } | null>(null);
   const [modalPartner, setModalPartner] = useState<Partner | null>(null);
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const clusterRef = useRef<any>(null);
 
   const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
     queryKey: ['/partners.json'],
@@ -376,7 +412,9 @@ export default function PartnerDirectoryFR() {
                 <MapZoomController zoomTo={zoomTo} />
                 <MapFitBounds partners={mappablePartners} />
                 <MapAutoZoomToSearch searchText={searchText} filteredPartners={mappablePartners} />
+                <ClusterClickHandler clusterRef={clusterRef} />
                 <MarkerClusterGroup
+                  ref={clusterRef}
                   chunkedLoading
                   maxClusterRadius={(zoom: number) => zoom >= 13 ? 5 : 50}
                   iconCreateFunction={(cluster: any) => {
@@ -401,7 +439,7 @@ export default function PartnerDirectoryFR() {
                   spiderfyOnMaxZoom={true}
                   spiderfyDistanceMultiplier={2}
                   showCoverageOnHover={false}
-                  zoomToBoundsOnClick={true}
+                  zoomToBoundsOnClick={false}
                 >
                   {mappablePartners.map((partner, index) => (
                     partner.lat && partner.lng && (
