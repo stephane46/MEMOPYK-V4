@@ -752,6 +752,14 @@ export default function PartnersManagementEnhanced() {
                     step="any"
                     value={editData.lat || ''}
                     onChange={(e) => setEditData({ ...editData, lat: parseFloat(e.target.value) || null })}
+                    onPaste={(e) => {
+                      const pastedText = e.clipboardData.getData('text');
+                      const match = pastedText.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
+                      if (match) {
+                        e.preventDefault();
+                        setEditData({ ...editData, lat: parseFloat(match[1]) });
+                      }
+                    }}
                     className="bg-white border-gray-300 text-gray-900"
                   />
                 </div>
@@ -763,6 +771,14 @@ export default function PartnersManagementEnhanced() {
                     step="any"
                     value={editData.lng || ''}
                     onChange={(e) => setEditData({ ...editData, lng: parseFloat(e.target.value) || null })}
+                    onPaste={(e) => {
+                      const pastedText = e.clipboardData.getData('text');
+                      const match = pastedText.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
+                      if (match) {
+                        e.preventDefault();
+                        setEditData({ ...editData, lng: parseFloat(match[2]) });
+                      }
+                    }}
                     className="bg-white border-gray-300 text-gray-900"
                   />
                 </div>
