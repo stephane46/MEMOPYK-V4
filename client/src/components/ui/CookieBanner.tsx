@@ -147,11 +147,11 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
           role="banner"
           aria-label="Cookie consent banner"
         >
-          <div className="w-full px-4 sm:px-6 lg:px-8">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 w-full">
               {/* Banner Content */}
-              <div className="flex-1 text-xs text-gray-700 leading-relaxed">
-                <p className="mb-2 font-medium text-gray-900 text-sm">
+              <div className="flex-1 text-[11px] sm:text-xs text-gray-700 leading-relaxed">
+                <p className="mb-2 font-medium text-gray-900 text-xs sm:text-sm">
                   {language === 'fr-FR' ? 'Votre vie privée est importante chez MEMOPYK.' : 'Your privacy matters at MEMOPYK.'}
                 </p>
                 <p>
@@ -163,11 +163,11 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 lg:min-w-fit">
+              <div className="flex flex-col sm:flex-row gap-2 lg:min-w-fit">
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     onClick={handleAcceptAll}
-                    className="cookie-accept-btn px-6 py-2"
+                    className="cookie-accept-btn px-4 sm:px-6 py-1.5 sm:py-2 text-sm"
                     data-testid="cookie-accept-all"
                   >
                     {language === 'fr-FR' ? 'Tout accepter' : 'Accept all'}
@@ -175,7 +175,7 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                   <Button
                     onClick={handleReject}
                     variant="outline"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50 px-4 sm:px-6 py-1.5 sm:py-2 text-sm"
                     data-testid="cookie-reject"
                   >
                     {language === 'fr-FR' ? 'Refuser' : 'Reject'}
@@ -183,7 +183,7 @@ export function CookieBanner({ onFooterSettingsClick }: CookieBannerProps) {
                   <Button
                     onClick={handleSettings}
                     variant="ghost"
-                    className="text-gray-600 hover:bg-gray-100 px-6 py-2"
+                    className="text-gray-600 hover:bg-gray-100 px-4 sm:px-6 py-1.5 sm:py-2 text-sm"
                     data-testid="cookie-settings"
                   >
                     {language === 'fr-FR' ? 'Paramètres' : 'Settings'}
