@@ -1,4 +1,5 @@
 import { pgTable, text, serial, integer, boolean, timestamp, varchar, decimal, numeric, jsonb, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -547,6 +548,51 @@ export const insertPartnerSubmissionSchema = createInsertSchema(partnerSubmissio
 
 export type PartnerSubmission = typeof partnerSubmissions.$inferSelect;
 export type InsertPartnerSubmission = z.infer<typeof insertPartnerSubmissionSchema>;
+
+// Partners table (approved partners for directory map)
+export const partners = pgTable("partners", {
+  id: serial("id").primaryKey(),
+  timestamp: timestamp("timestamp").defaultNow(),
+  partnerType: varchar("partner_type", { length: 50 }).default("digitization"),
+  partnerName: varchar("partner_name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  emailPublic: boolean("email_public").default(true),
+  phone: varchar("phone", { length: 50 }),
+  phonePublic: boolean("phone_public").default(false),
+  website: varchar("website", { length: 500 }),
+  address: text("address"),
+  addressLine2: text("address_line2"),
+  city: varchar("city", { length: 255 }),
+  postalCode: varchar("postal_code", { length: 20 }),
+  country: varchar("country", { length: 2 }), // ISO-2 country code
+  photoFormats: text("photo_formats").array().default(sql`'{}'`),
+  otherPhoto: text("other_photo"),
+  filmFormats: text("film_formats").array().default(sql`'{}'`),
+  otherFilm: text("other_film"),
+  videoCassettes: text("video_cassettes").array().default(sql`'{}'`),
+  otherVideo: text("other_video"),
+  delivery: text("delivery").array().default(sql`'{}'`),
+  otherDelivery: text("other_delivery"),
+  publicDescription: text("public_description"),
+  consent: boolean("consent").default(false),
+  status: varchar("status", { length: 50 }).default("Pending"),
+  isActive: boolean("is_active").default(false),
+  showOnMap: boolean("show_on_map").default(false),
+  lat: numeric("lat", { precision: 10, scale: 7 }),
+  lng: numeric("lng", { precision: 10, scale: 7 }),
+  slug: varchar("slug", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const insertPartnerSchema = createInsertSchema(partners).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type Partner = typeof partners.$inferSelect;
+export type InsertPartner = z.infer<typeof insertPartnerSchema>;
 
 // Insert types for all tables
 export type InsertUser = z.infer<typeof insertUserSchema>;
