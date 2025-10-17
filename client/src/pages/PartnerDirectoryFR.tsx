@@ -174,6 +174,7 @@ export default function PartnerDirectoryFR() {
   console.log('🗺️ Visible in viewport:', visiblePartners.length);
 
   // Service chips with counts (French labels) - ORDERED: Photo, Film, Video
+  // Counts update based on visible partners in map viewport
   const allServices = [
     { id: 'Photo', label: 'Photo' },
     { id: 'Film', label: 'Film' },
@@ -182,7 +183,7 @@ export default function PartnerDirectoryFR() {
   const serviceCounts = allServices.map(service => ({
     id: service.id,
     name: service.label,
-    count: partners.filter(p => p.services.includes(service.id)).length
+    count: visiblePartners.filter(p => p.services.includes(service.id)).length
   }));
 
   const toggleService = (serviceId: string) => {
@@ -312,7 +313,7 @@ export default function PartnerDirectoryFR() {
 
                 {/* Results Count */}
                 <div className="text-sm text-gray-600 whitespace-nowrap">
-                  {filteredPartners.length} partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''} • {visiblePartners.length} visible{visiblePartners.length !== 1 ? 's' : ''} sur la carte
+                  <span className="font-bold text-[#D67C4A]">{filteredPartners.length}</span> partenaire{filteredPartners.length !== 1 ? 's' : ''} trouvé{filteredPartners.length !== 1 ? 's' : ''} • <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> visible{visiblePartners.length !== 1 ? 's' : ''} sur la carte
                 </div>
               </div>
             </CardContent>
