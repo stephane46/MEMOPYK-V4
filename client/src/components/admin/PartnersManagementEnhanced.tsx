@@ -303,53 +303,63 @@ export default function PartnersManagementEnhanced() {
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-white">Partner Management</CardTitle>
-          <div className="flex gap-2">
-            <Button
-              onClick={handleAddNew}
-              className="bg-[#D67C4A] hover:bg-[#c46d3f] text-black font-medium"
-              size="sm"
-              data-testid="button-add-partner"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Partner
-            </Button>
-            <Button
-              onClick={() => setShowImportDialog(true)}
-              className="!bg-[#89BAD9] hover:!bg-[#7aa8c7] !text-black font-medium !border-[#89BAD9]"
-              size="sm"
-              data-testid="button-import-tsv"
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              Import TSV
-            </Button>
-            <Button
-              onClick={() => window.open('/fr-FR/partenaires', '_blank')}
-              className="bg-white hover:bg-gray-100 text-gray-900 font-medium border border-gray-300"
-              size="sm"
-              data-testid="button-view-map"
-            >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              View Map
-            </Button>
-            <Button
-              onClick={() => window.open('/api/partners/download', '_blank')}
-              variant="outline"
-              size="sm"
-              data-testid="button-download-excel"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Download Excel
-            </Button>
-            <Button
-              onClick={() => exportMapMutation.mutate()}
-              variant="outline"
-              size="sm"
-              disabled={exportMapMutation.isPending}
-              data-testid="button-export-map"
-            >
-              <Map className="h-4 w-4 mr-2" />
-              Export to Map
-            </Button>
+          <div className="flex gap-3">
+            {/* Primary Actions */}
+            <div className="flex gap-2">
+              <Button
+                onClick={handleAddNew}
+                className="!bg-[#D67C4A] hover:!bg-[#c46d3f] !text-black font-medium !border-[#D67C4A]"
+                size="sm"
+                data-testid="button-add-partner"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Partner
+              </Button>
+              <Button
+                onClick={() => setShowImportDialog(true)}
+                className="!bg-[#89BAD9] hover:!bg-[#7aa8c7] !text-black font-medium !border-[#89BAD9]"
+                size="sm"
+                data-testid="button-import-tsv"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Import TSV
+              </Button>
+            </div>
+
+            {/* Separator */}
+            <div className="w-px bg-white/20"></div>
+
+            {/* Secondary Actions */}
+            <div className="flex gap-2">
+              <Button
+                onClick={() => window.open('/fr-FR/partenaires', '_blank')}
+                className="!bg-white/10 hover:!bg-white/20 !text-white font-medium !border-white/30"
+                size="sm"
+                data-testid="button-view-map"
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                View Map
+              </Button>
+              <Button
+                onClick={() => window.open('/api/partners/download', '_blank')}
+                className="!bg-white/10 hover:!bg-white/20 !text-white font-medium !border-white/30"
+                size="sm"
+                data-testid="button-download-excel"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download Excel
+              </Button>
+              <Button
+                onClick={() => exportMapMutation.mutate()}
+                className="!bg-white/10 hover:!bg-white/20 !text-white font-medium !border-white/30"
+                size="sm"
+                disabled={exportMapMutation.isPending}
+                data-testid="button-export-map"
+              >
+                <Map className="h-4 w-4 mr-2" />
+                Export to Map
+              </Button>
+            </div>
           </div>
         </div>
       </CardHeader>
