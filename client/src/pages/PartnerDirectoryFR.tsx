@@ -382,9 +382,20 @@ export default function PartnerDirectoryFR() {
                   iconCreateFunction={(cluster: any) => {
                     const count = cluster.getChildCount();
                     return L.divIcon({
-                      html: `<div style="background: #2A4759 !important; color: white !important; border-radius: 50% !important; width: 40px !important; height: 40px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-weight: bold !important; border: 3px solid white !important; box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;">${count}</div>`,
+                      html: `
+                        <div style="position: relative; width: 25px; height: 41px;">
+                          <svg width="25" height="41" viewBox="0 0 25 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.5 0C5.59644 0 0 5.59644 0 12.5C0 21.875 12.5 41 12.5 41C12.5 41 25 21.875 25 12.5C25 5.59644 19.4036 0 12.5 0Z" fill="#2A4759"/>
+                            <circle cx="12.5" cy="12.5" r="8" fill="white"/>
+                          </svg>
+                          <div style="position: absolute; top: 5px; left: 0; right: 0; text-align: center; color: #2A4759; font-weight: bold; font-size: 12px; pointer-events: none;">
+                            ${count}
+                          </div>
+                        </div>
+                      `,
                       className: '',
-                      iconSize: [40, 40]
+                      iconSize: [25, 41],
+                      iconAnchor: [12.5, 41]
                     });
                   }}
                   spiderfyOnMaxZoom={true}
