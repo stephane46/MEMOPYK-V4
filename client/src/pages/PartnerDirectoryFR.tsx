@@ -339,7 +339,7 @@ export default function PartnerDirectoryFR() {
           </div>
 
           {/* Partner List - Aligned with Map Top */}
-          <div className="space-y-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar">
+          <div className="flex flex-col gap-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
             ) : visiblePartners.length === 0 ? (
