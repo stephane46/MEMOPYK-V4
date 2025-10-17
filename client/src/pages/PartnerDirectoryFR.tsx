@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
 import { MapPin, Phone, Mail, Globe, Filter, Search, Package, X, Navigation, ChevronDown, ChevronUp, Camera, Film as FilmIcon, Video } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -376,21 +377,26 @@ export default function PartnerDirectoryFR() {
                 <MapZoomController zoomTo={zoomTo} />
                 <MapFitBounds partners={mappablePartners} />
                 <MapAutoZoomToSearch searchText={searchText} filteredPartners={mappablePartners} />
-                {mappablePartners.map((partner, index) => (
-                  partner.lat && partner.lng && (
-                    <Marker
-                      key={index}
-                      position={[partner.lat, partner.lng]}
-                      eventHandlers={{
-                        click: () => {
-                          setSelectedPartner(partner.slug);
-                          setExpandedCard(partner.slug);
-                          setZoomTo({ lat: partner.lat!, lng: partner.lng!, zoom: 13 });
-                        }
-                      }}
-                    />
-                  )
-                ))}
+                <MarkerClusterGroup
+                  chunkedLoading
+                  maxClusterRadius={50}
+                >
+                  {mappablePartners.map((partner, index) => (
+                    partner.lat && partner.lng && (
+                      <Marker
+                        key={index}
+                        position={[partner.lat, partner.lng]}
+                        eventHandlers={{
+                          click: () => {
+                            setSelectedPartner(partner.slug);
+                            setExpandedCard(partner.slug);
+                            setZoomTo({ lat: partner.lat!, lng: partner.lng!, zoom: 13 });
+                          }
+                        }}
+                      />
+                    )
+                  ))}
+                </MarkerClusterGroup>
               </MapContainer>
             </div>
           </div>
