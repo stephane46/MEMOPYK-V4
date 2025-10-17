@@ -103,6 +103,103 @@ router.post("/api/partners/export-map", async (req, res) => {
   }
 });
 
+// Import partners from TSV
+router.post("/api/partners/import-tsv", async (req, res) => {
+  try {
+    const { tsvText } = req.body;
+    
+    if (!tsvText || typeof tsvText !== 'string') {
+      return res.status(400).json({ error: "Invalid TSV data" });
+    }
+
+    // Parse TSV data
+    const lines = tsvText.trim().split('\n');
+    if (lines.length < 2) {
+      return res.status(400).json({ error: "TSV must include header and at least one data row" });
+    }
+
+    // Extract headers and data rows
+    const headers = lines[0].split('\t');
+    const dataRows = lines.slice(1);
+
+    let importedCount = 0;
+    const errors: string[] = [];
+
+    for (let i = 0; i < dataRows.length; i++) {
+      try {
+        const values = dataRows[i].split('\t');
+        const row: any = {};
+        
+        // Map values to headers
+        headers.forEach((header, index) => {
+          row[header.trim()] = values[index]?.trim() || '';
+        });
+
+        // Create partner object matching Excel format
+        const newPartner = {
+          timestamp: row['Timestamp'] || new Date().toISOString(),
+          partner_type: 'digitization',
+          partner_name: row['Partner Name'] || '',
+          email: row['Email'] || '',
+          email_public: row['Email_Public'] === 'TRUE' ? 'TRUE' : 'FALSE',
+          phone: row['Phone'] || '',
+          phone_public: row['Phone_Public'] === 'TRUE' ? 'TRUE' : (row['Email_Public'] === 'TRUE' ? 'TRUE' : 'FALSE'), // Default to email_public if phone_public not specified
+          website: row['Website'] || '',
+          address: row['Address'] || '',
+          address_line2: row['Complément d\'adresse'] || row['Address Line 2'] || '',
+          city: row['City'] || '',
+          postal_code: row['Postal Code'] || '',
+          country: row['Country'] || '',
+          photo_formats: row['Photo Formats'] || '',
+          other_photo: row['Other Photo'] || '',
+          film_formats: row['Film Formats'] || '',
+          other_film: row['Other Film'] || '',
+          video_cassettes: row['Video Cassettes'] || '',
+          other_video: row['Other Video'] || '',
+          delivery: row['Delivery'] || '',
+          other_delivery: row['Other Delivery'] || '',
+          public_description: row['Public Description'] || '',
+          consent: row['Consent'] === 'Yes' ? 'TRUE' : 'TRUE', // Default to TRUE
+          status: 'Approved', // Auto-approve TSV imports
+          is_active: 'TRUE',
+          show_on_map: 'TRUE',
+          lat: '',
+          lng: '',
+          slug: ''
+        };
+
+        const success = partnerStore.create(newPartner);
+        if (success) {
+          importedCount++;
+          console.log(`✅ Imported partner ${i + 1}: ${newPartner.partner_name}`);
+        } else {
+          errors.push(`Row ${i + 1}: Failed to create partner`);
+        }
+      } catch (rowError: any) {
+        errors.push(`Row ${i + 1}: ${rowError.message}`);
+        console.error(`❌ Error importing row ${i + 1}:`, rowError);
+      }
+    }
+
+    if (importedCount === 0) {
+      return res.status(400).json({ 
+        error: "No partners imported", 
+        details: errors 
+      });
+    }
+
+    console.log(`✅ TSV Import completed: ${importedCount} partners imported`);
+    res.json({ 
+      ok: true, 
+      count: importedCount,
+      errors: errors.length > 0 ? errors : undefined
+    });
+  } catch (e: any) {
+    console.error("TSV Import error:", e);
+    res.status(500).json({ error: "Import failed: " + e.message });
+  }
+});
+
 // Create new partner (manual entry)
 router.post("/api/partners/create", async (req, res) => {
   try {

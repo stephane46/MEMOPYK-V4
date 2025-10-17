@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye, Camera, Film, Video, Plus, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink } from 'lucide-react';
+import { Download, Map, Search, ChevronLeft, ChevronRight, Pencil, Trash2, MapPin, Save, X, Building2, Package, Eye, Camera, Film, Video, Plus, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink, Upload } from 'lucide-react';
 import { queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { PHOTO_FORMATS, FILM_FORMATS, VIDEO_CASSETTES, DELIVERY } from '@/../../shared/partnerFormats';
@@ -68,6 +68,8 @@ export default function PartnersManagementEnhanced() {
   const [editingPartner, setEditingPartner] = useState<Partner | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [editData, setEditData] = useState<Partial<Partner>>({});
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importTsvText, setImportTsvText] = useState('');
   const limit = 20;
 
   const handleSort = (column: string) => {
@@ -223,6 +225,37 @@ export default function PartnersManagementEnhanced() {
     }
   });
 
+  const importTsvMutation = useMutation({
+    mutationFn: async (tsvText: string) => {
+      const response = await fetch('/api/partners/import-tsv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tsvText })
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Import failed');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['partners'] });
+      setShowImportDialog(false);
+      setImportTsvText('');
+      toast({
+        title: "Partners imported successfully",
+        description: `${data.count} partner(s) added to the system`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({ 
+        title: "Import failed", 
+        description: error.message,
+        variant: "destructive" 
+      });
+    }
+  });
+
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
@@ -279,6 +312,15 @@ export default function PartnersManagementEnhanced() {
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Partner
+            </Button>
+            <Button
+              onClick={() => setShowImportDialog(true)}
+              className="bg-[#89BAD9] hover:bg-[#7aa8c7] text-black font-medium"
+              size="sm"
+              data-testid="button-import-tsv"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Import TSV
             </Button>
             <Button
               onClick={() => window.open('/fr-FR/partenaires', '_blank')}
@@ -1020,6 +1062,62 @@ export default function PartnersManagementEnhanced() {
                 ? (createMutation.isPending ? 'Creating...' : 'Create Partner')
                 : (updateMutation.isPending ? 'Saving...' : 'Save Changes')
               }
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import TSV Dialog */}
+      <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <DialogContent className="max-w-3xl bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-gray-900 flex items-center gap-2">
+              <Upload className="h-5 w-5 text-[#D67C4A]" />
+              Import Partners from TSV
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-gray-700">Paste TSV Data</Label>
+              <Textarea
+                value={importTsvText}
+                onChange={(e) => setImportTsvText(e.target.value)}
+                placeholder="Paste your TSV data here (tab-separated values)..."
+                className="min-h-[300px] font-mono text-sm bg-white border-gray-300 text-gray-900"
+              />
+              <p className="text-xs text-gray-500">
+                Copy the TSV rows from your spreadsheet and paste them here. Include the header row with column names.
+              </p>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-sm text-blue-900 font-medium mb-1">Expected TSV Format:</p>
+              <p className="text-xs text-blue-700 font-mono">
+                Timestamp → Partner Name → Email → Email_Public → Phone → Website → Address → ...
+              </p>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowImportDialog(false);
+                setImportTsvText('');
+              }}
+              className="bg-white border-2 border-gray-400 text-gray-900 hover:bg-gray-100 font-medium"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Cancel
+            </Button>
+            <Button
+              onClick={() => importTsvMutation.mutate(importTsvText)}
+              disabled={importTsvMutation.isPending || !importTsvText.trim()}
+              className="bg-[#D67C4A] hover:bg-[#c46d3f] text-black font-medium border-2 border-[#D67C4A] disabled:opacity-50"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              {importTsvMutation.isPending ? 'Importing...' : 'Import Partners'}
             </Button>
           </div>
         </DialogContent>
