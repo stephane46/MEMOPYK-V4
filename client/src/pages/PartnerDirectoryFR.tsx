@@ -364,21 +364,15 @@ export default function PartnerDirectoryFR() {
                     onClick={() => {
                       if (!isExpanded) {
                         setExpandedCard(partner.slug);
-                        // Scroll to filters section after a brief delay for animation
+                        // Scroll card to top of container after a brief delay for animation
                         setTimeout(() => {
-                          document.getElementById('filters-section')?.scrollIntoView({ 
+                          document.getElementById(`card-${partner.slug}`)?.scrollIntoView({ 
                             behavior: 'smooth', 
                             block: 'start' 
                           });
                         }, 100);
                       } else {
                         setExpandedCard(null);
-                        setTimeout(() => {
-                          document.getElementById('filters-section')?.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'start' 
-                          });
-                        }, 100);
                       }
                     }}
                     data-testid={`partner-card-${partner.slug}`}
@@ -413,7 +407,7 @@ export default function PartnerDirectoryFR() {
                                   e.stopPropagation();
                                   setExpandedCard(partner.slug);
                                   setTimeout(() => {
-                                    document.getElementById('filters-section')?.scrollIntoView({ 
+                                    document.getElementById(`card-${partner.slug}`)?.scrollIntoView({ 
                                       behavior: 'smooth', 
                                       block: 'start' 
                                     });
@@ -429,12 +423,6 @@ export default function PartnerDirectoryFR() {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setExpandedCard(null);
-                                  setTimeout(() => {
-                                    document.getElementById('filters-section')?.scrollIntoView({ 
-                                      behavior: 'smooth', 
-                                      block: 'start' 
-                                    });
-                                  }, 100);
                                 }}
                                 className="text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium mt-1 flex items-center gap-1"
                               >
