@@ -182,8 +182,17 @@ export class ExcelPartnerStore {
     const offset = (page - 1) * limit;
     const paginatedPartners = partners.slice(offset, offset + limit);
 
+    // Convert string booleans to actual booleans for frontend
+    const convertedPartners = paginatedPartners.map(p => ({
+      ...p,
+      is_active: p.is_active === "TRUE",
+      show_on_map: p.show_on_map === "TRUE",
+      email_public: p.email_public === "TRUE",
+      phone_public: p.phone_public === "TRUE"
+    }));
+
     return {
-      partners: paginatedPartners,
+      partners: convertedPartners as any,
       total,
       page,
       limit,
@@ -301,7 +310,10 @@ export class ExcelPartnerStore {
         other_photo: p.other_photo || "",
         other_film: p.other_film || "",
         other_video: p.other_video || "",
-        other_delivery: p.other_delivery || ""
+        other_delivery: p.other_delivery || "",
+        status: p.status,
+        is_active: p.is_active === "TRUE",
+        show_on_map: p.show_on_map === "TRUE"
       }));
   }
 }
