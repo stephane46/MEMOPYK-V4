@@ -32,14 +32,17 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "NGOC TEST",
     "city": "Bordeaux",
     "country": "France",
-    "lat": 44.82961,
-    "lng": -0.56748,
+    "lat": 44.83179963473438,
+    "lng": -0.5680008374633064,
     "services": [
       "Photo",
       "Film",
@@ -77,7 +80,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Swiss Memory Lab",
@@ -122,7 +128,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Zurich Digital Archives",
@@ -168,7 +177,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Lausanne Photo Scan",
@@ -207,7 +219,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Brussels Heritage Digital",
@@ -256,7 +271,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Antwerp Media Transfer",
@@ -300,7 +318,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Lyon Mémoire Numérique",
@@ -347,7 +368,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Marseille Photo Lab",
@@ -391,7 +415,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Nice Riviera Scan",
@@ -436,7 +463,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Montréal Film & Photo",
@@ -486,7 +516,10 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   },
   {
     "name": "Toronto Memory Preservation",
@@ -532,117 +565,9 @@
     "other_photo": "",
     "other_film": "",
     "other_video": "",
-    "other_delivery": ""
-  },
-  {
-    "name": "Photolix",
-    "city": "Lyon",
-    "country": "France",
-    "lat": null,
-    "lng": null,
-    "services": [
-      "Photo",
-      "Film",
-      "Video"
-    ],
-    "formats": {
-      "photo": [
-        "Negatives 35mm",
-        "Medium format 120/220",
-        "Polaroid/Instax",
-        "Prints",
-        "Slides 35mm",
-        "Large format"
-      ],
-      "film": [
-        "8mm",
-        "9.5mm Pathé",
-        "Super 8",
-        "16mm"
-      ],
-      "video": [
-        "VHS",
-        "Video8/Hi8",
-        "MiniDV",
-        "DVCAM",
-        "Digital8",
-        "VHS-C",
-        "Betamax",
-        "U-Matic"
-      ]
-    },
-    "website": "www.photolix.fr",
-    "phone": "04 78 89 33 13",
-    "phone_public": true,
-    "email": "lyon@photolix.fr",
-    "email_public": true,
-    "public_description": "",
-    "slug": "photolix",
-    "address": "65 cours Vitton",
-    "address_line2": "",
-    "postal_code": "69006",
-    "delivery": [
-      "USB",
-      "Download link",
-      "DVD/Blu-ray"
-    ],
-    "other_photo": "",
-    "other_film": "",
-    "other_video": "",
-    "other_delivery": ""
-  },
-  {
-    "name": "PANAJOU",
-    "city": "BORDEAUX",
-    "country": "France",
-    "lat": null,
-    "lng": null,
-    "services": [
-      "Photo",
-      "Film",
-      "Video"
-    ],
-    "formats": {
-      "photo": [
-        "Prints",
-        "Albums",
-        "Negatives 35mm",
-        "Medium format 120/220",
-        "Slides 35mm",
-        "Large format",
-        "Polaroid/Instax"
-      ],
-      "film": [
-        "8mm",
-        "9.5mm Pathé",
-        "Super 8",
-        "16mm"
-      ],
-      "video": [
-        "VHS",
-        "Video8/Hi8",
-        "MiniDV",
-        "DVCAM",
-        "VHS-C",
-        "Digital8"
-      ]
-    },
-    "website": "https://www.panajou.fr/",
-    "phone": "+33556442269",
-    "phone_public": true,
-    "email": "contact@panajou.fr",
-    "email_public": true,
-    "public_description": "",
-    "slug": "panajou",
-    "address": "32 allées de Tourny",
-    "address_line2": "",
-    "postal_code": "33000",
-    "delivery": [
-      "USB"
-    ],
-    "other_photo": "",
-    "other_film": "",
-    "other_video": "",
-    "other_delivery": ""
+    "other_delivery": "",
+    "status": "Approved",
+    "is_active": true,
+    "show_on_map": true
   }
 ]
