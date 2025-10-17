@@ -1183,6 +1183,7 @@ button[role="switch"]:focus-visible {
 .partner-list-scrollbar::-webkit-scrollbar-track {
   background: #f3f4f6; /* Light gray track */
   border-radius: 10px;
+  margin-left: 8px; /* Space to the left of scrollbar */
 }
 
 .partner-list-scrollbar::-webkit-scrollbar-thumb {
