@@ -533,5 +533,116 @@
     "other_film": "",
     "other_video": "",
     "other_delivery": ""
+  },
+  {
+    "name": "Photolix",
+    "city": "Lyon",
+    "country": "France",
+    "lat": null,
+    "lng": null,
+    "services": [
+      "Photo",
+      "Film",
+      "Video"
+    ],
+    "formats": {
+      "photo": [
+        "Negatives 35mm",
+        "Medium format 120/220",
+        "Polaroid/Instax",
+        "Prints",
+        "Slides 35mm",
+        "Large format"
+      ],
+      "film": [
+        "8mm",
+        "9.5mm Pathé",
+        "Super 8",
+        "16mm"
+      ],
+      "video": [
+        "VHS",
+        "Video8/Hi8",
+        "MiniDV",
+        "DVCAM",
+        "Digital8",
+        "VHS-C",
+        "Betamax",
+        "U-Matic"
+      ]
+    },
+    "website": "www.photolix.fr",
+    "phone": "04 78 89 33 13",
+    "phone_public": true,
+    "email": "lyon@photolix.fr",
+    "email_public": true,
+    "public_description": "",
+    "slug": "photolix",
+    "address": "65 cours Vitton",
+    "address_line2": "",
+    "postal_code": "69006",
+    "delivery": [
+      "USB",
+      "Download link",
+      "DVD/Blu-ray"
+    ],
+    "other_photo": "",
+    "other_film": "",
+    "other_video": "",
+    "other_delivery": ""
+  },
+  {
+    "name": "PANAJOU",
+    "city": "BORDEAUX",
+    "country": "France",
+    "lat": null,
+    "lng": null,
+    "services": [
+      "Photo",
+      "Film",
+      "Video"
+    ],
+    "formats": {
+      "photo": [
+        "Prints",
+        "Albums",
+        "Negatives 35mm",
+        "Medium format 120/220",
+        "Slides 35mm",
+        "Large format",
+        "Polaroid/Instax"
+      ],
+      "film": [
+        "8mm",
+        "9.5mm Pathé",
+        "Super 8",
+        "16mm"
+      ],
+      "video": [
+        "VHS",
+        "Video8/Hi8",
+        "MiniDV",
+        "DVCAM",
+        "VHS-C",
+        "Digital8"
+      ]
+    },
+    "website": "https://www.panajou.fr/",
+    "phone": "+33556442269",
+    "phone_public": true,
+    "email": "contact@panajou.fr",
+    "email_public": true,
+    "public_description": "",
+    "slug": "panajou",
+    "address": "32 allées de Tourny",
+    "address_line2": "",
+    "postal_code": "33000",
+    "delivery": [
+      "USB"
+    ],
+    "other_photo": "",
+    "other_film": "",
+    "other_video": "",
+    "other_delivery": ""
   }
 ]
