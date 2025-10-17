@@ -1195,3 +1195,37 @@ button[role="switch"]:focus-visible {
   background: #c5703e; /* Darker orange on hover */
 }
 
+/* Leaflet Marker Cluster Styling - Display number ON pin markers */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-image: url('https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 25px !important;
+  height: 41px !important;
+  margin-left: -12px !important;
+  margin-top: -41px !important;
+}
+
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  background: #3388ff;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -2px;
+  right: -8px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
