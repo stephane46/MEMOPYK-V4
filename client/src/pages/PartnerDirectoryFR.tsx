@@ -339,7 +339,7 @@ export default function PartnerDirectoryFR() {
           </div>
 
           {/* Partner List - Aligned with Map Top */}
-          <div className="flex flex-col gap-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar">
+          <div className="flex flex-col gap-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar p-0">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
             ) : visiblePartners.length === 0 ? (
@@ -356,7 +356,7 @@ export default function PartnerDirectoryFR() {
                     <Card
                     key={index}
                     id={`card-${partner.slug}`}
-                    className={`${isExpanded ? 'h-[588px]' : 'h-[282px]'} flex-shrink-0 snap-start transition-all overflow-hidden cursor-pointer w-full ${
+                    className={`${isExpanded ? 'h-[588px]' : 'h-[282px]'} flex-shrink-0 snap-start transition-all overflow-hidden cursor-pointer w-full m-0 ${
                       selectedPartner === partner.slug
                         ? 'ring-2 ring-[#D67C4A] shadow-xl'
                         : 'hover:shadow-md'
