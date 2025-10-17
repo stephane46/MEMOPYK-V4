@@ -75,6 +75,39 @@ function MapFitBounds({ partners }: { partners: Array<{ lat: number | null; lng:
   return null;
 }
 
+// Component to auto-zoom map when search results change
+function MapAutoZoomToSearch({ 
+  searchText, 
+  filteredPartners 
+}: { 
+  searchText: string; 
+  filteredPartners: Array<{ lat: number | null; lng: number | null }>;
+}) {
+  const map = useMap();
+  const prevSearchText = useRef('');
+  
+  useEffect(() => {
+    // Only auto-zoom when search text changes (not on initial load or filter changes)
+    if (searchText && searchText !== prevSearchText.current && filteredPartners.length > 0) {
+      const partnersWithCoords = filteredPartners.filter(p => p.lat && p.lng);
+      
+      if (partnersWithCoords.length === 1) {
+        // Single result: zoom to that specific location
+        const partner = partnersWithCoords[0];
+        map.flyTo([partner.lat!, partner.lng!], 13, { duration: 1.5 });
+      } else if (partnersWithCoords.length > 1) {
+        // Multiple results: fit bounds to show all
+        const bounds: [number, number][] = partnersWithCoords.map(p => [p.lat!, p.lng!]);
+        map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 10, duration: 1.5 });
+      }
+    }
+    
+    prevSearchText.current = searchText;
+  }, [searchText, filteredPartners, map]);
+  
+  return null;
+}
+
 interface Partner {
   name: string;
   city: string;
@@ -342,6 +375,7 @@ export default function PartnerDirectoryFR() {
                 <MapBoundsTracker onBoundsChange={setMapBounds} />
                 <MapZoomController zoomTo={zoomTo} />
                 <MapFitBounds partners={mappablePartners} />
+                <MapAutoZoomToSearch searchText={searchText} filteredPartners={mappablePartners} />
                 {mappablePartners.map((partner, index) => (
                   partner.lat && partner.lng && (
                     <Marker
