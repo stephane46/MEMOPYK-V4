@@ -379,7 +379,7 @@ export default function PartnerDirectoryFR() {
                   })}
                 </div>
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600 text-right">
                 <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> partenaire{visiblePartners.length !== 1 ? 's' : ''} visible{visiblePartners.length !== 1 ? 's' : ''}
               </div>
             </div>
