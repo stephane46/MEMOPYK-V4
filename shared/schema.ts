@@ -554,24 +554,24 @@ export const partners = pgTable("partners", {
   id: serial("id").primaryKey(),
   timestamp: timestamp("timestamp").defaultNow(),
   partnerType: varchar("partner_type", { length: 50 }).default("digitization"),
-  partnerName: varchar("partner_name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull(),
+  partnerName: text("partner_name").notNull(),
+  email: text("email").notNull(),
   emailPublic: boolean("email_public").default(true),
-  phone: varchar("phone", { length: 50 }),
+  phone: text("phone"),
   phonePublic: boolean("phone_public").default(false),
-  website: varchar("website", { length: 500 }),
+  website: text("website"),
   address: text("address"),
   addressLine2: text("address_line2"),
-  city: varchar("city", { length: 255 }),
-  postalCode: varchar("postal_code", { length: 20 }),
+  city: text("city"),
+  postalCode: text("postal_code"),
   country: varchar("country", { length: 2 }), // ISO-2 country code
-  photoFormats: text("photo_formats").array().default(sql`'{}'`),
+  photoFormats: text("photo_formats"), // Comma-separated string
   otherPhoto: text("other_photo"),
-  filmFormats: text("film_formats").array().default(sql`'{}'`),
+  filmFormats: text("film_formats"), // Comma-separated string
   otherFilm: text("other_film"),
-  videoCassettes: text("video_cassettes").array().default(sql`'{}'`),
+  videoCassettes: text("video_cassettes"), // Comma-separated string
   otherVideo: text("other_video"),
-  delivery: text("delivery").array().default(sql`'{}'`),
+  delivery: text("delivery"), // Comma-separated string
   otherDelivery: text("other_delivery"),
   publicDescription: text("public_description"),
   consent: boolean("consent").default(false),
@@ -580,7 +580,7 @@ export const partners = pgTable("partners", {
   showOnMap: boolean("show_on_map").default(false),
   lat: numeric("lat", { precision: 10, scale: 7 }),
   lng: numeric("lng", { precision: 10, scale: 7 }),
-  slug: varchar("slug", { length: 255 }),
+  slug: text("slug"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });

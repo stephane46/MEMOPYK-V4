@@ -58,6 +58,13 @@ export interface HybridStorageInterface {
   updateWhyMemopykCard(cardId: string, updates: any): Promise<any>;
   deleteWhyMemopykCard(cardId: string): Promise<any>;
   
+  // Partners (approved partners for directory map)
+  getPartners(filters?: any): Promise<any[]>;
+  getPartnerById(partnerId: number): Promise<any>;
+  createPartner(partnerData: any): Promise<any>;
+  updatePartner(partnerId: number, updates: any): Promise<any>;
+  deletePartner(partnerId: number): Promise<any>;
+  
   // SEO settings - comprehensive management
   getSeoSettings(page?: string, language?: string): Promise<any[]>;
   createSeoSettings(seoData: any): Promise<any>;
@@ -2078,6 +2085,233 @@ export class HybridStorage implements HybridStorageInterface {
     }
     
     this.saveJsonFile('why-memopyk-cards.json', filteredCards);
+    return true;
+  }
+
+  // ==================== PARTNERS OPERATIONS ====================
+  
+  async getPartners(filters?: any): Promise<any[]> {
+    try {
+      console.log('🔍 Partners: Querying Supabase database...');
+      
+      if (this.supabase) {
+        let query = this.supabase.from('partners').select('*');
+        
+        // Apply filters if provided
+        if (filters) {
+          if (filters.status) {
+            query = query.eq('status', filters.status);
+          }
+          if (filters.is_active !== undefined) {
+            query = query.eq('is_active', filters.is_active);
+          }
+          if (filters.show_on_map !== undefined) {
+            query = query.eq('show_on_map', filters.show_on_map);
+          }
+          if (filters.search) {
+            query = query.or(`partner_name.ilike.%${filters.search}%,city.ilike.%${filters.search}%`);
+          }
+        }
+        
+        query = query.order('id', { ascending: false });
+        
+        const { data, error } = await query;
+        
+        if (!error && data) {
+          console.log(`✅ Partners: Retrieved ${data.length} items from Supabase`);
+          
+          // Sync to JSON backup
+          this.saveJsonFile('partners.json', data);
+          
+          return data;
+        }
+        
+        console.warn('⚠️ Partners: Supabase query failed:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Partners: Database query failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    let data = this.loadJsonFile('partners.json');
+    
+    // Apply filters to JSON data
+    if (filters) {
+      if (filters.status) {
+        data = data.filter((p: any) => p.status === filters.status);
+      }
+      if (filters.is_active !== undefined) {
+        data = data.filter((p: any) => p.is_active === filters.is_active);
+      }
+      if (filters.show_on_map !== undefined) {
+        data = data.filter((p: any) => p.show_on_map === filters.show_on_map);
+      }
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        data = data.filter((p: any) => 
+          p.partner_name?.toLowerCase().includes(searchLower) ||
+          p.city?.toLowerCase().includes(searchLower)
+        );
+      }
+    }
+    
+    return data;
+  }
+
+  async getPartnerById(partnerId: number): Promise<any> {
+    try {
+      console.log(`🔍 Partners: Fetching partner ${partnerId} from Supabase`);
+      
+      if (this.supabase) {
+        const { data, error } = await this.supabase
+          .from('partners')
+          .select('*')
+          .eq('id', partnerId)
+          .single();
+        
+        if (!error && data) {
+          console.log('✅ Partner retrieved from Supabase');
+          return data;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Partner fetch failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const partners = this.loadJsonFile('partners.json');
+    return partners.find((p: any) => p.id === partnerId) || null;
+  }
+
+  async createPartner(partnerData: any): Promise<any> {
+    try {
+      console.log('🆕 Creating partner in Supabase:', partnerData.partner_name);
+      
+      if (this.supabase) {
+        const { data, error } = await this.supabase
+          .from('partners')
+          .insert([partnerData])
+          .select()
+          .single();
+        
+        if (!error && data) {
+          console.log('✅ Partner created in Supabase:', data.id);
+          
+          // Update JSON backup
+          const partners = this.loadJsonFile('partners.json');
+          partners.push(data);
+          this.saveJsonFile('partners.json', partners);
+          
+          return data;
+        }
+        
+        console.warn('⚠️ Supabase insert failed:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Partner creation failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const partners = this.loadJsonFile('partners.json');
+    const newId = partners.length > 0 ? Math.max(...partners.map((p: any) => p.id || 0)) + 1 : 1;
+    const newPartner = {
+      ...partnerData,
+      id: newId,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    partners.push(newPartner);
+    this.saveJsonFile('partners.json', partners);
+    
+    return newPartner;
+  }
+
+  async updatePartner(partnerId: number, updates: any): Promise<any> {
+    try {
+      console.log(`🔄 Updating partner ${partnerId} in Supabase`);
+      
+      if (this.supabase) {
+        const { data, error } = await this.supabase
+          .from('partners')
+          .update(updates)
+          .eq('id', partnerId)
+          .select()
+          .single();
+        
+        if (!error && data) {
+          console.log('✅ Partner updated in Supabase');
+          
+          // Update JSON backup
+          const partners = this.loadJsonFile('partners.json');
+          const index = partners.findIndex((p: any) => p.id === partnerId);
+          if (index !== -1) {
+            partners[index] = data;
+            this.saveJsonFile('partners.json', partners);
+          }
+          
+          return data;
+        }
+        
+        console.warn('⚠️ Supabase update failed:', error);
+      }
+    } catch (error) {
+      console.warn('⚠️ Partner update failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const partners = this.loadJsonFile('partners.json');
+    const index = partners.findIndex((p: any) => p.id === partnerId);
+    
+    if (index === -1) {
+      throw new Error('Partner not found');
+    }
+    
+    partners[index] = {
+      ...partners[index],
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
+    
+    this.saveJsonFile('partners.json', partners);
+    
+    return partners[index];
+  }
+
+  async deletePartner(partnerId: number): Promise<any> {
+    try {
+      console.log(`🗑️ Deleting partner ${partnerId} from Supabase`);
+      
+      if (this.supabase) {
+        const { error } = await this.supabase
+          .from('partners')
+          .delete()
+          .eq('id', partnerId);
+        
+        if (!error) {
+          console.log('✅ Partner deleted from Supabase');
+          
+          // Update JSON backup
+          const partners = this.loadJsonFile('partners.json');
+          const filteredPartners = partners.filter((p: any) => p.id !== partnerId);
+          this.saveJsonFile('partners.json', filteredPartners);
+          
+          return true;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Partner deletion failed, using JSON fallback:', error);
+    }
+    
+    // Fallback to JSON
+    const partners = this.loadJsonFile('partners.json');
+    const filteredPartners = partners.filter((p: any) => p.id !== partnerId);
+    
+    if (filteredPartners.length === partners.length) {
+      throw new Error('Partner not found');
+    }
+    
+    this.saveJsonFile('partners.json', filteredPartners);
     return true;
   }
 
