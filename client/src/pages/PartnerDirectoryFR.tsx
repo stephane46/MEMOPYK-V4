@@ -319,80 +319,74 @@ export default function PartnerDirectoryFR() {
         </div>
       </div>
 
-      {/* Search & Filters - Sticky below header */}
-      <div className="sticky top-0 z-50 bg-white shadow-lg">
-        <div className="container mx-auto px-4">
-          <Card id="filters-section" className="border-0 shadow-none">
-            <CardContent className="p-3">
-              <div className="flex items-center gap-4">
-                {/* Text Search - Half Width */}
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <Input
-                      type="text"
-                      placeholder="Rechercher par nom ou ville..."
-                      value={searchText}
-                      onChange={(e) => setSearchText(e.target.value)}
-                      className="pl-10 pr-10"
-                      data-testid="input-search-partners"
-                    />
-                    {searchText && (
-                      <button
-                        onClick={() => setSearchText('')}
-                        className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                        data-testid="button-clear-search"
-                      >
-                        <X className="h-5 w-5" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Service Filters - Half Width */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                      <Filter className="h-4 w-4" />
-                      Services:
-                    </h3>
-                    <div className="flex gap-2">
-                      {serviceCounts.map(({ id, name, count }) => {
-                        const Icon = getServiceIcon(id);
-                        return (
-                          <Badge
-                            key={id}
-                            variant={selectedServices.includes(id) ? "default" : "outline"}
-                            className={`cursor-pointer transition-colors flex items-center justify-center gap-1.5 w-[130px] px-3 py-1.5 ${
-                              selectedServices.includes(id)
-                                ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
-                                : 'hover:bg-gray-100'
-                            }`}
-                            onClick={() => toggleService(id)}
-                            data-testid={`filter-service-${id.toLowerCase()}`}
-                          >
-                            <Icon className="h-4 w-4" />
-                            {name} ({count})
-                          </Badge>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Results Count */}
-                <div className="text-sm text-gray-600 whitespace-nowrap">
-                  <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> partenaire{visiblePartners.length !== 1 ? 's' : ''} visible{visiblePartners.length !== 1 ? 's' : ''}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 pt-4">
 
         {/* Map & List Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Search Bar - Above Map Column Only */}
+          <div>
+            <div className="mb-3">
+              <div className="relative" style={{ width: '50%' }}>
+                <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Rechercher par nom ou ville..."
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  className="pl-10 pr-10"
+                  data-testid="input-search-partners"
+                />
+                {searchText && (
+                  <button
+                    onClick={() => setSearchText('')}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    data-testid="button-clear-search"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Service Filters - Above Cards Column Only */}
+          <div>
+            <div className="mb-3">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                  <Filter className="h-4 w-4" />
+                  Services:
+                </h3>
+                <div className="flex gap-2 flex-wrap">
+                  {serviceCounts.map(({ id, name, count }) => {
+                    const Icon = getServiceIcon(id);
+                    return (
+                      <Badge
+                        key={id}
+                        variant={selectedServices.includes(id) ? "default" : "outline"}
+                        className={`cursor-pointer transition-colors flex items-center justify-center gap-1.5 w-[130px] px-3 py-1.5 ${
+                          selectedServices.includes(id)
+                            ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
+                            : 'hover:bg-gray-100'
+                        }`}
+                        onClick={() => toggleService(id)}
+                        data-testid={`filter-service-${id.toLowerCase()}`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {name} ({count})
+                      </Badge>
+                    );
+                  })}
+                </div>
+                <div className="text-sm text-gray-600 whitespace-nowrap ml-auto">
+                  <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> partenaire{visiblePartners.length !== 1 ? 's' : ''} visible{visiblePartners.length !== 1 ? 's' : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Map & List Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column: Map */}
           <div>
