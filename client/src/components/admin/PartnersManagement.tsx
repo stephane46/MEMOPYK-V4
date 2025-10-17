@@ -95,35 +95,8 @@ export default function PartnersManagement() {
     }
   });
 
-  const exportMapMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch('/api/partners/export-map', {
-        method: 'POST'
-      });
-      if (!response.ok) throw new Error('Export failed');
-      return response.json();
-    },
-    onSuccess: (data: any) => {
-      toast({
-        title: "Données carte mises à jour",
-        description: `${data.count} partenaire(s) exporté(s) vers /partners.json`,
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour les données de la carte",
-        variant: "destructive",
-      });
-    }
-  });
-
   const handleDownload = () => {
     window.open('/api/partners/download', '_blank');
-  };
-
-  const handleExportMap = () => {
-    exportMapMutation.mutate();
   };
 
   const handleDelete = (partnerId: number, partnerName: string) => {
@@ -220,15 +193,6 @@ export default function PartnersManagement() {
             <ExternalLink className="h-4 w-4" />
             Voir l'annuaire
           </a>
-          <button 
-            onClick={handleExportMap}
-            disabled={exportMapMutation.isPending}
-            className="bg-white text-black border-2 border-[#2A4759] px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-gray-50 transition-colors disabled:opacity-50"
-            data-testid="button-export-map"
-          >
-            <Map className="h-4 w-4" />
-            {exportMapMutation.isPending ? 'Export...' : 'Mettre à jour la carte'}
-          </button>
           <button 
             onClick={handleDownload}
             className="bg-[#D67C4A] text-black border-2 border-[#D67C4A] px-6 py-3 rounded-lg font-semibold inline-flex items-center gap-2 hover:opacity-90 transition-opacity"

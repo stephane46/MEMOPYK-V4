@@ -186,26 +186,28 @@ export default function PartnerDirectoryEN() {
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
   const clusterRef = useRef<any>(null);
 
-  const { data: partners = [], isLoading, refetch } = useQuery<Partner[]>({
-    queryKey: ['/partners.json'],
+  const { data: partnersResponse, isLoading, refetch } = useQuery<{ partners: Partner[], total: number }>({
+    queryKey: ['/api/partners', { limit: 1000, status: 'Approved', is_active: true, show_on_map: true }],
     queryFn: async () => {
       try {
-        const response = await fetch('/partners.json', {
+        const response = await fetch('/api/partners?limit=1000&status=Approved&is_active=true&show_on_map=true', {
           cache: 'no-store',
           headers: { 'Cache-Control': 'no-cache' }
         });
         if (!response.ok) {
-          return [];
+          return { partners: [], total: 0 };
         }
         const data = await response.json();
         return data;
       } catch (error) {
-        return [];
+        return { partners: [], total: 0 };
       }
     },
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
+
+  const partners = partnersResponse?.partners || [];
 
   // Filter partners
   const filteredPartners = partners.filter(partner => {

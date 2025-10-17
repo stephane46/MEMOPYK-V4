@@ -6,7 +6,7 @@ import * as XLSX from "xlsx";
 import fs from "fs";
 import path from "path";
 import { Resend } from "resend";
-import { partnerStore } from "../stores/ExcelPartnerStore";
+import { hybridStorage } from "../hybrid-storage";
 
 const router = Router();
 const EXCEL_FILE = path.join(process.cwd(), "partner-submissions.xlsx");
@@ -38,8 +38,41 @@ router.post("/api/partners/intake", rateLimit(30), async (req, res) => {
       return res.status(400).json({ ok: false, error: "captcha_failed", reqId });
     }
 
-    // Save to Excel file
-    await saveToExcel(data);
+    // Save to Supabase via hybrid storage (with JSON fallback)
+    const partnerData = {
+      timestamp: new Date().toISOString(),
+      partner_type: data.partner_type || 'digitization',
+      partner_name: data.partner_name,
+      email: data.email,
+      email_public: Boolean(data.email_public),
+      phone: data.phone || '',
+      phone_public: Boolean(data.phone_public),
+      website: data.website || '',
+      address: data.address?.street || '',
+      address_line2: data.address?.line2 || '',
+      city: data.address?.city || '',
+      postal_code: data.address?.postal_code || '',
+      country: data.address?.country || '',
+      photo_formats: Array.isArray(data.photo_formats) ? data.photo_formats.join(', ') : data.photo_formats || '',
+      other_photo: data.other_photo_formats || '',
+      film_formats: Array.isArray(data.film_formats) ? data.film_formats.join(', ') : data.film_formats || '',
+      other_film: data.other_film_formats || '',
+      video_cassettes: Array.isArray(data.video_formats) ? data.video_formats.join(', ') : data.video_formats || '',
+      other_video: data.other_video_formats || '',
+      delivery: Array.isArray(data.delivery) ? data.delivery.join(', ') : data.delivery || '',
+      other_delivery: data.other_delivery || '',
+      public_description: data.public_description || '',
+      consent: true,
+      status: 'Pending',
+      is_active: false,
+      show_on_map: false,
+      lat: null,
+      lng: null,
+      slug: ''
+    };
+
+    const partner = await hybridStorage.createPartner(partnerData);
+    console.log(`✅ Partner intake saved to Supabase: ${partner.partner_name} (ID: ${partner.id})`);
     
     // Send email notification
     try {
@@ -50,7 +83,7 @@ router.post("/api/partners/intake", rateLimit(30), async (req, res) => {
       // Don't fail the request if email fails
     }
 
-    return res.json({ ok: true, saved: "excel", reqId });
+    return res.json({ ok: true, saved: "supabase", partnerId: partner.id, reqId });
   } catch (e: any) {
     console.error("INTAKE_ERR", reqId, e?.message || e);
     return res.status(500).json({ ok: false, error: "server_error", reqId });
@@ -72,33 +105,6 @@ router.get("/api/partners/download", async (req, res) => {
     });
   } catch (e: any) {
     console.error("Download error:", e);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// Export map data JSON (approved partners only)
-router.post("/api/partners/export-map", async (req, res) => {
-  try {
-    const mapPartners = partnerStore.getMapData();
-
-    // Save to public JSON file
-    const publicDir = path.join(process.cwd(), "public");
-    if (!fs.existsSync(publicDir)) {
-      fs.mkdirSync(publicDir, { recursive: true });
-    }
-    
-    const jsonPath = path.join(publicDir, "partners.json");
-    fs.writeFileSync(jsonPath, JSON.stringify(mapPartners, null, 2));
-
-    console.log(`✅ Map data exported via store: ${mapPartners.length} partners`);
-    res.json({ 
-      ok: true, 
-      count: mapPartners.length, 
-      file: "/partners.json",
-      partners: mapPartners.slice(0, 5) // Preview first 5
-    });
-  } catch (e: any) {
-    console.error("Export error:", e);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -135,15 +141,15 @@ router.post("/api/partners/import-tsv", async (req, res) => {
           row[header.trim()] = values[index]?.trim() || '';
         });
 
-        // Create partner object matching Excel format
+        // Create partner object for Supabase (boolean values, not strings)
         const newPartner = {
           timestamp: row['Timestamp'] || new Date().toISOString(),
           partner_type: 'digitization',
           partner_name: row['Partner Name'] || '',
           email: row['Email'] || '',
-          email_public: row['Email_Public'] === 'TRUE' ? 'TRUE' : 'FALSE',
+          email_public: row['Email_Public'] === 'TRUE' || row['Email_Public'] === true,
           phone: row['Phone'] || '',
-          phone_public: row['Phone_Public'] === 'TRUE' ? 'TRUE' : (row['Email_Public'] === 'TRUE' ? 'TRUE' : 'FALSE'), // Default to email_public if phone_public not specified
+          phone_public: row['Phone_Public'] === 'TRUE' || row['Phone_Public'] === true || (row['Email_Public'] === 'TRUE' || row['Email_Public'] === true),
           website: row['Website'] || '',
           address: row['Address'] || '',
           address_line2: row['Complément d\'adresse'] || row['Address Line 2'] || '',
@@ -159,19 +165,19 @@ router.post("/api/partners/import-tsv", async (req, res) => {
           delivery: row['Delivery'] || '',
           other_delivery: row['Other Delivery'] || '',
           public_description: row['Public Description'] || '',
-          consent: row['Consent'] === 'Yes' ? 'TRUE' : 'TRUE', // Default to TRUE
+          consent: true,
           status: 'Approved', // Auto-approve TSV imports
-          is_active: 'TRUE',
-          show_on_map: 'TRUE',
-          lat: '',
-          lng: '',
-          slug: ''
+          is_active: true,
+          show_on_map: true,
+          lat: row['lat'] ? parseFloat(row['lat']) : null,
+          lng: row['lng'] ? parseFloat(row['lng']) : null,
+          slug: row['slug'] || ''
         };
 
-        const success = partnerStore.create(newPartner);
-        if (success) {
+        const result = await hybridStorage.createPartner(newPartner);
+        if (result) {
           importedCount++;
-          console.log(`✅ Imported partner ${i + 1}: ${newPartner.partner_name}`);
+          console.log(`✅ Imported partner ${i + 1}: ${newPartner.partner_name} (ID: ${result.id})`);
         } else {
           errors.push(`Row ${i + 1}: Failed to create partner`);
         }
@@ -205,15 +211,15 @@ router.post("/api/partners/create", async (req, res) => {
   try {
     const partnerData = req.body;
     
-    // Create new partner row with current timestamp
+    // Prepare partner data for Supabase (snake_case, boolean values)
     const newPartner = {
       timestamp: new Date().toISOString(),
       partner_type: partnerData.partner_type || 'digitization',
       partner_name: partnerData.partner_name || '',
       email: partnerData.email || '',
-      email_public: partnerData.email_public || 'FALSE',
+      email_public: partnerData.email_public || false,
       phone: partnerData.phone || '',
-      phone_public: partnerData.phone_public || 'FALSE',
+      phone_public: partnerData.phone_public || false,
       website: partnerData.website || '',
       address: partnerData.address || '',
       address_line2: partnerData.address_line2 || '',
@@ -229,23 +235,23 @@ router.post("/api/partners/create", async (req, res) => {
       delivery: partnerData.delivery || '',
       other_delivery: partnerData.other_delivery || '',
       public_description: partnerData.public_description || '',
-      consent: 'TRUE',
+      consent: true,
       status: partnerData.status || 'Pending',
-      is_active: partnerData.is_active ? 'TRUE' : 'FALSE',
-      show_on_map: partnerData.show_on_map ? 'TRUE' : 'FALSE',
-      lat: partnerData.lat || '',
-      lng: partnerData.lng || '',
+      is_active: partnerData.is_active || false,
+      show_on_map: partnerData.show_on_map || false,
+      lat: partnerData.lat || null,
+      lng: partnerData.lng || null,
       slug: partnerData.slug || ''
     };
 
-    const success = partnerStore.create(newPartner);
+    const result = await hybridStorage.createPartner(newPartner);
     
-    if (!success) {
+    if (!result) {
       return res.status(500).json({ error: "Failed to create partner" });
     }
 
-    console.log(`✅ Partner created via store: ${newPartner.partner_name}`);
-    return res.json({ ok: true, message: "Partner created successfully" });
+    console.log(`✅ Partner created: ${result.partner_name} (ID: ${result.id})`);
+    return res.json({ ok: true, message: "Partner created successfully", partner: result });
   } catch (e: any) {
     console.error("Create error:", e);
     return res.status(500).json({ error: "Server error" });
@@ -256,19 +262,34 @@ router.post("/api/partners/create", async (req, res) => {
 router.get("/api/partners", async (req, res) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
+    const limit = parseInt(req.query.limit as string) || 1000; // Higher limit for directory map
     const search = req.query.search as string;
     const status = req.query.status as string;
-    const partner_type = req.query.partner_type as string;
-    const services = req.query.services ? (req.query.services as string).split(',') : undefined;
+    const is_active = req.query.is_active === 'true' ? true : req.query.is_active === 'false' ? false : undefined;
+    const show_on_map = req.query.show_on_map === 'true' ? true : req.query.show_on_map === 'false' ? false : undefined;
 
-    const result = partnerStore.getAll(
-      { search, status, partner_type, services },
-      page,
-      limit
-    );
+    // Fetch from hybrid storage (Supabase primary + JSON fallback)
+    const filters: any = {};
+    if (status) filters.status = status;
+    if (is_active !== undefined) filters.is_active = is_active;
+    if (show_on_map !== undefined) filters.show_on_map = show_on_map;
+    if (search) filters.search = search;
 
-    res.json(result);
+    const allPartners = await hybridStorage.getPartners(filters);
+    
+    // Client-side pagination for compatibility
+    const total = allPartners.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const partners = allPartners.slice(startIndex, endIndex);
+
+    res.json({ 
+      partners, 
+      total, 
+      page, 
+      limit,
+      totalPages: Math.ceil(total / limit)
+    });
   } catch (e: any) {
     console.error("Get partners error:", e);
     res.status(500).json({ error: "Server error" });
@@ -329,35 +350,35 @@ router.get("/api/partners/summary", async (req, res) => {
 // Update partner details (Status, Is_Active, Show_On_Map, lat, lng)
 router.patch("/api/partners/:id/update", async (req, res) => {
   try {
-    const rowId = parseInt(req.params.id);
+    const partnerId = parseInt(req.params.id);
     const updates = req.body;
 
-    // Convert boolean values to "TRUE"/"FALSE" strings for Excel compatibility
+    // Normalize boolean values for Supabase (true/false instead of "TRUE"/"FALSE")
     const normalizedUpdates = { ...updates };
     if ('is_active' in normalizedUpdates) {
-      normalizedUpdates.is_active = normalizedUpdates.is_active ? 'TRUE' : 'FALSE';
+      normalizedUpdates.is_active = Boolean(normalizedUpdates.is_active);
     }
     if ('show_on_map' in normalizedUpdates) {
-      normalizedUpdates.show_on_map = normalizedUpdates.show_on_map ? 'TRUE' : 'FALSE';
+      normalizedUpdates.show_on_map = Boolean(normalizedUpdates.show_on_map);
     }
     if ('email_public' in normalizedUpdates) {
-      normalizedUpdates.email_public = normalizedUpdates.email_public ? 'TRUE' : 'FALSE';
+      normalizedUpdates.email_public = Boolean(normalizedUpdates.email_public);
     }
     if ('phone_public' in normalizedUpdates) {
-      normalizedUpdates.phone_public = normalizedUpdates.phone_public ? 'TRUE' : 'FALSE';
+      normalizedUpdates.phone_public = Boolean(normalizedUpdates.phone_public);
     }
 
-    const success = partnerStore.update(rowId, normalizedUpdates);
+    const result = await hybridStorage.updatePartner(partnerId, normalizedUpdates);
     
-    if (!success) {
+    if (!result) {
       return res.status(404).json({ error: "Partner not found" });
     }
 
-    console.log(`✅ Partner updated via store: row ${rowId}`);
-    return res.json({ ok: true, message: "Partner updated successfully" });
+    console.log(`✅ Partner updated: ${partnerId}`);
+    return res.json({ ok: true, message: "Partner updated successfully", partner: result });
   } catch (e: any) {
     console.error("Update error:", e);
-    return res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: e.message || "Server error" });
   }
 });
 
@@ -441,19 +462,15 @@ router.patch("/api/partners/:id/update-legacy", async (req, res) => {
 // Delete a partner submission
 router.delete("/api/partners/:id", async (req, res) => {
   try {
-    const rowId = parseInt(req.params.id);
+    const partnerId = parseInt(req.params.id);
 
-    const success = partnerStore.delete(rowId);
+    await hybridStorage.deletePartner(partnerId);
     
-    if (!success) {
-      return res.status(404).json({ error: "Partner not found" });
-    }
-
-    console.log(`✅ Partner deleted via store: row ${rowId}`);
+    console.log(`✅ Partner deleted: ${partnerId}`);
     return res.json({ ok: true, message: "Partner deleted successfully" });
   } catch (e: any) {
     console.error("Delete error:", e);
-    return res.status(500).json({ error: "Server error" });
+    return res.status(404).json({ error: e.message || "Partner not found" });
   }
 });
 
@@ -527,84 +544,6 @@ router.delete("/api/partners/:id/legacy", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
-async function saveToExcel(data: any) {
-  let workbook: XLSX.WorkBook;
-  let worksheet: XLSX.WorkSheet;
-  
-  // Load existing file or create new one
-  if (fs.existsSync(EXCEL_FILE)) {
-    workbook = XLSX.readFile(EXCEL_FILE);
-    worksheet = workbook.Sheets[workbook.SheetNames[0]];
-  } else {
-    workbook = XLSX.utils.book_new();
-    worksheet = XLSX.utils.aoa_to_sheet([
-      ["Timestamp", "Partner Name", "Email", "Email_Public", "Phone", "Website", 
-       "Address", "Complément d'adresse", "City", "Postal Code", "Country", "Photo Formats", "Other Photo", 
-       "Film Formats", "Other Film", "Video Cassettes", "Other Video", "Delivery", "Other Delivery", "Public Description", "Consent",
-       "Status", "Is_Active", "Show_On_Map", "lat", "lng", "slug"]
-    ]);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Partners");
-  }
-  
-  // Map country code to full name
-  const countryMap: Record<string, string> = {
-    'FR': 'France',
-    'BE': 'Belgium',
-    'CA': 'Canada',
-    'MC': 'Monaco',
-    'CH': 'Switzerland'
-  };
-  
-  const countryName = countryMap[data.address?.country] || data.address?.country || "";
-  
-  // Generate slug from partner name
-  const generateSlug = (name: string): string => {
-    return name
-      .toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove accents
-      .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with hyphens
-      .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
-  };
-  
-  // Prepare row data
-  const row = [
-    new Date().toISOString(),
-    data.partner_name,
-    data.email,
-    data.email_public ? "TRUE" : "FALSE",
-    data.phone || "",
-    data.website || "",
-    data.address?.street || "",
-    data.address?.line2 || "",
-    data.address?.city || "",
-    data.address?.postal_code || "",
-    countryName,
-    data.photo_formats?.join(", ") || "",
-    data.other_photo_formats || "",
-    data.film_formats?.join(", ") || "",
-    data.other_film_formats || "",
-    data.video_cassettes?.join(", ") || "",
-    data.other_video_formats || "",
-    data.delivery?.join(", ") || "",
-    data.other_delivery || "",
-    data.public_description || "",
-    data.consent_listed ? "Yes" : "No",
-    "Pending",
-    "FALSE",
-    "FALSE",
-    "",
-    "",
-    generateSlug(data.partner_name)
-  ];
-  
-  // Append row
-  XLSX.utils.sheet_add_aoa(worksheet, [row], { origin: -1 });
-  
-  // Save file
-  XLSX.writeFile(workbook, EXCEL_FILE);
-  console.log(`✅ Partner submission saved to Excel: ${data.partner_name}`);
-}
 
 async function sendPartnerNotification(data: any) {
   if (!resend) {

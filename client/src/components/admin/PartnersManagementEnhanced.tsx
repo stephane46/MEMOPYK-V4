@@ -238,23 +238,6 @@ export default function PartnersManagementEnhanced() {
     quickUpdateMutation.mutate({ id: partnerId, updates: { show_on_map: !currentValue } });
   };
 
-  const exportMapMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch('/api/partners/export-map', { method: 'POST' });
-      if (!response.ok) throw new Error('Export failed');
-      return response.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "Map data updated",
-        description: `${data.count} partner(s) exported to /partners.json`,
-      });
-    },
-    onError: () => {
-      toast({ title: "Export failed", variant: "destructive" });
-    }
-  });
-
   const importTsvMutation = useMutation({
     mutationFn: async (tsvText: string) => {
       const response = await fetch('/api/partners/import-tsv', {
@@ -378,16 +361,6 @@ export default function PartnersManagementEnhanced() {
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download Excel
-              </Button>
-              <Button
-                onClick={() => exportMapMutation.mutate()}
-                className="!bg-[#2A4759] hover:!bg-[#1f3a4a] !text-white font-medium !border-[#2A4759]"
-                size="sm"
-                disabled={exportMapMutation.isPending}
-                data-testid="button-export-map"
-              >
-                <Map className="h-4 w-4 mr-2" />
-                Export to Map
               </Button>
             </div>
           </div>
