@@ -402,9 +402,9 @@ export default function PartnerDirectoryFR() {
                     }}
                     data-testid={`partner-card-${partner.slug}`}
                   >
-                    <CardContent className="p-0">
+                    <CardContent className="p-0 h-full flex flex-col">
                       {/* Header Section with colored background */}
-                      <div className="bg-gradient-to-r from-[#2A4759] to-[#1f3646] px-4 py-2 sticky top-0 z-10">
+                      <div className="bg-gradient-to-r from-[#2A4759] to-[#1f3646] px-4 py-2 sticky top-0 z-10 flex-shrink-0">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
                             <h3 className="text-xl font-bold text-white mb-1">
@@ -419,7 +419,7 @@ export default function PartnerDirectoryFR() {
                       </div>
 
                       {/* Content Section */}
-                      <div className={isExpanded ? "p-3 space-y-2 overflow-y-auto" : "p-4 space-y-3"} style={isExpanded ? { maxHeight: 'calc(588px - 60px)' } : {}}>
+                      <div className={isExpanded ? "p-3 space-y-2 overflow-y-auto flex-1" : "p-4 space-y-3"}>
                         {/* Description with expand indicator */}
                         {partner.public_description && (
                           <div>
@@ -566,7 +566,7 @@ export default function PartnerDirectoryFR() {
                       {isExpanded && (
                         <button
                           onClick={() => setExpandedCard(null)}
-                          className="w-full text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium py-2 flex items-center justify-center gap-1 border-t bg-white sticky bottom-0"
+                          className="w-full text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium py-2.5 flex items-center justify-center gap-1 border-t bg-white flex-shrink-0"
                         >
                           Réduire <ChevronUp className="h-4 w-4" />
                         </button>
