@@ -54,6 +54,27 @@ function MapZoomController({ zoomTo }: { zoomTo: { lat: number; lng: number; zoo
   return null;
 }
 
+// Component to fit map bounds to all partners on initial load
+function MapFitBounds({ partners }: { partners: Array<{ lat: number | null; lng: number | null }> }) {
+  const map = useMap();
+  const hasInitialized = useRef(false);
+  
+  useEffect(() => {
+    if (!hasInitialized.current && partners.length > 0) {
+      const bounds: [number, number][] = partners
+        .filter(p => p.lat && p.lng)
+        .map(p => [p.lat!, p.lng!]);
+      
+      if (bounds.length > 0) {
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 10 });
+        hasInitialized.current = true;
+      }
+    }
+  }, [partners, map]);
+  
+  return null;
+}
+
 interface Partner {
   name: string;
   city: string;
@@ -319,6 +340,7 @@ export default function PartnerDirectoryFR() {
                 />
                 <MapBoundsTracker onBoundsChange={setMapBounds} />
                 <MapZoomController zoomTo={zoomTo} />
+                <MapFitBounds partners={mappablePartners} />
                 {mappablePartners.map((partner, index) => (
                   partner.lat && partner.lng && (
                     <Marker
