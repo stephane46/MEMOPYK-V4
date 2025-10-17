@@ -208,6 +208,36 @@ export default function PartnersManagementEnhanced() {
     }
   });
 
+  const quickUpdateMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: number, updates: Partial<Partner> }) => {
+      const res = await fetch(`/api/partners/${id}/update`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
+      if (!res.ok) throw new Error('Failed to update');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['partners'] });
+    }
+  });
+
+  const cycleStatus = (partnerId: number, currentStatus: string) => {
+    const statusCycle = ['Pending', 'Approved', 'Rejected'];
+    const currentIndex = statusCycle.indexOf(currentStatus);
+    const nextStatus = statusCycle[(currentIndex + 1) % statusCycle.length];
+    quickUpdateMutation.mutate({ id: partnerId, updates: { status: nextStatus } });
+  };
+
+  const toggleActive = (partnerId: number, currentValue: boolean) => {
+    quickUpdateMutation.mutate({ id: partnerId, updates: { is_active: !currentValue } });
+  };
+
+  const toggleShowOnMap = (partnerId: number, currentValue: boolean) => {
+    quickUpdateMutation.mutate({ id: partnerId, updates: { show_on_map: !currentValue } });
+  };
+
   const exportMapMutation = useMutation({
     mutationFn: async () => {
       const response = await fetch('/api/partners/export-map', { method: 'POST' });
@@ -459,20 +489,21 @@ export default function PartnersManagementEnhanced() {
                     {sortBy !== 'status' && <ArrowUpDown className="h-3 w-3 opacity-30" />}
                   </div>
                 </TableHead>
-                <TableHead className="text-gray-700 font-semibold">Map</TableHead>
+                <TableHead className="text-gray-700 font-semibold">Active</TableHead>
+                <TableHead className="text-gray-700 font-semibold">Show on Map</TableHead>
                 <TableHead className="text-gray-700 font-semibold text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-gray-500 py-8">
+                  <TableCell colSpan={9} className="text-center text-gray-500 py-8">
                     Loading partners...
                   </TableCell>
                 </TableRow>
               ) : !data?.partners.length ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-gray-500 py-8">
+                  <TableCell colSpan={9} className="text-center text-gray-500 py-8">
                     No partners found
                   </TableCell>
                 </TableRow>
@@ -499,21 +530,49 @@ export default function PartnersManagementEnhanced() {
                       <div className="text-xs text-gray-500">{partner.country}</div>
                     </TableCell>
                     <TableCell>
-                      {getStatusBadge(partner.status)}
+                      <button 
+                        onClick={() => cycleStatus(partner.id, partner.status)}
+                        className="cursor-pointer hover:opacity-80 transition-opacity"
+                        data-testid={`button-cycle-status-${partner.id}`}
+                      >
+                        {getStatusBadge(partner.status)}
+                      </button>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1">
-                        {partner.show_on_map && partner.lat && partner.lng ? (
-                          <Badge variant="default" className="text-xs bg-green-100 text-green-700 border-green-300">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            Visible
+                      <button 
+                        onClick={() => toggleActive(partner.id, partner.is_active)}
+                        className="cursor-pointer hover:opacity-80 transition-opacity"
+                        data-testid={`button-toggle-active-${partner.id}`}
+                      >
+                        {partner.is_active ? (
+                          <Badge className="text-xs !bg-green-100 !text-green-700 !border-green-300 !important">
+                            Active
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-xs bg-red-100 text-red-800 border-red-200">
+                          <Badge variant="outline" className="text-xs !bg-gray-100 !text-gray-600 !border-gray-300 !important">
+                            Inactive
+                          </Badge>
+                        )}
+                      </button>
+                    </TableCell>
+                    <TableCell>
+                      <button 
+                        onClick={() => toggleShowOnMap(partner.id, partner.show_on_map)}
+                        className="cursor-pointer hover:opacity-80 transition-opacity"
+                        data-testid={`button-toggle-map-${partner.id}`}
+                      >
+                        {partner.show_on_map ? (
+                          <Badge className="text-xs !bg-[#89BAD9] !text-white !border-[#89BAD9] !important">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            On Map
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-xs !bg-gray-100 !text-gray-600 !border-gray-300 !important">
+                            <Eye className="h-3 w-3 mr-1 opacity-50" />
                             Hidden
                           </Badge>
                         )}
-                      </div>
+                      </button>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
