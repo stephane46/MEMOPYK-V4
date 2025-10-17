@@ -339,7 +339,7 @@ export default function PartnerDirectoryFR() {
           </div>
 
           {/* Partner List - Aligned with Map Top */}
-          <div className="flex flex-col gap-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar p-0">
+          <div id="partner-list-container" className="flex flex-col gap-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar p-0">
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
             ) : visiblePartners.length === 0 ? (
@@ -364,12 +364,14 @@ export default function PartnerDirectoryFR() {
                     onClick={() => {
                       if (!isExpanded) {
                         setExpandedCard(partner.slug);
-                        // Scroll card to top of container after a brief delay for animation
+                        // Scroll within the container to show the expanded card
                         setTimeout(() => {
-                          document.getElementById(`card-${partner.slug}`)?.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'start' 
-                          });
+                          const container = document.getElementById('partner-list-container');
+                          const card = document.getElementById(`card-${partner.slug}`);
+                          if (container && card) {
+                            const cardOffsetTop = card.offsetTop;
+                            container.scrollTo({ top: cardOffsetTop, behavior: 'smooth' });
+                          }
                         }, 100);
                       } else {
                         setExpandedCard(null);
@@ -407,10 +409,12 @@ export default function PartnerDirectoryFR() {
                                   e.stopPropagation();
                                   setExpandedCard(partner.slug);
                                   setTimeout(() => {
-                                    document.getElementById(`card-${partner.slug}`)?.scrollIntoView({ 
-                                      behavior: 'smooth', 
-                                      block: 'start' 
-                                    });
+                                    const container = document.getElementById('partner-list-container');
+                                    const card = document.getElementById(`card-${partner.slug}`);
+                                    if (container && card) {
+                                      const cardOffsetTop = card.offsetTop;
+                                      container.scrollTo({ top: cardOffsetTop, behavior: 'smooth' });
+                                    }
                                   }, 100);
                                 }}
                                 className="text-[#D67C4A] hover:text-[#c5703e] text-sm font-medium mt-1 flex items-center gap-1"
