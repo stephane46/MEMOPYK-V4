@@ -179,9 +179,9 @@ export default function PartnerIntakeFR() {
               </button>
             </div>
             
-            <h1 className="text-4xl font-bold mb-4">Numérisation de films et vidéos</h1>
+            <h1 className="text-4xl font-bold mb-4">Inscription Annuaire MEMOPYK</h1>
             <p className="text-xl opacity-95">
-              Numérisation de vidéos
+              Professionnels de la numérisation
             </p>
           </div>
 
