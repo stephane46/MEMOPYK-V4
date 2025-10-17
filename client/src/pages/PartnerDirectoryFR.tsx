@@ -361,7 +361,7 @@ export default function PartnerDirectoryFR() {
           </div>
 
           {/* Partner List - Aligned with Map Top */}
-          <div id="partner-list-container" className="flex flex-col gap-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar p-0 pr-6" style={{ background: 'linear-gradient(to right, transparent calc(100% - 24px), #F2EBDC calc(100% - 24px))' }}>
+          <div id="partner-list-container" className="flex flex-col gap-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar p-0 pr-6" style={{ background: 'linear-gradient(to right, transparent calc(100% - 24px), #F2EBDC calc(100% - 24px))', scrollSnapStop: 'always' }}>
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
             ) : visiblePartners.length === 0 ? (
