@@ -382,8 +382,8 @@ export default function PartnerDirectoryFR() {
                   iconCreateFunction={(cluster: any) => {
                     const count = cluster.getChildCount();
                     return L.divIcon({
-                      html: `<div style="background: #2A4759; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${count}</div>`,
-                      className: 'custom-cluster-icon',
+                      html: `<div style="background: #2A4759 !important; color: white !important; border-radius: 50% !important; width: 40px !important; height: 40px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-weight: bold !important; border: 3px solid white !important; box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;">${count}</div>`,
+                      className: '',
                       iconSize: [40, 40]
                     });
                   }}
