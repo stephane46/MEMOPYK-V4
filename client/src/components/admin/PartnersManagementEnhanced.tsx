@@ -901,11 +901,11 @@ export default function PartnersManagementEnhanced() {
                 </div>
               </div>
 
-              {/* Video Cassettes */}
+              {/* Video Formats */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <Video className="w-5 h-5 text-[#D67C4A]" />
-                  <Label className="text-base font-semibold text-gray-900">Video Cassettes</Label>
+                  <Label className="text-base font-semibold text-gray-900">Video Formats</Label>
                 </div>
                 <div className="grid grid-cols-2 gap-3 pl-7">
                   {VIDEO_CASSETTES.map((format) => {
