@@ -379,7 +379,7 @@ export default function PartnerDirectoryEN() {
                   })}
                 </div>
               </div>
-              <div className="text-sm text-gray-600 whitespace-nowrap" style={{ marginRight: '10px' }}>
+              <div className="text-sm text-gray-600 whitespace-nowrap" style={{ marginRight: '12px' }}>
                 <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> visible partner{visiblePartners.length !== 1 ? 's' : ''}
               </div>
             </div>
