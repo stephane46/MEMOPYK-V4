@@ -327,13 +327,13 @@ export default function PartnersManagementEnhanced() {
             </div>
 
             {/* Separator */}
-            <div className="w-px bg-white/20"></div>
+            <div className="w-px bg-gray-300 h-8 self-center"></div>
 
             {/* Secondary Actions */}
             <div className="flex gap-2">
               <Button
                 onClick={() => window.open('/fr-FR/partenaires', '_blank')}
-                className="!bg-white/10 hover:!bg-white/20 !text-white font-medium !border-white/30"
+                className="!bg-[#2A4759] hover:!bg-[#1f3a4a] !text-white font-medium !border-[#2A4759]"
                 size="sm"
                 data-testid="button-view-map"
               >
@@ -342,7 +342,7 @@ export default function PartnersManagementEnhanced() {
               </Button>
               <Button
                 onClick={() => window.open('/api/partners/download', '_blank')}
-                className="!bg-white/10 hover:!bg-white/20 !text-white font-medium !border-white/30"
+                className="!bg-[#2A4759] hover:!bg-[#1f3a4a] !text-white font-medium !border-[#2A4759]"
                 size="sm"
                 data-testid="button-download-excel"
               >
@@ -351,7 +351,7 @@ export default function PartnersManagementEnhanced() {
               </Button>
               <Button
                 onClick={() => exportMapMutation.mutate()}
-                className="!bg-white/10 hover:!bg-white/20 !text-white font-medium !border-white/30"
+                className="!bg-[#2A4759] hover:!bg-[#1f3a4a] !text-white font-medium !border-[#2A4759]"
                 size="sm"
                 disabled={exportMapMutation.isPending}
                 data-testid="button-export-map"
