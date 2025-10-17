@@ -1177,7 +1177,7 @@ button[role="switch"]:focus-visible {
 
 /* WebKit browsers (Chrome, Safari, Edge) */
 .partner-list-scrollbar::-webkit-scrollbar {
-  width: 40px; /* Make scrollbar wider and more visible */
+  width: 80px; /* Double width scrollbar */
 }
 
 .partner-list-scrollbar::-webkit-scrollbar-track {
