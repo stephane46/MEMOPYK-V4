@@ -103,9 +103,29 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     return path.replace(/^\/(fr-FR|en-US)/, '') || '/';
   };
 
+  // Translate path slugs between languages
+  const translatePath = (path: string, targetLang: Language): string => {
+    // Path translations for pages with different slugs
+    const pathTranslations: Record<string, { 'fr-FR': string; 'en-US': string }> = {
+      '/partenaires': { 'fr-FR': '/partenaires', 'en-US': '/partners' },
+      '/partners': { 'fr-FR': '/partenaires', 'en-US': '/partners' },
+      '/partenaires/devenir': { 'fr-FR': '/partenaires/devenir', 'en-US': '/partners/join' },
+      '/partners/join': { 'fr-FR': '/partenaires/devenir', 'en-US': '/partners/join' },
+    };
+
+    // Check if this path needs translation
+    if (pathTranslations[path]) {
+      return pathTranslations[path][targetLang];
+    }
+
+    // No translation needed
+    return path;
+  };
+
   const getLocalizedPath = (path: string): string => {
     const cleanPath = removeLanguageFromPath(path);
-    return `/${language}${cleanPath === '/' ? '' : cleanPath}`;
+    const translatedPath = translatePath(cleanPath, language);
+    return `/${language}${translatedPath === '/' ? '' : translatedPath}`;
   };
 
   useEffect(() => {
@@ -143,7 +163,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const setLanguage = (lang: Language) => {
     const currentPath = removeLanguageFromPath(location);
-    const newPath = `/${lang}${currentPath === '/' ? '' : currentPath}`;
+    const translatedPath = translatePath(currentPath, lang);
+    const newPath = `/${lang}${translatedPath === '/' ? '' : translatedPath}`;
     window.history.pushState({}, '', newPath);
     setLanguageState(lang);
     
