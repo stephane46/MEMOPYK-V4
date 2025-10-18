@@ -46,7 +46,7 @@ router.post("/api/partners/intake", rateLimit(30), async (req, res) => {
       email: data.email,
       email_public: Boolean(data.email_public),
       phone: data.phone || '',
-      phone_public: Boolean(data.phone_public),
+      phone_public: false, // Phone is never public by default (not collected in intake form)
       website: data.website || '',
       address: data.address?.street || '',
       address_line2: data.address?.line2 || '',
