@@ -392,7 +392,7 @@ export default function PartnerDirectoryEN() {
               {/* Floating Visible Partners Counter */}
               <div className="absolute top-4 right-4 z-[1000] bg-[#D67C4A] text-white px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2 font-semibold text-base lg:text-lg" data-testid="visible-partners-counter">
                 <MapPin className="h-5 w-5 lg:h-6 lg:w-6" />
-                <span>{visiblePartners.length} visible partner{visiblePartners.length !== 1 ? 's' : ''}</span>
+                <span>{visiblePartners.length} professional{visiblePartners.length !== 1 ? 's' : ''} found</span>
               </div>
               <MapContainer
                 center={mapCenter}
