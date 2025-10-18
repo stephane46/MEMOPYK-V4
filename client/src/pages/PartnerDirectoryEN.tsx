@@ -323,62 +323,56 @@ export default function PartnerDirectoryEN() {
 
       <div className="container mx-auto px-4 py-4">
 
-        {/* Map & List Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Search Bar - Above Map Column Only */}
-          <div>
-            <div className="mb-4">
-              <div className="relative w-full lg:w-1/2">
-                <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Search by name or city..."
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  className="pl-10 pr-10"
-                  data-testid="input-search-partners"
-                />
-                {searchText && (
-                  <button
-                    onClick={() => setSearchText('')}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                    data-testid="button-clear-search"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                )}
-              </div>
-            </div>
+        {/* Search Bar and Filters - Above Map Column */}
+        <div className="mb-4 space-y-4">
+          {/* Search Bar */}
+          <div className="relative w-full lg:w-1/3">
+            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search by name or city..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="pl-10 pr-10"
+              data-testid="input-search-partners"
+            />
+            {searchText && (
+              <button
+                onClick={() => setSearchText('')}
+                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                data-testid="button-clear-search"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            )}
           </div>
 
-          {/* Service Filters - Above Cards Column Only */}
-          <div className="pr-6">
-            <div className="mb-4 flex items-center gap-3 flex-wrap">
-              <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                <Filter className="h-4 w-4" />
-                Services:
-              </h3>
-              <div className="flex gap-2 flex-wrap">
-                {serviceCounts.map(({ id, name, count }) => {
-                  const Icon = getServiceIcon(id);
-                  return (
-                    <Badge
-                      key={id}
-                      variant={selectedServices.includes(id) ? "default" : "outline"}
-                      className={`cursor-pointer transition-colors flex items-center justify-center gap-1.5 w-[130px] px-3 py-1.5 ${
-                        selectedServices.includes(id)
-                          ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
-                          : 'hover:bg-gray-100'
-                      }`}
-                      onClick={() => toggleService(id)}
-                      data-testid={`filter-service-${id.toLowerCase()}`}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {name} ({count})
-                    </Badge>
-                  );
-                })}
-              </div>
+          {/* Service Filters */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
+              <Filter className="h-4 w-4" />
+              Services:
+            </h3>
+            <div className="flex gap-2 flex-wrap">
+              {serviceCounts.map(({ id, name, count }) => {
+                const Icon = getServiceIcon(id);
+                return (
+                  <Badge
+                    key={id}
+                    variant={selectedServices.includes(id) ? "default" : "outline"}
+                    className={`cursor-pointer transition-colors flex items-center justify-center gap-1.5 w-[130px] px-3 py-1.5 ${
+                      selectedServices.includes(id)
+                        ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
+                        : 'hover:bg-gray-100'
+                    }`}
+                    onClick={() => toggleService(id)}
+                    data-testid={`filter-service-${id.toLowerCase()}`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {name} ({count})
+                  </Badge>
+                );
+              })}
             </div>
           </div>
         </div>
