@@ -328,7 +328,7 @@ export default function PartnerDirectoryFR() {
           {/* Search Bar - Above Map Column Only */}
           <div>
             <div className="mb-4">
-              <div className="relative" style={{ width: '50%' }}>
+              <div className="relative w-full lg:w-1/2">
                 <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <Input
                   type="text"
