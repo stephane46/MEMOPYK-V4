@@ -345,7 +345,7 @@ export default function PartnersManagementEnhanced() {
             {/* Secondary Actions */}
             <div className="flex gap-2">
               <Button
-                onClick={() => window.open('/fr-FR/partenaires', '_blank')}
+                onClick={() => window.open('/fr-FR/annuaire-pro', '_blank')}
                 className="!bg-[#2A4759] hover:!bg-[#1f3a4a] !text-white font-medium !border-[#2A4759]"
                 size="sm"
                 data-testid="button-view-map"

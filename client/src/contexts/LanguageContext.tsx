@@ -107,10 +107,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const translatePath = (path: string, targetLang: Language): string => {
     // Path translations for pages with different slugs
     const pathTranslations: Record<string, { 'fr-FR': string; 'en-US': string }> = {
-      '/partenaires': { 'fr-FR': '/partenaires', 'en-US': '/partners' },
-      '/partners': { 'fr-FR': '/partenaires', 'en-US': '/partners' },
-      '/partenaires/devenir': { 'fr-FR': '/partenaires/devenir', 'en-US': '/partners/join' },
-      '/partners/join': { 'fr-FR': '/partenaires/devenir', 'en-US': '/partners/join' },
+      '/annuaire-pro': { 'fr-FR': '/annuaire-pro', 'en-US': '/directory-pro' },
+      '/directory-pro': { 'fr-FR': '/annuaire-pro', 'en-US': '/directory-pro' },
+      '/annuaire-pro/devenir': { 'fr-FR': '/annuaire-pro/devenir', 'en-US': '/directory-pro/join' },
+      '/directory-pro/join': { 'fr-FR': '/annuaire-pro/devenir', 'en-US': '/directory-pro/join' },
     };
 
     // Check if this path needs translation

@@ -87,10 +87,10 @@ function AnalyticsRouter() {
         <Route path="/en-US/blog" component={BlogIndexPage} />
         
         {/* Partner Routes */}
-        <Route path="/fr-FR/partenaires" component={PartnerDirectoryFR} />
-        <Route path="/fr-FR/partenaires/devenir" component={PartnerIntakeFR} />
-        <Route path="/en-US/partners" component={PartnerDirectoryEN} />
-        <Route path="/en-US/partners/join" component={PartnerIntakeEN} />
+        <Route path="/fr-FR/annuaire-pro" component={PartnerDirectoryFR} />
+        <Route path="/fr-FR/annuaire-pro/devenir" component={PartnerIntakeFR} />
+        <Route path="/en-US/directory-pro" component={PartnerDirectoryEN} />
+        <Route path="/en-US/directory-pro/join" component={PartnerIntakeEN} />
         
         {/* Catch-all routes temporarily removed to prevent FAQ section conflict */}
         {/* Will restore with proper configuration after identifying root cause */}

@@ -154,7 +154,7 @@ export default function PartnerIntakeEN() {
             {/* Language Selector */}
             <div className="absolute top-4 right-4 md:top-8 md:right-8 flex gap-2">
               <button
-                onClick={() => window.location.href = "/en-US/partners/join"}
+                onClick={() => window.location.href = "/en-US/directory-pro/join"}
                 className="p-2 rounded-md border-2 border-white bg-white/20 shadow-md"
                 title="English"
                 data-testid="lang-switcher-en"
@@ -166,7 +166,7 @@ export default function PartnerIntakeEN() {
                 />
               </button>
               <button
-                onClick={() => window.location.href = "/fr-FR/partenaires/devenir"}
+                onClick={() => window.location.href = "/fr-FR/annuaire-pro/devenir"}
                 className="p-2 rounded-md border-2 border-transparent hover:border-white/50 transition-all"
                 title="Passer au français"
                 data-testid="lang-switcher-fr"

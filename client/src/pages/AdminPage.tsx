@@ -236,7 +236,7 @@ export default function AdminPage() {
     { id: 'seo', label: 'SEO Management', icon: Globe },
     { id: 'hero-management', label: 'Vidéos Hero', icon: Video },
     { id: 'gallery', label: 'Galerie Vidéos', icon: Play },
-    { id: 'partners', label: 'Partenaires', icon: UserCheck },
+    { id: 'partners', label: 'Annuaire Pro', icon: UserCheck },
     { id: 'cache', label: 'Cache', icon: HardDrive },
     { id: 'faq', label: 'FAQ', icon: MessageSquare },
     { id: 'cta', label: 'Boutons CTA', icon: Zap },
