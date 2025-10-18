@@ -353,36 +353,31 @@ export default function PartnerDirectoryFR() {
 
           {/* Service Filters - Above Cards Column Only */}
           <div className="pr-6">
-            <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                  <Filter className="h-4 w-4" />
-                  Services:
-                </h3>
-                <div className="flex gap-2 flex-wrap">
-                  {serviceCounts.map(({ id, name, count }) => {
-                    const Icon = getServiceIcon(id);
-                    return (
-                      <Badge
-                        key={id}
-                        variant={selectedServices.includes(id) ? "default" : "outline"}
-                        className={`cursor-pointer transition-colors flex items-center justify-center gap-1.5 w-[130px] px-3 py-1.5 ${
-                          selectedServices.includes(id)
-                            ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
-                            : 'hover:bg-gray-100'
-                        }`}
-                        onClick={() => toggleService(id)}
-                        data-testid={`filter-service-${id.toLowerCase()}`}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {name} ({count})
-                      </Badge>
-                    );
-                  })}
-                </div>
-              </div>
-              <div className="text-sm text-gray-600 whitespace-nowrap" style={{ marginRight: '12px' }}>
-                <span className="font-bold text-[#D67C4A]">{visiblePartners.length}</span> partenaire{visiblePartners.length !== 1 ? 's' : ''} visible{visiblePartners.length !== 1 ? 's' : ''}
+            <div className="mb-4 flex items-center gap-3 flex-wrap">
+              <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                <Filter className="h-4 w-4" />
+                Services:
+              </h3>
+              <div className="flex gap-2 flex-wrap">
+                {serviceCounts.map(({ id, name, count }) => {
+                  const Icon = getServiceIcon(id);
+                  return (
+                    <Badge
+                      key={id}
+                      variant={selectedServices.includes(id) ? "default" : "outline"}
+                      className={`cursor-pointer transition-colors flex items-center justify-center gap-1.5 w-[130px] px-3 py-1.5 ${
+                        selectedServices.includes(id)
+                          ? 'bg-[#D67C4A] text-white hover:bg-[#c5703e]'
+                          : 'hover:bg-gray-100'
+                      }`}
+                      onClick={() => toggleService(id)}
+                      data-testid={`filter-service-${id.toLowerCase()}`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {name} ({count})
+                    </Badge>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -393,7 +388,12 @@ export default function PartnerDirectoryFR() {
           {/* Left Column: Map */}
           <div>
             {/* Map */}
-            <div className="h-[350px] lg:h-[588px] rounded-lg overflow-hidden shadow-lg">
+            <div className="h-[350px] lg:h-[588px] rounded-lg overflow-hidden shadow-lg relative">
+              {/* Floating Visible Partners Counter */}
+              <div className="absolute top-4 right-4 z-[1000] bg-[#D67C4A] text-white px-4 py-2.5 rounded-lg shadow-xl flex items-center gap-2 font-semibold text-base lg:text-lg" data-testid="visible-partners-counter">
+                <MapPin className="h-5 w-5 lg:h-6 lg:w-6" />
+                <span>{visiblePartners.length} partenaire{visiblePartners.length !== 1 ? 's' : ''} visible{visiblePartners.length !== 1 ? 's' : ''}</span>
+              </div>
               <MapContainer
                 center={mapCenter}
                 zoom={6}
