@@ -393,7 +393,7 @@ export default function PartnerDirectoryFR() {
           {/* Left Column: Map */}
           <div>
             {/* Map */}
-            <div className="h-[588px] rounded-lg overflow-hidden shadow-lg">
+            <div className="h-[350px] lg:h-[588px] rounded-lg overflow-hidden shadow-lg">
               <MapContainer
                 center={mapCenter}
                 zoom={6}
@@ -463,7 +463,7 @@ export default function PartnerDirectoryFR() {
           </div>
 
           {/* Partner List - Aligned with Map Top */}
-          <div id="partner-list-container" className="flex flex-col gap-3 h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar p-0 pr-6" style={{ background: 'linear-gradient(to right, transparent calc(100% - 24px), #F2EBDC calc(100% - 24px))', scrollSnapStop: 'always' }}>
+          <div id="partner-list-container" className="flex flex-col gap-3 max-h-[600px] lg:h-[588px] overflow-y-auto snap-y snap-mandatory partner-list-scrollbar p-0 pr-6" style={{ background: 'linear-gradient(to right, transparent calc(100% - 24px), #F2EBDC calc(100% - 24px))', scrollSnapStop: 'always' }}>
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">Chargement...</div>
             ) : visiblePartners.length === 0 ? (
@@ -480,7 +480,7 @@ export default function PartnerDirectoryFR() {
                     <Card
                     key={index}
                     id={`card-${partner.slug}`}
-                    className={`${isExpanded ? 'h-[588px]' : 'h-[288px]'} flex-shrink-0 snap-start transition-all overflow-hidden cursor-pointer w-full m-0 ${
+                    className={`${isExpanded ? 'min-h-[500px] lg:h-[588px]' : 'h-[288px]'} flex-shrink-0 snap-start transition-all overflow-hidden cursor-pointer w-full m-0 ${
                       selectedPartner === partner.slug
                         ? 'ring-2 ring-[#D67C4A] shadow-xl'
                         : 'hover:shadow-md'
