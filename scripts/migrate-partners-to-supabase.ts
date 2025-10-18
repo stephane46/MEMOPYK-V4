@@ -13,6 +13,15 @@ async function migratePartners() {
     process.exit(1);
   }
 
+  // Country name to ISO-2 code mapping
+  const countryMap: Record<string, string> = {
+    'France': 'FR',
+    'Switzerland': 'CH',
+    'Belgium': 'BE',
+    'Canada': 'CA',
+    'Monaco': 'MC',
+  };
+
   try {
     // Read Excel file
     const workbook = XLSX.readFile(EXCEL_FILE);
@@ -30,6 +39,10 @@ async function migratePartners() {
       const row: any = data[i];
       
       try {
+        // Convert country name to ISO-2 code
+        const countryName = row['Country'] || '';
+        const countryCode = countryMap[countryName] || countryName;
+        
         // Convert Excel row to Supabase format
         const partnerData = {
           timestamp: row['Timestamp'] || new Date().toISOString(),
@@ -44,7 +57,7 @@ async function migratePartners() {
           address_line2: row['Complément d\'adresse'] || '',
           city: row['City'] || '',
           postal_code: row['Postal Code'] || '',
-          country: row['Country'] || '',
+          country: countryCode,
           photo_formats: row['Photo Formats'] || '',
           other_photo: row['Other Photo'] || '',
           film_formats: row['Film Formats'] || '',
