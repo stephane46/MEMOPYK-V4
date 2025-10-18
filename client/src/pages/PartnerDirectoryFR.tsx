@@ -330,7 +330,7 @@ export default function PartnerDirectoryFR() {
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Rechercher par nom ou ville..."
+              placeholder="Nom ou ville..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className="pl-10 pr-10"
