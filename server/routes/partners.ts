@@ -323,6 +323,7 @@ router.get("/api/partners", async (req, res) => {
     const status = req.query.status as string;
     const is_active = req.query.is_active === 'true' ? true : req.query.is_active === 'false' ? false : undefined;
     const show_on_map = req.query.show_on_map === 'true' ? true : req.query.show_on_map === 'false' ? false : undefined;
+    const transform = req.query.transform === 'true'; // Only transform for directory pages
 
     // Fetch from hybrid storage (Supabase primary + JSON fallback)
     const filters: any = {};
@@ -333,14 +334,17 @@ router.get("/api/partners", async (req, res) => {
 
     const allPartners = await hybridStorage.getPartners(filters);
     
-    // Transform data from Supabase format to frontend format
-    const transformedPartners = allPartners.map(transformPartnerData);
+    // Transform data ONLY if requested (for directory pages)
+    // Admin panel needs raw Supabase format
+    const processedPartners = transform 
+      ? allPartners.map(transformPartnerData)
+      : allPartners;
     
     // Client-side pagination for compatibility
-    const total = transformedPartners.length;
+    const total = processedPartners.length;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-    const partners = transformedPartners.slice(startIndex, endIndex);
+    const partners = processedPartners.slice(startIndex, endIndex);
 
     res.json({ 
       partners, 

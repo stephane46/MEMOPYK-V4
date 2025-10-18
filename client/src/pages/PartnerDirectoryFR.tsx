@@ -187,10 +187,10 @@ export default function PartnerDirectoryFR() {
   const clusterRef = useRef<any>(null);
 
   const { data: partnersResponse, isLoading, refetch } = useQuery<{ partners: Partner[], total: number }>({
-    queryKey: ['/api/partners', { limit: 1000, status: 'Approved', is_active: true, show_on_map: true }],
+    queryKey: ['/api/partners', { limit: 1000, status: 'Approved', is_active: true, show_on_map: true, transform: true }],
     queryFn: async () => {
       try {
-        const response = await fetch('/api/partners?limit=1000&status=Approved&is_active=true&show_on_map=true', {
+        const response = await fetch('/api/partners?limit=1000&status=Approved&is_active=true&show_on_map=true&transform=true', {
           cache: 'no-store',
           headers: { 'Cache-Control': 'no-cache' }
         });
