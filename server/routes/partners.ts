@@ -90,22 +90,67 @@ router.post("/api/partners/intake", rateLimit(30), async (req, res) => {
   }
 });
 
-// Download Excel file
+// Download Excel file - Generate from Supabase database
 router.get("/api/partners/download", async (req, res) => {
   try {
-    if (!fs.existsSync(EXCEL_FILE)) {
+    // Fetch all partners from Supabase
+    const partners = await hybridStorage.getPartners({});
+    
+    if (!partners || partners.length === 0) {
       return res.status(404).json({ error: "No partner submissions found" });
     }
 
-    res.download(EXCEL_FILE, "partner-submissions.xlsx", (err) => {
-      if (err) {
-        console.error("Download error:", err);
-        res.status(500).json({ error: "Failed to download file" });
-      }
-    });
+    // Create Excel workbook
+    const workbook = XLSX.utils.book_new();
+    
+    // Convert partners to worksheet data
+    const worksheetData = partners.map(p => ({
+      'Timestamp': p.timestamp,
+      'Partner Type': p.partner_type,
+      'Partner Name': p.partner_name,
+      'Contact Name': p.contact_name,
+      'Email': p.email,
+      'Email Public': p.email_public ? 'TRUE' : 'FALSE',
+      'Phone': p.phone,
+      'Phone Public': p.phone_public ? 'TRUE' : 'FALSE',
+      'Website': p.website,
+      'Address': p.address,
+      'Address Line 2': p.address_line2,
+      'City': p.city,
+      'Postal Code': p.postal_code,
+      'Country': p.country,
+      'Photo Formats': p.photo_formats,
+      'Other Photo': p.other_photo,
+      'Film Formats': p.film_formats,
+      'Other Film': p.other_film,
+      'Video Cassettes': p.video_cassettes,
+      'Other Video': p.other_video,
+      'Delivery': p.delivery,
+      'Other Delivery': p.other_delivery,
+      'Public Description': p.public_description,
+      'Status': p.status,
+      'Active': p.is_active ? 'TRUE' : 'FALSE',
+      'Show on Map': p.show_on_map ? 'TRUE' : 'FALSE',
+      'Latitude': p.lat,
+      'Longitude': p.lng,
+      'Slug': p.slug
+    }));
+    
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Partners");
+    
+    // Generate Excel file buffer
+    const excelBuffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    
+    // Send file
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="partner-submissions.xlsx"');
+    res.send(excelBuffer);
+    
+    console.log(`✅ Exported ${partners.length} partners to Excel`);
   } catch (e: any) {
     console.error("Download error:", e);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + e.message });
   }
 });
 
