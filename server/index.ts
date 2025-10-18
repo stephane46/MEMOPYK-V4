@@ -10,26 +10,50 @@ import { log } from "./vite";
 import { testDatabaseConnection } from "./database";
 import { VideoCache } from "./video-cache";
 import { processSeoForDev, isHtmlResponse, shouldProcessSeoUrl, prodSeoMiddleware } from "./seo-middleware";
+
+const VERSION = "1.0.53-deploy-fix";
+console.log(`=== MEMOPYK Server Starting ${VERSION} ===`);
+console.log("🚀 Deployment Environment Detection:");
+console.log("   NODE_ENV:", process.env.NODE_ENV || "undefined");
+console.log("   REPLIT_DEPLOYMENT:", process.env.REPLIT_DEPLOYMENT || "undefined");
+console.log("   Is Production:", process.env.NODE_ENV === "production" || process.env.REPLIT_DEPLOYMENT === "1");
+console.log("   PORT:", process.env.PORT || 5000);
+
+// Validate required production secrets
+console.log("\n🔐 Production Secrets Validation:");
+const requiredSecrets = [
+  { name: "SUPABASE_URL", value: process.env.SUPABASE_URL },
+  { name: "SUPABASE_SERVICE_KEY", value: process.env.SUPABASE_SERVICE_KEY },
+  { name: "SESSION_SECRET", value: process.env.SESSION_SECRET }
+];
+
+let missingSecrets = false;
+for (const secret of requiredSecrets) {
+  if (secret.value) {
+    console.log(`   ✅ ${secret.name}: Available`);
+  } else {
+    console.error(`   ❌ ${secret.name}: MISSING!`);
+    missingSecrets = true;
+  }
+}
+
+if (missingSecrets && (process.env.NODE_ENV === "production" || process.env.REPLIT_DEPLOYMENT === "1")) {
+  console.error("\n❌ CRITICAL: Missing required production secrets!");
+  console.error("   Please configure secrets in the Replit Deployment settings.");
+  console.error("   Server will continue but functionality may be limited.");
+}
+
+console.log("\n📊 Database Configuration:");
+console.log("   DATABASE_URL (Neon): DISABLED - Using Supabase VPS only");
+console.log("   SUPABASE_URL:", process.env.SUPABASE_URL ? "✅ Configured" : "❌ Missing");
+
 // Import GA4 scheduler after server startup to avoid blocking deployment
 setImmediate(() => {
-  import("./ga4-scheduler.js").catch(err => {
-    console.error("❌ GA4 scheduler import error:", err);
+  // @ts-ignore - ga4-scheduler.js is a plain JS file without types
+  import("./ga4-scheduler").catch(err => {
+    console.error("❌ GA4 scheduler import error (non-critical):", err.message);
   });
 });
-
-const VERSION = "1.0.52-deploy-fix";
-console.log(`=== MEMOPYK Server Starting ${VERSION} ===`);
-console.log("NODE_ENV:", process.env.NODE_ENV);
-console.log("🚨 DEPLOYMENT CHECK: NODE_ENV must be 'production' for correct HTML serving");
-console.log("PORT:", process.env.PORT || 5000);
-console.log(
-  "🚫 DATABASE_URL (Neon):",
-  "DISABLED - Using Supabase VPS only"
-);
-console.log(
-  "SUPABASE_URL:",
-  process.env.SUPABASE_URL ? "✅ Available" : "❌ Missing"
-);
 
 // Initialize video cache system for production gallery video support (non-blocking)
 console.log("🎬 Initializing video cache system...");
@@ -348,30 +372,91 @@ app.use((req, res, next) => {
   server.headersTimeout = 121000; // Slightly higher than server timeout
   server.keepAliveTimeout = 5000; // Keep alive timeout
   
+  console.log(`\n🌐 Starting HTTP server on 0.0.0.0:${port}...`);
+  
   server.listen(port, "0.0.0.0", () => {
-    console.log(`🚀 MEMOPYK Server running on port ${port}`);
-    console.log(`📡 Health check: http://localhost:${port}/health`);
-    console.log(`🔗 API endpoints: http://localhost:${port}/api`);
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`🔄 Dev frontend: http://localhost:${port} (proxied to Vite)`);
+    console.log(`\n✅ ========================================`);
+    console.log(`✅ MEMOPYK Server Successfully Started!`);
+    console.log(`✅ ========================================`);
+    console.log(`📡 Version: ${VERSION}`);
+    console.log(`🌍 Listening on: 0.0.0.0:${port}`);
+    console.log(`🏥 Health check: http://0.0.0.0:${port}/health`);
+    console.log(`🔗 API endpoints: http://0.0.0.0:${port}/api/*`);
+    
+    if (process.env.NODE_ENV === "production" || process.env.REPLIT_DEPLOYMENT === "1") {
+      console.log(`📦 Mode: PRODUCTION`);
+      console.log(`📁 Static files: dist/`);
+      console.log(`🔒 SEO injection: ENABLED`);
     } else {
-      console.log(`📦 Frontend: http://localhost:${port}`);
+      console.log(`🔄 Mode: DEVELOPMENT`);
+      console.log(`🔄 Frontend proxy: http://localhost:5173`);
     }
-    console.log(`✅ ${VERSION} deployment ready!`);
+    
+    console.log(`✅ Server ready to accept connections!`);
+    console.log(`✅ ========================================\n`);
     
     // Signal deployment readiness immediately
     if (process.send) {
+      console.log(`📤 Sending ready signal to process manager...`);
       process.send('ready');
     }
   });
   
   // Handle deployment errors gracefully
   server.on('error', (err: any) => {
+    console.error('\n❌ ========================================');
+    console.error('❌ SERVER STARTUP ERROR');
+    console.error('❌ ========================================');
+    
     if (err.code === 'EADDRINUSE') {
       console.error(`❌ Port ${port} is already in use`);
+      console.error(`   Another process is listening on 0.0.0.0:${port}`);
+      console.error(`   Kill the other process or use a different port`);
+    } else if (err.code === 'EACCES') {
+      console.error(`❌ Permission denied to bind port ${port}`);
+      console.error(`   Try using a port >= 1024 or run with elevated privileges`);
     } else {
-      console.error('❌ Server error:', err);
+      console.error('❌ Server startup error:', err.message);
+      console.error('   Error code:', err.code);
+      console.error('   Stack trace:', err.stack);
     }
+    
+    console.error('❌ ========================================\n');
     process.exit(1);
   });
-})();
+  
+  // Handle uncaught exceptions
+  process.on('uncaughtException', (err) => {
+    console.error('\n❌ ========================================');
+    console.error('❌ UNCAUGHT EXCEPTION');
+    console.error('❌ ========================================');
+    console.error('Error:', err.message);
+    console.error('Stack:', err.stack);
+    console.error('❌ ========================================\n');
+    process.exit(1);
+  });
+  
+  // Handle unhandled promise rejections
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('\n⚠️ ========================================');
+    console.error('⚠️ UNHANDLED PROMISE REJECTION');
+    console.error('⚠️ ========================================');
+    console.error('Reason:', reason);
+    console.error('Promise:', promise);
+    console.error('⚠️ ========================================\n');
+  });
+  
+})().catch((error) => {
+  console.error('\n❌ ========================================');
+  console.error('❌ FATAL INITIALIZATION ERROR');
+  console.error('❌ ========================================');
+  console.error('Error:', error.message);
+  console.error('Stack:', error.stack);
+  console.error('❌ ========================================\n');
+  console.error('\n💡 Troubleshooting:');
+  console.error('   1. Check that all required secrets are configured');
+  console.error('   2. Verify the build completed successfully');
+  console.error('   3. Ensure dist/ folder exists with index.html');
+  console.error('   4. Check server logs for detailed error messages\n');
+  process.exit(1);
+});
