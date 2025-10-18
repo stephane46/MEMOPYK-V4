@@ -258,6 +258,62 @@ router.post("/api/partners/create", async (req, res) => {
   }
 });
 
+// Helper: Transform Supabase partner data to frontend format
+function transformPartnerData(dbPartner: any) {
+  // Parse comma-separated strings into arrays, removing extra quotes
+  const parseList = (str: string | null): string[] => {
+    if (!str || str.trim() === '') return [];
+    return str
+      .split(',')
+      .map(s => s.trim())
+      .map(s => s.replace(/^["']|["']$/g, '')) // Remove leading/trailing quotes
+      .filter(s => s.length > 0);
+  };
+
+  // Determine services based on which format fields have values
+  const services: string[] = [];
+  const photoFormats = parseList(dbPartner.photo_formats);
+  const filmFormats = parseList(dbPartner.film_formats);
+  const videoFormats = parseList(dbPartner.video_cassettes);
+  
+  if (photoFormats.length > 0 || dbPartner.other_photo) services.push('Photo');
+  if (filmFormats.length > 0 || dbPartner.other_film) services.push('Film');
+  if (videoFormats.length > 0 || dbPartner.other_video) services.push('Video');
+
+  return {
+    id: dbPartner.id,
+    name: dbPartner.partner_name,
+    city: dbPartner.city || '',
+    country: dbPartner.country || '',
+    lat: dbPartner.lat,
+    lng: dbPartner.lng,
+    services,
+    formats: {
+      photo: photoFormats,
+      film: filmFormats,
+      video: videoFormats
+    },
+    website: dbPartner.website || '',
+    phone: dbPartner.phone || '',
+    phone_public: dbPartner.phone_public || false,
+    email: dbPartner.email || '',
+    email_public: dbPartner.email_public || false,
+    public_description: dbPartner.public_description || '',
+    slug: dbPartner.slug || '',
+    address: dbPartner.address || '',
+    address_line2: dbPartner.address_line2 || '',
+    postal_code: dbPartner.postal_code || '',
+    delivery: parseList(dbPartner.delivery),
+    other_photo: dbPartner.other_photo || '',
+    other_film: dbPartner.other_film || '',
+    other_video: dbPartner.other_video || '',
+    other_delivery: dbPartner.other_delivery || '',
+    status: dbPartner.status,
+    is_active: dbPartner.is_active,
+    show_on_map: dbPartner.show_on_map
+  };
+}
+
 // Enhanced: Get all partners with pagination and filters
 router.get("/api/partners", async (req, res) => {
   try {
@@ -277,11 +333,14 @@ router.get("/api/partners", async (req, res) => {
 
     const allPartners = await hybridStorage.getPartners(filters);
     
+    // Transform data from Supabase format to frontend format
+    const transformedPartners = allPartners.map(transformPartnerData);
+    
     // Client-side pagination for compatibility
-    const total = allPartners.length;
+    const total = transformedPartners.length;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-    const partners = allPartners.slice(startIndex, endIndex);
+    const partners = transformedPartners.slice(startIndex, endIndex);
 
     res.json({ 
       partners, 
