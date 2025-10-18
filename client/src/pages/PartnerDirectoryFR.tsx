@@ -323,10 +323,10 @@ export default function PartnerDirectoryFR() {
 
       <div className="container mx-auto px-4 py-4">
 
-        {/* Search Bar and Filters - Single Line */}
-        <div className="mb-4 flex flex-col lg:flex-row items-start lg:items-center gap-4">
+        {/* Search Bar and Filters - Single Line in Left Column */}
+        <div className="mb-4 flex flex-col lg:flex-row items-start lg:items-center gap-3 lg:w-1/2">
           {/* Search Bar */}
-          <div className="relative w-full lg:w-1/3">
+          <div className="relative w-full lg:w-auto lg:flex-shrink-0" style={{ minWidth: '200px' }}>
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <Input
               type="text"
@@ -348,8 +348,8 @@ export default function PartnerDirectoryFR() {
           </div>
 
           {/* Service Filters */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2 whitespace-nowrap">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-1 whitespace-nowrap">
               <Filter className="h-4 w-4" />
               Services:
             </h3>
