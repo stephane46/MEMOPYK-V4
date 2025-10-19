@@ -8896,15 +8896,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { slug } = req.params;
       const token = await getDirectusToken();
       
-      // Use wildcard to fetch all accessible fields, avoid specifying restricted fields
-      const params = new URLSearchParams({
-        'filter[slug][_eq]': slug,
-        'filter[status][_eq]': 'published',
-        'fields': '*.*',
-        'limit': '1'
-      });
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[slug][_eq]=${slug}&filter[status][_eq]=published&fields=*&limit=1`;
+      console.log('📝 Fetching blog post:', url);
 
-      const response = await fetch(`https://cms-blog.memopyk.org/items/posts?${params}`, {
+      const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -8914,15 +8909,17 @@ export async function registerRoutes(app: Express): Promise<void> {
         throw new Error(`Directus API error: ${response.status}`);
       }
 
-      const { data } = await response.json();
+      const result = await response.json();
+      console.log('📦 Directus response:', JSON.stringify(result).substring(0, 200));
       
-      if (!data || data.length === 0) {
+      if (!result.data || result.data.length === 0) {
+        console.log('❌ Post not found in Directus for slug:', slug);
         res.status(404).json({ error: 'Post not found' });
         return;
       }
 
-      console.log('✅ Blog post fetched successfully:', data[0]?.title || slug);
-      res.json(data[0]);
+      console.log('✅ Blog post fetched successfully:', result.data[0]?.title || slug);
+      res.json(result.data[0]);
     } catch (error) {
       console.error('❌ Error fetching blog post:', error);
       res.status(500).json({ error: 'Failed to fetch blog post' });
