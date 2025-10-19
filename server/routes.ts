@@ -8896,15 +8896,22 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { slug } = req.params;
       const token = await getDirectusToken();
       
-      // Fetch post with nested M2A blocks and their content
-      const params = new URLSearchParams({
-        'filter[slug][_eq]': slug,
-        'filter[status][_eq]': 'published',
-        'fields': '*,author.*,image.*,blocks.item:block_richtext.*,blocks.item:block_gallery.*,blocks.item:block_gallery.items.*,blocks.item:block_gallery.items.directus_files_id.*',
-        'limit': '1'
-      });
+      // Fetch post with nested M2A blocks - tested working syntax
+      const fieldsQuery = [
+        '*',
+        'author.*',
+        'image.*',
+        'blocks.*',
+        'blocks.item:block_richtext.*',
+        'blocks.item:block_gallery.*',
+        'blocks.item:block_gallery.items.*',
+        'blocks.item:block_gallery.items.directus_files_id.*'
+      ].join(',');
 
-      const response = await fetch(`https://cms-blog.memopyk.org/items/posts?${params}`, {
+      // Manually construct URL to preserve colons in M2A syntax
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[slug][_eq]=${encodeURIComponent(slug)}&filter[status][_eq]=published&fields=${fieldsQuery}&limit=1`;
+
+      const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
