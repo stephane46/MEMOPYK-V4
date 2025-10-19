@@ -76,6 +76,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **VideoOverlay Re-render Fix (v1.0.200)**: CRITICAL fix for VideoOverlay constant remounting during video playback. Completely rewritten with stable React patterns: memoized props/calculations, useCallback for all event handlers, eliminated resize listeners, disabled problematic state updates in parent components (GallerySection animation observers, storage listeners, mobile detection). This fix enables proper GA4 video progress tracking (25%, 50%, 75%, 100%) that was previously impossible due to component remounting.
 - **Debug Cleanup (v1.0.201)**: Comprehensive removal of debugging statements and GA debug HUD after successful VideoOverlay stabilization. Removed all console.log debugging emojis (🎬, 🚨, 💓, 🎯, 🔥) while preserving essential functionality. VideoOverlay backup retained as VideoOverlay_backup_20250905_131134.tsx.
 - **Partner Intake System**: Bilingual partner directory system with Zoho CRM integration. Partners register with full profiles (services, formats, capabilities) via French (/fr-FR/partenaires/devenir) and English (/en-US/partners/join) intake forms. Backend creates Account, Contact, and Partner records in Zoho CRM (EU) using OAuth refresh-token flow with automatic token rotation. Security layer includes rate limiting (30 req/min), CSRF double-submit cookie pattern, and reCAPTCHA stub. Complex validation via shared Zod schema with progressive disclosure UX for optimal user experience.
+- **Directus Blog CMS Integration**: Headless CMS integration for bilingual blog content at `/en-US/blog` and `/fr-FR/blog`. Backend authenticates with Directus API using OAuth credentials, fetches posts with M2A (Many-to-Any) blocks (rich text, headings, galleries), and maps fields (`published_at` → `publish_date`). Language normalization helpers (`toBase`, `sameLang`) in `server/helpers/lang.ts` and `client/src/lib/lang.ts` handle both BCP-47 full form (en-US, fr-FR) and base codes (en, fr) for consistent filtering. Publishing gate: only shows posts where `status === 'published'` AND `published_at <= now()`. Typography matches main site: Playfair Display (headings), Poppins (body text).
 
 ## External Dependencies
 
@@ -100,7 +101,22 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Crypto-js**: Client-side MD5 hashing.
 - **Multer**: Node.js middleware for file uploads.
 
+### Content Management
+- **Directus CMS**: Headless CMS for blog content management (https://cms-blog.memopyk.org).
+- **@directus/sdk**: Official Directus JavaScript SDK.
+- **@directus/visual-editing**: Live visual editing support for Directus content.
+
 ## Environment Variables
+
+### Directus CMS Integration (Blog System)
+- `DIRECTUS_EMAIL`: Email for Directus API authentication (api-blog@memopyk.org)
+- `DIRECTUS_PASSWORD`: Password for Directus API authentication
+- `DIRECTUS_TOKEN` (optional): Static token for Directus API (currently using email/password OAuth flow)
+
+### Configuration Notes
+- Directus authentication uses OAuth token refresh flow with 15-minute expiration
+- Blog endpoints automatically filter by language using normalized comparison (handles both "en" and "en-US" formats)
+- CSP configured to allow Directus assets: `https://cms-blog.memopyk.org` in img-src, connect-src, media-src
 
 ### Zoho CRM Integration (Partner Intake System)
 - `ZOHO_BASE_URL`: Zoho CRM API base URL (EU: `https://www.zohoapis.eu`)

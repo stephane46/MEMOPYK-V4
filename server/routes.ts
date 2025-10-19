@@ -48,6 +48,7 @@ import ga4MpRouter from './routes/ga4Mp';
 import { getRealtimeTopVideos, getRealtimeVideoProgress } from './routes/ga4Realtime';
 import partnersRoute from './routes/partners';
 import crypto from 'crypto';
+import { sameLang, toBase } from './helpers/lang';
 
 // Paris timezone window computation function
 const PARIS_ZONE = "Europe/Paris";
@@ -8867,17 +8868,13 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const { language } = req.query;
       const token = await getDirectusToken();
-      const lang = language === 'fr-FR' ? 'fr' : 'en';
       
       // Request specific fields as per schema
       const fieldsQuery = 'id,title,slug,status,published_at,language,description,image.*,author.*,seo';
       
       // Filter by status and published_at <= now
-      // Note: We filter by language on backend but include posts without language field (they'll fallback to route locale on frontend)
       const now = new Date().toISOString();
       const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&sort=-published_at&fields=${fieldsQuery}`;
-
-      console.log('🔍 Directus blog posts URL:', url);
       
       const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -8901,12 +8898,10 @@ export async function registerRoutes(app: Express): Promise<void> {
             return false;
           }
           
-          // Filter by language: match lang OR include posts without language field (they'll use route locale)
-          // Handle both "en" and "en-US" formats
-          if (!post.language) return true; // Include posts without language (fallback to route locale)
-          const postLang = post.language.toLowerCase();
-          const requestedLang = typeof language === 'string' ? language.toLowerCase() : lang;
-          return postLang === lang || postLang === requestedLang || postLang.startsWith(`${lang}-`);
+          // Filter by language using normalized comparison
+          // Include posts without language field (they'll fallback to route locale)
+          if (!post.language) return true;
+          return sameLang(post.language, language as string);
         })
         .map((post: any) => {
           // Map published_at → publish_date for frontend
@@ -8925,7 +8920,6 @@ export async function registerRoutes(app: Express): Promise<void> {
           return mapped;
         });
       
-      console.log(`✅ Blog posts fetched: ${mappedPosts.length} posts for ${lang}`);
       res.json(mappedPosts);
     } catch (error) {
       console.error('❌ Error fetching blog posts:', error);
