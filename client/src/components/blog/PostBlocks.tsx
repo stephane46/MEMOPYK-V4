@@ -95,10 +95,6 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
                     const title = file.title || '';
                     const description = file.description || title;
 
-                    console.log('🖼️ Gallery image:', { fileId, title });
-                    const imageUrl = directusAsset(fileId, { width: 828, quality: 82, format: 'webp' });
-                    console.log('🖼️ Generated URL:', imageUrl);
-
                     const sizes = '(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 300px';
                     
                     const srcset = [640, 828, 1200]
