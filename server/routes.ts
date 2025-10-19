@@ -8893,6 +8893,11 @@ export async function registerRoutes(app: Express): Promise<void> {
       const result = await response.json();
       const posts = result.data || [];
       
+      console.log(`📝 RAW posts from Directus: ${posts.length} posts`);
+      if (posts.length > 0) {
+        console.log('📝 First post sample:', JSON.stringify(posts[0], null, 2));
+      }
+      
       // Map Directus fields to frontend expectations
       const mappedPosts = posts
         .filter((post: any) => {
@@ -8902,7 +8907,11 @@ export async function registerRoutes(app: Express): Promise<void> {
           }
           
           // Filter by language: match lang OR include posts without language field (they'll use route locale)
-          return !post.language || post.language === lang;
+          // Handle both "en" and "en-US" formats
+          if (!post.language) return true; // Include posts without language (fallback to route locale)
+          const postLang = post.language.toLowerCase();
+          const requestedLang = typeof language === 'string' ? language.toLowerCase() : lang;
+          return postLang === lang || postLang === requestedLang || postLang.startsWith(`${lang}-`);
         })
         .map((post: any) => {
           // Map published_at → publish_date for frontend
