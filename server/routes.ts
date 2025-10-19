@@ -8827,20 +8827,63 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  // Blog Routes - Proxy to Directus CMS
+  // Blog Routes - Proxy to Directus CMS with Authentication
+  let directusToken: string | null = null;
+  let tokenExpiry = 0;
+
+  async function getDirectusToken() {
+    const now = Date.now();
+    if (directusToken && now < tokenExpiry) {
+      return directusToken;
+    }
+
+    try {
+      const response = await fetch('https://cms-blog.memopyk.org/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: process.env.DIRECTUS_EMAIL,
+          password: process.env.DIRECTUS_PASSWORD
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Directus auth failed: ${response.status}`);
+      }
+
+      const { data } = await response.json();
+      directusToken = data.access_token;
+      tokenExpiry = now + (data.expires || 900000); // Default 15min
+      
+      console.log('✅ Directus authenticated successfully');
+      return directusToken;
+    } catch (error) {
+      console.error('❌ Directus authentication error:', error);
+      throw error;
+    }
+  }
+
   app.get("/api/blog/posts", async (req, res) => {
     try {
       const { language } = req.query;
+      const token = await getDirectusToken();
+      const lang = language === 'fr-FR' ? 'fr' : 'en';
       
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*, author:authors(*), category:categories(*)')
-        .eq('status', 'published')
-        .eq('language', language || 'en-US')
-        .order('publish_date', { ascending: false });
-      
-      if (error) throw error;
-      
+      const params = new URLSearchParams({
+        'filter[status][_eq]': 'published',
+        'filter[language][_eq]': lang,
+        'sort': '-publish_date'
+      });
+
+      const response = await fetch(`https://cms-blog.memopyk.org/items/posts?${params}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Directus API error: ${response.status}`);
+      }
+
+      const { data } = await response.json();
       res.json(data || []);
     } catch (error) {
       console.error('❌ Error fetching blog posts:', error);
@@ -8852,25 +8895,52 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const { slug } = req.params;
       const { language } = req.query;
+      const token = await getDirectusToken();
+      const lang = language === 'fr-FR' ? 'fr' : 'en';
       
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*, author:authors(*), category:categories(*)')
-        .eq('slug', slug)
-        .eq('status', 'published')
-        .eq('language', language || 'en-US')
-        .limit(1)
-        .single();
-      
-      if (error) {
-        if (error.code === 'PGRST116') {
-          res.status(404).json({ error: 'Post not found' });
-          return;
-        }
-        throw error;
+      const fields = [
+        'id', 'title', 'slug', 'status', 'published_at', 'description',
+        'excerpt', 'body_html', 'language', 'publish_date',
+        'meta_title', 'meta_description', 'meta_keywords',
+        'canonical_url', 'og_image_url', 'og_description',
+        'featured_image_url', 'featured_image_alt', 'reading_time_minutes',
+        'author.id', 'author.name', 'author.avatar',
+        'image.id', 'image.title', 'image.description', 'image.width', 'image.height',
+        'blocks.collection',
+        'blocks.item.*',
+        'blocks.item.items.id',
+        'blocks.item.items.file.id',
+        'blocks.item.items.file.title',
+        'blocks.item.items.file.description',
+        'blocks.item.items.file.width',
+        'blocks.item.items.file.height',
+      ];
+
+      const params = new URLSearchParams({
+        'filter[slug][_eq]': slug,
+        'filter[language][_eq]': lang,
+        'filter[status][_eq]': 'published',
+        'filter[published_at][_lte]': new Date().toISOString(),
+        'fields': fields.join(','),
+        'limit': '1'
+      });
+
+      const response = await fetch(`https://cms-blog.memopyk.org/items/posts?${params}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Directus API error: ${response.status}`);
       }
+
+      const { data } = await response.json();
       
-      res.json(data);
+      if (!data || data.length === 0) {
+        res.status(404).json({ error: 'Post not found' });
+        return;
+      }
+
+      res.json(data[0]);
     } catch (error) {
       console.error('❌ Error fetching blog post:', error);
       res.status(500).json({ error: 'Failed to fetch blog post' });
