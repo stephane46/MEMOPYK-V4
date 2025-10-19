@@ -8867,17 +8867,13 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const { language } = req.query;
       const token = await getDirectusToken();
+      const lang = language === 'fr-FR' ? 'fr' : 'en';
       
-      // Include necessary fields for blog listing
-      const fieldsQuery = [
-        '*',
-        'author.*',
-        'image.*'
-      ].join(',');
+      // Request specific fields as per schema
+      const fieldsQuery = 'id,title,slug,status,published_at,language,description,image.*,author.*,seo';
       
-      // Simple query - only filter by status (published)
-      // Note: language and publish_date fields don't exist in Directus schema
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&fields=${fieldsQuery}`;
+      // Filter by status and language
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[language][_eq]=${lang}&sort=-published_at&fields=${fieldsQuery}`;
 
       console.log('🔍 Directus blog posts URL:', url);
       
@@ -8893,20 +8889,32 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
 
       const result = await response.json();
-      let posts = result.data || [];
+      const posts = result.data || [];
       
-      // Client-side filtering by language if needed (once we know the actual field name)
-      // For now, return all published posts
+      // Map Directus fields to frontend expectations
+      const mappedPosts = posts
+        .filter((post: any) => {
+          // Gate rendering: status === 'published' && published_at <= now()
+          return post.status === 'published' && new Date(post.published_at) <= new Date();
+        })
+        .map((post: any) => {
+          // Map published_at → publish_date for frontend
+          const mapped = {
+            ...post,
+            publish_date: post.published_at,
+            // displayLocale fallback: post.language ?? routeLocale
+            language: post.language || language
+          };
+          
+          // Map Directus image field to featured_image_url
+          if (post.image?.id && !mapped.featured_image_url) {
+            mapped.featured_image_url = `https://cms-blog.memopyk.org/assets/${post.image.id}`;
+          }
+          
+          return mapped;
+        });
       
-      // Map Directus image field to featured_image_url for each post
-      const mappedPosts = posts.map((post: any) => {
-        if (post.image?.id && !post.featured_image_url) {
-          post.featured_image_url = `https://cms-blog.memopyk.org/assets/${post.image.id}`;
-        }
-        return post;
-      });
-      
-      console.log(`✅ Blog posts fetched: ${mappedPosts.length} posts`);
+      console.log(`✅ Blog posts fetched: ${mappedPosts.length} posts for ${lang}`);
       res.json(mappedPosts);
     } catch (error) {
       console.error('❌ Error fetching blog posts:', error);
