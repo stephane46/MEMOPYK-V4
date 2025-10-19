@@ -361,65 +361,6 @@ export default function BlogPostPage() {
                   </>
                 )}
               </div>
-
-              {/* Author Card */}
-              {post.author && getAuthorName(post.author) && (
-                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#F2EBDC]/50 to-transparent rounded-xl border border-[#D67C4A]/10">
-                  <div className="flex-shrink-0">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#D67C4A] to-[#89BAD9] flex items-center justify-center text-white text-2xl font-['Playfair_Display'] font-semibold">
-                      {getAuthorName(post.author)?.charAt(0).toUpperCase()}
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <User className="w-4 h-4 text-[#D67C4A]" />
-                      <span className="text-sm text-gray-500">{t.by}</span>
-                    </div>
-                    <p className="font-semibold text-[#2A4759]" data-testid="text-post-author">
-                      {getAuthorName(post.author)}
-                    </p>
-                    {post.author.bio && (
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{post.author.bio}</p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Share Buttons */}
-              <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-100">
-                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <Share2 className="w-4 h-4" />
-                  {t.share}:
-                </span>
-                <button
-                  onClick={() => handleShare('twitter')}
-                  className="p-2 rounded-full hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
-                  aria-label="Share on Twitter"
-                >
-                  <Twitter className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleShare('facebook')}
-                  className="p-2 rounded-full hover:bg-blue-50 text-gray-600 hover:text-blue-700 transition-colors"
-                  aria-label="Share on Facebook"
-                >
-                  <Facebook className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleShare('linkedin')}
-                  className="p-2 rounded-full hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
-                  aria-label="Share on LinkedIn"
-                >
-                  <Linkedin className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleShare('copy')}
-                  className="p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-[#D67C4A] transition-colors"
-                  aria-label={t.copyLink}
-                >
-                  <LinkIcon className="w-5 h-5" />
-                </button>
-              </div>
             </header>
 
             {/* Article Content */}
@@ -461,6 +402,42 @@ export default function BlogPostPage() {
                   dangerouslySetInnerHTML={{ __html: typeof post.content === 'string' ? post.content : '' }}
                 />
               )}
+
+              {/* Share Buttons */}
+              <div className="flex items-center justify-center gap-3 mt-12 pt-8 border-t border-gray-100">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Share2 className="w-4 h-4" />
+                  {t.share}:
+                </span>
+                <button
+                  onClick={() => handleShare('twitter')}
+                  className="p-2 rounded-full hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
+                  aria-label="Share on Twitter"
+                >
+                  <Twitter className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleShare('facebook')}
+                  className="p-2 rounded-full hover:bg-blue-50 text-gray-600 hover:text-blue-700 transition-colors"
+                  aria-label="Share on Facebook"
+                >
+                  <Facebook className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleShare('linkedin')}
+                  className="p-2 rounded-full hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
+                  aria-label="Share on LinkedIn"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleShare('copy')}
+                  className="p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-[#D67C4A] transition-colors"
+                  aria-label={t.copyLink}
+                >
+                  <LinkIcon className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Newsletter Signup */}
