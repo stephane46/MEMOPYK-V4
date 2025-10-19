@@ -8929,8 +8929,15 @@ export async function registerRoutes(app: Express): Promise<void> {
         return;
       }
 
-      console.log('✅ Blog post fetched successfully:', result.data[0]?.title || slug);
-      res.json(result.data[0]);
+      const post = result.data[0];
+      
+      // Map Directus image field to featured_image_url for frontend compatibility
+      if (post.image?.id && !post.featured_image_url) {
+        post.featured_image_url = post.image.id;
+      }
+
+      console.log('✅ Blog post fetched successfully:', post?.title || slug);
+      res.json(post);
     } catch (error) {
       console.error('❌ Error fetching blog post:', error);
       res.status(500).json({ error: 'Failed to fetch blog post' });
