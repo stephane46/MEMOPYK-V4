@@ -8872,9 +8872,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Request specific fields as per schema
       const fieldsQuery = 'id,title,slug,status,published_at,language,description,image.*,author.*,seo';
       
-      // Filter by status, language, and published_at <= now
+      // Filter by status and published_at <= now
+      // Note: We filter by language on backend but include posts without language field (they'll fallback to route locale on frontend)
       const now = new Date().toISOString();
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[language][_eq]=${lang}&filter[published_at][_lte]=${now}&sort=-published_at&fields=${fieldsQuery}`;
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&sort=-published_at&fields=${fieldsQuery}`;
 
       console.log('🔍 Directus blog posts URL:', url);
       
@@ -8896,7 +8897,12 @@ export async function registerRoutes(app: Express): Promise<void> {
       const mappedPosts = posts
         .filter((post: any) => {
           // Gate rendering: status === 'published' && published_at <= now()
-          return post.status === 'published' && new Date(post.published_at) <= new Date();
+          if (post.status !== 'published' || new Date(post.published_at) > new Date()) {
+            return false;
+          }
+          
+          // Filter by language: match lang OR include posts without language field (they'll use route locale)
+          return !post.language || post.language === lang;
         })
         .map((post: any) => {
           // Map published_at → publish_date for frontend
