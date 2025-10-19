@@ -73,6 +73,9 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
           case "block_gallery": {
             const items = b.item?.items || [];
             if (!items || items.length === 0) return null;
+            
+            // Sort items by sort field as per schema
+            const sorted = [...items].sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
 
             return (
               <div
@@ -87,7 +90,7 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
                 })}
               >
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {items.map((galleryItem: any, idx: number) => {
+                  {sorted.map((galleryItem: any, idx: number) => {
                     const file = galleryItem.directus_file;
                     if (!file || !file.id) return null;
 

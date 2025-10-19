@@ -66,3 +66,20 @@ const directus = createDirectus<DirectusSchema>(directusUrl)
 export default directus;
 
 export type { Post, Author, Category, DirectusSchema };
+
+// Asset URL helpers for Directus CDN
+const CDN = 'https://cms-blog.memopyk.org/assets';
+
+export function assetUrl(id: string, opts?: { width?: number }) {
+  const p = new URL(`${CDN}/${id}`);
+  if (opts?.width) p.searchParams.set('width', String(opts.width));
+  p.searchParams.set('fit', 'inside');
+  p.searchParams.set('quality', '82');
+  p.searchParams.set('format', 'webp');
+  return p.toString();
+}
+
+export function assetSrcSet(id: string) {
+  const widths = [640, 828, 1200];
+  return widths.map(w => `${assetUrl(id, { width: w })} ${w}w`).join(', ');
+}

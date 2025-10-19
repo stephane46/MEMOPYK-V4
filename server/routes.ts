@@ -8872,8 +8872,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Request specific fields as per schema
       const fieldsQuery = 'id,title,slug,status,published_at,language,description,image.*,author.*,seo';
       
-      // Filter by status and language
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[language][_eq]=${lang}&sort=-published_at&fields=${fieldsQuery}`;
+      // Filter by status, language, and published_at <= now
+      const now = new Date().toISOString();
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[language][_eq]=${lang}&filter[published_at][_lte]=${now}&sort=-published_at&fields=${fieldsQuery}`;
 
       console.log('🔍 Directus blog posts URL:', url);
       
@@ -8927,20 +8928,20 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { slug } = req.params;
       const token = await getDirectusToken();
       
-      // Fetch post with nested M2A blocks - tested working syntax
+      // Fetch post with nested M2A blocks - as per schema
       const fieldsQuery = [
-        '*',
-        'author.*',
-        'image.*',
-        'blocks.*',
-        'blocks.item:block_richtext.*',
-        'blocks.item:block_gallery.*',
-        'blocks.item:block_gallery.items.*',
-        'blocks.item:block_gallery.items.directus_file.*'
+        'id,title,slug,status,published_at,description,seo',
+        'image.id,image.filename_download,image.type,image.width,image.height',
+        'author.id,author.first_name,author.last_name,author.email',
+        'blocks.collection,blocks.item.*',
+        'blocks.item.items.id,blocks.item.items.sort,blocks.item.items.directus_file.id',
+        'blocks.item.items.directus_file.filename_download,blocks.item.items.directus_file.type',
+        'blocks.item.items.directus_file.width,blocks.item.items.directus_file.height'
       ].join(',');
 
-      // Manually construct URL to preserve colons in M2A syntax
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[slug][_eq]=${encodeURIComponent(slug)}&filter[status][_eq]=published&fields=${fieldsQuery}&limit=1`;
+      // Manually construct URL to preserve commas and filter by published_at
+      const now = new Date().toISOString();
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[slug][_eq]=${encodeURIComponent(slug)}&filter[status][_eq]=published&filter[published_at][_lte]=${now}&fields=${fieldsQuery}&limit=1`;
 
       const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -8962,13 +8963,17 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       const post = result.data[0];
       
-      // Map Directus image field to featured_image_url for frontend compatibility
-      if (post.image?.id && !post.featured_image_url) {
-        post.featured_image_url = `https://cms-blog.memopyk.org/assets/${post.image.id}`;
-      }
+      // Map Directus fields to frontend expectations
+      const mappedPost = {
+        ...post,
+        publish_date: post.published_at, // Map published_at → publish_date for frontend
+        featured_image_url: post.image?.id 
+          ? `https://cms-blog.memopyk.org/assets/${post.image.id}` 
+          : undefined
+      };
 
-      console.log('✅ Blog post fetched successfully:', post?.title || slug);
-      res.json(post);
+      console.log('✅ Blog post fetched successfully:', mappedPost.title || slug);
+      res.json(mappedPost);
     } catch (error) {
       console.error('❌ Error fetching blog post:', error);
       res.status(500).json({ error: 'Failed to fetch blog post' });
