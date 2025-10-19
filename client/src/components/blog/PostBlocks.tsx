@@ -88,7 +88,7 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
               >
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {items.map((galleryItem: any, idx: number) => {
-                    const file = galleryItem.file;
+                    const file = galleryItem.directus_file;
                     if (!file || !file.id) return null;
 
                     const fileId = file.id;

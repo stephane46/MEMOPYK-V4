@@ -8905,7 +8905,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         'blocks.item:block_richtext.*',
         'blocks.item:block_gallery.*',
         'blocks.item:block_gallery.items.*',
-        'blocks.item:block_gallery.items.directus_files_id.*'
+        'blocks.item:block_gallery.items.directus_file.*'
       ].join(',');
 
       // Manually construct URL to preserve colons in M2A syntax
