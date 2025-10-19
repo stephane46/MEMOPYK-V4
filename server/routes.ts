@@ -8869,22 +8869,39 @@ export async function registerRoutes(app: Express): Promise<void> {
       const token = await getDirectusToken();
       const lang = language === 'fr-FR' ? 'fr' : 'en';
       
-      const params = new URLSearchParams({
-        'filter[status][_eq]': 'published',
-        'filter[language][_eq]': lang,
-        'sort': '-publish_date'
-      });
+      // Include necessary fields for blog listing
+      const fieldsQuery = [
+        '*',
+        'author.*',
+        'image.*'
+      ].join(',');
+      
+      // Manually construct URL to preserve field syntax
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[language][_eq]=${lang}&sort=-publish_date&fields=${fieldsQuery}`;
 
-      const response = await fetch(`https://cms-blog.memopyk.org/items/posts?${params}`, {
+      const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Directus API error:', response.status, errorText);
         throw new Error(`Directus API error: ${response.status}`);
       }
 
-      const { data } = await response.json();
-      res.json(data || []);
+      const result = await response.json();
+      const posts = result.data || [];
+      
+      // Map Directus image field to featured_image_url for each post
+      const mappedPosts = posts.map((post: any) => {
+        if (post.image?.id && !post.featured_image_url) {
+          post.featured_image_url = `https://cms-blog.memopyk.org/assets/${post.image.id}`;
+        }
+        return post;
+      });
+      
+      console.log(`✅ Blog posts fetched: ${mappedPosts.length} posts for ${lang}`);
+      res.json(mappedPosts);
     } catch (error) {
       console.error('❌ Error fetching blog posts:', error);
       res.status(500).json({ error: 'Failed to fetch blog posts' });
@@ -8933,7 +8950,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       // Map Directus image field to featured_image_url for frontend compatibility
       if (post.image?.id && !post.featured_image_url) {
-        post.featured_image_url = post.image.id;
+        post.featured_image_url = `https://cms-blog.memopyk.org/assets/${post.image.id}`;
       }
 
       console.log('✅ Blog post fetched successfully:', post?.title || slug);
