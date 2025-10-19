@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import { setAttr } from '@directus/visual-editing';
 import { rewriteBodyImages } from '@/lib/imageUtils';
+import { directusAsset } from '@/constants/directus';
 
 interface PostBlocksProps {
   blocks: Array<{
@@ -43,7 +44,7 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
           }
 
           case "block_richtext": {
-            const raw = b.item?.html || "";
+            const raw = b.item?.html || b.item?.content || "";
             const sanitized = DOMPurify.sanitize(raw);
             const html = rewriteBodyImages(sanitized);
 
@@ -62,14 +63,74 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
                 data-directus={setAttr({
                   collection: "block_richtext",
                   item: b.item?.id,
-                  fields: "html",
+                  fields: "content",
                   mode: "drawer",
                 })}
               />
             );
           }
 
+          case "block_gallery": {
+            const items = b.item?.items || [];
+            if (!items || items.length === 0) return null;
+
+            return (
+              <div
+                key={`gallery-${i}`}
+                data-testid={`block-gallery-${i}`}
+                className="my-8"
+                data-directus={setAttr({
+                  collection: "block_gallery",
+                  item: b.item?.id,
+                  fields: "items",
+                  mode: "drawer",
+                })}
+              >
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {items.map((galleryItem: any, idx: number) => {
+                    const file = galleryItem.file;
+                    if (!file || !file.id) return null;
+
+                    const fileId = file.id;
+                    const title = file.title || '';
+                    const description = file.description || title;
+
+                    const sizes = '(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 300px';
+                    
+                    const srcset = [640, 828, 1200]
+                      .map(w => `${directusAsset(fileId, { width: w, quality: 82, format: 'webp' })} ${w}w`)
+                      .join(', ');
+
+                    return (
+                      <figure
+                        key={galleryItem.id || idx}
+                        className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow"
+                        data-testid={`gallery-item-${i}-${idx}`}
+                      >
+                        <img
+                          src={directusAsset(fileId, { width: 828, quality: 82, format: 'webp' })}
+                          srcSet={srcset}
+                          sizes={sizes}
+                          alt={description}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-auto object-cover aspect-square"
+                        />
+                        {title && (
+                          <figcaption className="sr-only">
+                            {title}
+                          </figcaption>
+                        )}
+                      </figure>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          }
+
           default:
+            console.warn(`Unknown block collection: ${b.collection}`);
             return null;
         }
       })}
