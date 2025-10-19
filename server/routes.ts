@@ -8894,34 +8894,13 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/blog/posts/:slug", async (req, res) => {
     try {
       const { slug } = req.params;
-      const { language } = req.query;
       const token = await getDirectusToken();
-      const lang = language === 'fr-FR' ? 'fr' : 'en';
       
-      const fields = [
-        'id', 'title', 'slug', 'status', 'published_at', 'description',
-        'excerpt', 'body_html', 'language', 'publish_date',
-        'meta_title', 'meta_description', 'meta_keywords',
-        'canonical_url', 'og_image_url', 'og_description',
-        'featured_image_url', 'featured_image_alt', 'reading_time_minutes',
-        'author.id', 'author.name', 'author.avatar',
-        'image.id', 'image.title', 'image.description', 'image.width', 'image.height',
-        'blocks.collection',
-        'blocks.item.*',
-        'blocks.item.items.id',
-        'blocks.item.items.file.id',
-        'blocks.item.items.file.title',
-        'blocks.item.items.file.description',
-        'blocks.item.items.file.width',
-        'blocks.item.items.file.height',
-      ];
-
+      // Use wildcard to fetch all accessible fields, avoid specifying restricted fields
       const params = new URLSearchParams({
         'filter[slug][_eq]': slug,
-        'filter[language][_eq]': lang,
         'filter[status][_eq]': 'published',
-        'filter[published_at][_lte]': new Date().toISOString(),
-        'fields': fields.join(','),
+        'fields': '*.*',
         'limit': '1'
       });
 
@@ -8930,6 +8909,8 @@ export async function registerRoutes(app: Express): Promise<void> {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Directus API error:', response.status, errorText);
         throw new Error(`Directus API error: ${response.status}`);
       }
 
@@ -8940,6 +8921,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         return;
       }
 
+      console.log('✅ Blog post fetched successfully:', data[0]?.title || slug);
       res.json(data[0]);
     } catch (error) {
       console.error('❌ Error fetching blog post:', error);
