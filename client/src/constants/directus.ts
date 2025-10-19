@@ -22,10 +22,35 @@ export function directusAsset(
 export async function getPostWithBlocks(slug: string, locale: string) {
   const language = locale === 'fr-FR' ? 'fr' : 'en';
   
+  // Comprehensive fields for Simple CMS template support
+  const fields = [
+    'id', 'title', 'slug', 'status', 'published_at', 'description',
+    'excerpt', 'body_html', 'language', 'publish_date',
+    'meta_title', 'meta_description', 'meta_keywords',
+    'canonical_url', 'og_image_url', 'og_description',
+    'featured_image_url', 'featured_image_alt', 'reading_time_minutes',
+    // Author deep read
+    'author.id', 'author.name', 'author.avatar',
+    // Featured image deep read
+    'image.id', 'image.title', 'image.description', 'image.width', 'image.height',
+    // M2A blocks with all possible collections
+    'blocks.collection',
+    'blocks.item.*',
+    // Gallery nested items (for block_gallery)
+    'blocks.item.items.id',
+    'blocks.item.items.file.id',
+    'blocks.item.items.file.title',
+    'blocks.item.items.file.description',
+    'blocks.item.items.file.width',
+    'blocks.item.items.file.height',
+  ];
+  
   const params = new URLSearchParams({
     'filter[slug][_eq]': slug,
     'filter[language][_eq]': language,
-    'fields': '*,blocks.collection,blocks.item.*',
+    'filter[status][_eq]': 'published',
+    'filter[published_at][_lte]': new Date().toISOString(),
+    'fields': fields.join(','),
     'limit': '1'
   });
 
