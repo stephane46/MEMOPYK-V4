@@ -92,7 +92,7 @@ export default function BlogPostPage() {
     
     // Apply visual editing AFTER post data is loaded
     import('@directus/visual-editing').then(async ({ apply }) => {
-      await apply({ directusUrl: 'https://cms.memopyk.org' });
+      await apply({ directusUrl: 'https://cms-blog.memopyk.org' });
       console.log('✏️ Visual Editing applied');
       
       // Debug: log all data-directus attributes found

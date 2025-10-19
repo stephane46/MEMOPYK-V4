@@ -57,7 +57,7 @@ interface DirectusSchema {
   categories: Category[];
 }
 
-const directusUrl = import.meta.env.VITE_DIRECTUS_URL || 'https://cms.memopyk.org';
+const directusUrl = import.meta.env.VITE_DIRECTUS_URL || 'https://cms-blog.memopyk.org';
 
 const directus = createDirectus<DirectusSchema>(directusUrl)
   .with(rest())
