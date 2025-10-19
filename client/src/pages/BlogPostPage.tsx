@@ -1,20 +1,25 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation, Link, useParams } from 'wouter';
 import { Helmet } from 'react-helmet-async';
 import { setAttr } from '@directus/visual-editing';
 import { BlockRenderer } from '@/components/blog/BlockRenderer';
 import PostBlocks from '@/components/blog/PostBlocks';
+import NewsletterSignup from '@/components/blog/NewsletterSignup';
 import { DEFAULT_OG, DEFAULT_OG_FR } from '@/constants/seo';
 import { directusAsset, getPostWithBlocks } from '@/constants/directus';
 import { rewriteBodyImages } from '@/lib/imageUtils';
 import DOMPurify from 'dompurify';
+import { Calendar, Clock, User, Share2, Twitter, Facebook, Linkedin, Link as LinkIcon } from 'lucide-react';
 
 interface Author {
   id: string;
-  name: string;
+  first_name?: string;
+  last_name?: string;
+  name?: string;
   avatar?: string;
   bio?: string;
+  email?: string;
 }
 
 interface PostContent {
@@ -33,7 +38,8 @@ interface Post {
   id: string;
   title: string;
   slug: string;
-  excerpt: string;
+  excerpt?: string;
+  description?: string;
   content: string | PostContent;
   body_html?: string;
   language: string;
@@ -61,17 +67,16 @@ export default function BlogPostPage() {
   const slug = params.slug;
   const languageCode = location.includes('/fr-FR') ? 'fr-FR' : 'en-US';
   const language = languageCode === 'fr-FR' ? 'fr' : 'en';
+  const [readingProgress, setReadingProgress] = useState(0);
 
   const { data: post, isLoading } = useQuery<Post | null>({
     queryKey: ['/api/blog/post', slug, languageCode],
     queryFn: async () => {
-      // Try fetching from Directus first to get blocks
       const directusPost = await getPostWithBlocks(slug!, languageCode);
       if (directusPost && directusPost.blocks && directusPost.blocks.length > 0) {
         return directusPost;
       }
       
-      // Fallback to existing API endpoint when blocks not available
       const response = await fetch(`/api/blog/posts/${slug}?language=${languageCode}`);
       if (response.status === 404) return null;
       if (!response.ok) throw new Error('Failed to fetch post');
@@ -87,26 +92,26 @@ export default function BlogPostPage() {
   useEffect(() => {
     if (!inVisualEditingMode || !post) return;
     
-    // Debug: verify we have the correct primary key
-    console.log('🔍 Visual Editing - Post ID:', post.id, 'Type:', typeof post.id);
-    
-    // Apply visual editing AFTER post data is loaded
     import('@directus/visual-editing').then(async ({ apply }) => {
       await apply({ directusUrl: 'https://cms-blog.memopyk.org' });
-      console.log('✏️ Visual Editing applied');
-      
-      // Debug: log all data-directus attributes found
-      setTimeout(() => {
-        const attrs = document.querySelectorAll('[data-directus]');
-        console.log('📊 Total data-directus attributes:', attrs.length);
-        attrs.forEach(el => {
-          console.log('📌 Found:', el.getAttribute('data-directus'));
-        });
-      }, 100);
     });
   }, [inVisualEditingMode, post]);
 
-  // Helper to create data-directus attribute
+  // Reading progress tracker
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+      const trackLength = documentHeight - windowHeight;
+      const progress = (scrollTop / trackLength) * 100;
+      setReadingProgress(Math.min(Math.max(progress, 0), 100));
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const getDirectusAttr = (fields: string, mode: 'popover' | 'drawer' = 'popover') => {
     if (!inVisualEditingMode || !post) return {};
     return {
@@ -124,42 +129,71 @@ export default function BlogPostPage() {
       backToBlog: 'Retour au blog',
       notFound: 'Article non trouvé',
       notFoundDescription: 'L\'article que vous recherchez n\'existe pas ou a été supprimé.',
-      readingTime: 'min de lecture'
+      readingTime: 'min de lecture',
+      by: 'Par',
+      share: 'Partager',
+      copyLink: 'Copier le lien',
+      linkCopied: 'Lien copié !',
     },
     'en-US': {
       backToBlog: 'Back to blog',
       notFound: 'Article not found',
       notFoundDescription: 'The article you are looking for does not exist or has been removed.',
-      readingTime: 'min read'
+      readingTime: 'min read',
+      by: 'By',
+      share: 'Share',
+      copyLink: 'Copy link',
+      linkCopied: 'Link copied!',
     }
   }[languageCode];
 
   const blogRoute = language === 'fr' ? '/fr-FR/blog' : '/en-US/blog';
 
+  const getAuthorName = (author?: Author) => {
+    if (!author) return null;
+    if (author.name) return author.name;
+    if (author.first_name && author.last_name) {
+      return `${author.first_name} ${author.last_name}`;
+    }
+    return author.first_name || author.last_name || null;
+  };
+
+  const handleShare = async (platform: string) => {
+    const url = window.location.href;
+    const title = post?.title || '';
+    
+    const shareUrls: Record<string, string> = {
+      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    };
+    
+    if (platform === 'copy') {
+      await navigator.clipboard.writeText(url);
+      alert(t.linkCopied);
+    } else if (shareUrls[platform]) {
+      window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+    }
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F2EBDC]">
-        <header className="bg-[#2A4759] text-white py-6">
-          <div className="container mx-auto px-4">
-            <Link href={blogRoute} data-testid="link-back-to-blog">
-              <span className="text-[#D67C4A] hover:text-[#F2EBDC] transition-colors cursor-pointer">
-                ← {t.backToBlog}
-              </span>
-            </Link>
-          </div>
-        </header>
-        <main className="container mx-auto px-4 py-12">
-          <div className="animate-pulse">
+      <div className="min-h-screen bg-gradient-to-b from-[#F2EBDC] to-white">
+        <div className="h-2 bg-gray-200 sticky top-0 z-50">
+          <div className="h-full bg-[#D67C4A]" style={{ width: '0%' }}></div>
+        </div>
+        <div className="relative h-96 bg-gray-300 animate-pulse"></div>
+        <div className="container mx-auto px-4 max-w-4xl -mt-20 relative z-10">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 animate-pulse">
             <div className="h-12 bg-gray-300 rounded mb-6 max-w-2xl"></div>
-            <div className="h-6 bg-gray-300 rounded mb-4 max-w-xs"></div>
-            <div className="h-96 bg-gray-300 rounded mb-8"></div>
+            <div className="h-6 bg-gray-300 rounded mb-8 max-w-xs"></div>
             <div className="space-y-4">
               <div className="h-4 bg-gray-300 rounded"></div>
               <div className="h-4 bg-gray-300 rounded"></div>
               <div className="h-4 bg-gray-300 rounded w-3/4"></div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
@@ -170,21 +204,29 @@ export default function BlogPostPage() {
         <Helmet>
           <title>{t.notFound} | MEMOPYK</title>
         </Helmet>
-        <div className="min-h-screen bg-[#F2EBDC]">
-          <header className="bg-[#2A4759] text-white py-6">
+        <div className="min-h-screen bg-gradient-to-b from-[#F2EBDC] to-white">
+          <header className="bg-gradient-to-br from-[#2A4759] via-[#2A4759] to-[#1a2d38] text-white py-6">
             <div className="container mx-auto px-4">
               <Link href={blogRoute} data-testid="link-back-to-blog">
-                <span className="text-[#D67C4A] hover:text-[#F2EBDC] transition-colors cursor-pointer">
-                  ← {t.backToBlog}
+                <span className="inline-flex items-center text-[#D67C4A] hover:text-[#F2EBDC] transition-colors cursor-pointer font-medium group">
+                  <svg className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  {t.backToBlog}
                 </span>
               </Link>
             </div>
           </header>
-          <main className="container mx-auto px-4 py-12 text-center">
-            <h1 className="text-4xl font-['Playfair_Display'] text-[#2A4759] mb-4" data-testid="text-not-found-title">
-              {t.notFound}
-            </h1>
-            <p className="text-gray-700" data-testid="text-not-found-description">{t.notFoundDescription}</p>
+          <main className="container mx-auto px-4 py-20 text-center">
+            <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-12">
+              <svg className="w-24 h-24 mx-auto mb-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h1 className="text-4xl font-['Playfair_Display'] text-[#2A4759] mb-4 font-semibold" data-testid="text-not-found-title">
+                {t.notFound}
+              </h1>
+              <p className="text-gray-600 text-lg" data-testid="text-not-found-description">{t.notFoundDescription}</p>
+            </div>
           </main>
         </div>
       </>
@@ -194,7 +236,7 @@ export default function BlogPostPage() {
   const defaultOg = languageCode === 'fr-FR' ? DEFAULT_OG_FR : DEFAULT_OG;
   
   const seoTitle = post.meta_title || post.title;
-  const seoDescription = post.meta_description || post.excerpt || "";
+  const seoDescription = post.meta_description || post.description || post.excerpt || "";
   const seoKeywords = post.meta_keywords;
   
   function resolveHero(raw?: string | null, width?: number) {
@@ -241,79 +283,147 @@ export default function BlogPostPage() {
         <meta name="twitter:image" content={ogUrl} />
       </Helmet>
 
-      <div className="min-h-screen bg-[#F2EBDC]">
-        <header className="bg-[#2A4759] text-white py-6">
-          <div className="container mx-auto px-4">
-            <Link href={blogRoute} data-testid="link-back-to-blog">
-              <span className="text-[#D67C4A] hover:text-[#F2EBDC] transition-colors cursor-pointer">
-                ← {t.backToBlog}
-              </span>
-            </Link>
-          </div>
-        </header>
+      <div className="min-h-screen bg-gradient-to-b from-[#F2EBDC] to-white">
+        {/* Reading Progress Bar */}
+        <div className="h-2 bg-gray-200 sticky top-0 z-50">
+          <div 
+            className="h-full bg-gradient-to-r from-[#D67C4A] to-[#89BAD9] transition-all duration-150"
+            style={{ width: `${readingProgress}%` }}
+          ></div>
+        </div>
 
-        <article className="pb-12">
-          {heroUrl && (
-            <div className="w-full">
-              <div className="mx-auto max-w-screen-xl px-4">
-                <div 
-                  className="relative w-full aspect-[16/9] max-h-[70vh] bg-gray-100 rounded-xl overflow-hidden"
-                  {...getDirectusAttr('featured_image_url', 'popover')}
-                >
-                  <img
-                    src={heroUrl}
-                    srcSet={heroSrcSet}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
-                    alt={post.featured_image_alt || post.title}
-                    loading="eager"
-                    decoding="async"
-                    className="w-full h-full object-contain"
-                    data-testid="img-post-featured"
-                  />
-                </div>
+        {/* Hero Section with Overlay */}
+        {heroUrl && (
+          <div className="relative h-96 md:h-[32rem] overflow-hidden bg-[#2A4759]">
+            <img
+              src={heroUrl}
+              srcSet={heroSrcSet}
+              sizes="100vw"
+              alt={post.featured_image_alt || post.title}
+              loading="eager"
+              decoding="async"
+              className="w-full h-full object-cover"
+              data-testid="img-post-hero"
+              {...getDirectusAttr('featured_image_url', 'popover')}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+            
+            {/* Back Button Overlay */}
+            <div className="absolute top-6 left-0 right-0 z-10">
+              <div className="container mx-auto px-4">
+                <Link href={blogRoute} data-testid="link-back-to-blog">
+                  <span className="inline-flex items-center text-white hover:text-[#D67C4A] transition-colors cursor-pointer font-medium group bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full">
+                    <svg className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    {t.backToBlog}
+                  </span>
+                </Link>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          <header className="bg-white py-12 mb-8 shadow-sm">
-            <div className="container mx-auto px-4 max-w-4xl">
+        {/* Article Container with Overlap */}
+        <article className="container mx-auto px-4 max-w-4xl -mt-20 md:-mt-32 relative z-10 pb-20">
+          {/* Main Content Card */}
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            {/* Article Header */}
+            <header className="p-8 md:p-12 border-b border-gray-100">
               <h1
-                className="text-4xl md:text-5xl font-['Playfair_Display'] text-[#2A4759] mb-4"
+                className="text-4xl md:text-5xl lg:text-6xl font-['Playfair_Display'] text-[#2A4759] mb-6 leading-tight"
                 data-testid="text-post-title"
                 {...getDirectusAttr('title', 'popover')}
               >
                 {post.title}
               </h1>
-              <div className="flex items-center gap-4 text-gray-600 flex-wrap">
-                {post.publish_date && (
-                  <time dateTime={post.publish_date} data-testid="text-post-date">
+              
+              {/* Metadata */}
+              <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-6">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-[#D67C4A]" />
+                  <time dateTime={post.publish_date} data-testid="text-post-date" className="text-sm">
                     {new Date(post.publish_date).toLocaleDateString(
                       languageCode === 'fr-FR' ? 'fr-FR' : 'en-US',
                       { year: 'numeric', month: 'long', day: 'numeric' }
                     )}
                   </time>
-                )}
-                {post.author && typeof post.author === 'object' && post.author.name && (
-                  <>
-                    <span>•</span>
-                    <span data-testid="text-post-author">{post.author.name}</span>
-                  </>
-                )}
+                </div>
                 {post.reading_time_minutes && (
                   <>
-                    <span>•</span>
-                    <span data-testid="text-reading-time">{post.reading_time_minutes} {t.readingTime}</span>
+                    <span className="text-gray-300">•</span>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-[#D67C4A]" />
+                      <span data-testid="text-reading-time" className="text-sm">
+                        {post.reading_time_minutes} {t.readingTime}
+                      </span>
+                    </div>
                   </>
                 )}
               </div>
-            </div>
-          </header>
 
-          <div className="container mx-auto px-4 max-w-4xl">
-            <div
-              className="bg-white p-8 md:p-12 rounded-lg shadow-sm"
-              data-testid="post-content"
-            >
+              {/* Author Card */}
+              {post.author && getAuthorName(post.author) && (
+                <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-[#F2EBDC]/50 to-transparent rounded-xl border border-[#D67C4A]/10">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#D67C4A] to-[#89BAD9] flex items-center justify-center text-white text-2xl font-['Playfair_Display'] font-semibold">
+                      {getAuthorName(post.author)?.charAt(0).toUpperCase()}
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <User className="w-4 h-4 text-[#D67C4A]" />
+                      <span className="text-sm text-gray-500">{t.by}</span>
+                    </div>
+                    <p className="font-semibold text-[#2A4759]" data-testid="text-post-author">
+                      {getAuthorName(post.author)}
+                    </p>
+                    {post.author.bio && (
+                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{post.author.bio}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Share Buttons */}
+              <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-100">
+                <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Share2 className="w-4 h-4" />
+                  {t.share}:
+                </span>
+                <button
+                  onClick={() => handleShare('twitter')}
+                  className="p-2 rounded-full hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
+                  aria-label="Share on Twitter"
+                >
+                  <Twitter className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleShare('facebook')}
+                  className="p-2 rounded-full hover:bg-blue-50 text-gray-600 hover:text-blue-700 transition-colors"
+                  aria-label="Share on Facebook"
+                >
+                  <Facebook className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleShare('linkedin')}
+                  className="p-2 rounded-full hover:bg-blue-50 text-gray-600 hover:text-blue-600 transition-colors"
+                  aria-label="Share on LinkedIn"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => handleShare('copy')}
+                  className="p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-[#D67C4A] transition-colors"
+                  aria-label={t.copyLink}
+                >
+                  <LinkIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </header>
+
+            {/* Article Content */}
+            <div className="p-8 md:p-12" data-testid="post-content">
               {post.blocks && post.blocks.length > 0 ? (
                 <div {...getDirectusAttr('blocks', 'drawer')}>
                   <PostBlocks blocks={post.blocks} />
@@ -321,35 +431,54 @@ export default function BlogPostPage() {
               ) : post.body_html ? (
                 <article
                   className="prose prose-lg max-w-none
-                    prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759]
-                    prose-p:text-gray-700 prose-p:leading-relaxed
-                    prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
-                    prose-strong:text-[#2A4759]
-                    prose-img:rounded-lg prose-img:shadow-lg prose-img:max-w-full prose-img:h-auto
-                    prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
+                    prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759] prose-headings:scroll-mt-24
+                    prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6
+                    prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
+                    prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-lg prose-p:mb-6
+                    prose-a:text-[#D67C4A] prose-a:no-underline prose-a:font-medium hover:prose-a:underline
+                    prose-strong:text-[#2A4759] prose-strong:font-semibold
+                    prose-ul:my-6 prose-ol:my-6 prose-li:text-gray-700 prose-li:my-2
+                    prose-img:rounded-xl prose-img:shadow-2xl prose-img:max-w-full prose-img:h-auto prose-img:my-8
+                    prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic prose-blockquote:bg-[#F2EBDC]/30 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:my-8
+                    prose-code:text-[#D67C4A] prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded"
                   {...getDirectusAttr('body_html', 'drawer')}
                   dangerouslySetInnerHTML={{ __html: rewriteBodyImages(DOMPurify.sanitize(post.body_html)) }}
                 />
               ) : typeof post.content === 'object' && post.content.blocks ? (
-                <div
-                  {...getDirectusAttr('content', 'drawer')}
-                >
+                <div {...getDirectusAttr('content', 'drawer')}>
                   <BlockRenderer blocks={post.content.blocks} />
                 </div>
               ) : (
                 <div
                   className="prose prose-lg max-w-none
                     prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759]
-                    prose-p:text-gray-700 prose-p:leading-relaxed
+                    prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-lg
                     prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
                     prose-strong:text-[#2A4759]
-                    prose-img:rounded-lg prose-img:shadow-lg
-                    prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
+                    prose-img:rounded-xl prose-img:shadow-2xl
+                    prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic prose-blockquote:bg-[#F2EBDC]/30 prose-blockquote:py-4 prose-blockquote:px-6"
                   {...getDirectusAttr('content', 'drawer')}
                   dangerouslySetInnerHTML={{ __html: typeof post.content === 'string' ? post.content : '' }}
                 />
               )}
             </div>
+
+            {/* Newsletter Signup */}
+            <div className="px-8 md:px-12 pb-8 md:pb-12">
+              <NewsletterSignup language={languageCode} />
+            </div>
+          </div>
+
+          {/* Back to Blog CTA */}
+          <div className="mt-12 text-center">
+            <Link href={blogRoute}>
+              <span className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#2A4759] to-[#1a2d38] text-white rounded-full hover:shadow-xl transition-all cursor-pointer group font-semibold">
+                <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                {t.backToBlog}
+              </span>
+            </Link>
           </div>
         </article>
       </div>

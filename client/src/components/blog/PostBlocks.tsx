@@ -53,12 +53,16 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
                 key={`richtext-${i}`}
                 data-testid={`block-richtext-${i}`}
                 className="prose prose-lg max-w-none
-                  prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759]
-                  prose-p:text-gray-700 prose-p:leading-relaxed
-                  prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
-                  prose-strong:text-[#2A4759]
-                  prose-img:rounded-lg prose-img:shadow-lg prose-img:max-w-full prose-img:h-auto
-                  prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic"
+                  prose-headings:font-['Playfair_Display'] prose-headings:text-[#2A4759] prose-headings:scroll-mt-24
+                  prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6
+                  prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
+                  prose-p:text-gray-700 prose-p:leading-relaxed prose-p:text-lg prose-p:mb-6
+                  prose-a:text-[#D67C4A] prose-a:no-underline prose-a:font-medium hover:prose-a:underline
+                  prose-strong:text-[#2A4759] prose-strong:font-semibold
+                  prose-ul:my-6 prose-ol:my-6 prose-li:text-gray-700 prose-li:my-2
+                  prose-img:rounded-xl prose-img:shadow-2xl prose-img:max-w-full prose-img:h-auto prose-img:my-8
+                  prose-blockquote:border-l-4 prose-blockquote:border-[#D67C4A] prose-blockquote:italic prose-blockquote:bg-[#F2EBDC]/30 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:my-8
+                  prose-code:text-[#D67C4A] prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded"
                 dangerouslySetInnerHTML={{ __html: html }}
                 data-directus={setAttr({
                   collection: "block_richtext",
@@ -89,7 +93,7 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
                   mode: "drawer",
                 })}
               >
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {sorted.map((galleryItem: any, idx: number) => {
                     const file = galleryItem.directus_file;
                     if (!file || !file.id) return null;
