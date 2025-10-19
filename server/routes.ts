@@ -8893,11 +8893,6 @@ export async function registerRoutes(app: Express): Promise<void> {
       const result = await response.json();
       const posts = result.data || [];
       
-      console.log(`📝 RAW posts from Directus: ${posts.length} posts`);
-      if (posts.length > 0) {
-        console.log('📝 First post sample:', JSON.stringify(posts[0], null, 2));
-      }
-      
       // Map Directus fields to frontend expectations
       const mappedPosts = posts
         .filter((post: any) => {
