@@ -8867,7 +8867,6 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const { language } = req.query;
       const token = await getDirectusToken();
-      const lang = language === 'fr-FR' ? 'fr' : 'en';
       
       // Include necessary fields for blog listing
       const fieldsQuery = [
@@ -8876,9 +8875,12 @@ export async function registerRoutes(app: Express): Promise<void> {
         'image.*'
       ].join(',');
       
-      // Manually construct URL to preserve field syntax
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[language][_eq]=${lang}&sort=-publish_date&fields=${fieldsQuery}`;
+      // Simple query - only filter by status (published)
+      // Note: language and publish_date fields don't exist in Directus schema
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&fields=${fieldsQuery}`;
 
+      console.log('🔍 Directus blog posts URL:', url);
+      
       const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -8886,11 +8888,15 @@ export async function registerRoutes(app: Express): Promise<void> {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ Directus API error:', response.status, errorText);
+        console.error('❌ Failed URL:', url);
         throw new Error(`Directus API error: ${response.status}`);
       }
 
       const result = await response.json();
-      const posts = result.data || [];
+      let posts = result.data || [];
+      
+      // Client-side filtering by language if needed (once we know the actual field name)
+      // For now, return all published posts
       
       // Map Directus image field to featured_image_url for each post
       const mappedPosts = posts.map((post: any) => {
@@ -8900,7 +8906,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         return post;
       });
       
-      console.log(`✅ Blog posts fetched: ${mappedPosts.length} posts for ${lang}`);
+      console.log(`✅ Blog posts fetched: ${mappedPosts.length} posts`);
       res.json(mappedPosts);
     } catch (error) {
       console.error('❌ Error fetching blog posts:', error);
