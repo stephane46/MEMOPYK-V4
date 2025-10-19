@@ -8896,10 +8896,15 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { slug } = req.params;
       const token = await getDirectusToken();
       
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[slug][_eq]=${slug}&filter[status][_eq]=published&fields=*&limit=1`;
-      console.log('📝 Fetching blog post:', url);
+      // Fetch post with nested M2A blocks and their content
+      const params = new URLSearchParams({
+        'filter[slug][_eq]': slug,
+        'filter[status][_eq]': 'published',
+        'fields': '*,author.*,image.*,blocks.item:block_richtext.*,blocks.item:block_gallery.*,blocks.item:block_gallery.items.*,blocks.item:block_gallery.items.directus_files_id.*',
+        'limit': '1'
+      });
 
-      const response = await fetch(url, {
+      const response = await fetch(`https://cms-blog.memopyk.org/items/posts?${params}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -8910,7 +8915,6 @@ export async function registerRoutes(app: Express): Promise<void> {
       }
 
       const result = await response.json();
-      console.log('📦 Directus response:', JSON.stringify(result).substring(0, 200));
       
       if (!result.data || result.data.length === 0) {
         console.log('❌ Post not found in Directus for slug:', slug);
