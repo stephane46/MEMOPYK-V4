@@ -8920,6 +8920,10 @@ export async function registerRoutes(app: Express): Promise<void> {
           return mapped;
         });
       
+      // Prevent browser caching to always fetch fresh content from Directus
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
       res.json(mappedPosts);
     } catch (error) {
       console.error('❌ Error fetching blog posts:', error);
@@ -8976,7 +8980,10 @@ export async function registerRoutes(app: Express): Promise<void> {
           : undefined
       };
 
-      console.log('✅ Blog post fetched successfully:', mappedPost.title || slug);
+      // Prevent browser caching to always fetch fresh content from Directus
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
       res.json(mappedPost);
     } catch (error) {
       console.error('❌ Error fetching blog post:', error);
