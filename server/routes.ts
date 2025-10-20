@@ -9038,6 +9038,57 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       const post = result.data[0];
       
+      // Fallback hydration for blocks where M2A expansion failed
+      // (e.g., block_content_section_v3 with integer ID causing M2A mismatch)
+      if (post.blocks && Array.isArray(post.blocks)) {
+        // First, fetch the non-expanded blocks to get the actual item IDs
+        const blocksUrl = `https://cms-blog.memopyk.org/items/posts_blocks?filter[posts_id][_eq]=${post.id}&fields=id,collection,item,sort&sort=sort`;
+        const blocksResponse = await fetch(blocksUrl, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (blocksResponse.ok) {
+          const blocksResult = await blocksResponse.json();
+          const rawBlocks = blocksResult.data || [];
+          
+          // Hydrate blocks that failed expansion (item is null in post.blocks)
+          const hydratedBlocks = await Promise.all(
+            post.blocks.map(async (block: any) => {
+              // If expansion failed (item is null), find matching raw block and hydrate
+              if (block.item === null) {
+                // Find raw block by matching collection and sort order
+                const rawBlock = rawBlocks.find((rb: any) => 
+                  rb.collection === block.collection && rb.sort === block.sort
+                );
+                
+                if (rawBlock && rawBlock.item) {
+                  const itemId = rawBlock.item;
+                  
+                  try {
+                    const itemUrl = `https://cms-blog.memopyk.org/items/${rawBlock.collection}/${itemId}`;
+                    const itemResponse = await fetch(itemUrl, {
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (itemResponse.ok) {
+                      const itemResult = await itemResponse.json();
+                      console.log(`✅ Hydrated ${rawBlock.collection}/${itemId} successfully`);
+                      return { ...block, item: itemResult.data };
+                    }
+                  } catch (err) {
+                    console.error(`⚠️ Failed to hydrate ${rawBlock.collection}/${itemId}:`, err);
+                  }
+                }
+              }
+              
+              return block; // Already expanded or failed to hydrate
+            })
+          );
+          
+          post.blocks = hydratedBlocks;
+        }
+      }
+      
       // Map Directus fields to frontend expectations
       const mappedPost = {
         ...post,
