@@ -9011,7 +9011,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         'blocks.item:block_content_section.background,blocks.item:block_content_section.caption,blocks.item:block_content_section.alt',
         'blocks.item:block_content_section.image_primary.id',
         'blocks.item:block_content_section.image_secondary.id',
-        'blocks.item:block_content_section.image_third.id'
+        'blocks.item:block_content_section.image_third.id',
+        'blocks.item:block_content_section_v3.id,blocks.item:block_content_section_v3.layout,blocks.item:block_content_section_v3.text',
+        'blocks.item:block_content_section_v3.media_width,blocks.item:block_content_section_v3.media_align',
+        'blocks.item:block_content_section_v3.max_width,blocks.item:block_content_section_v3.spacing_top,blocks.item:block_content_section_v3.spacing_bottom',
+        'blocks.item:block_content_section_v3.background,blocks.item:block_content_section_v3.caption,blocks.item:block_content_section_v3.alt',
+        'blocks.item:block_content_section_v3.image_primary.id',
+        'blocks.item:block_content_section_v3.image_secondary.id',
+        'blocks.item:block_content_section_v3.image_third.id'
       ].join(',');
 
       // Manually construct URL to preserve commas and filter by published_at

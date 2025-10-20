@@ -367,7 +367,10 @@ export default function BlogPostPage() {
             <div className="p-8 md:p-12" data-testid="post-content">
               {post.blocks && post.blocks.length > 0 ? (
                 <div {...getDirectusAttr('blocks', 'drawer')}>
-                  <PostBlocks blocks={post.blocks} />
+                  {(() => {
+                    console.log('📦 Blog blocks:', post.blocks.map(b => ({ collection: b.collection, hasItem: !!b.item })));
+                    return <PostBlocks blocks={post.blocks} />;
+                  })()}
                 </div>
               ) : post.body_html ? (
                 <article

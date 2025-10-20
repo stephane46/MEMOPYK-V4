@@ -137,7 +137,8 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
             );
           }
 
-          case "block_content_section": {
+          case "block_content_section":
+          case "block_content_section_v3": {
             if (!b.item) {
               console.warn(`Block content section at index ${i} has no item data`);
               return null;
