@@ -138,6 +138,10 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
           }
 
           case "block_content_section": {
+            if (!b.item) {
+              console.warn(`Block content section at index ${i} has no item data`);
+              return null;
+            }
             return (
               <BlockContentSection 
                 key={`content-section-${i}`}

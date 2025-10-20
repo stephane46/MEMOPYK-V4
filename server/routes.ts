@@ -8941,15 +8941,20 @@ export async function registerRoutes(app: Express): Promise<void> {
         'id,title,slug,status,published_at,description,seo',
         'image.id,image.filename_download,image.type,image.width,image.height',
         'author.id,author.first_name,author.last_name,author.email',
-        'blocks.collection,blocks.item.*',
-        // Gallery block nested files
-        'blocks.item.items.id,blocks.item.items.sort,blocks.item.items.directus_file.id',
-        'blocks.item.items.directus_file.filename_download,blocks.item.items.directus_file.type',
-        'blocks.item.items.directus_file.width,blocks.item.items.directus_file.height',
-        // Content section block image files
-        'blocks.item.image_primary.id',
-        'blocks.item.image_secondary.id',
-        'blocks.item.image_third.id'
+        'blocks.collection',
+        'blocks.item:block_heading.id,blocks.item:block_heading.text,blocks.item:block_heading.level,blocks.item:block_heading.align',
+        'blocks.item:block_richtext.id,blocks.item:block_richtext.content,blocks.item:block_richtext.headline,blocks.item:block_richtext.tagline',
+        'blocks.item:block_gallery.id,blocks.item:block_gallery.headline,blocks.item:block_gallery.tagline',
+        'blocks.item:block_gallery.items.id,blocks.item:block_gallery.items.sort,blocks.item:block_gallery.items.directus_file.id',
+        'blocks.item:block_gallery.items.directus_file.filename_download,blocks.item:block_gallery.items.directus_file.type',
+        'blocks.item:block_gallery.items.directus_file.width,blocks.item:block_gallery.items.directus_file.height',
+        'blocks.item:block_content_section.id,blocks.item:block_content_section.layout,blocks.item:block_content_section.text',
+        'blocks.item:block_content_section.media_width,blocks.item:block_content_section.media_align',
+        'blocks.item:block_content_section.max_width,blocks.item:block_content_section.spacing_top,blocks.item:block_content_section.spacing_bottom',
+        'blocks.item:block_content_section.background,blocks.item:block_content_section.caption,blocks.item:block_content_section.alt',
+        'blocks.item:block_content_section.image_primary.id',
+        'blocks.item:block_content_section.image_secondary.id',
+        'blocks.item:block_content_section.image_third.id'
       ].join(',');
 
       // Manually construct URL to preserve commas and filter by published_at
