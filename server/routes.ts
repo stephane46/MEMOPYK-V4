@@ -8864,6 +8864,50 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   }
 
+  // Debug endpoint to diagnose block_content_section permissions
+  app.get("/api/debug/directus-blocks", async (req, res) => {
+    try {
+      const token = await getDirectusToken();
+      const postId = 'c85a9734-ed79-436a-a206-55f34caa8b4e';
+      
+      // Test 1: Without expansion (should show item: "1")
+      const test1Url = `https://cms-blog.memopyk.org/items/posts_blocks?filter[posts_id][_eq]=${postId}&filter[collection][_eq]=block_content_section&fields=id,collection,item,sort&sort=sort`;
+      const test1Res = await fetch(test1Url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const test1Data = await test1Res.json();
+      
+      // Test 2: With expansion (likely shows item: null due to permissions)
+      const test2Url = `https://cms-blog.memopyk.org/items/posts_blocks?filter[posts_id][_eq]=${postId}&filter[collection][_eq]=block_content_section&fields=id,collection,item.*,sort&sort=sort`;
+      const test2Res = await fetch(test2Url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const test2Data = await test2Res.json();
+      
+      // Test 3: Direct fetch of block_content_section collection
+      const test3Url = `https://cms-blog.memopyk.org/items/block_content_section`;
+      const test3Res = await fetch(test3Url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const test3Data = await test3Res.json();
+      
+      res.json({
+        test1_without_expansion: test1Data,
+        test2_with_expansion: test2Data,
+        test3_direct_collection: test3Data,
+        diagnosis: {
+          hasBlockLink: test1Data?.data?.length > 0,
+          itemIdFromTest1: test1Data?.data?.[0]?.item,
+          itemDataFromTest2: test2Data?.data?.[0]?.item,
+          permissionsIssue: test1Data?.data?.[0]?.item && !test2Data?.data?.[0]?.item
+        }
+      });
+    } catch (error) {
+      console.error('❌ Directus debug error:', error);
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
   app.get("/api/blog/posts", async (req, res) => {
     try {
       const { language } = req.query;
