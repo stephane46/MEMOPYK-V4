@@ -8891,15 +8891,28 @@ export async function registerRoutes(app: Express): Promise<void> {
       });
       const test3Data = await test3Res.json();
       
+      // Test 4: ALL blocks with item.* expansion to compare permissions
+      const test4Url = `https://cms-blog.memopyk.org/items/posts_blocks?filter[posts_id][_eq]=${postId}&fields=collection,item,sort,item.*&sort=sort`;
+      const test4Res = await fetch(test4Url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const test4Data = await test4Res.json();
+      
       res.json({
         test1_without_expansion: test1Data,
         test2_with_expansion: test2Data,
         test3_direct_collection: test3Data,
+        test4_all_blocks_with_expansion: test4Data,
         diagnosis: {
           hasBlockLink: test1Data?.data?.length > 0,
           itemIdFromTest1: test1Data?.data?.[0]?.item,
           itemDataFromTest2: test2Data?.data?.[0]?.item,
-          permissionsIssue: test1Data?.data?.[0]?.item && !test2Data?.data?.[0]?.item
+          permissionsIssue: test1Data?.data?.[0]?.item && !test2Data?.data?.[0]?.item,
+          allBlocksComparison: test4Data?.data?.map((b: any) => ({
+            collection: b.collection,
+            hasItemData: b.item !== null,
+            itemType: typeof b.item
+          }))
         }
       });
     } catch (error) {
