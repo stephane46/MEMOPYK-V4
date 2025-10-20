@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 import { setAttr } from '@directus/visual-editing';
 import { rewriteBodyImages } from '@/lib/imageUtils';
 import { directusAsset } from '@/constants/directus';
+import BlockContentSection from './BlockContentSection';
 
 interface PostBlocksProps {
   blocks: Array<{
@@ -133,6 +134,16 @@ export default function PostBlocks({ blocks }: PostBlocksProps) {
                   })}
                 </div>
               </div>
+            );
+          }
+
+          case "block_content_section": {
+            return (
+              <BlockContentSection 
+                key={`content-section-${i}`}
+                item={b.item}
+                index={i}
+              />
             );
           }
 

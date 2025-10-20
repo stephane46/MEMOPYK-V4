@@ -8942,9 +8942,14 @@ export async function registerRoutes(app: Express): Promise<void> {
         'image.id,image.filename_download,image.type,image.width,image.height',
         'author.id,author.first_name,author.last_name,author.email',
         'blocks.collection,blocks.item.*',
+        // Gallery block nested files
         'blocks.item.items.id,blocks.item.items.sort,blocks.item.items.directus_file.id',
         'blocks.item.items.directus_file.filename_download,blocks.item.items.directus_file.type',
-        'blocks.item.items.directus_file.width,blocks.item.items.directus_file.height'
+        'blocks.item.items.directus_file.width,blocks.item.items.directus_file.height',
+        // Content section block image files
+        'blocks.item.image_primary.id',
+        'blocks.item.image_secondary.id',
+        'blocks.item.image_third.id'
       ].join(',');
 
       // Manually construct URL to preserve commas and filter by published_at
