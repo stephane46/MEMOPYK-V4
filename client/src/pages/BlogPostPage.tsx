@@ -110,6 +110,42 @@ export default function BlogPostPage() {
     });
   }, [inVisualEditingMode, post]);
 
+  // Track blog post view for analytics (exclude admin views)
+  useEffect(() => {
+    if (!post || !slug) return;
+    
+    // Don't track if in admin mode
+    const isAdmin = window.location.pathname.includes('/admin');
+    if (isAdmin) return;
+    
+    // Get or create session ID
+    let baseSessionId = localStorage.getItem('memopyk-base-session-id');
+    if (!baseSessionId) {
+      baseSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('memopyk-base-session-id', baseSessionId);
+    }
+    
+    let tabId = sessionStorage.getItem('memopyk-tab-id');
+    if (!tabId) {
+      tabId = Math.random().toString(36).substr(2, 9);
+      sessionStorage.setItem('memopyk-tab-id', tabId);
+    }
+    
+    const sessionId = `${baseSessionId}_${tabId}`;
+    
+    // Track view
+    fetch('/api/analytics/blog/view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        post_slug: slug,
+        post_title: post.title,
+        language: languageCode,
+        session_id: sessionId
+      })
+    }).catch(err => console.warn('Blog view tracking failed:', err));
+  }, [post, slug, languageCode]);
+
   // Reading progress tracker
   useEffect(() => {
     const handleScroll = () => {
