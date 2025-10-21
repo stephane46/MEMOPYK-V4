@@ -8939,6 +8939,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       const now = new Date().toISOString();
       const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&filter[language][_eq]=${language}&sort=-published_at&fields=${fieldsQuery}`;
       
+      console.log(`🔍 Fetching blog posts with filter: language=${language}, published_at<=${now}`);
+      console.log(`🔍 Query URL: ${url}`);
+      
       const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -8952,6 +8955,11 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       const result = await response.json();
       const posts = result.data || [];
+      
+      console.log(`📝 Directus returned ${posts.length} posts:`);
+      posts.forEach((post: any) => {
+        console.log(`   - "${post.title}" (${post.slug}) | Status: ${post.status} | Lang: ${post.language} | Published: ${post.published_at}`);
+      });
       
       // Map Directus fields to frontend expectations
       const mappedPosts = posts
