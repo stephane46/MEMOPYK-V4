@@ -72,7 +72,13 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Professional Flag System**: 255-country SVG flag solution with dynamic mapping and three-tier fallback.
 - **OpenReplay Integration**: Session recording and user behavior analytics.
 - **Partner Intake System**: Bilingual partner directory with Zoho CRM integration (Account, Contact, Partner records). Uses OAuth refresh-token flow, rate limiting, CSRF, and reCAPTCHA stub.
-- **Directus Blog CMS Integration**: Headless CMS for bilingual blog content. Fetches posts with M2A blocks (rich text, headings, galleries, content sections) and maps fields. Language normalization helpers for consistent filtering. Supports `block_heading`, `block_richtext`, `block_gallery`, and `block_content_section` (flexible layouts, Markdown rendering).
+- **Directus Blog CMS Integration**: Headless CMS for bilingual blog content. Fetches posts with M2A blocks (rich text, headings, galleries, content sections) and maps fields. Language normalization helpers for consistent filtering. Supports `block_heading`, `block_richtext`, `block_gallery`, and `block_content_section` (flexible layouts, Markdown rendering with GFM tables).
+- **Blog Markdown Rendering System**: 
+  - **GFM Support**: GitHub Flavored Markdown enabled via `marked.setOptions({ gfm: true })` for tables, strikethrough, and enhanced syntax
+  - **Table Styling**: Professional responsive tables with zebra striping, subtle borders, header backgrounds, and horizontal scroll on mobile devices
+  - **CSS Classes**: All markdown content wrapped in `.md-content` class for consistent styling across all 5 content section layouts (text-only, image-full, two-images, three-images, image-left/right)
+  - **Sanitization**: DOMPurify sanitizes all rendered HTML before display for security
+  - **Prose Integration**: TailwindCSS `@tailwindcss/typography` prose classes for beautiful typography alongside custom table styles
 
 ## External Dependencies
 
@@ -97,7 +103,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Crypto-js**: Client-side MD5 hashing.
 - **Multer**: Node.js middleware for file uploads.
 - **Sharp**: Image processing library for static image generation.
-- **marked**: Fast Markdown parser.
+- **marked**: Fast Markdown parser with GFM (GitHub Flavored Markdown) enabled for tables, strikethrough, and enhanced syntax support.
 
 ### Content Management
 - **Directus CMS**: Headless CMS for blog content management (https://cms-blog.memopyk.org).
