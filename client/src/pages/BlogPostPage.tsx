@@ -74,13 +74,26 @@ export default function BlogPostPage() {
     queryFn: async () => {
       const directusPost = await getPostWithBlocks(slug!, languageCode);
       if (directusPost && directusPost.blocks && directusPost.blocks.length > 0) {
+        // Client-side guard: verify language matches
+        if (directusPost.language !== languageCode) {
+          console.warn(`⚠️ Language mismatch for post ${slug}: expected ${languageCode}, got ${directusPost.language}`);
+          return null;
+        }
         return directusPost;
       }
       
       const response = await fetch(`/api/blog/posts/${slug}?language=${languageCode}`);
       if (response.status === 404) return null;
       if (!response.ok) throw new Error('Failed to fetch post');
-      return response.json();
+      const data = await response.json();
+      
+      // Client-side guard: verify language matches
+      if (data && data.language !== languageCode) {
+        console.warn(`⚠️ Language mismatch for post ${slug}: expected ${languageCode}, got ${data.language}`);
+        return null;
+      }
+      
+      return data;
     }
   });
 
