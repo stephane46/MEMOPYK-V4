@@ -147,6 +147,15 @@ export const useVideoAnalytics = () => {
       return;
     }
     
+    // Development environment exclusion - exclude Replit preview and localhost
+    const isDevelopment = window.location.hostname.includes('replit.dev') || 
+                         window.location.hostname.includes('localhost') ||
+                         window.location.hostname === '127.0.0.1';
+    if (isDevelopment) {
+      console.log('📊 PRODUCTION ANALYTICS: Skipping session tracking - development environment detected');
+      return;
+    }
+    
     // Session deduplication to prevent analytics overload (reduced from 1 hour to 10 minutes for better production tracking)
     const sessionKey = 'memopyk-session-tracked';
     const sessionStartKey = 'memopyk-session-start';

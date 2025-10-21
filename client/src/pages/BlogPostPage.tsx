@@ -110,13 +110,22 @@ export default function BlogPostPage() {
     });
   }, [inVisualEditingMode, post]);
 
-  // Track blog post view for analytics (exclude admin views)
+  // Track blog post view for analytics (exclude admin and development)
   useEffect(() => {
     if (!post || !slug) return;
     
     // Don't track if in admin mode
     const isAdmin = window.location.pathname.includes('/admin');
     if (isAdmin) return;
+    
+    // Don't track if in development/preview environment
+    const isDevelopment = window.location.hostname.includes('replit.dev') || 
+                         window.location.hostname.includes('localhost') ||
+                         window.location.hostname === '127.0.0.1';
+    if (isDevelopment) {
+      console.log('📊 Blog view tracking skipped: development environment');
+      return;
+    }
     
     // Get or create session ID
     let baseSessionId = localStorage.getItem('memopyk-base-session-id');
