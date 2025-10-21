@@ -3,6 +3,12 @@ import DOMPurify from 'dompurify';
 import { directusAsset } from '@/constants/directus';
 import { setAttr } from '@directus/visual-editing';
 
+// Enable GFM (GitHub Flavored Markdown) for tables
+marked.setOptions({
+  gfm: true,
+  breaks: false,
+});
+
 type FileRef = string | { id: string } | null;
 
 export type ContentSection = {
@@ -203,7 +209,7 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
         <div className={`mx-auto px-4 ${maxWidth}`}>
           {textHtml && (
             <article
-              className={`prose prose-lg max-w-none
+              className={`md-content prose prose-lg max-w-none
                 prose-headings:font-['Playfair_Display'] ${isDark ? 'prose-headings:text-white' : 'prose-headings:text-[#2A4759]'}
                 prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4
                 prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-3
@@ -245,7 +251,7 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
           {capPos === 'below' && renderCaption()}
           {textHtml && (
             <article
-              className={`prose prose-lg max-w-none
+              className={`md-content prose prose-lg max-w-none
                 prose-headings:font-['Playfair_Display'] ${isDark ? 'prose-headings:text-white' : 'prose-headings:text-[#2A4759]'}
                 ${isDark ? 'prose-p:text-gray-200' : 'prose-p:text-gray-700'} prose-p:leading-relaxed
                 prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
@@ -299,7 +305,7 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
           {capPos === 'below' && renderCaption()}
           {textHtml && (
             <article
-              className={`prose prose-lg max-w-none
+              className={`md-content prose prose-lg max-w-none
                 prose-headings:font-['Playfair_Display'] ${isDark ? 'prose-headings:text-white' : 'prose-headings:text-[#2A4759]'}
                 ${isDark ? 'prose-p:text-gray-200' : 'prose-p:text-gray-700'} prose-p:leading-relaxed
                 prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline`}
@@ -362,7 +368,7 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
           {capPos === 'below' && renderCaption()}
           {textHtml && (
             <article
-              className={`prose prose-lg max-w-none
+              className={`md-content prose prose-lg max-w-none
                 prose-headings:font-['Playfair_Display'] ${isDark ? 'prose-headings:text-white' : 'prose-headings:text-[#2A4759]'}
                 ${isDark ? 'prose-p:text-gray-200' : 'prose-p:text-gray-700'} prose-p:leading-relaxed
                 prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline`}
@@ -409,7 +415,7 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
             {textHtml && (
               <div className="flex-1 min-w-0">
                 <article
-                  className={`prose prose-lg max-w-none
+                  className={`md-content prose prose-lg max-w-none
                     prose-headings:font-['Playfair_Display'] ${isDark ? 'prose-headings:text-white' : 'prose-headings:text-[#2A4759]'}
                     ${isDark ? 'prose-p:text-gray-200' : 'prose-p:text-gray-700'} prose-p:leading-relaxed
                     prose-a:text-[#D67C4A] prose-a:no-underline hover:prose-a:underline
