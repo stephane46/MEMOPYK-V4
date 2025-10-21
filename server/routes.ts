@@ -9027,6 +9027,7 @@ export async function registerRoutes(app: Express): Promise<void> {
         'blocks.item:block_content_section_v3.media_width,blocks.item:block_content_section_v3.media_align',
         'blocks.item:block_content_section_v3.max_width,blocks.item:block_content_section_v3.spacing_top,blocks.item:block_content_section_v3.spacing_bottom',
         'blocks.item:block_content_section_v3.background,blocks.item:block_content_section_v3.caption,blocks.item:block_content_section_v3.alt',
+        'blocks.item:block_content_section_v3.image_fit,blocks.item:block_content_section_v3.image_height',
         'blocks.item:block_content_section_v3.gutter,blocks.item:block_content_section_v3.corner_radius',
         'blocks.item:block_content_section_v3.image_shadow,blocks.item:block_content_section_v3.block_shadow',
         'blocks.item:block_content_section_v3.caption_align,blocks.item:block_content_section_v3.caption_position,blocks.item:block_content_section_v3.caption_bg',

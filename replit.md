@@ -1,7 +1,7 @@
 # MEMOPYK - Replit Project Documentation
 
 ## Overview
-MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. Its core purpose is to provide a seamless and intuitive experience for creating and managing cherished video memories. Key capabilities include a bilingual (French/English) content management system, a professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing tools, and real-time preview. The project aims to capture a niche market for personalized, high-quality video memories with significant market potential.
+MEMOPYK is a full-stack memory film platform that transforms personal photos and videos into cinematic memory films. Its purpose is to provide a seamless and intuitive experience for creating and managing cherished video memories, targeting a niche market for personalized, high-quality video memories with significant market potential. Key capabilities include a bilingual (French/English) CMS, professional video lightbox, robust gallery management with reliable video streaming, language-specific upload functionality, advanced image reframing, and real-time preview.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -37,15 +37,15 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **State Management**: TanStack Query.
 - **Form Handling**: React Hook Form with Zod validation.
 - **UI/UX Decisions**:
-    - **Typography**: Poppins for general text, Playfair Display for hero video overlay text.
+    - **Typography**: Poppins, Playfair Display.
     - **Color Scheme**: MEMOPYK brand palette (Dark Blue #2A4759, Orange #D67C4A, Navy #011526, Cream #F2EBDC, Sky Blue #89BAD9).
-    - **Responsive Design**: Adaptive to all screen sizes, with advanced mobile optimizations and PWA features.
-    - **Navigation**: Customer journey-focused anchor-based scrolling on the homepage; logo acts as home button with language routing.
-    - **Image Cropping**: Inline drag-and-reposition interface with real-time visual feedback and dual badge system.
-    - **Video Display**: Minimal controls for gallery videos, 2/3 screen size lightbox with blurred background. Hero videos use a cache system for fast loading; gallery videos stream directly from CDN.
-    - **Admin Interface**: Streamlined content management, professional field labeling, clear visual indicators, responsive font size system with real-time preview.
-    - **Silent Loading Experience**: Eliminated all loading states for seamless content display.
-    - **Instant Thumbnail-to-Video System**: Professional YouTube/Netflix-style loading with immediate thumbnail display during video buffering.
+    - **Responsive Design**: Adaptive to all screen sizes, mobile optimizations, PWA features.
+    - **Navigation**: Customer journey-focused anchor-based scrolling on homepage; logo acts as home button with language routing.
+    - **Image Cropping**: Inline drag-and-reposition interface with real-time visual feedback.
+    - **Video Display**: Minimal controls for gallery videos, 2/3 screen size lightbox. Hero videos use cache, gallery videos stream from CDN.
+    - **Admin Interface**: Streamlined content management, professional field labeling, responsive font size, real-time preview.
+    - **Silent Loading Experience**: Eliminated all loading states.
+    - **Instant Thumbnail-to-Video System**: Professional YouTube/Netflix-style loading.
 
 ### Backend
 - **Runtime**: Node.js with Express.js.
@@ -55,28 +55,24 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Session Management**: Express sessions with PostgreSQL store.
 
 ### Key Architectural Decisions
-- **Hybrid Storage System**: JSON fallback for most data, complementing PostgreSQL for data persistence and synchronization. Gallery data comes DIRECTLY from Supabase VPS database with NO JSON fallback.
-- **Universal Video Proxy**: Manages video serving, range requests, local caching, and fallback to Supabase CDN.
-- **Image Proxy**: Handles image loading, resolves CORS issues, and prioritizes static cropped images.
-- **Cache Management**: Smart caching for hero videos (immediate preload) and direct CDN streaming for gallery videos. Persistent video element system for instant gallery video startup. Comprehensive persistent caching for GA4 endpoints with auto-cleanup, 24-hour retention, and admin bypass.
-- **Bilingual Support**: Comprehensive French/English content management for UI, data, and SEO. Primary-language-first detection system.
-- **Modular API Design**: RESTful API for various content types (hero videos, gallery, FAQs, legal docs, analytics).
+- **Hybrid Storage System**: JSON fallback for most data, complementing PostgreSQL; gallery data from Supabase VPS only.
+- **Universal Video Proxy**: Manages video serving, range requests, local caching, and Supabase CDN fallback.
+- **Image Proxy**: Handles image loading, resolves CORS, prioritizes static cropped images.
+- **Cache Management**: Smart caching for hero videos (preload), direct CDN streaming for gallery videos. Persistent caching for GA4 endpoints with auto-cleanup and 24-hour retention.
+- **Bilingual Support**: Comprehensive French/English content management for UI, data, SEO with primary-language-first detection.
+- **Modular API Design**: RESTful API for content types (hero videos, gallery, FAQs, legal docs, analytics).
 - **Static Image Generation**: Automated Sharp-based cropping and generation of static images for gallery thumbnails upon upload.
-- **Unified Analytics Architecture**: Comprehensive dual-stream analytics system combining direct Supabase tracking with automated GA4 BigQuery sync. Primary analytics dashboard loads instantly from Supabase tables (analytics_sessions, analytics_views, analytics_videos) with real-time accuracy. Secondary GA4 → BigQuery → Supabase pipeline enriches data daily with Google's advanced processing. **Data Complementarity**: Supabase provides custom metrics, real-time precision, and specific MEMOPYK events; GA4 BigQuery adds demographics, acquisition channels, device details, and Google's processed analytics that complement rather than duplicate the direct tracking data.
-- **Real-time Analytics**: Direct website tracking with IP management, accurate session/view tracking, IP exclusion, and geolocation enrichment. Instant dashboard loading with zero tolerance for slow queries.
-- **Google Analytics Integration**: Dual implementation with GA4 JavaScript tracking and automated BigQuery export sync. Daily scheduler (00:15 Paris time) processes GA4 BigQuery exports into Supabase for enriched analytics without performance impact.
-- **Bundle Optimization System**: Significant reduction in bundle size through dependency cleanup and removal of unused components.
-- **Direct Supabase Upload System**: Facilitates large file uploads bypassing deployment limits.
-- **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings. Fully integrated with hybrid storage (JSON ↔ Supabase sync) with audit logging.
-- **Deployment Optimizations**: Fast health check endpoints, production video cache preloading, comprehensive error handling, routing priorities, and automated public asset copying.
-- **Visitor Classification & Analytics Accuracy**: Implemented 30-second session deduplication and proper classification logic for new/returning visitors. Video analytics precisely track watch duration and completion metrics, excluding admin page visits.
-- **Professional Flag System**: Comprehensive 255-country solution using SVG flags with dynamic country mapping and a three-tier fallback system.
-- **OpenReplay Integration**: Comprehensive session recording and user behavior analytics using OpenReplay SDK (disabled in dev for mobile compatibility).
-- **Hybrid Storage Analytics Fix (v1.0.188)**: Fixed "Analytics (old)" dashboard failures by replacing direct PostgreSQL `pool.unsafe()` queries with proven hybrid storage pattern. Endpoints `/api/analytics/geo` and `/api/analytics/overview` now use `this.supabase.from()` with automatic JSON fallback, eliminating CONNECT_TIMEOUT errors when accessing Supabase VPS database.
-- **VideoOverlay Re-render Fix (v1.0.200)**: CRITICAL fix for VideoOverlay constant remounting during video playback. Completely rewritten with stable React patterns: memoized props/calculations, useCallback for all event handlers, eliminated resize listeners, disabled problematic state updates in parent components (GallerySection animation observers, storage listeners, mobile detection). This fix enables proper GA4 video progress tracking (25%, 50%, 75%, 100%) that was previously impossible due to component remounting.
-- **Debug Cleanup (v1.0.201)**: Comprehensive removal of debugging statements and GA debug HUD after successful VideoOverlay stabilization. Removed all console.log debugging emojis (🎬, 🚨, 💓, 🎯, 🔥) while preserving essential functionality. VideoOverlay backup retained as VideoOverlay_backup_20250905_131134.tsx.
-- **Partner Intake System**: Bilingual partner directory system with Zoho CRM integration. Partners register with full profiles (services, formats, capabilities) via French (/fr-FR/partenaires/devenir) and English (/en-US/partners/join) intake forms. Backend creates Account, Contact, and Partner records in Zoho CRM (EU) using OAuth refresh-token flow with automatic token rotation. Security layer includes rate limiting (30 req/min), CSRF double-submit cookie pattern, and reCAPTCHA stub. Complex validation via shared Zod schema with progressive disclosure UX for optimal user experience.
-- **Directus Blog CMS Integration**: Headless CMS integration for bilingual blog content at `/en-US/blog` and `/fr-FR/blog`. Backend authenticates with Directus API using OAuth credentials, fetches posts with M2A (Many-to-Any) blocks (rich text, headings, galleries, content sections), and maps fields (`published_at` → `publish_date`). Language normalization helpers (`toBase`, `sameLang`) in `server/helpers/lang.ts` and `client/src/lib/lang.ts` handle both BCP-47 full form (en-US, fr-FR) and base codes (en, fr) for consistent filtering. Publishing gate: only shows posts where `status === 'published'` AND `published_at <= now()`. Typography matches main site: Playfair Display (headings), Poppins (body text). **Blog Content Blocks**: Supports `block_heading` (h1/h2/h3 with alignment), `block_richtext` (HTML content), `block_gallery` (multi-image grid), and `block_content_section` (flexible layouts: text-only, image-left, image-right, image-full, two-images, three-images with configurable media width, alignment, spacing, background, and Markdown text rendering via marked library).
+- **Unified Analytics Architecture**: Dual-stream system combining direct Supabase tracking with automated GA4 BigQuery sync for enriched data. Real-time dashboard loading from Supabase.
+- **Google Analytics Integration**: GA4 JavaScript tracking and automated BigQuery export sync to Supabase for enriched data.
+- **Bundle Optimization System**: Reduced bundle size through dependency cleanup.
+- **Direct Supabase Upload System**: Facilitates large file uploads.
+- **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings, integrated with hybrid storage and audit logging.
+- **Deployment Optimizations**: Fast health checks, production video cache preloading, error handling, routing priorities.
+- **Visitor Classification & Analytics Accuracy**: 30-second session deduplication, proper new/returning visitor classification. Video analytics track watch duration and completion, excluding admin views.
+- **Professional Flag System**: 255-country SVG flag solution with dynamic mapping and three-tier fallback.
+- **OpenReplay Integration**: Session recording and user behavior analytics.
+- **Partner Intake System**: Bilingual partner directory with Zoho CRM integration (Account, Contact, Partner records). Uses OAuth refresh-token flow, rate limiting, CSRF, and reCAPTCHA stub.
+- **Directus Blog CMS Integration**: Headless CMS for bilingual blog content. Fetches posts with M2A blocks (rich text, headings, galleries, content sections) and maps fields. Language normalization helpers for consistent filtering. Supports `block_heading`, `block_richtext`, `block_gallery`, and `block_content_section` (flexible layouts, Markdown rendering).
 
 ## External Dependencies
 
@@ -89,7 +85,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Radix UI**: Unstyled, accessible component primitives.
 - **Lucide React**: Icon library.
 - **Tailwind CSS**: Utility-first CSS framework.
-- **svg-country-flags**: Professional country flag library (hampusborgos/country-flags).
+- **svg-country-flags**: Professional country flag library.
 
 ### Development Tools
 - **Vite**: Frontend build tool.
@@ -100,34 +96,17 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **DOMPurify**: HTML sanitization library.
 - **Crypto-js**: Client-side MD5 hashing.
 - **Multer**: Node.js middleware for file uploads.
+- **Sharp**: Image processing library for static image generation.
+- **marked**: Fast Markdown parser.
 
 ### Content Management
 - **Directus CMS**: Headless CMS for blog content management (https://cms-blog.memopyk.org).
 - **@directus/sdk**: Official Directus JavaScript SDK.
 - **@directus/visual-editing**: Live visual editing support for Directus content.
-- **marked**: Fast Markdown parser for blog content section blocks.
 
-## Environment Variables
+### CRM Integration
+- **Zoho CRM**: Partner intake system integration.
 
-### Directus CMS Integration (Blog System)
-- `DIRECTUS_EMAIL`: Email for Directus API authentication (api-blog@memopyk.org)
-- `DIRECTUS_PASSWORD`: Password for Directus API authentication
-- `DIRECTUS_TOKEN` (optional): Static token for Directus API (currently using email/password OAuth flow)
-
-### Configuration Notes
-- Directus authentication uses OAuth token refresh flow with 15-minute expiration
-- Blog endpoints automatically filter by language using normalized comparison (handles both "en" and "en-US" formats)
-- CSP configured to allow Directus assets: `https://cms-blog.memopyk.org` in img-src, connect-src, media-src
-
-### Zoho CRM Integration (Partner Intake System)
-- `ZOHO_BASE_URL`: Zoho CRM API base URL (EU: `https://www.zohoapis.eu`)
-- `ZOHO_AUTH_URL`: Zoho OAuth token URL (EU: `https://accounts.zoho.eu/oauth/v2/token`)
-- `ZOHO_CLIENT_ID`: Zoho OAuth client ID
-- `ZOHO_CLIENT_SECRET`: Zoho OAuth client secret
-- `ZOHO_REFRESH_TOKEN`: Zoho OAuth refresh token for automatic token rotation
-- `PARTNERS_MODULE_API` (optional): Zoho CRM module name (defaults to "Partners")
-
-### Configuration Notes
-- All Zoho credentials must be configured for the EU region (zohoapis.eu, accounts.zoho.eu)
-- OAuth refresh token flow enables automatic access token rotation without user intervention
-- Partner intake endpoints use rate limiting (30 requests/minute) and CSRF protection
+### Analytics
+- **Google Analytics 4 (GA4)**: JavaScript tracking and BigQuery export.
+- **OpenReplay**: Session recording and user behavior analytics.

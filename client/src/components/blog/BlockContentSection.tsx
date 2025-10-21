@@ -27,6 +27,8 @@ export type ContentSection = {
   caption_align?: "left" | "center" | "right" | null;
   caption_position?: "above" | "below" | "overlay" | null;
   caption_bg?: "none" | "light" | "dark" | null;
+  image_fit?: "natural" | "cover" | "contain" | null;
+  image_height?: number | null;
 };
 
 interface BlockContentSectionProps {
@@ -106,10 +108,15 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   const capPos = item.caption_position ?? 'below';
   const capBg = item.caption_bg ?? 'dark';
   
+  // Read image sizing controls
+  const imageFit = item.image_fit ?? 'natural';
+  const imageHeight = Number(item.image_height ?? 400);
+  
   // CSS variables for grid layouts
   const gridStyleVars = {
     '--gutter': `${gutter}px`,
     '--radius': `${cornerRadius}px`,
+    '--tile-h': imageFit !== 'natural' ? `${imageHeight}px` : 'auto',
   } as React.CSSProperties;
   
   // Container classes
@@ -135,9 +142,45 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   const directusAttr = item.id ? setAttr({
     collection: "block_content_section_v3",
     item: item.id,
-    fields: "layout,text,image_primary,image_secondary,image_third,media_width,media_align,max_width,spacing_top,spacing_bottom,background,caption,alt,gutter,corner_radius,image_shadow,block_shadow,caption_align,caption_position,caption_bg",
+    fields: "layout,text,image_primary,image_secondary,image_third,media_width,media_align,max_width,spacing_top,spacing_bottom,background,caption,alt,image_fit,image_height,gutter,corner_radius,image_shadow,block_shadow,caption_align,caption_position,caption_bg",
     mode: "drawer",
   }) : {};
+  
+  // Helper to get image URL with proper transforms
+  const getImageUrl = (fileId: string | null, options: { width?: number } = {}) => {
+    if (!fileId) return null;
+    const width = options.width || 1600;
+    
+    if (imageFit === 'natural') {
+      return directusAsset(fileId, { width, quality: 80, format: 'webp' });
+    } else if (imageFit === 'cover') {
+      // Build URL manually for cover with height
+      return `https://cms-blog.memopyk.org/assets/${fileId}?width=${width}&height=${imageHeight}&fit=cover&quality=80&format=webp`;
+    } else if (imageFit === 'contain') {
+      // Build URL manually for contain with height
+      return `https://cms-blog.memopyk.org/assets/${fileId}?width=${width}&height=${imageHeight}&fit=inside&quality=80&format=webp`;
+    }
+    return directusAsset(fileId, { width, quality: 80, format: 'webp' });
+  };
+  
+  // Helper to get tile classes based on image_fit
+  const getTileClasses = (baseShadow = false) => {
+    const classes = ['tile'];
+    
+    if (imageFit === 'cover') {
+      classes.push('tile--cover');
+    } else if (imageFit === 'contain') {
+      classes.push('tile--contain');
+    } else {
+      classes.push('tile--natural');
+    }
+    
+    if (baseShadow && imgShadow) {
+      classes.push('tile--shadow');
+    }
+    
+    return classes.join(' ');
+  };
   
   // Caption rendering helper
   const renderCaption = () => {
@@ -227,16 +270,15 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
           {capPos === 'above' && renderCaption()}
           <div 
             className="grid grid-cols-1 md:grid-cols-2 mb-8"
-            style={{ gap: `var(--gutter, ${gutter}px)`, ...gridStyleVars }}
+            style={gridStyleVars}
           >
             {primaryId && (
               <figure>
                 <div className={`img-wrap ${capPos === 'overlay' ? 'relative' : ''}`}>
                   <img
-                    src={directusAsset(primaryId, { width: 800, quality: 85, format: 'webp' })}
+                    src={getImageUrl(primaryId, { width: 800 })!}
                     alt={item.alt || ''}
-                    className={`w-full h-auto ${imgShadowCls}`}
-                    style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
+                    className={getTileClasses(true)}
                     loading="lazy"
                   />
                   {capPos === 'overlay' && renderCaption()}
@@ -246,10 +288,9 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
             {secondaryId && (
               <figure>
                 <img
-                  src={directusAsset(secondaryId, { width: 800, quality: 85, format: 'webp' })}
+                  src={getImageUrl(secondaryId, { width: 800 })!}
                   alt={item.alt || ''}
-                  className={`w-full h-auto ${imgShadowCls}`}
-                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
+                  className={getTileClasses(true)}
                   loading="lazy"
                 />
               </figure>
@@ -282,16 +323,15 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
           {capPos === 'above' && renderCaption()}
           <div 
             className="grid grid-cols-1 md:grid-cols-3 mb-8"
-            style={{ gap: `var(--gutter, ${gutter}px)`, ...gridStyleVars }}
+            style={gridStyleVars}
           >
             {primaryId && (
               <figure>
                 <div className={`img-wrap ${capPos === 'overlay' ? 'relative' : ''}`}>
                   <img
-                    src={directusAsset(primaryId, { width: 600, quality: 85, format: 'webp' })}
+                    src={getImageUrl(primaryId, { width: 600 })!}
                     alt={item.alt || ''}
-                    className={`w-full h-auto ${imgShadowCls}`}
-                    style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
+                    className={getTileClasses(true)}
                     loading="lazy"
                   />
                   {capPos === 'overlay' && renderCaption()}
@@ -301,10 +341,9 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
             {secondaryId && (
               <figure>
                 <img
-                  src={directusAsset(secondaryId, { width: 600, quality: 85, format: 'webp' })}
+                  src={getImageUrl(secondaryId, { width: 600 })!}
                   alt={item.alt || ''}
-                  className={`w-full h-auto ${imgShadowCls}`}
-                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
+                  className={getTileClasses(true)}
                   loading="lazy"
                 />
               </figure>
@@ -312,10 +351,9 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
             {thirdId && (
               <figure>
                 <img
-                  src={directusAsset(thirdId, { width: 600, quality: 85, format: 'webp' })}
+                  src={getImageUrl(thirdId, { width: 600 })!}
                   alt={item.alt || ''}
-                  className={`w-full h-auto ${imgShadowCls}`}
-                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
+                  className={getTileClasses(true)}
                   loading="lazy"
                 />
               </figure>

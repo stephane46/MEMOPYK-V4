@@ -1310,3 +1310,26 @@ button[role="switch"]:focus-visible {
   border-radius: inherit;
   overflow: hidden;
 }
+
+/* Tile image sizing classes for image_fit control */
+.tile {
+  width: 100%;
+  display: block;
+  border-radius: var(--radius, 12px);
+}
+
+.tile--cover {
+  height: var(--tile-h, 400px);
+  object-fit: cover;
+}
+
+.tile--contain {
+  height: var(--tile-h, 400px);
+  object-fit: contain;
+  background: #f6f6f6;
+}
+
+.tile--natural {
+  height: auto;
+  object-fit: initial;
+}
