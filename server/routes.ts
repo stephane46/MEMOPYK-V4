@@ -8928,7 +8928,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       const now = new Date().toISOString();
       
       // Fetch ALL posts with just status and published_at filters (NO language filter)
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&sort=-published_at&fields=id,title,slug,status,published_at,language`;
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&sort=-published_at&fields=id,title,slug,status,published_at,language&limit=24`;
       
       console.log(`🔍 DIAGNOSTIC: Fetching ALL posts without language filter`);
       console.log(`🔍 DIAGNOSTIC URL: ${url}`);
@@ -8983,7 +8983,7 @@ export async function registerRoutes(app: Express): Promise<void> {
       
       // Filter by status, published_at <= now, AND exact language match
       const now = new Date().toISOString();
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&filter[language][_eq]=${language}&sort=-published_at&fields=${fieldsQuery}`;
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&filter[language][_eq]=${language}&sort=-published_at&fields=${fieldsQuery}&limit=24`;
       
       console.log(`🔍 Fetching blog posts with filter: language=${language}, published_at<=${now}`);
       console.log(`🔍 Query URL: ${url}`);
