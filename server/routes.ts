@@ -3664,6 +3664,26 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Blog Analytics - GET blog view trends over time
+  app.get("/api/analytics/blog/trends", async (req, res) => {
+    try {
+      const { days } = req.query;
+      const daysNum = parseInt(days as string || '30');
+      
+      const dateFrom = new Date();
+      dateFrom.setDate(dateFrom.getDate() - daysNum);
+      const dateFromStr = dateFrom.toISOString();
+      
+      console.log(`📊 Fetching blog view trends for last ${daysNum} days`);
+      
+      const trends = await hybridStorage.getBlogViewTrends(dateFromStr);
+      res.json(trends);
+    } catch (error) {
+      console.error('❌ Blog view trends error:', error);
+      res.status(500).json({ error: "Failed to get blog view trends" });
+    }
+  });
+
   // Video Performance Analytics - GET comprehensive video engagement with milestones
   app.get("/api/analytics/video-performance", async (req, res) => {
     try {

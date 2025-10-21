@@ -6970,6 +6970,35 @@ Allow: /contact`;
       return [];
     }
   }
+
+  async getBlogViewTrends(dateFrom?: string, dateTo?: string): Promise<any[]> {
+    try {
+      console.log(`📊 Fetching blog view trends...`);
+      
+      const views = await this.getBlogPostViews({ dateFrom, dateTo });
+      
+      // Group by date and count views
+      const dateStats = new Map<string, number>();
+      
+      views.forEach((view: any) => {
+        const date = new Date(view.created_at);
+        const dateKey = date.toISOString().split('T')[0]; // YYYY-MM-DD
+        
+        dateStats.set(dateKey, (dateStats.get(dateKey) || 0) + 1);
+      });
+      
+      // Convert to array and sort by date
+      const trends = Array.from(dateStats.entries())
+        .map(([date, views]) => ({ date, views }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+      
+      console.log(`✅ Found ${trends.length} days of blog view data`);
+      return trends;
+    } catch (error) {
+      console.error('Error getting blog view trends:', error);
+      return [];
+    }
+  }
 }
 
 // Create singleton instance
