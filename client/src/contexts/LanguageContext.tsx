@@ -163,7 +163,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const setLanguage = (lang: Language) => {
     const currentPath = removeLanguageFromPath(location);
-    const translatedPath = translatePath(currentPath, lang);
+    
+    // Special handling for blog post pages: navigate to blog list instead of trying to find translated post
+    // Pattern: /blog/{slug} should go to /blog (list page) in new language
+    const isBlogPostPage = /^\/blog\/[^\/]+/.test(currentPath);
+    const targetPath = isBlogPostPage ? '/blog' : currentPath;
+    
+    const translatedPath = translatePath(targetPath, lang);
     const newPath = `/${lang}${translatedPath === '/' ? '' : translatedPath}`;
     window.history.pushState({}, '', newPath);
     setLanguageState(lang);
