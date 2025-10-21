@@ -79,6 +79,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
   - **CSS Classes**: All markdown content wrapped in `.md-content` class for consistent styling across all 5 content section layouts (text-only, image-full, two-images, three-images, image-left/right)
   - **Sanitization**: DOMPurify sanitizes all rendered HTML before display for security
   - **Prose Integration**: TailwindCSS `@tailwindcss/typography` prose classes for beautiful typography alongside custom table styles
+- **Blog Analytics System**: Tracks blog post views with hybrid storage pattern (Supabase primary + JSON fallback). Excludes admin IP addresses. Admin dashboard "Blog" tab shows popular posts ranked by views with language filtering and time period selection (7d/30d/90d).
 
 ## External Dependencies
 
