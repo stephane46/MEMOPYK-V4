@@ -4,7 +4,9 @@ import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { AnalyticsNewLoadingStates } from './AnalyticsNewLoadingStates';
 import { formatDistanceToNow } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { Eye } from 'lucide-react';
+import { Eye, TrendingUp } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface PopularBlogPost {
   post_slug: string;
@@ -14,13 +16,58 @@ interface PopularBlogPost {
   last_viewed: string;
 }
 
+interface BlogTrendData {
+  date: string;
+  views: number;
+}
+
+const formatDate = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) {
+    return dateStr;
+  }
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: '2-digit' 
+  });
+};
+
+const formatTooltipDate = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) {
+    return dateStr;
+  }
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+};
+
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+        <p className="text-sm font-medium text-gray-900 mb-1">
+          {formatTooltipDate(payload[0].payload.date)}
+        </p>
+        <p className="text-sm text-gray-600">
+          <span className="font-semibold text-[#D67C4A]">{payload[0].value}</span> views
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export const AnalyticsNewBlog: React.FC = () => {
   const { selectedPeriod } = useAnalyticsNewFilters();
   
   // Map period to days
   const days = selectedPeriod === '7d' ? 7 : selectedPeriod === '30d' ? 30 : 90;
 
-  const { data: popularPosts, isLoading, error } = useQuery<PopularBlogPost[]>({
+  const { data: popularPosts, isLoading: postsLoading, error: postsError } = useQuery<PopularBlogPost[]>({
     queryKey: ['/api/analytics/blog/popular', { days }],
     queryFn: async () => {
       const response = await fetch(`/api/analytics/blog/popular?days=${days}`);
@@ -28,6 +75,18 @@ export const AnalyticsNewBlog: React.FC = () => {
       return response.json();
     }
   });
+
+  const { data: trendsData, isLoading: trendsLoading, error: trendsError } = useQuery<BlogTrendData[]>({
+    queryKey: ['/api/analytics/blog/trends', { days }],
+    queryFn: async () => {
+      const response = await fetch(`/api/analytics/blog/trends?days=${days}`);
+      if (!response.ok) throw new Error('Failed to fetch blog trends');
+      return response.json();
+    }
+  });
+
+  const isLoading = postsLoading || trendsLoading;
+  const error = postsError || trendsError;
 
   if (isLoading) {
     return (
@@ -50,6 +109,8 @@ export const AnalyticsNewBlog: React.FC = () => {
       </div>
     );
   }
+
+  const totalViews = popularPosts?.reduce((sum, post) => sum + post.view_count, 0) || 0;
 
   if (!popularPosts || popularPosts.length === 0) {
     return (
@@ -78,6 +139,67 @@ export const AnalyticsNewBlog: React.FC = () => {
           Last {days} days
         </div>
       </div>
+
+      {/* Blog Views Trend Chart */}
+      <Card className="bg-white border border-gray-200">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-[#D67C4A]" />
+                Blog Views Over Time
+              </CardTitle>
+              <CardDescription className="text-sm text-gray-600 mt-1">
+                Daily blog post views for the selected period
+              </CardDescription>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-gray-900">{totalViews}</div>
+              <div className="text-sm text-gray-600">Total Views</div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {trendsData && trendsData.length > 0 ? (
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={trendsData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="blogViewsGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#D67C4A" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#D67C4A" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={formatDate}
+                    stroke="#9ca3af"
+                    style={{ fontSize: '12px' }}
+                  />
+                  <YAxis 
+                    stroke="#9ca3af"
+                    style={{ fontSize: '12px' }}
+                    allowDecimals={false}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area 
+                    type="monotone" 
+                    dataKey="views" 
+                    stroke="#D67C4A" 
+                    strokeWidth={2}
+                    fill="url(#blogViewsGradient)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-[300px] flex items-center justify-center text-gray-500">
+              No trend data available
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Popular Posts Table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
@@ -171,7 +293,7 @@ export const AnalyticsNewBlog: React.FC = () => {
             </span>
             <span className="text-gray-600">
               Total views: <span className="font-semibold text-gray-900">
-                {popularPosts.reduce((sum, post) => sum + post.view_count, 0)}
+                {totalViews}
               </span>
             </span>
           </div>
