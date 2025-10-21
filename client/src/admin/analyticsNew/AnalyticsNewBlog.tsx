@@ -62,10 +62,10 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const AnalyticsNewBlog: React.FC = () => {
-  const { selectedPeriod } = useAnalyticsNewFilters();
+  const { datePreset } = useAnalyticsNewFilters();
   
   // Map period to days
-  const days = selectedPeriod === '7d' ? 7 : selectedPeriod === '30d' ? 30 : 90;
+  const days = datePreset === '7d' ? 7 : datePreset === '30d' ? 30 : 90;
 
   const { data: popularPosts, isLoading: postsLoading, error: postsError } = useQuery<PopularBlogPost[]>({
     queryKey: ['/api/analytics/blog/popular', { days }],
