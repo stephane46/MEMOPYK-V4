@@ -9,6 +9,7 @@ import {
   Activity,
   AlertTriangle,
   Shield,
+  FileText,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import './analyticsNew.tokens.css';
@@ -55,6 +56,12 @@ export const ANALYTICS_NEW_TABS: AnalyticsNewTab[] = [
     id: 'cta',
     label: 'CTA',
     icon: MousePointer,
+    description: '',
+  },
+  {
+    id: 'blog',
+    label: 'Blog',
+    icon: FileText,
     description: '',
   },
   {

@@ -9,6 +9,7 @@ import { AnalyticsNewVideo } from './AnalyticsNewVideo';
 import { AnalyticsNewTrends } from './AnalyticsNewTrends';
 import { AnalyticsNewGeo } from './AnalyticsNewGeo';
 import { AnalyticsNewCta } from './AnalyticsNewCta';
+import { AnalyticsNewBlog } from './AnalyticsNewBlog';
 import DataSourceBadge from './components/DataSourceBadge';
 import { useAnalyticsNewFilters } from './analyticsNewFilters.store';
 import { Badge } from '@/components/ui/badge';
@@ -123,6 +124,8 @@ export const AnalyticsNewDashboard: React.FC<AnalyticsNewDashboardProps> = ({
         return <AnalyticsNewGeo />;
       case 'cta':
         return <AnalyticsNewCta />;
+      case 'blog':
+        return <AnalyticsNewBlog />;
       case 'trends':
         return <AnalyticsNewTrends />;
       case 'clarity':
