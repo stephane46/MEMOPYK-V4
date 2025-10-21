@@ -88,8 +88,20 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   const secondaryId = getFileId(item.image_secondary);
   const thirdId = getFileId(item.image_third);
 
+  // Temporary logging to verify image URLs
+  console.log('🖼️ BlockContentSection image IDs:', { primaryId, secondaryId, thirdId });
+  if (primaryId) {
+    console.log('🖼️ Primary URL:', directusAsset(primaryId, { width: 1200, format: 'webp' }));
+  }
+  if (secondaryId) {
+    console.log('🖼️ Secondary URL:', directusAsset(secondaryId, { width: 1200, format: 'webp' }));
+  }
+  if (thirdId) {
+    console.log('🖼️ Third URL:', directusAsset(thirdId, { width: 1200, format: 'webp' }));
+  }
+
   const directusAttr = item.id ? setAttr({
-    collection: "block_content_section",
+    collection: "block_content_section_v3",
     item: item.id,
     fields: "layout,text,image_primary,image_secondary,image_third,media_width,media_align,max_width,spacing_top,spacing_bottom,background,caption,alt",
     mode: "drawer",
