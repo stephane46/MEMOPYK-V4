@@ -22,6 +22,10 @@ export type ContentSection = {
   alt?: string | null;
   gutter?: number | null;
   corner_radius?: number | null;
+  image_shadow?: boolean | null;
+  block_shadow?: boolean | null;
+  caption_align?: "left" | "center" | "right" | null;
+  caption_position?: "above" | "below" | "overlay" | null;
 };
 
 interface BlockContentSectionProps {
@@ -90,22 +94,56 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   const secondaryId = getFileId(item.image_secondary);
   const thirdId = getFileId(item.image_third);
   
-  // NEW: Read gutter and corner_radius fields for grid layouts
+  // Read gutter and corner_radius fields for grid layouts
   const gutter = Number(item.gutter ?? 24);
   const cornerRadius = Number(item.corner_radius ?? 12);
+  
+  // Read shadow and caption controls
+  const imgShadow = !!item.image_shadow;
+  const blkShadow = !!item.block_shadow;
+  const capAlign = item.caption_align ?? 'left';
+  const capPos = item.caption_position ?? 'below';
   
   // CSS variables for grid layouts
   const gridStyleVars = {
     '--gutter': `${gutter}px`,
     '--radius': `${cornerRadius}px`,
   } as React.CSSProperties;
+  
+  // Container classes
+  const containerCls = [
+    'bcs',
+    blkShadow ? 'bcs--shadow' : null
+  ].filter(Boolean).join(' ');
+  
+  // Caption classes
+  const captionCls = [
+    'bcs-caption',
+    capAlign === 'center' ? 'bcs-caption--center' :
+    capAlign === 'right' ? 'bcs-caption--right' : 'bcs-caption--left',
+    capPos === 'overlay' ? 'bcs-caption--overlay' : null,
+    capPos === 'above' ? 'bcs-caption--above' : 'bcs-caption--below'
+  ].filter(Boolean).join(' ');
+  
+  // Image shadow class
+  const imgShadowCls = imgShadow ? 'tile--shadow' : '';
 
   const directusAttr = item.id ? setAttr({
     collection: "block_content_section_v3",
     item: item.id,
-    fields: "layout,text,image_primary,image_secondary,image_third,media_width,media_align,max_width,spacing_top,spacing_bottom,background,caption,alt,gutter,corner_radius",
+    fields: "layout,text,image_primary,image_secondary,image_third,media_width,media_align,max_width,spacing_top,spacing_bottom,background,caption,alt,gutter,corner_radius,image_shadow,block_shadow,caption_align,caption_position",
     mode: "drawer",
   }) : {};
+  
+  // Caption rendering helper
+  const renderCaption = () => {
+    if (!item.caption) return null;
+    return (
+      <div className={captionCls}>
+        <span>{item.caption}</span>
+      </div>
+    );
+  };
 
   // Text-only layout
   if (item.layout === 'text-only') {
@@ -138,26 +176,26 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   if (item.layout === 'image-full') {
     return (
       <div
-        className={`${spacingTop} ${spacingBottom} ${background}`}
+        className={`${spacingTop} ${spacingBottom} ${background} ${containerCls}`}
         data-testid={`block-content-section-${index}`}
         {...directusAttr}
       >
         <div className={`mx-auto px-4 ${maxWidth}`}>
+          {capPos === 'above' && renderCaption()}
           {primaryId && (
             <figure className="mb-8">
-              <img
-                src={directusAsset(primaryId, { width: 1600, quality: 85, format: 'webp' })}
-                alt={item.alt || ''}
-                className="w-full h-auto rounded-xl shadow-2xl"
-                loading="lazy"
-              />
-              {item.caption && (
-                <figcaption className="mt-3 text-center text-sm text-gray-600 italic">
-                  {item.caption}
-                </figcaption>
-              )}
+              <div className={`img-wrap ${capPos === 'overlay' ? 'relative' : ''}`}>
+                <img
+                  src={directusAsset(primaryId, { width: 1600, quality: 85, format: 'webp' })}
+                  alt={item.alt || ''}
+                  className={`w-full h-auto rounded-xl ${imgShadowCls}`}
+                  loading="lazy"
+                />
+                {capPos === 'overlay' && renderCaption()}
+              </div>
             </figure>
           )}
+          {capPos === 'below' && renderCaption()}
           {textHtml && (
             <article
               className={`prose prose-lg max-w-none
@@ -177,24 +215,28 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   if (item.layout === 'two-images') {
     return (
       <div
-        className={`${spacingTop} ${spacingBottom} ${background}`}
+        className={`${spacingTop} ${spacingBottom} ${background} ${containerCls}`}
         data-testid={`block-content-section-${index}`}
         {...directusAttr}
       >
         <div className={`mx-auto px-4 ${maxWidth}`}>
+          {capPos === 'above' && renderCaption()}
           <div 
             className="grid grid-cols-1 md:grid-cols-2 mb-8"
             style={{ gap: `var(--gutter, ${gutter}px)`, ...gridStyleVars }}
           >
             {primaryId && (
               <figure>
-                <img
-                  src={directusAsset(primaryId, { width: 800, quality: 85, format: 'webp' })}
-                  alt={item.alt || ''}
-                  className="w-full h-auto shadow-lg"
-                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
-                  loading="lazy"
-                />
+                <div className={`img-wrap ${capPos === 'overlay' ? 'relative' : ''}`}>
+                  <img
+                    src={directusAsset(primaryId, { width: 800, quality: 85, format: 'webp' })}
+                    alt={item.alt || ''}
+                    className={`w-full h-auto ${imgShadowCls}`}
+                    style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
+                    loading="lazy"
+                  />
+                  {capPos === 'overlay' && renderCaption()}
+                </div>
               </figure>
             )}
             {secondaryId && (
@@ -202,18 +244,14 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
                 <img
                   src={directusAsset(secondaryId, { width: 800, quality: 85, format: 'webp' })}
                   alt={item.alt || ''}
-                  className="w-full h-auto shadow-lg"
+                  className={`w-full h-auto ${imgShadowCls}`}
                   style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
                   loading="lazy"
                 />
               </figure>
             )}
           </div>
-          {item.caption && (
-            <p className="text-center text-sm text-gray-600 italic mb-6">
-              {item.caption}
-            </p>
-          )}
+          {capPos === 'below' && renderCaption()}
           {textHtml && (
             <article
               className={`prose prose-lg max-w-none
@@ -232,24 +270,28 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   if (item.layout === 'three-images') {
     return (
       <div
-        className={`${spacingTop} ${spacingBottom} ${background}`}
+        className={`${spacingTop} ${spacingBottom} ${background} ${containerCls}`}
         data-testid={`block-content-section-${index}`}
         {...directusAttr}
       >
         <div className={`mx-auto px-4 ${maxWidth}`}>
+          {capPos === 'above' && renderCaption()}
           <div 
             className="grid grid-cols-1 md:grid-cols-3 mb-8"
             style={{ gap: `var(--gutter, ${gutter}px)`, ...gridStyleVars }}
           >
             {primaryId && (
               <figure>
-                <img
-                  src={directusAsset(primaryId, { width: 600, quality: 85, format: 'webp' })}
-                  alt={item.alt || ''}
-                  className="w-full h-auto shadow-lg"
-                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
-                  loading="lazy"
-                />
+                <div className={`img-wrap ${capPos === 'overlay' ? 'relative' : ''}`}>
+                  <img
+                    src={directusAsset(primaryId, { width: 600, quality: 85, format: 'webp' })}
+                    alt={item.alt || ''}
+                    className={`w-full h-auto ${imgShadowCls}`}
+                    style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
+                    loading="lazy"
+                  />
+                  {capPos === 'overlay' && renderCaption()}
+                </div>
               </figure>
             )}
             {secondaryId && (
@@ -257,7 +299,7 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
                 <img
                   src={directusAsset(secondaryId, { width: 600, quality: 85, format: 'webp' })}
                   alt={item.alt || ''}
-                  className="w-full h-auto shadow-lg"
+                  className={`w-full h-auto ${imgShadowCls}`}
                   style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
                   loading="lazy"
                 />
@@ -268,18 +310,14 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
                 <img
                   src={directusAsset(thirdId, { width: 600, quality: 85, format: 'webp' })}
                   alt={item.alt || ''}
-                  className="w-full h-auto shadow-lg"
+                  className={`w-full h-auto ${imgShadowCls}`}
                   style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
                   loading="lazy"
                 />
               </figure>
             )}
           </div>
-          {item.caption && (
-            <p className="text-center text-sm text-gray-600 italic mb-6">
-              {item.caption}
-            </p>
-          )}
+          {capPos === 'below' && renderCaption()}
           {textHtml && (
             <article
               className={`prose prose-lg max-w-none
@@ -302,7 +340,7 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
     
     return (
       <div
-        className={`${spacingTop} ${spacingBottom} ${background}`}
+        className={`${spacingTop} ${spacingBottom} ${background} ${containerCls}`}
         data-testid={`block-content-section-${index}`}
         {...directusAttr}
       >
@@ -311,17 +349,17 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
             {/* Image */}
             {primaryId && (
               <figure className={`${mediaWidth} flex-shrink-0`}>
-                <img
-                  src={directusAsset(primaryId, { width: 1000, quality: 85, format: 'webp' })}
-                  alt={item.alt || ''}
-                  className={`w-full h-auto rounded-xl shadow-lg ${alignClass}`}
-                  loading="lazy"
-                />
-                {item.caption && (
-                  <figcaption className="mt-3 text-sm text-gray-600 italic text-center">
-                    {item.caption}
-                  </figcaption>
-                )}
+                {capPos === 'above' && renderCaption()}
+                <div className={`img-wrap ${capPos === 'overlay' ? 'relative' : ''}`}>
+                  <img
+                    src={directusAsset(primaryId, { width: 1000, quality: 85, format: 'webp' })}
+                    alt={item.alt || ''}
+                    className={`w-full h-auto rounded-xl ${imgShadowCls} ${alignClass}`}
+                    loading="lazy"
+                  />
+                  {capPos === 'overlay' && renderCaption()}
+                </div>
+                {capPos === 'below' && renderCaption()}
               </figure>
             )}
             

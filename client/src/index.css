@@ -1229,3 +1229,72 @@ button[role="switch"]:focus-visible {
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
+
+/* Blog Content Section Controls - Block Shadow, Image Shadow, Caption Positioning */
+.bcs {
+  position: relative;
+}
+
+.bcs--shadow {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+/* Image shadows */
+.tile--shadow {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Caption base styles */
+.bcs-caption {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.75);
+  margin-top: 8px;
+}
+
+/* Caption alignment */
+.bcs-caption--left {
+  text-align: left;
+}
+
+.bcs-caption--center {
+  text-align: center;
+}
+
+.bcs-caption--right {
+  text-align: right;
+}
+
+/* Caption positioning */
+.bcs-caption--above {
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+.bcs-caption--below {
+  margin-top: 8px;
+}
+
+/* Overlay caption - positioned over image */
+.bcs-caption--overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 14px;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.45) 100%);
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+  margin: 0;
+}
+
+/* Image wrapper for overlay support */
+.bcs .img-wrap {
+  position: relative;
+  border-radius: inherit;
+  overflow: hidden;
+}
