@@ -8921,6 +8921,52 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // DIAGNOSTIC ENDPOINT - See ALL posts regardless of language
+  app.get("/api/blog/posts-debug", async (req, res) => {
+    try {
+      const token = await getDirectusToken();
+      const now = new Date().toISOString();
+      
+      // Fetch ALL posts with just status and published_at filters (NO language filter)
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&sort=-published_at&fields=id,title,slug,status,published_at,language`;
+      
+      console.log(`🔍 DIAGNOSTIC: Fetching ALL posts without language filter`);
+      console.log(`🔍 DIAGNOSTIC URL: ${url}`);
+      
+      const response = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Directus API error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      const posts = result.data || [];
+      
+      console.log(`🔍 DIAGNOSTIC: Directus returned ${posts.length} posts total (all languages)`);
+      posts.forEach((post: any) => {
+        console.log(`   📄 "${post.title}" | Language value: "${post.language}" | Status: ${post.status}`);
+      });
+      
+      res.json({
+        count: posts.length,
+        posts: posts.map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          slug: p.slug,
+          language: p.language,
+          language_type: typeof p.language,
+          status: p.status,
+          published_at: p.published_at
+        }))
+      });
+    } catch (error) {
+      console.error('❌ Diagnostic error:', error);
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
   app.get("/api/blog/posts", async (req, res) => {
     try {
       const { language } = req.query;
