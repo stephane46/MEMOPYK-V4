@@ -26,6 +26,7 @@ export type ContentSection = {
   block_shadow?: boolean | null;
   caption_align?: "left" | "center" | "right" | null;
   caption_position?: "above" | "below" | "overlay" | null;
+  caption_bg?: "none" | "light" | "dark" | null;
 };
 
 interface BlockContentSectionProps {
@@ -103,6 +104,7 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   const blkShadow = !!item.block_shadow;
   const capAlign = item.caption_align ?? 'left';
   const capPos = item.caption_position ?? 'below';
+  const capBg = item.caption_bg ?? 'dark';
   
   // CSS variables for grid layouts
   const gridStyleVars = {
@@ -122,7 +124,9 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
     capAlign === 'center' ? 'bcs-caption--center' :
     capAlign === 'right' ? 'bcs-caption--right' : 'bcs-caption--left',
     capPos === 'overlay' ? 'bcs-caption--overlay' : null,
-    capPos === 'above' ? 'bcs-caption--above' : 'bcs-caption--below'
+    capPos === 'above' ? 'bcs-caption--above' : 'bcs-caption--below',
+    capPos === 'overlay' && capBg === 'light' ? 'bcs-caption--bg-light' : null,
+    capPos === 'overlay' && capBg === 'dark' ? 'bcs-caption--bg-dark' : null
   ].filter(Boolean).join(' ');
   
   // Image shadow class
@@ -131,7 +135,7 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   const directusAttr = item.id ? setAttr({
     collection: "block_content_section_v3",
     item: item.id,
-    fields: "layout,text,image_primary,image_secondary,image_third,media_width,media_align,max_width,spacing_top,spacing_bottom,background,caption,alt,gutter,corner_radius,image_shadow,block_shadow,caption_align,caption_position",
+    fields: "layout,text,image_primary,image_secondary,image_third,media_width,media_align,max_width,spacing_top,spacing_bottom,background,caption,alt,gutter,corner_radius,image_shadow,block_shadow,caption_align,caption_position,caption_bg",
     mode: "drawer",
   }) : {};
   
