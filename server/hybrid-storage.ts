@@ -149,6 +149,11 @@ export interface HybridStorageInterface {
   recordConversionStep(stepData: any): Promise<any>;
   getConversionFunnel(timeRange?: { from: string; to: string }): Promise<any>;
   getFunnelAnalytics(timeRange?: { from: string; to: string }): Promise<any>;
+  
+  // Blog Analytics methods
+  createBlogPostView(viewData: any): Promise<any>;
+  getBlogPostViews(options?: { dateFrom?: string, dateTo?: string, postSlug?: string }): Promise<any[]>;
+  getPopularBlogPosts(dateFrom?: string, dateTo?: string): Promise<any[]>;
 }
 
 export class HybridStorage implements HybridStorageInterface {
@@ -6798,6 +6803,171 @@ Allow: /contact`;
         console.error('Error deleting IP exclusion from JSON:', jsonError);
         throw jsonError;
       }
+    }
+  }
+
+  async createBlogPostView(viewData: any): Promise<any> {
+    try {
+      console.log(`📊 Creating blog post view: ${viewData.post_slug}`);
+      
+      const newView = {
+        id: `blog_view_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        post_slug: viewData.post_slug,
+        post_title: viewData.post_title,
+        language: viewData.language,
+        session_id: viewData.session_id,
+        ip_address: viewData.ip_address,
+        created_at: new Date().toISOString()
+      };
+
+      // Try Supabase first
+      const { data, error } = await this.supabase
+        .from('blog_post_views')
+        .insert([newView])
+        .select()
+        .single();
+
+      if (error) {
+        console.warn('⚠️ Blog Post View: Database insert failed, using JSON fallback:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log('✅ Blog post view created in Supabase');
+        return data;
+      }
+      
+      return newView;
+    } catch (error) {
+      console.warn('⚠️ Blog Post View: Supabase connection failed, using JSON fallback:', error);
+      
+      // Fallback to JSON
+      try {
+        const views = this.loadJsonFile('blog-post-views.json') || [];
+        const newView = {
+          id: `blog_view_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          post_slug: viewData.post_slug,
+          post_title: viewData.post_title,
+          language: viewData.language,
+          session_id: viewData.session_id,
+          ip_address: viewData.ip_address,
+          created_at: new Date().toISOString()
+        };
+        
+        views.push(newView);
+        this.saveJsonFile('blog-post-views.json', views);
+        
+        console.log('✅ Blog post view created in JSON');
+        return newView;
+      } catch (jsonError) {
+        console.error('Error creating blog post view in JSON:', jsonError);
+        throw jsonError;
+      }
+    }
+  }
+
+  async getBlogPostViews(options?: { dateFrom?: string, dateTo?: string, postSlug?: string }): Promise<any[]> {
+    const { dateFrom, dateTo, postSlug } = options || {};
+    
+    try {
+      console.log(`📊 Fetching blog post views from Supabase...`);
+      
+      let query = this.supabase
+        .from('blog_post_views')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (dateFrom) {
+        query = query.gte('created_at', dateFrom);
+      }
+      if (dateTo) {
+        const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
+        query = query.lte('created_at', dateToEndOfDay);
+      }
+      if (postSlug) {
+        query = query.eq('post_slug', postSlug);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('⚠️ Blog Post Views: Supabase query error:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log(`✅ Retrieved ${data.length} blog post views from Supabase`);
+        return data;
+      }
+      
+      return [];
+    } catch (error) {
+      console.warn('⚠️ Blog Post Views: Supabase connection failed, using JSON fallback:', error);
+      
+      // Fallback to JSON
+      try {
+        let views = this.loadJsonFile('blog-post-views.json') || [];
+        
+        if (dateFrom) {
+          views = views.filter((view: any) => view.created_at >= dateFrom);
+        }
+        if (dateTo) {
+          const dateToEndOfDay = dateTo.includes('T') ? dateTo : dateTo + 'T23:59:59.999Z';
+          views = views.filter((view: any) => view.created_at <= dateToEndOfDay);
+        }
+        if (postSlug) {
+          views = views.filter((view: any) => view.post_slug === postSlug);
+        }
+        
+        console.log(`✅ Retrieved ${views.length} blog post views from JSON`);
+        return views;
+      } catch (jsonError) {
+        console.error('Error getting blog post views from JSON:', jsonError);
+        return [];
+      }
+    }
+  }
+
+  async getPopularBlogPosts(dateFrom?: string, dateTo?: string): Promise<any[]> {
+    try {
+      console.log(`📊 Fetching popular blog posts...`);
+      
+      const views = await this.getBlogPostViews({ dateFrom, dateTo });
+      
+      // Group by post slug and count views
+      const postStats = new Map();
+      
+      views.forEach((view: any) => {
+        const slug = view.post_slug;
+        
+        if (!postStats.has(slug)) {
+          postStats.set(slug, {
+            post_slug: slug,
+            post_title: view.post_title,
+            language: view.language,
+            view_count: 0,
+            last_viewed: view.created_at
+          });
+        }
+        
+        const stats = postStats.get(slug);
+        stats.view_count++;
+        
+        // Track most recent view
+        if (view.created_at > stats.last_viewed) {
+          stats.last_viewed = view.created_at;
+        }
+      });
+      
+      // Convert to array and sort by view count
+      const popularPosts = Array.from(postStats.values())
+        .sort((a, b) => b.view_count - a.view_count);
+      
+      console.log(`✅ Found ${popularPosts.length} unique blog posts`);
+      return popularPosts;
+    } catch (error) {
+      console.error('Error getting popular blog posts:', error);
+      return [];
     }
   }
 }
