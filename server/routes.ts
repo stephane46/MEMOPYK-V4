@@ -3608,6 +3608,62 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
+  // Blog Analytics - POST track blog post view
+  app.post("/api/analytics/blog/view", async (req, res) => {
+    try {
+      const { post_slug, post_title, language, session_id } = req.body;
+      const ip_address = req.ip || req.headers['x-forwarded-for'] || '0.0.0.0';
+      
+      console.log(`📊 Blog post view: ${post_slug} (${language}) from IP ${ip_address}`);
+      
+      // Check if this IP is in the exclusion list
+      const exclusions = await hybridStorage.getIpExclusions();
+      const isExcluded = exclusions.some((excl: any) => 
+        excl.is_active && excl.ip_address === ip_address
+      );
+      
+      if (isExcluded) {
+        console.log(`⏭️ Skipping blog view tracking - IP ${ip_address} is excluded`);
+        res.json({ success: true, excluded: true, message: "View not tracked - IP excluded" });
+        return;
+      }
+      
+      const viewData = {
+        post_slug,
+        post_title,
+        language,
+        session_id,
+        ip_address
+      };
+      
+      const view = await hybridStorage.createBlogPostView(viewData);
+      res.json({ success: true, view });
+    } catch (error) {
+      console.error('❌ Blog post view tracking error:', error);
+      res.status(500).json({ error: "Failed to track blog post view" });
+    }
+  });
+
+  // Blog Analytics - GET popular blog posts
+  app.get("/api/analytics/blog/popular", async (req, res) => {
+    try {
+      const { days } = req.query;
+      const daysNum = parseInt(days as string || '30');
+      
+      const dateFrom = new Date();
+      dateFrom.setDate(dateFrom.getDate() - daysNum);
+      const dateFromStr = dateFrom.toISOString();
+      
+      console.log(`📊 Fetching popular blog posts for last ${daysNum} days`);
+      
+      const popularPosts = await hybridStorage.getPopularBlogPosts(dateFromStr);
+      res.json(popularPosts);
+    } catch (error) {
+      console.error('❌ Popular blog posts error:', error);
+      res.status(500).json({ error: "Failed to get popular blog posts" });
+    }
+  });
+
   // Video Performance Analytics - GET comprehensive video engagement with milestones
   app.get("/api/analytics/video-performance", async (req, res) => {
     try {
