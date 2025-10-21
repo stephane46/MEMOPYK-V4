@@ -20,6 +20,8 @@ export type ContentSection = {
   background?: "default" | "light" | "dark" | null;
   caption?: string | null;
   alt?: string | null;
+  gutter?: number | null;
+  corner_radius?: number | null;
 };
 
 interface BlockContentSectionProps {
@@ -87,11 +89,21 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
   const primaryId = getFileId(item.image_primary);
   const secondaryId = getFileId(item.image_secondary);
   const thirdId = getFileId(item.image_third);
+  
+  // NEW: Read gutter and corner_radius fields for grid layouts
+  const gutter = Number(item.gutter ?? 24);
+  const cornerRadius = Number(item.corner_radius ?? 12);
+  
+  // CSS variables for grid layouts
+  const gridStyleVars = {
+    '--gutter': `${gutter}px`,
+    '--radius': `${cornerRadius}px`,
+  } as React.CSSProperties;
 
   const directusAttr = item.id ? setAttr({
     collection: "block_content_section_v3",
     item: item.id,
-    fields: "layout,text,image_primary,image_secondary,image_third,media_width,media_align,max_width,spacing_top,spacing_bottom,background,caption,alt",
+    fields: "layout,text,image_primary,image_secondary,image_third,media_width,media_align,max_width,spacing_top,spacing_bottom,background,caption,alt,gutter,corner_radius",
     mode: "drawer",
   }) : {};
 
@@ -170,13 +182,17 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
         {...directusAttr}
       >
         <div className={`mx-auto px-4 ${maxWidth}`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div 
+            className="grid grid-cols-1 md:grid-cols-2 mb-8"
+            style={{ gap: `var(--gutter, ${gutter}px)`, ...gridStyleVars }}
+          >
             {primaryId && (
               <figure>
                 <img
                   src={directusAsset(primaryId, { width: 800, quality: 85, format: 'webp' })}
                   alt={item.alt || ''}
-                  className="w-full h-auto rounded-xl shadow-lg"
+                  className="w-full h-auto shadow-lg"
+                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
                   loading="lazy"
                 />
               </figure>
@@ -186,7 +202,8 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
                 <img
                   src={directusAsset(secondaryId, { width: 800, quality: 85, format: 'webp' })}
                   alt={item.alt || ''}
-                  className="w-full h-auto rounded-xl shadow-lg"
+                  className="w-full h-auto shadow-lg"
+                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
                   loading="lazy"
                 />
               </figure>
@@ -220,13 +237,17 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
         {...directusAttr}
       >
         <div className={`mx-auto px-4 ${maxWidth}`}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div 
+            className="grid grid-cols-1 md:grid-cols-3 mb-8"
+            style={{ gap: `var(--gutter, ${gutter}px)`, ...gridStyleVars }}
+          >
             {primaryId && (
               <figure>
                 <img
                   src={directusAsset(primaryId, { width: 600, quality: 85, format: 'webp' })}
                   alt={item.alt || ''}
-                  className="w-full h-auto rounded-xl shadow-lg"
+                  className="w-full h-auto shadow-lg"
+                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
                   loading="lazy"
                 />
               </figure>
@@ -236,7 +257,8 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
                 <img
                   src={directusAsset(secondaryId, { width: 600, quality: 85, format: 'webp' })}
                   alt={item.alt || ''}
-                  className="w-full h-auto rounded-xl shadow-lg"
+                  className="w-full h-auto shadow-lg"
+                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
                   loading="lazy"
                 />
               </figure>
@@ -246,7 +268,8 @@ export default function BlockContentSection({ item, index = 0 }: BlockContentSec
                 <img
                   src={directusAsset(thirdId, { width: 600, quality: 85, format: 'webp' })}
                   alt={item.alt || ''}
-                  className="w-full h-auto rounded-xl shadow-lg"
+                  className="w-full h-auto shadow-lg"
+                  style={{ borderRadius: `var(--radius, ${cornerRadius}px)` }}
                   loading="lazy"
                 />
               </figure>
