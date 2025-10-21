@@ -8924,14 +8924,20 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/blog/posts", async (req, res) => {
     try {
       const { language } = req.query;
+      
+      // Validate language parameter
+      if (!language || (language !== 'en-US' && language !== 'fr-FR')) {
+        return res.status(400).json({ error: 'Invalid or missing language parameter. Must be en-US or fr-FR' });
+      }
+      
       const token = await getDirectusToken();
       
       // Request specific fields as per schema
       const fieldsQuery = 'id,title,slug,status,published_at,language,description,image.*,author.*,seo';
       
-      // Filter by status and published_at <= now
+      // Filter by status, published_at <= now, AND exact language match
       const now = new Date().toISOString();
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&sort=-published_at&fields=${fieldsQuery}`;
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[status][_eq]=published&filter[published_at][_lte]=${now}&filter[language][_eq]=${language}&sort=-published_at&fields=${fieldsQuery}`;
       
       const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -8950,23 +8956,19 @@ export async function registerRoutes(app: Express): Promise<void> {
       // Map Directus fields to frontend expectations
       const mappedPosts = posts
         .filter((post: any) => {
-          // Gate rendering: status === 'published' && published_at <= now()
-          if (post.status !== 'published' || new Date(post.published_at) > new Date()) {
+          // Double-check language matches (belt & suspenders approach)
+          if (post.language !== language) {
+            console.warn(`⚠️ Language mismatch: expected ${language}, got ${post.language} for post ${post.slug}`);
             return false;
           }
-          
-          // Filter by language using normalized comparison
-          // Include posts without language field (they'll fallback to route locale)
-          if (!post.language) return true;
-          return sameLang(post.language, language as string);
+          return true;
         })
         .map((post: any) => {
           // Map published_at → publish_date for frontend
           const mapped = {
             ...post,
             publish_date: post.published_at,
-            // displayLocale fallback: post.language ?? routeLocale
-            language: post.language || language
+            language: post.language
           };
           
           // Map Directus image field to featured_image_url
@@ -8976,6 +8978,8 @@ export async function registerRoutes(app: Express): Promise<void> {
           
           return mapped;
         });
+      
+      console.log(`✅ Blog posts fetched for ${language}: ${mappedPosts.length} posts`);
       
       // Prevent browser caching to always fetch fresh content from Directus
       res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -8991,11 +8995,18 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/blog/posts/:slug", async (req, res) => {
     try {
       const { slug } = req.params;
+      const { language } = req.query;
+      
+      // Validate language parameter
+      if (!language || (language !== 'en-US' && language !== 'fr-FR')) {
+        return res.status(400).json({ error: 'Invalid or missing language parameter. Must be en-US or fr-FR' });
+      }
+      
       const token = await getDirectusToken();
       
       // Fetch post with nested M2A blocks - as per schema
       const fieldsQuery = [
-        'id,title,slug,status,published_at,description,seo',
+        'id,title,slug,status,published_at,language,description,seo',
         'image.id,image.filename_download,image.type,image.width,image.height',
         'author.id,author.first_name,author.last_name,author.email',
         'blocks.collection',
@@ -9021,9 +9032,9 @@ export async function registerRoutes(app: Express): Promise<void> {
         'blocks.item:block_content_section_v3.image_third.id'
       ].join(',');
 
-      // Manually construct URL to preserve commas and filter by published_at
+      // Manually construct URL to preserve commas and filter by slug, language, status, and published_at
       const now = new Date().toISOString();
-      const url = `https://cms-blog.memopyk.org/items/posts?filter[slug][_eq]=${encodeURIComponent(slug)}&filter[status][_eq]=published&filter[published_at][_lte]=${now}&fields=${fieldsQuery}&limit=1`;
+      const url = `https://cms-blog.memopyk.org/items/posts?filter[slug][_eq]=${encodeURIComponent(slug)}&filter[language][_eq]=${language}&filter[status][_eq]=published&filter[published_at][_lte]=${now}&fields=${fieldsQuery}&limit=1`;
 
       const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -9038,12 +9049,19 @@ export async function registerRoutes(app: Express): Promise<void> {
       const result = await response.json();
       
       if (!result.data || result.data.length === 0) {
-        console.log('❌ Post not found in Directus for slug:', slug);
+        console.log(`❌ Post not found in Directus for slug: ${slug}, language: ${language}`);
         res.status(404).json({ error: 'Post not found' });
         return;
       }
 
       const post = result.data[0];
+      
+      // Double-check language matches (belt & suspenders approach)
+      if (post.language !== language) {
+        console.warn(`⚠️ Language mismatch for post ${slug}: expected ${language}, got ${post.language}`);
+        res.status(404).json({ error: 'Post not found' });
+        return;
+      }
       
       // Fallback hydration for blocks where M2A expansion failed
       // (e.g., block_content_section_v3 with integer ID causing M2A mismatch)
