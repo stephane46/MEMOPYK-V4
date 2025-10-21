@@ -68,7 +68,7 @@ Modal styling: Requires solid white modal backgrounds with dark overlays for pro
 - **Direct Supabase Upload System**: Facilitates large file uploads.
 - **SEO Management System**: Comprehensive interface for page-level meta tags, keywords, redirects, image SEO, and global settings, integrated with hybrid storage and audit logging.
 - **Deployment Optimizations**: Fast health checks, production video cache preloading, error handling, routing priorities.
-- **Visitor Classification & Analytics Accuracy**: 30-second session deduplication, proper new/returning visitor classification. Video analytics track watch duration and completion, excluding admin views.
+- **Visitor Classification & Analytics Accuracy**: 30-second session deduplication, proper new/returning visitor classification. Video analytics track watch duration and completion, excluding admin views. All analytics (session, video, blog) exclude development/preview environments (replit.dev, localhost) to ensure only production traffic is tracked.
 - **Professional Flag System**: 255-country SVG flag solution with dynamic mapping and three-tier fallback.
 - **OpenReplay Integration**: Session recording and user behavior analytics.
 - **Partner Intake System**: Bilingual partner directory with Zoho CRM integration (Account, Contact, Partner records). Uses OAuth refresh-token flow, rate limiting, CSRF, and reCAPTCHA stub.
